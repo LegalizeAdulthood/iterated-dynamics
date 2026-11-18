@@ -11,9 +11,7 @@
 #include <math/BigNum.h>
 
 #include <algorithm>
-#include <cfloat>
 #include <cmath>
-#include <cstdio>
 #include <cstring>
 #include <stdexcept>
 #include <utility>
@@ -134,148 +132,6 @@ BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
     return r;
 }
 
-BigFloatPtr arctangent(BigFloatPtr r, BigFloatPtr n)
-{
-    int almost_match = 0;
-    bool sign_flag = false;
-
-    // use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r))
-
-    if (is_bf_neg(n))
-    {
-        sign_flag = true;
-        neg_a_bf(n);
-    }
-
-    // If n is very large, atanl() won't give enough decimal places to be a
-    // good enough initial guess for Newton's Method.  If it is larger than
-    // say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).
-
-    LDouble f = bf_to_float(n);
-    const bool large_arg = f > 1.0;
-    if (large_arg)
-    {
-        unsafe_inv_bf(g_bf_tmp3.data(), n, g_bf_tmp1.data(), g_bf_tmp2.data());
-        copy_bf(n, g_bf_tmp3.data());
-        f = bf_to_float(n);
-    }
-
-    clear_bf(g_bf_tmp3.data()); // not really necessary, but makes things more consistent
-
-    // With Newton's Method, there is no need to calculate all the digits
-    // every time.  The precision approximately doubles each iteration.
-    // Save original values.
-    int orig_bf_length = g_bf_length;
-    int orig_bn_length = g_bn_length;
-    int orig_padding = g_padding;
-    int orig_r_length = g_r_length;
-    int orig_shift_factor = g_shift_factor;
-    int orig_r_bf_length = g_r_bf_length;
-    BigFloatPtr orig_bf_pi = g_bf_pi.data();
-    BigFloatPtr bf_pi = orig_bf_pi;
-    BigFloatPtr orig_r = r;
-    BigFloatPtr orig_n = n;
-    BigFloatPtr orig_bf_tmp3 = g_bf_tmp3.data();
-    BigFloatPtr bf_tmp3 = orig_bf_tmp3;
-
-    // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
-    g_bn_length = std::min(g_bn_length, orig_bn_length);
-    calc_lengths();
-
-    // adjust pointers
-    r = orig_r + orig_bf_length - g_bf_length;
-    bf_pi = orig_bf_pi + orig_bf_length - g_bf_length;
-    bf_tmp3 = orig_bf_tmp3 + orig_bf_length - g_bf_length;
-
-    f = atanl(f); // approximate arctangent
-    // no need to check overflow
-
-    float_to_bf(r, f);           // start with approximate atan
-    copy_bf(bf_tmp3, r);
-
-    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
-    {
-        // adjust lengths
-        g_bn_length <<= 1; // double precision
-        g_bn_length = std::min(g_bn_length, orig_bn_length);
-        calc_lengths();
-        r = orig_r + orig_bf_length - g_bf_length;
-        n = orig_n + orig_bf_length - g_bf_length;
-        bf_pi = orig_bf_pi + orig_bf_length - g_bf_length;
-        bf_tmp3 = orig_bf_tmp3 + orig_bf_length - g_bf_length;
-
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-        std::printf("\natan() loop #%i, g_bf_length=%i\nsincos() loops\n", i, g_bf_length);
-#endif
-        unsafe_sin_cos_bf(g_bf_tmp4.data(), g_bf_tmp5.data(), bf_tmp3, bf_pi, g_bf_tmp1.data(), g_bf_tmp2.data()); // sin(r), cos(r)
-        copy_bf(bf_tmp3, r);                                                  // restore bf_tmp3 from sincos_bf()
-        copy_bf(g_bf_tmp1.data(), g_bf_tmp5.data());
-        unsafe_mult_bf(g_bf_tmp2.data(), n, g_bf_tmp1.data());                // n*cos(r)
-        unsafe_sub_a_bf(g_bf_tmp4.data(), g_bf_tmp2.data());                  // sin(r) - n*cos(r)
-        unsafe_mult_bf(g_bf_tmp1.data(), g_bf_tmp5.data(), g_bf_tmp4.data()); // cos(r) * (sin(r) - n*cos(r))
-        copy_bf(bf_tmp3, r);
-        unsafe_sub_a_bf(r, g_bf_tmp1.data());                                 // r - cos(r) * (sin(r) - n*cos(r))
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-        putchar('\n');
-        {
-            const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-            BigArena dump_arena{size, 2, reduce_bf_product};
-            bf_hex_dump(BigFloat::from_legacy(dump_arena, r, size));
-        }
-#endif
-        if (g_bf_length == orig_bf_length)
-        {
-            const int comp = std::abs(cmp_bf(r, bf_tmp3));
-            if (comp < 8) // if match or almost match
-            {
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-                std::printf("atan() loop comp=%i\n", comp);
-#endif
-                if (comp < 4              // perfect or near perfect match
-                    || almost_match == 1) // close enough for 2nd time
-                {
-                    break;
-                }
-                // this is the first time they almost matched
-                almost_match++;
-            }
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-            else
-            {
-                std::printf("atan() loop comp=%i\n", comp);
-            }
-#endif
-        }
-
-        copy_bf(bf_tmp3, r); // make a copy for later comparison
-    }
-
-    // restore original values
-    g_bf_length = orig_bf_length;
-    g_bn_length = orig_bn_length;
-    g_padding = orig_padding;
-    g_r_length = orig_r_length;
-    g_shift_factor = orig_shift_factor;
-    g_r_bf_length = orig_r_bf_length;
-    bf_pi = orig_bf_pi;
-    r = orig_r;
-    bf_tmp3 = orig_bf_tmp3;
-
-    if (large_arg)
-    {
-        half_bf(bf_tmp3, bf_pi);   // pi/2
-        compound_operation(bf_tmp3, r, unsafe_sub_a_bf); // pi/2 - atan(1/n)
-        copy_bf(r, bf_tmp3);
-    }
-
-    if (sign_flag)
-    {
-        neg_a_bf(r);
-    }
-    return r;
-}
-
 BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
 {
     const int sign_x = sign_bf(nx);
@@ -313,7 +169,8 @@ BigFloatPtr arctangent2(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
         neg_a_bf(nx);
     }
     unsafe_div_bf(g_bf_tmp6.data(), ny, nx, g_bf_tmp1.data(), g_bf_tmp2.data());
-    arctangent(r, g_bf_tmp6.data());
+    arctangent(r, g_bf_tmp6.data(), g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(),
+        g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp_copy1.data());
     if (sign_x < 0)
     {
         binary_operation(r, g_bf_pi.data(), r, unsafe_sub_bf);
@@ -348,6 +205,15 @@ void reduce_bf_product(Byte *value)
 {
     std::memmove(value, value + g_padding, g_bf_length + 2);
 }
+
+#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
+void bf_hex_dump_snapshot(const Byte *r)
+{
+    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+    BigArena dump_arena{size, 2, reduce_bf_product};
+    bf_hex_dump(BigFloat::from_legacy(dump_arena, r, size));
+}
+#endif
 
 BigFloat::BigFloat() noexcept = default;
 

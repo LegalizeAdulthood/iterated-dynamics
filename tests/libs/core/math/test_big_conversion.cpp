@@ -925,6 +925,50 @@ TEST_F(TestBigFloatByteSineCosine, reducesTheBorrowedHalfPiWindowAndPreservesGua
     EXPECT_EQ(mark, save_stack());
 }
 
+class TestBigFloatByteArctangent : public TestBigNumConversionBase
+{
+};
+
+TEST_F(TestBigFloatByteArctangent, restoresPrecisionAndKeepsLargeArgumentScratchEffects)
+{
+    init_bf_length(64);
+    init_big_pi();
+    const int size = g_bf_length + 2;
+    const std::array<int, 6> lengths{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    std::vector<Byte> source(size + 4, 0xa5);
+    Byte *const input = source.data() + 2;
+    std::fill_n(input, size, Byte{0});
+    input[size - 4] = 2;
+    std::vector<Byte> result(size + 4, 0xa5);
+    Byte *const output = result.data() + 2;
+    std::fill_n(output, size, Byte{0});
+    std::vector<Byte> tmp3(size + 2);
+    std::fill(tmp3.begin() + size, tmp3.end(), Byte{0xa5});
+    std::vector<Byte> copy1(size + 2, 0xa5);
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(output,
+        arctangent(output, input, g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), tmp3.data(), g_bf_tmp4.data(),
+            g_bf_tmp5.data(), copy1.data()));
+
+    std::vector<Byte> reciprocal(size + 4, 0xa5);
+    std::fill_n(reciprocal.begin() + 2, size, Byte{0});
+    reciprocal[size - 2] = 0x80;
+    reciprocal[size] = 0xff;
+    reciprocal[size + 1] = 0xff;
+    EXPECT_EQ(reciprocal, source);
+    EXPECT_EQ(std::vector<Byte>(output, output + size + 2), tmp3);
+    EXPECT_EQ(0, BIG_ACCESS16(copy1.data() + g_bf_length));
+    EXPECT_EQ(0xa5, copy1[size]);
+    EXPECT_EQ(0xa5, copy1[size + 1]);
+    EXPECT_EQ(0xa5, result.front());
+    EXPECT_EQ(0xa5, result.back());
+    EXPECT_EQ(
+        lengths, (std::array<int, 6>{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_NEAR(1.1071487177940905L, bf_to_float(output), 1e-11L);
+}
+
 struct BigNumConversionInput
 {
     const char *name;

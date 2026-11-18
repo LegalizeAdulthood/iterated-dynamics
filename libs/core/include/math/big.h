@@ -169,6 +169,9 @@ bool is_bn_zero(const Byte *n);
 Byte *float_to_bn(Byte *r, LDouble f);
 
 void bf_hex_dump(const BigFloat &r);
+#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
+void bf_hex_dump_snapshot(const Byte *r);
+#endif
 Byte *str_to_bf(Byte *r, std::string_view s, Byte *tmp1);
 Byte *bf_to_bn(Byte *n, const Byte *f);
 Byte *bn_to_bf(Byte *f, const Byte *n);
@@ -181,6 +184,8 @@ Byte *unsafe_div_bf(Byte *r, Byte *n1, Byte *n2, Byte *tmp1, Byte *tmp2);
 Byte *exp_bf(Byte *r, const Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3);
 Byte *unsafe_ln_bf(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *tmp4, Byte *tmp5, Byte *tmp6);
 Byte *unsafe_sin_cos_bf(Byte *s, Byte *c, Byte *n, const Byte *pi, Byte *tmp1, Byte *tmp2);
+Byte *arctangent(
+    Byte *r, Byte *n, const Byte *pi, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *tmp4, Byte *tmp5, Byte *copy1);
 BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx);
 Byte *unsafe_bf_to_bf10(Byte *r, int dec, Byte *n);
 Byte *mult_a_bf10_int(Byte *r, int dec, misc::U16 n);
