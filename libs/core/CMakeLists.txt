@@ -170,11 +170,7 @@ add_library(id-core
     include/math/BigComplex.h math/BigComplex.cpp
     include/math/BigFloat.h math/BigFloat.cpp
     include/math/BigNum.h math/BigNum.cpp
-    math/BigStorage.h
-    math/big_float.cpp
     include/math/big_init.h math/big_init.cpp
-    math/big_num.cpp
-    math/big_numc.cpp
     include/math/cmplx.h math/cmplx.cpp
     include/math/complex_fn.h
     include/math/fixed_pt.h math/fixed_pt.cpp

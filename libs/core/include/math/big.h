@@ -34,6 +34,17 @@ using BFPtrComplex = Complex<Byte *>;
 using BNPtrComplex = Complex<Byte *>;
 using BFConstPtrComplex = Complex<const Byte *>;
 
+// Precision lengths shared with the initialization layer.
+extern int g_int_length;
+extern int g_bn_length;
+extern int g_r_length;
+extern int g_padding;
+extern int g_decimals;
+extern int g_shift_factor;
+extern int g_bf_length;
+extern int g_r_bf_length;
+void calc_lengths();
+
 Byte *clear_bn(Byte *r);
 Byte *max_bn(Byte *r);
 Byte *copy_bn(Byte *r, const Byte *n);
@@ -73,18 +84,14 @@ LDouble scale256(LDouble f, int n);
 // prototypes
 misc::U32 BIG_ACCESS32(const Byte *addr);
 misc::U16 BIG_ACCESS16(const Byte *addr);
-misc::S16 BIG_ACCESS_S16(const misc::S16 *addr);
 misc::U32 BIG_SET32(Byte *addr, misc::U32 val);
 misc::U16 BIG_SET16(Byte *addr, misc::U16 val);
-misc::S16 BIG_SET_S16(misc::S16 *addr, misc::S16 val);
 #else
 // equivalent defines
 #define BIG_ACCESS32(addr)   (*(U32 *)(addr))
 #define BIG_ACCESS16(addr)   (*(U16 *)(addr))
-#define BIG_ACCESS_S16(addr)   (*(S16 *)(addr))
 #define BIG_SET32(addr, val) (*(U32 *)(addr) = (U32)(val))
 #define BIG_SET16(addr, val) (*(U16 *)(addr) = (U16)(val))
-#define BIG_SET_S16(addr, val) (*(S16 *)(addr) = (S16)(val))
 #endif
 Byte *str_to_bn(Byte *r, std::string_view s);
 Byte *int_to_bn(Byte *r, long value);

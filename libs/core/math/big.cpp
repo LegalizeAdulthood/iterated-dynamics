@@ -4,7 +4,6 @@
 // Wesley Loewer's Big Numbers. (C) 1994-95, Wesley B. Loewer
 //
 #include <math/big.h>
-#include <math/big_init.h>
 
 #include <algorithm>
 #include <cfloat>
@@ -65,7 +64,9 @@ S16 BIG_SET_S16(S16 *addr, S16 val)
     ((Byte *) addr)[1] = (Byte) ((val >> 8) & 0xff);
     return val;
 }
-
+#else
+#define BIG_ACCESS_S16(addr) (*(S16 *) (addr))
+#define BIG_SET_S16(addr, val) (*(S16 *) (addr) = (S16) (val))
 #endif
 
 namespace
