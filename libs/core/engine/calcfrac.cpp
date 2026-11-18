@@ -1473,11 +1473,9 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                 }
                 else if (g_bf_math == BFMathType::BIG_FLT)
                 {
-                    if (cmp_bf(abs_a_bf((g_bf_tmp = g_saved_z_bf.x - g_new_z_bf.x).data()), g_close_enough_bf.data()) <
-                        0)
+                    if (cmp_bf(abs_a_bf(g_bf_tmp = g_saved_z_bf.x - g_new_z_bf.x), g_close_enough_bf) < 0)
                     {
-                        if (cmp_bf(abs_a_bf((g_bf_tmp = g_saved_z_bf.y - g_new_z_bf.y).data()),
-                                g_close_enough_bf.data()) < 0)
+                        if (cmp_bf(abs_a_bf(g_bf_tmp = g_saved_z_bf.y - g_new_z_bf.y), g_close_enough_bf) < 0)
                         {
                             m_caught_a_cycle = true;
                         }

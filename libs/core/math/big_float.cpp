@@ -33,29 +33,6 @@ void bf_hex_dump(const BigFloat &r)
 }
 
 /********************************************************************/
-// r = |n|
-BigFloatPtr abs_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    copy_bf(r, n);
-    if (is_bf_neg(r))
-    {
-        neg_a_bf(r);
-    }
-    return r;
-}
-
-/********************************************************************/
-// r = |r|
-BigFloatPtr abs_a_bf(BigFloatPtr r)
-{
-    if (is_bf_neg(r))
-    {
-        neg_a_bf(r);
-    }
-    return r;
-}
-
-/********************************************************************/
 // r = 1/n
 // uses g_bf_tmp1 - g_bf_tmp2 - global temp bigfloats
 //  SIDE-EFFECTS:

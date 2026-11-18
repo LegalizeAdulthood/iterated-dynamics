@@ -1097,10 +1097,7 @@ BigFloat BigFloat::operator/(const BigFloat &right) const
 BigFloat BigFloat::abs() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING), *this};
-    if (is_bf_neg(result))
-    {
-        neg_a_bf(result);
-    }
+    abs_a_bf(result);
     return result;
 }
 
@@ -1202,6 +1199,18 @@ BigFloat &neg_bf(BigFloat &r, const BigFloat &n)
 BigFloat &neg_a_bf(BigFloat &r)
 {
     neg_a_bf(r.data());
+    return r;
+}
+
+BigFloat &abs_bf(BigFloat &r, const BigFloat &n)
+{
+    abs_bf(r.data(), n.data());
+    return r;
+}
+
+BigFloat &abs_a_bf(BigFloat &r)
+{
+    abs_a_bf(r.data());
     return r;
 }
 

@@ -410,12 +410,12 @@ bool mandel_per_image_bf()
     sub_bf(g_delta2_y_bf.data(), g_bf_y_3rd.data(), g_bf_y_min.data());
     g_delta2_y_bf /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
-    abs_bf(g_close_enough_bf.data(), g_delta_x_bf.data());
-    if (cmp_bf(abs_bf(bf_temp1.data(), g_delta2_x_bf.data()), g_close_enough_bf.data()) > 0)
+    abs_bf(g_close_enough_bf, g_delta_x_bf);
+    if (cmp_bf(abs_bf(bf_temp1, g_delta2_x_bf), g_close_enough_bf) > 0)
     {
         g_close_enough_bf = bf_temp1;
     }
-    if (cmp_bf(abs_bf(bf_temp1.data(), g_delta_y_bf.data()), abs_bf(bf_temp2.data(), g_delta2_y_bf.data())) > 0)
+    if (cmp_bf(abs_bf(bf_temp1, g_delta_y_bf), abs_bf(bf_temp2, g_delta2_y_bf)) > 0)
     {
         if (bf_temp1 > g_close_enough_bf)
         {

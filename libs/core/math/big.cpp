@@ -1645,6 +1645,27 @@ Byte *neg_a_bf(Byte *r)
     return r;
 }
 
+// r = |n|
+Byte *abs_bf(Byte *r, const Byte *n)
+{
+    copy_bf(r, n);
+    if (is_bf_neg(r))
+    {
+        neg_a_bf(r);
+    }
+    return r;
+}
+
+// r = |r|
+Byte *abs_a_bf(Byte *r)
+{
+    if (is_bf_neg(r))
+    {
+        neg_a_bf(r);
+    }
+    return r;
+}
+
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat

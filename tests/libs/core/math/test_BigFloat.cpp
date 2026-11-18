@@ -1151,34 +1151,75 @@ TEST_P(TestBigFloatArithmetic, unsignedDivisionAssignmentRetainsRoundingAndZeroD
     }
 }
 
-TEST_P(TestBigFloatArithmetic, absoluteValuePreservesItsOperandAndDestinationArena)
+class TestBigFloatAbs : public TestBigFloatValue, public testing::WithParamInterface<std::tuple<int, const char *>>
 {
-    auto &persistent = bf_arena(BigLifetime::PERSISTENT);
-    for (const char *text :
-        {"0", "2.5", "-2.5", "1.2345678901234567890123456789e-400", "-1.2345678901234567890123456789e-400",
-            "1.2345678901234567890123456789e400", "-1.2345678901234567890123456789e400"})
-    {
-        SCOPED_TRACE(text);
-        const BigFloat source{persistent, text};
-        const auto original = encoded_value(source);
-        auto raw_source = original;
-        std::vector<Byte> expected(original.size());
-        abs_bf(expected.data(), raw_source.data());
+};
 
-        const BigFloat member_result = source.abs();
-        const BigFloat result = abs(source);
-        BigFloat assigned{persistent, source};
-        assigned = abs(assigned);
+TEST_P(TestBigFloatAbs, absoluteValuePreservesItsOperandAndDestinationArena)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const char *text = std::get<1>(GetParam());
+    BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
+    const BigFloat source{persistent, text};
+    const std::vector<Byte> original = encoded_value(source);
+    const BigFloat magnitude{persistent, *text == '-' ? text + 1 : text};
+    const std::vector<Byte> expected = encoded_value(magnitude);
 
-        EXPECT_EQ(expected, encoded_value(member_result));
-        EXPECT_EQ(expected, encoded_value(result));
-        EXPECT_EQ(expected, encoded_value(assigned));
-        EXPECT_EQ(original, encoded_value(source));
-        EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &member_result.arena());
-        EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &result.arena());
-        EXPECT_EQ(&persistent, &assigned.arena());
-    }
+    const BigFloat member_result = source.abs();
+    const BigFloat result = abs(source);
+    BigFloat assigned{persistent, source};
+    assigned = abs(assigned);
+
+    EXPECT_EQ(expected, encoded_value(member_result));
+    EXPECT_EQ(expected, encoded_value(result));
+    EXPECT_EQ(expected, encoded_value(assigned));
+    EXPECT_EQ(original, encoded_value(source));
+    EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &member_result.arena());
+    EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &result.arena());
+    EXPECT_EQ(&persistent, &assigned.arena());
 }
+
+TEST_P(TestBigFloatAbs, destinationFormsPreserveIdentityPaddingAndStorage)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const char *text = std::get<1>(GetParam());
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    const BigFloat source{arena, text};
+    const BigFloat magnitude{arena, *text == '-' ? text + 1 : text};
+    const std::vector<Byte> original = encoded_value(source);
+    const std::vector<Byte> expected = encoded_value(magnitude);
+    BigFloat result{arena};
+    BigFloat in_place{arena, source};
+    const Byte *const result_address = result.data();
+    const Byte *const in_place_address = in_place.data();
+    const std::size_t size = arena.value_size();
+    const std::size_t padding = arena.block_size() - size;
+    std::fill_n(result.data(), arena.block_size(), Byte{0xa5});
+    std::fill_n(in_place.data() + size, padding, Byte{0x5a});
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&result, &abs_bf(result, source));
+    EXPECT_EQ(&in_place, &abs_a_bf(in_place));
+
+    EXPECT_EQ(original, encoded_value(source));
+    EXPECT_EQ(expected, encoded_value(result));
+    EXPECT_EQ(expected, encoded_value(in_place));
+    EXPECT_EQ(result_address, result.data());
+    EXPECT_EQ(in_place_address, in_place.data());
+    EXPECT_EQ(
+        std::vector<Byte>(padding, 0xa5), std::vector<Byte>(result.data() + size, result.data() + size + padding));
+    EXPECT_EQ(
+        std::vector<Byte>(padding, 0x5a), std::vector<Byte>(in_place.data() + size, in_place.data() + size + padding));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndValues, TestBigFloatAbs,
+    testing::Combine(testing::Values(4, 32, 708),
+        testing::Values("0", "2.5", "-2.5", "1.2345678901234567890123456789e-400",
+            "-1.2345678901234567890123456789e-400", "1.2345678901234567890123456789e400",
+            "-1.2345678901234567890123456789e400")));
 
 TEST_P(TestBigFloatArithmetic, constMachineConversionRetainsLegacyResultsAndInputBytes)
 {
