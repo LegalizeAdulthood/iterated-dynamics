@@ -574,9 +574,7 @@ std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
 {
     std::pair<BigFloat, BigFloat> result{
         BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
-    unsafe_sin_cos_bf(result.first.m_storage.data(), result.second.m_storage.data(), g_bf_tmp_copy1.data(),
-        g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
+    sin_cos_bf(result.first, result.second, *this);
     return result;
 }
 
@@ -766,6 +764,13 @@ BigFloat &ln_bf(BigFloat &r, const BigFloat &n)
     unsafe_ln_bf(r.data(), g_bf_tmp_copy1.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(),
         g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data());
     return r;
+}
+
+BigFloat &sin_cos_bf(BigFloat &s, BigFloat &c, const BigFloat &n)
+{
+    copy_bf(g_bf_tmp_copy1.data(), n.data());
+    unsafe_sin_cos_bf(s.data(), c.data(), g_bf_tmp_copy1.data(), g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
+    return s;
 }
 
 BigFloat &str_to_bf(BigFloat &r, const std::string_view text)

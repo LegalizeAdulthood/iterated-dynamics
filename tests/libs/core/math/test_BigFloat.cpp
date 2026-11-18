@@ -51,6 +51,9 @@ static_assert(std::is_same_v<decltype(unsafe_div_bf_int(std::declval<BigFloat &>
 static_assert(std::is_same_v<decltype(div_a_bf_int(std::declval<BigFloat &>(), U16{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(exp_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(ln_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
+static_assert(std::is_same_v<decltype(sin_cos_bf(std::declval<BigFloat &>(), std::declval<BigFloat &>(),
+                                 std::declval<const BigFloat &>())),
+    BigFloat &>);
 static_assert(std::is_same_v<decltype(&bf_to_string), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_e), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_f), std::string (*)(const BigFloat &, int)>);
@@ -1325,6 +1328,66 @@ TEST_P(TestBigFloatLogarithm, preservesDestinationStorageAndHandlesAliasedSource
 
 INSTANTIATE_TEST_SUITE_P(
     InputsAndAliases, TestBigFloatLogarithm, testing::Combine(testing::Values(1, 0, -1), testing::Bool()));
+
+class TestBigFloatSineCosine : public TestBigFloatValue, public testing::WithParamInterface<LDouble>
+{
+};
+
+TEST_P(TestBigFloatSineCosine, writesBothDestinationsAndPreservesSourceAndStorage)
+{
+    init_big_pi();
+    const LDouble angle = GetParam();
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    const BigFloat source{arena, angle};
+    BigFloat sine{arena};
+    BigFloat cosine{arena};
+    const std::vector<Byte> original = encoded_value(source);
+    const std::size_t size = arena.value_size();
+    const std::size_t stride = arena.block_size();
+    const std::vector<Byte> guard(stride - size, 0xa5);
+    std::fill(sine.data() + size, sine.data() + stride, Byte{0xa5});
+    std::fill(cosine.data() + size, cosine.data() + stride, Byte{0xa5});
+    const Byte *const sine_address = sine.data();
+    const Byte *const cosine_address = cosine.data();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&sine, &sin_cos_bf(sine, cosine, source));
+
+    EXPECT_NEAR(std::sin(angle), sine.to_float(), 1e-12L);
+    EXPECT_NEAR(std::cos(angle), cosine.to_float(), 1e-12L);
+    EXPECT_EQ(original, encoded_value(source));
+    EXPECT_EQ(sine_address, sine.data());
+    EXPECT_EQ(cosine_address, cosine.data());
+    EXPECT_EQ(guard, std::vector<Byte>(sine.data() + size, sine.data() + stride));
+    EXPECT_EQ(guard, std::vector<Byte>(cosine.data() + size, cosine.data() + stride));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(Angles, TestBigFloatSineCosine, testing::Values(0.0L, 0.375L, -0.625L));
+
+class TestBigFloatSineCosineAlias : public TestBigFloatValue, public testing::WithParamInterface<bool>
+{
+};
+
+TEST_P(TestBigFloatSineCosineAlias, copiesTheSourceBeforeWritingEitherDestination)
+{
+    init_big_pi();
+    constexpr LDouble angle = -0.625L;
+    BigFloat source{angle};
+    BigFloat other{0};
+    BigFloat &sine = GetParam() ? source : other;
+    BigFloat &cosine = GetParam() ? other : source;
+
+    EXPECT_EQ(&sine, &sin_cos_bf(sine, cosine, source));
+
+    EXPECT_NEAR(std::sin(angle), sine.to_float(), 1e-12L);
+    EXPECT_NEAR(std::cos(angle), cosine.to_float(), 1e-12L);
+}
+
+INSTANTIATE_TEST_SUITE_P(Destinations, TestBigFloatSineCosineAlias, testing::Bool(),
+    [](const testing::TestParamInfo<bool> &info) { return info.param ? "Sine" : "Cosine"; });
 
 TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
 {

@@ -351,7 +351,7 @@ TEST_P(TestBigComplex, realValueFunctionsPreserveTheirOperands)
     expect_precision(result.x, log(input.x));
     atan2_bf(result.x.data(), raw.y.data(), raw.x.data());
     expect_precision(result.x, atan2(input.y, input.x));
-    sin_cos_bf(result.x.data(), result.y.data(), raw.y.data());
+    sin_cos_bf(result.x, result.y, raw.y);
     const auto [sine, cosine] = sin_cos(input.y);
     EXPECT_EQ(result, (BFComplex{sine, cosine}));
     EXPECT_EQ(input, raw);
