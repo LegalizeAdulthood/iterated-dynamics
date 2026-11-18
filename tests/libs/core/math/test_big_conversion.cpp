@@ -17,6 +17,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <iterator>
 #include <limits>
 #include <string>
 #include <tuple>
@@ -384,14 +385,25 @@ struct BigFloatByteMultiplyInput
     int product_exponent;
 };
 
-class TestBigFloatByteMultiply : public TestBigNumConversionBase,
-                                 public testing::WithParamInterface<BigFloatByteMultiplyInput>
+class TestBigFloatBytePrecision : public TestBigNumConversionBase
 {
+protected:
+    ValueSaver<fractals::FractalType> m_fractal_type{fractals::g_fractal_type, fractals::FractalType::MANDEL_Z_POWER};
+};
+
+class TestBigFloatByteMultiply : public TestBigFloatBytePrecision,
+                                 public testing::WithParamInterface<std::tuple<int, BigFloatByteMultiplyInput>>
+{
+protected:
+    void SetUp() override
+    {
+        init_bf_length(std::get<0>(GetParam()));
+    }
 };
 
 TEST_P(TestBigFloatByteMultiply, writesCompleteWideProductAndRestoresLengths)
 {
-    const BigFloatByteMultiplyInput &input = GetParam();
+    const BigFloatByteMultiplyInput &input = std::get<1>(GetParam());
     const std::array<int, 7> lengths{
         g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
     const auto encode = [](int length, int mantissa, int exponent)
@@ -421,10 +433,11 @@ TEST_P(TestBigFloatByteMultiply, writesCompleteWideProductAndRestoresLengths)
             g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
 }
 
-INSTANTIATE_TEST_SUITE_P(SignsAndZero, TestBigFloatByteMultiply,
-    testing::Values(BigFloatByteMultiplyInput{2, 3, 2, 3, 6, 1}, BigFloatByteMultiplyInput{-2, 3, 2, 3, -6, 1},
-        BigFloatByteMultiplyInput{2, -3, 2, 3, -6, 1}, BigFloatByteMultiplyInput{-2, -3, 2, 3, 6, 1},
-        BigFloatByteMultiplyInput{0, -3, 0, -3, 0, 0}));
+INSTANTIATE_TEST_SUITE_P(PrecisionsSignsAndZero, TestBigFloatByteMultiply,
+    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708),
+        testing::Values(BigFloatByteMultiplyInput{2, 3, 2, 3, 6, 1}, BigFloatByteMultiplyInput{-2, 3, 2, 3, -6, 1},
+            BigFloatByteMultiplyInput{2, -3, 2, 3, -6, 1}, BigFloatByteMultiplyInput{-2, -3, 2, 3, 6, 1},
+            BigFloatByteMultiplyInput{0, -3, 0, -3, 0, 0})));
 
 struct BigFloatByteSqrInput
 {
@@ -435,13 +448,19 @@ struct BigFloatByteSqrInput
     int squared_exponent;
 };
 
-class TestBigFloatByteSqr : public TestBigNumConversionBase, public testing::WithParamInterface<BigFloatByteSqrInput>
+class TestBigFloatByteSqr : public TestBigFloatBytePrecision,
+                            public testing::WithParamInterface<std::tuple<int, BigFloatByteSqrInput>>
 {
+protected:
+    void SetUp() override
+    {
+        init_bf_length(std::get<0>(GetParam()));
+    }
 };
 
 TEST_P(TestBigFloatByteSqr, writesCompleteWideProductAndRestoresLengths)
 {
-    const BigFloatByteSqrInput &input = GetParam();
+    const BigFloatByteSqrInput &input = std::get<1>(GetParam());
     const std::array<int, 7> lengths{
         g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
     std::vector<Byte> source(g_bf_length + 2);
@@ -469,9 +488,236 @@ TEST_P(TestBigFloatByteSqr, writesCompleteWideProductAndRestoresLengths)
             g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
 }
 
-INSTANTIATE_TEST_SUITE_P(SignsAndExponents, TestBigFloatByteSqr,
-    testing::Values(BigFloatByteSqrInput{3, 3, -700, 9, -1400}, BigFloatByteSqrInput{-2, 2, 500, 4, 1000},
-        BigFloatByteSqrInput{0, 0, -1, 0, 0}));
+INSTANTIATE_TEST_SUITE_P(PrecisionsSignsAndExponents, TestBigFloatByteSqr,
+    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708),
+        testing::Values(BigFloatByteSqrInput{3, 3, -700, 9, -1400}, BigFloatByteSqrInput{-2, 2, 500, 4, 1000},
+            BigFloatByteSqrInput{0, 0, -1, 0, 0})));
+
+namespace
+{
+
+std::vector<Byte> integer_bf_bytes(const int length, const int mantissa, const int exponent)
+{
+    std::vector<Byte> bytes(length + 2);
+    bytes[length - 2] = static_cast<Byte>(mantissa);
+    bytes[length - 1] = mantissa < 0 ? 0xff : 0;
+    bytes[length] = static_cast<Byte>(exponent);
+    bytes[length + 1] = static_cast<Byte>(static_cast<unsigned>(exponent) >> 8);
+    return bytes;
+}
+
+struct BigFloatByteProductInput
+{
+    int left;
+    int right;
+    int left_exponent;
+    int right_exponent;
+    int product;
+    int product_exponent;
+    bool shared{};
+    bool sqr{};
+};
+
+} // namespace
+
+class TestBigFloatByteCanonicalProduct : public TestBigFloatBytePrecision,
+                                         public testing::WithParamInterface<std::tuple<int, BigFloatByteProductInput>>
+{
+protected:
+    void SetUp() override
+    {
+        init_bf_length(std::get<0>(GetParam()));
+    }
+};
+
+TEST_P(TestBigFloatByteCanonicalProduct, preservesOutputBoundsAndRecordsDestructiveOperandEffects)
+{
+    const BigFloatByteProductInput &input = std::get<1>(GetParam());
+    std::vector<Byte> left = integer_bf_bytes(g_bf_length, input.left, input.left_exponent);
+    std::vector<Byte> right = integer_bf_bytes(g_bf_length, input.right, input.right_exponent);
+    const bool nonzero = input.left != 0 && (input.sqr || input.shared || input.right != 0);
+    std::vector<Byte> expected_left =
+        integer_bf_bytes(g_bf_length, nonzero ? std::abs(input.left) : input.left, input.left_exponent);
+    std::vector<Byte> expected_right = integer_bf_bytes(g_bf_length,
+        nonzero && !input.shared && !input.sqr ? std::abs(input.right) : input.right, input.right_exponent);
+    left.push_back(0x5a);
+    right.push_back(0x6c);
+    expected_left.push_back(0x5a);
+    expected_right.push_back(0x6c);
+    std::vector<Byte> output(g_r_bf_length + 6, 0xa5);
+    std::vector<Byte> expected_output = output;
+    const std::vector<Byte> canonical = integer_bf_bytes(g_bf_length, input.product, input.product_exponent);
+    std::copy(canonical.begin(), canonical.end(), expected_output.begin() + 2);
+    BigArena &temporary = bf_arena(BigLifetime::TEMPORARY);
+    BigStackSaver saved;
+    Byte *const borrowed = bf_stack().allocate_single();
+    std::fill_n(borrowed, temporary.block_size(), Byte{0x69});
+    BigArena::Allocation reservation = temporary.allocate_double();
+    Byte *const product_address = reservation.data();
+    std::fill_n(product_address, 2 * temporary.block_size(), Byte{0xa5});
+    reservation.reset();
+    const std::vector<Byte> free_bytes(product_address, product_address + 2 * temporary.block_size());
+    const std::size_t high_water = temporary.high_water_mark();
+    const BigStackMark mark = save_stack();
+    Byte *const result = output.data() + 2;
+
+    Byte *const returned = input.sqr ? unsafe_square_bf(result, left.data())
+                                     : unsafe_mult_bf(result, left.data(), input.shared ? left.data() : right.data());
+
+    EXPECT_EQ(result, returned);
+    EXPECT_EQ(expected_output, output);
+    EXPECT_EQ(expected_left, left);
+    EXPECT_EQ(expected_right, right);
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(high_water, temporary.high_water_mark());
+    EXPECT_EQ(std::vector<Byte>(temporary.block_size(), 0x69),
+        (std::vector<Byte>{borrowed, borrowed + temporary.block_size()}));
+    const BigArena::Allocation reused = temporary.allocate_double();
+    EXPECT_EQ(product_address, reused.data());
+    EXPECT_EQ(high_water, temporary.high_water_mark());
+    if (!nonzero)
+    {
+        EXPECT_EQ(free_bytes, (std::vector<Byte>{reused.data(), reused.data() + 2 * temporary.block_size()}));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndOperations, TestBigFloatByteCanonicalProduct,
+    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708),
+        testing::Values(BigFloatByteProductInput{2, 3, 0, 0, 6, 0}, BigFloatByteProductInput{-2, 3, 0, 0, -6, 0},
+            BigFloatByteProductInput{2, -3, 0, 0, -6, 0}, BigFloatByteProductInput{-2, -3, 0, 0, 6, 0},
+            BigFloatByteProductInput{2, 3, 500, 700, 6, 1200}, BigFloatByteProductInput{-2, 3, -500, -700, -6, -1200},
+            BigFloatByteProductInput{0, 3, 0, 700, 0, 0}, BigFloatByteProductInput{-2, 0, -500, 0, 0, 0},
+            BigFloatByteProductInput{-3, -3, 1000, 1000, 9, 2000, true},
+            BigFloatByteProductInput{2, 0, 0, 0, 4, 0, false, true},
+            BigFloatByteProductInput{-3, 0, 0, 0, 9, 0, false, true},
+            BigFloatByteProductInput{-2, 0, 500, 0, 4, 1000, false, true},
+            BigFloatByteProductInput{3, 0, -700, 0, 9, -1400, false, true},
+            BigFloatByteProductInput{0, 0, 0, 0, 0, 0, false, true})));
+
+class TestBigFloatByteReduction : public TestBigFloatBytePrecision, public testing::WithParamInterface<int>
+{
+protected:
+    void SetUp() override
+    {
+        init_bf_length(GetParam());
+    }
+};
+
+TEST_P(TestBigFloatByteReduction, copiesOnlyTheCanonicalWindowIncludingTheExponent)
+{
+    std::vector<Byte> guarded(g_r_bf_length + 6, 0xa5);
+    for (int i = 0; i < g_r_bf_length + 2; ++i)
+    {
+        guarded[2 + i] = static_cast<Byte>(37 * i + 19);
+    }
+    std::vector<Byte> expected = guarded;
+    std::copy_n(guarded.begin() + 2 + g_padding, g_bf_length + 2, expected.begin() + 2);
+
+    reduce_bf_product(guarded.data() + 2);
+
+    EXPECT_EQ(expected, guarded);
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatByteReduction, testing::Values(4, 12, 52, 56, 64, 708));
+
+namespace
+{
+
+// Encoded pi independently verified with Chudnovsky and Gauss-Legendre.
+// 710 fractional bytes, two integer bytes, and a two-byte zero exponent.
+constexpr Byte PI_BYTES[] = {
+    0x4F, 0x8C, 0xC6, 0x32, 0x67, 0xAC, 0xC3, 0xFF, 0x7E, 0x28, 0xF6, 0xA8, 0x42, 0xD5, 0xDB, 0x69, 0x17, 0xDF, 0x2E,
+    0x56, 0x87, 0x1A, 0xA0, 0x8C, 0x6F, 0xCA, 0xBB, 0x57, 0x5C, 0x9E, 0x82, 0xDF, 0x00, 0x3E, 0x48, 0x7B, 0x31, 0x53,
+    0x60, 0x87, 0x23, 0xFD, 0xFA, 0xB5, 0x3D, 0x32, 0xAB, 0x52, 0x05, 0xAD, 0xC8, 0x1E, 0x50, 0x2F, 0x15, 0x6B, 0x61,
+    0xFD, 0xDF, 0x16, 0x75, 0x3C, 0xF8, 0x22, 0x32, 0xDB, 0xF8, 0xE9, 0xA5, 0x8E, 0xCC, 0xA3, 0x1F, 0xFB, 0xFE, 0x25,
+    0x9F, 0x67, 0x79, 0x72, 0x2C, 0x40, 0xC6, 0x00, 0xA1, 0xD6, 0x0A, 0x32, 0x60, 0x1A, 0xBD, 0xC0, 0x79, 0x55, 0xDB,
+    0xFB, 0xD3, 0xB9, 0x39, 0x5F, 0x0B, 0xD2, 0x0F, 0x74, 0xC8, 0x45, 0x57, 0xA8, 0xCB, 0xC0, 0xB3, 0x4B, 0x2E, 0x19,
+    0x07, 0x28, 0x0F, 0x66, 0xFD, 0x4A, 0x33, 0xDE, 0x04, 0xD0, 0xE3, 0xBE, 0x09, 0xBD, 0x5E, 0xAF, 0x44, 0x45, 0x81,
+    0xCC, 0x2C, 0x95, 0x30, 0x9B, 0x1F, 0x51, 0xFC, 0x6D, 0x6F, 0xEC, 0x52, 0x3B, 0xEB, 0xB2, 0x39, 0x13, 0xB5, 0x53,
+    0x6C, 0x3E, 0xAF, 0x6F, 0xFB, 0x68, 0x63, 0x24, 0x6A, 0x19, 0xC2, 0x9E, 0x5C, 0x5E, 0xC4, 0x60, 0x9F, 0x40, 0xB6,
+    0x4F, 0xA9, 0xC1, 0xBA, 0x06, 0xC0, 0x04, 0xBD, 0xE0, 0x6C, 0x97, 0x3B, 0x4C, 0x79, 0xB6, 0x1A, 0x50, 0xFE, 0xE3,
+    0xF7, 0xDE, 0xE8, 0xF6, 0xD8, 0x79, 0xD4, 0x25, 0x7B, 0x1B, 0x99, 0x80, 0xC9, 0x72, 0x53, 0x07, 0x9B, 0xC0, 0xF1,
+    0x49, 0xD3, 0xEA, 0x0F, 0xDB, 0x48, 0x12, 0x0A, 0xD0, 0x24, 0xD7, 0xD0, 0x37, 0x3D, 0x02, 0x9B, 0x42, 0x72, 0xDF,
+    0xFE, 0x1B, 0x06, 0x77, 0x3F, 0x36, 0x62, 0xAA, 0xD3, 0x4E, 0xA6, 0x6A, 0xC1, 0x56, 0x9F, 0x44, 0x1A, 0x40, 0x73,
+    0x20, 0xC1, 0x85, 0xD8, 0x75, 0x6F, 0xE0, 0xBE, 0x5E, 0x8B, 0x3B, 0xC3, 0xA5, 0x84, 0x7D, 0xB4, 0x9F, 0x6F, 0x45,
+    0x19, 0x86, 0xEE, 0x8C, 0x88, 0x0E, 0x43, 0x82, 0x3E, 0x59, 0xCA, 0x66, 0x76, 0x01, 0xAF, 0x39, 0x1D, 0x65, 0xF1,
+    0xA1, 0x98, 0x2A, 0xFB, 0x7E, 0x50, 0xF0, 0x3B, 0xBA, 0xE4, 0x3B, 0x7A, 0x13, 0x6C, 0x0B, 0xEF, 0x6E, 0xA3, 0x33,
+    0x51, 0xAB, 0x28, 0xA7, 0x0F, 0x96, 0x68, 0x2F, 0x54, 0xD8, 0xD2, 0xA0, 0x51, 0x6A, 0xF0, 0x88, 0xD3, 0xAB, 0x61,
+    0x9C, 0x0C, 0x67, 0x9A, 0x6C, 0xE9, 0xF6, 0x42, 0x68, 0xC6, 0x21, 0x5E, 0x9B, 0x1F, 0x9E, 0x4A, 0xF0, 0xC8, 0x69,
+    0x04, 0x20, 0x84, 0xA4, 0x82, 0x44, 0x0B, 0x2E, 0x39, 0x42, 0xF4, 0x83, 0xF3, 0x6F, 0x6D, 0x0F, 0xC5, 0xAC, 0x96,
+    0xD3, 0x81, 0x3E, 0x89, 0x23, 0x88, 0x1B, 0x65, 0xEB, 0x02, 0x23, 0x26, 0xDC, 0xB1, 0x75, 0x85, 0xE9, 0x5D, 0x5D,
+    0x84, 0xEF, 0x32, 0x80, 0xEC, 0x5D, 0x60, 0xAC, 0x7C, 0x48, 0x91, 0xA9, 0x21, 0xFB, 0xCC, 0x09, 0xD8, 0x61, 0x93,
+    0x21, 0x28, 0x66, 0x1B, 0xE8, 0xBF, 0xC4, 0xAF, 0xB9, 0x4B, 0x6B, 0x98, 0x48, 0x8F, 0x3B, 0x77, 0x86, 0x95, 0x28,
+    0x81, 0x53, 0x32, 0x7A, 0x5C, 0xCF, 0x24, 0x6C, 0x33, 0xBA, 0xD6, 0xAF, 0x1E, 0x93, 0x87, 0x9B, 0x16, 0x3E, 0x5C,
+    0xCE, 0xF6, 0x31, 0x18, 0x74, 0x5D, 0xC5, 0xA9, 0x2B, 0x2A, 0xBC, 0x6F, 0x63, 0x11, 0x14, 0xEE, 0xB3, 0x93, 0xE9,
+    0x72, 0x7C, 0xAF, 0x86, 0x54, 0xA1, 0xCE, 0xE8, 0x41, 0x11, 0x34, 0x5C, 0xCC, 0xB4, 0xB6, 0x10, 0xAB, 0x2A, 0x6A,
+    0x39, 0xCA, 0x55, 0x40, 0x14, 0xE8, 0x63, 0x62, 0x98, 0x48, 0x57, 0x94, 0xAB, 0x55, 0xAA, 0xF3, 0x25, 0x55, 0xE6,
+    0x60, 0x5C, 0x60, 0x55, 0xDA, 0x2F, 0xAF, 0x78, 0x27, 0x4B, 0x31, 0xBD, 0xC1, 0x77, 0x15, 0xD7, 0x3E, 0x8A, 0x1E,
+    0xB0, 0x8B, 0x0E, 0x9E, 0x6C, 0x0E, 0x18, 0x3A, 0x60, 0xB0, 0xDC, 0x79, 0x8E, 0xEF, 0x38, 0xDB, 0xB8, 0x18, 0x79,
+    0x41, 0xCA, 0xF0, 0x85, 0x60, 0x28, 0x23, 0xB0, 0xD1, 0xC5, 0x13, 0x60, 0xF2, 0x2A, 0x39, 0xD5, 0x30, 0x9C, 0xB5,
+    0x59, 0x5A, 0xC2, 0x1D, 0xA4, 0x54, 0x7B, 0xEE, 0x4A, 0x15, 0x82, 0x58, 0xCD, 0x8B, 0x71, 0x58, 0xB6, 0x8E, 0x72,
+    0x8F, 0x74, 0x95, 0x0D, 0x7E, 0x3D, 0x93, 0xF4, 0xA3, 0xFE, 0x58, 0xA4, 0x69, 0x4E, 0x57, 0x71, 0xD8, 0x20, 0x69,
+    0x63, 0x16, 0xFC, 0x8E, 0x85, 0xE2, 0xF2, 0x01, 0x08, 0xF7, 0x6C, 0x91, 0xB3, 0x47, 0x99, 0xA1, 0x24, 0x99, 0x7F,
+    0x2C, 0xF1, 0x45, 0x90, 0x7C, 0xBA, 0x96, 0x7E, 0x26, 0x6A, 0xED, 0xAF, 0xE1, 0xB8, 0xB7, 0xDF, 0x1A, 0xD0, 0xDB,
+    0x72, 0xFD, 0x2F, 0xAC, 0xB5, 0xDF, 0x98, 0xA6, 0x0B, 0x31, 0xD1, 0x1B, 0xFB, 0x79, 0x89, 0xD9, 0xD5, 0x16, 0x92,
+    0x17, 0x09, 0x47, 0xB5, 0xB5, 0xD5, 0x84, 0x3F, 0xDD, 0x50, 0x7C, 0xC9, 0xB7, 0x29, 0xAC, 0xC0, 0x6C, 0x0C, 0xE9,
+    0x34, 0xCF, 0x66, 0x54, 0xBE, 0x77, 0x13, 0xD0, 0x38, 0xE6, 0x21, 0x28, 0x45, 0x89, 0x6C, 0x4E, 0xEC, 0x98, 0xFA,
+    0x2E, 0x08, 0xD0, 0x31, 0x9F, 0x29, 0x22, 0x38, 0x09, 0xA4, 0x44, 0x73, 0x70, 0x03, 0x2E, 0x8A, 0x19, 0x13, 0xD3,
+    0x08, 0xA3, 0x85, 0x88, 0x6A, 0x3F, 0x24,
+    /* . */ 0x03, 0x00, 0x00, 0x00
+    //  <- up to g_int_length 4 ->
+    // or BigFloat int length of 2 + 2 byte exp
+};
+
+} // namespace
+
+class TestBigFloatBytePi : public TestBigFloatBytePrecision, public testing::WithParamInterface<int>
+{
+protected:
+    void SetUp() override
+    {
+        init_bf_length(GetParam());
+    }
+};
+
+TEST_P(TestBigFloatBytePi, copiesTheRequestedTableWindowAndPreservesGuards)
+{
+    const int size = g_bf_length + 2;
+    ASSERT_LE(size, static_cast<int>(std::size(PI_BYTES)));
+    std::vector<Byte> guarded(size + 4, 0xa5);
+    std::vector<Byte> expected = guarded;
+    std::copy_n(std::end(PI_BYTES) - size, size, expected.begin() + 2);
+
+    copy_bf_pi(guarded.data() + 2);
+
+    EXPECT_EQ(expected, guarded);
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatBytePi, testing::Values(4, 12, 56, 64, 708));
+
+TEST(TestBigFloatByteAdditionBounds, writesOnlyTheBorrowedByteWindow)
+{
+    const ValueSaver<int> bf_length{g_bf_length, 8};
+    const ValueSaver<int> bn_length{g_bn_length, 4};
+    std::vector<Byte> left = integer_bf_bytes(g_bf_length, 2, 0);
+    std::vector<Byte> right = integer_bf_bytes(g_bf_length, 1, 0);
+    left[g_bf_length - 3] = 0x80;
+    right[g_bf_length - 3] = 0x40;
+    std::vector<Byte> expected = integer_bf_bytes(g_bf_length, 3, 0);
+    expected[g_bf_length - 3] = 0xc0;
+    std::vector<Byte> guarded(expected.size() + 4, 0xa5);
+    const std::vector<Byte> original_left = left;
+    const std::vector<Byte> original_right = right;
+    std::vector<Byte> expected_output = guarded;
+    std::copy(expected.begin(), expected.end(), expected_output.begin() + 2);
+    Byte *const result = guarded.data() + 2;
+
+    EXPECT_EQ(result, unsafe_add_bf(result, left.data(), right.data()));
+
+    EXPECT_EQ(expected_output, guarded);
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(original_right, right);
+}
 
 struct BigFloatByteScalarMultiplyInput
 {
@@ -1638,6 +1884,59 @@ INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteMigration,
                 0x3b, 0xfe, 0x80, 0xff},
             {0x91, 0xa2, 0xb3, 0xc4, 0xd5, 0xe6, 0xf7, 0x08, 0x19, 0x2a, 0x3b, 0xfe, 0x80, 0xff}}),
     [](const testing::TestParamInfo<BigFloatMigrationInput> &info) { return info.param.name; });
+
+namespace
+{
+
+std::vector<Byte> wide_float_fixture(const int length, const bool negative, const int guard)
+{
+    std::vector<Byte> bytes(length + 2);
+    bytes[length - 2] = negative ? 0xee : 0x12;
+    bytes[length - 1] = negative ? 0xff : 0;
+    bytes[length] = negative ? 0xdc : 0x34;
+    bytes[length + 1] = negative ? 0xfe : 0x12;
+    if (guard >= 0 && guard < length - 2)
+    {
+        bytes[guard] = 0x5a;
+    }
+    return bytes;
+}
+
+} // namespace
+
+class TestBigFloatByteWideRelocation : public TestBigFloatBytePrecision,
+                                       public testing::WithParamInterface<std::tuple<int, bool>>
+{
+};
+
+TEST_P(TestBigFloatByteWideRelocation, preservesSignedMantissaExponentAndFractionalGuard)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const int old_length = g_bf_length;
+    const int old_padding = g_padding;
+    const int old_wide_length = g_r_bf_length;
+    const int guard = old_padding - 1;
+    const bool negative = std::get<1>(GetParam());
+    const std::vector<Byte> source = wide_float_fixture(old_wide_length, negative, guard);
+
+    init_bf_length(old_length == 56 ? 64 : 56);
+
+    const int new_wide_length = g_r_bf_length;
+    const std::vector<Byte> expected =
+        wide_float_fixture(new_wide_length, negative, guard + new_wide_length - old_wide_length);
+    std::vector<Byte> destination(expected.size() + 4, 0xa5);
+
+    migrate_bf(destination.data() + 2, source.data(), 2, g_bf_length, g_padding, old_length, old_padding);
+
+    EXPECT_EQ(expected, (std::vector<Byte>{destination.begin() + 2, destination.end() - 2}));
+    EXPECT_EQ(0xa5, destination[0]);
+    EXPECT_EQ(0xa5, destination[1]);
+    EXPECT_EQ(0xa5, destination[destination.size() - 2]);
+    EXPECT_EQ(0xa5, destination.back());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigFloatByteWideRelocation,
+    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708), testing::Bool()));
 
 class TestBigArenaNumericMigration : public testing::TestWithParam<bool>
 {
