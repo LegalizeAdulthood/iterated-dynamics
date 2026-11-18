@@ -33,13 +33,6 @@ void bf_hex_dump(const BigFloat &r)
 }
 
 /********************************************************************/
-// sign(r)
-int sign_bf(BigFloatConstPtr n)
-{
-    return is_bf_neg(n) ? -1 : is_bf_not_zero(n) ? 1 : 0;
-}
-
-/********************************************************************/
 // r = |n|
 BigFloatPtr abs_bf(BigFloatPtr r, BigFloatPtr n)
 {
@@ -213,12 +206,6 @@ BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
     return r;
 }
 
-/**********************************************************************/
-bool is_bf_zero(BigFloatConstPtr n)
-{
-    return !is_bf_not_zero(n);
-}
-
 // The following used to be in bigfltc.c
 /********************************************************************/
 // normalize big float
@@ -270,23 +257,6 @@ void norm_sign_bf(BigFloatPtr r, const bool positive)
 {
     norm_bf(r);
     r[g_bf_length-1] = static_cast<Byte>(positive ? 0x00 : 0xFF);
-}
-
-/********************************************************************/
-// r < 0 ?
-// returns 1 if negative, 0 if positive or zero
-bool is_bf_neg(BigFloatConstPtr n)
-{
-    return static_cast<S8>(n[g_bf_length - 1]) < 0;
-}
-
-/********************************************************************/
-// n != 0 ?
-// RETURNS: if n != 0 returns 1
-//          else returns 0
-bool is_bf_not_zero(BigFloatConstPtr n)
-{
-    return std::any_of(n, n + g_bf_length, [](const Byte digit) { return digit != 0; });
 }
 
 /********************************************************************/

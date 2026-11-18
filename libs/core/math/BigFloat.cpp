@@ -1168,7 +1168,7 @@ BigFloat BigFloat::operator/(const BigFloat &right) const
 BigFloat BigFloat::abs() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING), *this};
-    if (is_bf_neg(result.m_storage.data()))
+    if (is_bf_neg(result))
     {
         negate(result.m_storage.data());
     }
@@ -1237,6 +1237,26 @@ BigFloat &max_bf(BigFloat &r)
 {
     max_bf(r.data());
     return r;
+}
+
+int sign_bf(const BigFloat &n)
+{
+    return sign_bf(n.data());
+}
+
+bool is_bf_zero(const BigFloat &n)
+{
+    return is_bf_zero(n.data());
+}
+
+bool is_bf_neg(const BigFloat &n)
+{
+    return is_bf_neg(n.data());
+}
+
+bool is_bf_not_zero(const BigFloat &n)
+{
+    return is_bf_not_zero(n.data());
 }
 
 BigFloat &str_to_bf(BigFloat &r, const std::string_view text)

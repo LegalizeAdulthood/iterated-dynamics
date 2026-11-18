@@ -111,6 +111,35 @@ INSTANTIATE_TEST_SUITE_P(LengthsAndOperations, TestBigFloatByteProcedures,
     testing::Combine(testing::Values(8, 12, 64, 712),
         testing::Values(BigFloatByteProcedure::COPY, BigFloatByteProcedure::CLEAR, BigFloatByteProcedure::MAXIMUM)));
 
+struct BigFloatByteSignInput
+{
+    Byte first;
+    Byte last;
+    int sign;
+};
+
+class TestBigFloatByteSign : public testing::TestWithParam<BigFloatByteSignInput>
+{
+};
+
+TEST_P(TestBigFloatByteSign, observesOnlyTheBorrowedMantissa)
+{
+    constexpr int length = 8;
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const BigFloatByteSignInput &input = GetParam();
+    const std::array<Byte, length + 4> encoded{0x80, input.first, 0, 0, 0, 0, 0, 0, input.last, 0x7f, 0xff, 0xa5};
+    const Byte *const mantissa = encoded.data() + 1;
+
+    EXPECT_EQ(input.sign, sign_bf(mantissa));
+    EXPECT_EQ(input.sign == 0, is_bf_zero(mantissa));
+    EXPECT_EQ(input.sign < 0, is_bf_neg(mantissa));
+    EXPECT_EQ(input.sign != 0, is_bf_not_zero(mantissa));
+}
+
+INSTANTIATE_TEST_SUITE_P(Mantissas, TestBigFloatByteSign,
+    testing::Values(BigFloatByteSignInput{0, 0, 0}, BigFloatByteSignInput{0x80, 0, 1},
+        BigFloatByteSignInput{0, 0x01, 1}, BigFloatByteSignInput{0, 0x80, -1}));
+
 struct BigNumConversionInput
 {
     const char *name;

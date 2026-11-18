@@ -474,7 +474,7 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     float_to_bf(center.x, 0.125);
     float_to_bf(center.y, -0.0625);
     str_to_bf(seed.x, GetParam().real);
-    if (is_bf_zero(seed.x.data()))
+    if (is_bf_zero(seed.x))
     {
         clear_bf(seed.y);
     }

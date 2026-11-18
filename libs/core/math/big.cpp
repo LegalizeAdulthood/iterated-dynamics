@@ -1535,6 +1535,29 @@ Byte *max_bf(Byte *r)
     return r;
 }
 
+// r < 0 ?
+bool is_bf_neg(const Byte *n)
+{
+    return static_cast<S8>(n[g_bf_length - 1]) < 0;
+}
+
+// n != 0 ?
+bool is_bf_not_zero(const Byte *n)
+{
+    return std::any_of(n, n + g_bf_length, [](const Byte digit) { return digit != 0; });
+}
+
+bool is_bf_zero(const Byte *n)
+{
+    return !is_bf_not_zero(n);
+}
+
+// sign(r)
+int sign_bf(const Byte *n)
+{
+    return is_bf_neg(n) ? -1 : is_bf_not_zero(n) ? 1 : 0;
+}
+
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat

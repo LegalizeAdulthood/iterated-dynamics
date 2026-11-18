@@ -148,6 +148,10 @@ private:
 BigFloat &clear_bf(BigFloat &r);
 BigFloat &copy_bf(BigFloat &r, const BigFloat &n);
 BigFloat &max_bf(BigFloat &r);
+int sign_bf(const BigFloat &n);
+bool is_bf_zero(const BigFloat &n);
+bool is_bf_neg(const BigFloat &n);
+bool is_bf_not_zero(const BigFloat &n);
 BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
 BigFloat &float_to_bf(BigFloat &r, LDouble value);

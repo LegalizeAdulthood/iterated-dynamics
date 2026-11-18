@@ -168,8 +168,8 @@ bool relative_delta(const BFComplex &value, const BFComplex &reference, std::com
     difference.y = value.y - reference.y;
     delta = {static_cast<double>(bf_to_float(difference.x)), static_cast<double>(bf_to_float(difference.y))};
     // Subnormal displacements do not retain full relative precision.
-    return (std::isnormal(delta.real()) || is_bf_zero(difference.x.data())) &&
-        (std::isnormal(delta.imag()) || is_bf_zero(difference.y.data()));
+    return (std::isnormal(delta.real()) || is_bf_zero(difference.x)) &&
+        (std::isnormal(delta.imag()) || is_bf_zero(difference.y));
 }
 
 bool ambiguous_bailout(const std::complex<double> &reference, const std::complex<double> &delta)

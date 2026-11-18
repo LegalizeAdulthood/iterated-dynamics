@@ -198,6 +198,35 @@ INSTANTIATE_TEST_SUITE_P(PrecisionsLifetimesAndOperations, TestBigFloatStoragePr
                 {0, 1, 0, static_cast<Byte>((std::numeric_limits<long double>::max_exponent / 8) % 256),
                     static_cast<Byte>((std::numeric_limits<long double>::max_exponent / 8) / 256)}})));
 
+class TestBigFloatSign : public TestBigFloatValue, public testing::WithParamInterface<std::tuple<int, int>>
+{
+};
+
+TEST_P(TestBigFloatSign, observesConstValueWithoutChangingItsBytesOrStorage)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const int sign = std::get<1>(GetParam());
+    const BigFloat value{static_cast<LDouble>(sign) / 2};
+    const std::vector<Byte> original = encoded_value(value);
+    const Byte *const address = value.data();
+    const BigArena &arena = value.arena();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(sign, sign_bf(value));
+    EXPECT_EQ(sign == 0, is_bf_zero(value));
+    EXPECT_EQ(sign < 0, is_bf_neg(value));
+    EXPECT_EQ(sign != 0, is_bf_not_zero(value));
+
+    EXPECT_EQ(original, encoded_value(value));
+    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    PrecisionsAndSigns, TestBigFloatSign, testing::Combine(testing::Values(4, 64, 708), testing::Values(-1, 0, 1)));
+
 struct BigFloatParseCase
 {
     std::string_view text;

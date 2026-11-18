@@ -2137,8 +2137,8 @@ void set_symmetry(SymmetryType sym, const bool use_list)
         BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
         std::destroy_at(&bft1);
         ::new (&bft1) BigFloat{std::move(value)};
-        x_axis_on_screen = sign_bf(g_bf_y_min.data()) != sign_bf(g_bf_y_max.data());
-        y_axis_on_screen = sign_bf(g_bf_x_min.data()) != sign_bf(g_bf_x_max.data());
+        x_axis_on_screen = sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max);
+        y_axis_on_screen = sign_bf(g_bf_x_min) != sign_bf(g_bf_x_max);
     }
     else
     {
