@@ -280,7 +280,7 @@ TEST_P(TestBigFloatWorkspaceRamp, preservesOperandsAndRestoresBorrowedWorkspaceW
 
     if (test.logarithm)
     {
-        ln_bf(result.data(), input.data());
+        ln_bf(result, input);
     }
     else
     {

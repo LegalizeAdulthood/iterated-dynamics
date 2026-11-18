@@ -36,14 +36,6 @@ void bf_hex_dump(const BigFloat &r)
 
 
 /**********************************************************************/
-BigFloatPtr ln_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    copy_bf(g_bf_tmp_copy1.data(), n);
-    unsafe_ln_bf(r, g_bf_tmp_copy1.data());
-    return r;
-}
-
-/**********************************************************************/
 BigFloatPtr sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)
 {
     copy_bf(g_bf_tmp_copy1.data(), n);

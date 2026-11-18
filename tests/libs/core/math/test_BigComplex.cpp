@@ -347,7 +347,7 @@ TEST_P(TestBigComplex, realValueFunctionsPreserveTheirOperands)
     EXPECT_EQ(result.x, input.x.half());
     exp_bf(result.x, raw.y);
     EXPECT_EQ(result.x, exp(input.y));
-    ln_bf(result.x.data(), raw.x.data());
+    ln_bf(result.x, raw.x);
     expect_precision(result.x, log(input.x));
     atan2_bf(result.x.data(), raw.y.data(), raw.x.data());
     expect_precision(result.x, atan2(input.y, input.x));

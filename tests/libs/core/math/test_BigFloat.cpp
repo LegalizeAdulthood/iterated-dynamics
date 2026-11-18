@@ -50,6 +50,7 @@ static_assert(std::is_same_v<decltype(unsafe_div_bf_int(std::declval<BigFloat &>
     BigFloat &>);
 static_assert(std::is_same_v<decltype(div_a_bf_int(std::declval<BigFloat &>(), U16{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(exp_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
+static_assert(std::is_same_v<decltype(ln_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(&bf_to_string), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_e), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_f), std::string (*)(const BigFloat &, int)>);
@@ -1282,6 +1283,48 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatExponential,
     testing::Values(BigFloatExponentialInput{0.0L, 1.0L, 0.0L},
         BigFloatExponentialInput{0.375L, 1.4549914146182013L, 1e-12L},
         BigFloatExponentialInput{-0.625L, 0.5352614285189903L, 1e-12L}));
+
+class TestBigFloatLogarithm : public TestBigFloatValue, public testing::WithParamInterface<std::tuple<int, bool>>
+{
+};
+
+TEST_P(TestBigFloatLogarithm, preservesDestinationStorageAndHandlesAliasedSources)
+{
+    init_bf_length(64);
+    const int input = std::get<0>(GetParam());
+    const bool alias = std::get<1>(GetParam());
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    BigFloat source{arena, static_cast<LDouble>(input)};
+    BigFloat result{arena};
+    BigFloat &output = alias ? source : result;
+    const std::vector<Byte> original = encoded_value(source);
+    const std::size_t size = arena.value_size();
+    const std::size_t stride = arena.block_size();
+    std::vector<Byte> expected(size);
+    if (input <= 0)
+    {
+        constexpr int exponent = std::numeric_limits<LDouble>::max_exponent / 8 - 1;
+        expected[size - 3] = 0xff;
+        expected[size - 2] = static_cast<Byte>(exponent);
+        expected[size - 1] = static_cast<Byte>(exponent >> 8);
+    }
+    std::fill(output.data() + size, output.data() + stride, Byte{0xa5});
+    const Byte *const address = output.data();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&output, &ln_bf(output, std::as_const(source)));
+
+    EXPECT_EQ(expected, encoded_value(output));
+    EXPECT_EQ(alias ? expected : original, encoded_value(source));
+    EXPECT_EQ(address, output.data());
+    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(output.data() + size, output.data() + stride));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    InputsAndAliases, TestBigFloatLogarithm, testing::Combine(testing::Values(1, 0, -1), testing::Bool()));
 
 TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
 {

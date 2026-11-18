@@ -134,98 +134,6 @@ BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
     return r;
 }
 
-BigFloatPtr logarithm(BigFloatPtr r, BigFloatPtr n)
-{
-    int almost_match = 0;
-
-    // use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1
-
-    if (is_bf_neg(n) || is_bf_zero(n))
-    {
-        // error, return largest neg value
-        max_bf(r);
-        neg_a_bf(r);
-        return r;
-    }
-
-    LDouble f = bf_to_float(n);
-    f = std::log(f); // approximate ln(x)
-    // no need to check overflow
-    // appears to be ok, do ln
-
-    // With Newton's Method, there is no need to calculate all the digits
-    // every time.  The precision approximately doubles each iteration.
-    // Save original values.
-    int orig_bf_length = g_bf_length;
-    int orig_bn_length = g_bn_length;
-    int orig_padding = g_padding;
-    int orig_r_length = g_r_length;
-    int orig_shift_factor = g_shift_factor;
-    int orig_r_bf_length = g_r_bf_length;
-    BigFloatPtr orig_r = r;
-    BigFloatPtr orig_n = n;
-    BigFloatPtr orig_bf_tmp5 = g_bf_tmp5.data();
-    BigFloatPtr bf_tmp5 = orig_bf_tmp5;
-
-    // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
-    g_bn_length = std::min(g_bn_length, orig_bn_length);
-    calc_lengths();
-
-    // adjust pointers
-    r = orig_r + orig_bf_length - g_bf_length;
-    bf_tmp5 = orig_bf_tmp5 + orig_bf_length - g_bf_length;
-
-    float_to_bf(r, f);           // start with approximate ln
-    neg_a_bf(r);                 // -r
-    copy_bf(bf_tmp5, r);         // -r
-
-    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
-    {
-        // adjust lengths
-        g_bn_length <<= 1; // double precision
-        g_bn_length = std::min(g_bn_length, orig_bn_length);
-        calc_lengths();
-        r = orig_r + orig_bf_length - g_bf_length;
-        n = orig_n + orig_bf_length - g_bf_length;
-        bf_tmp5 = orig_bf_tmp5 + orig_bf_length - g_bf_length;
-
-        exp_bf(g_bf_tmp6.data(), r, g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data()); // exp(-r)
-        unsafe_mult_bf(g_bf_tmp2.data(), g_bf_tmp6.data(), n); // n*exp(-r)
-        int_to_bf(g_bf_tmp4.data(), 1);
-        unsafe_sub_a_bf(g_bf_tmp2.data(), g_bf_tmp4.data());   // n*exp(-r) - 1
-        unsafe_sub_a_bf(r, g_bf_tmp2.data());                  // -r - (n*exp(-r) - 1)
-        if (g_bf_length == orig_bf_length)
-        {
-            const int comp = std::abs(cmp_bf(r, bf_tmp5));
-            if (comp < 8)                 // if match or almost match
-            {
-                if (comp < 4              // perfect or near perfect match
-                    || almost_match == 1) // close enough for 2nd time
-                {
-                    break;
-                }
-                // this is the first time they almost matched
-                almost_match++;
-            }
-        }
-        copy_bf(bf_tmp5, r); // -r
-    }
-
-    // restore original values
-    g_bf_length = orig_bf_length;
-    g_bn_length = orig_bn_length;
-    g_padding = orig_padding;
-    g_r_length = orig_r_length;
-    g_shift_factor = orig_shift_factor;
-    g_r_bf_length = orig_r_bf_length;
-    r = orig_r;
-    bf_tmp5 = orig_bf_tmp5;
-
-    neg_a_bf(r); // -(-r)
-    return r;
-}
-
 BigFloatPtr sine_cosine(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n, [[maybe_unused]] BigFloatPtr pi)
 {
     U16 fact = 2;
@@ -822,8 +730,7 @@ BigFloat BigFloat::half() const
 BigFloat BigFloat::log() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
-    logarithm(result.m_storage.data(), g_bf_tmp_copy1.data());
+    ln_bf(result, *this);
     return result;
 }
 
@@ -1020,6 +927,14 @@ BigFloat &div_a_bf_int(BigFloat &r, const U16 u)
 BigFloat &exp_bf(BigFloat &r, const BigFloat &n)
 {
     exp_bf(r.data(), n.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data());
+    return r;
+}
+
+BigFloat &ln_bf(BigFloat &r, const BigFloat &n)
+{
+    copy_bf(g_bf_tmp_copy1.data(), n.data());
+    unsafe_ln_bf(r.data(), g_bf_tmp_copy1.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(),
+        g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data());
     return r;
 }
 
@@ -1247,11 +1162,6 @@ BigArena::Allocation BigFloatProduct::release_reduced_storage() &&
 Byte *unsafe_square_bf(Byte *r, Byte *n)
 {
     return square_value(r, n);
-}
-
-BigFloatPtr unsafe_ln_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    return logarithm(r, n);
 }
 
 BigFloatPtr unsafe_sin_cos_bf(BigFloatPtr s, BigFloatPtr c, BigFloatPtr n)

@@ -2032,6 +2032,98 @@ Byte *exp_bf(Byte *r, const Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3)
     return r;
 }
 
+Byte *unsafe_ln_bf(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *tmp4, Byte *tmp5, Byte *tmp6)
+{
+    int almost_match = 0;
+
+    // use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1
+
+    if (is_bf_neg(n) || is_bf_zero(n))
+    {
+        // error, return largest neg value
+        max_bf(r);
+        neg_a_bf(r);
+        return r;
+    }
+
+    LDouble f = bf_to_float(n);
+    f = std::log(f); // approximate ln(x)
+    // no need to check overflow
+    // appears to be ok, do ln
+
+    // With Newton's Method, there is no need to calculate all the digits
+    // every time.  The precision approximately doubles each iteration.
+    // Save original values.
+    int orig_bf_length = g_bf_length;
+    int orig_bn_length = g_bn_length;
+    int orig_padding = g_padding;
+    int orig_r_length = g_r_length;
+    int orig_shift_factor = g_shift_factor;
+    int orig_r_bf_length = g_r_bf_length;
+    Byte *orig_r = r;
+    Byte *orig_n = n;
+    Byte *orig_bf_tmp5 = tmp5;
+    Byte *bf_tmp5 = orig_bf_tmp5;
+
+    // calculate new starting values
+    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
+    g_bn_length = std::min(g_bn_length, orig_bn_length);
+    calc_lengths();
+
+    // adjust pointers
+    r = orig_r + orig_bf_length - g_bf_length;
+    bf_tmp5 = orig_bf_tmp5 + orig_bf_length - g_bf_length;
+
+    float_to_bf(r, f);           // start with approximate ln
+    neg_a_bf(r);                 // -r
+    copy_bf(bf_tmp5, r);         // -r
+
+    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
+    {
+        // adjust lengths
+        g_bn_length <<= 1; // double precision
+        g_bn_length = std::min(g_bn_length, orig_bn_length);
+        calc_lengths();
+        r = orig_r + orig_bf_length - g_bf_length;
+        n = orig_n + orig_bf_length - g_bf_length;
+        bf_tmp5 = orig_bf_tmp5 + orig_bf_length - g_bf_length;
+
+        exp_bf(tmp6, r, tmp1, tmp2, tmp3); // exp(-r)
+        unsafe_mult_bf(tmp2, tmp6, n);     // n*exp(-r)
+        int_to_bf(tmp4, 1);
+        unsafe_sub_a_bf(tmp2, tmp4);       // n*exp(-r) - 1
+        unsafe_sub_a_bf(r, tmp2);          // -r - (n*exp(-r) - 1)
+        if (g_bf_length == orig_bf_length)
+        {
+            const int comp = std::abs(cmp_bf(r, bf_tmp5));
+            if (comp < 8)                 // if match or almost match
+            {
+                if (comp < 4              // perfect or near perfect match
+                    || almost_match == 1) // close enough for 2nd time
+                {
+                    break;
+                }
+                // this is the first time they almost matched
+                almost_match++;
+            }
+        }
+        copy_bf(bf_tmp5, r); // -r
+    }
+
+    // restore original values
+    g_bf_length = orig_bf_length;
+    g_bn_length = orig_bn_length;
+    g_padding = orig_padding;
+    g_r_length = orig_r_length;
+    g_shift_factor = orig_shift_factor;
+    g_r_bf_length = orig_r_bf_length;
+    r = orig_r;
+    bf_tmp5 = orig_bf_tmp5;
+
+    neg_a_bf(r); // -(-r)
+    return r;
+}
+
 // SIDE-EFFECTS: n1 and n2 are changed to their absolute values
 Byte *multiply_wide(Byte *r, Byte *n1, Byte *n2)
 {

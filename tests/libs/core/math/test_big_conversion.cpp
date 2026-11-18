@@ -841,6 +841,41 @@ TEST_F(TestBigFloatByteExponential, truncatesTheFirstTinyTermWithinTheBorrowedWi
     EXPECT_EQ(mark, save_stack());
 }
 
+class TestBigFloatByteLogarithm : public TestBigNumConversionBase
+{
+};
+
+TEST_F(TestBigFloatByteLogarithm, confinesThePrecisionRampToTheBorrowedWindows)
+{
+    init_bf_length(64);
+    const int size = g_bf_length + 2;
+    const std::array<int, 6> lengths{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    std::vector<Byte> source(size + 4, 0xa5);
+    std::fill_n(source.begin() + 2, size, Byte{0});
+    source[size - 2] = 1;
+    const std::vector<Byte> original = source;
+    std::vector<Byte> result(size + 4, 0xa5);
+    std::fill_n(result.begin() + 2, size, Byte{0});
+    const std::vector<Byte> expected = result;
+    Byte *const output = result.data() + 2;
+    std::vector<Byte> expected_scratch(size + 2);
+    expected_scratch[size] = 0xa5;
+    expected_scratch[size + 1] = 0xa5;
+    std::vector<Byte> tmp5 = expected_scratch;
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(output,
+        unsafe_ln_bf(output, source.data() + 2, g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(), g_bf_tmp4.data(),
+            tmp5.data(), g_bf_tmp6.data()));
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(expected_scratch, tmp5);
+    EXPECT_EQ(
+        lengths, (std::array<int, 6>{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+    EXPECT_EQ(mark, save_stack());
+}
+
 struct BigNumConversionInput
 {
     const char *name;
