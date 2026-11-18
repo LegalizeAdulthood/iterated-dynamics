@@ -40,20 +40,4 @@ namespace id::math
 /*****************************************/
 // the following used to be in bigfltc.c
 
-/********************************************************************/
-// r = 0
-BigFloatPtr clear_bf(BigFloatPtr r)
-{
-    std::memset(r, 0, g_bf_length+2);  // set array to zero
-    return r;
-}
-
-/********************************************************************/
-// r = n
-BigFloatPtr copy_bf(BigFloatPtr r, BigFloatConstPtr n)
-{
-    std::memcpy(r, n, g_bf_length+2);
-    return r;
-}
-
 } // namespace id::math

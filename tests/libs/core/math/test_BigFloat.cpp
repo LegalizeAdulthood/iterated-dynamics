@@ -41,6 +41,10 @@ static_assert(std::is_same_v<decltype(str_to_bf(std::declval<BigFloat &>(), std:
 static_assert(std::is_same_v<decltype(int_to_bf(std::declval<BigFloat &>(), long{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(float_to_bf(std::declval<BigFloat &>(), LDouble{})), BigFloat &>);
 static_assert(std::is_same_v<decltype(bf_to_float(std::declval<BigFloat &>())), LDouble>);
+static_assert(
+    std::is_same_v<decltype(copy_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
+static_assert(std::is_same_v<decltype(clear_bf(std::declval<BigFloat &>())), BigFloat &>);
+static_assert(std::is_same_v<decltype(max_bf(std::declval<BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(&bf_to_string), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_e), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_f), std::string (*)(const BigFloat &, int)>);
@@ -115,6 +119,84 @@ TEST_F(TestBigFloatValue, parsesTheSpecifiedView)
 
     EXPECT_EQ("-1.25", value.to_string());
 }
+
+enum class BigFloatStorageProcedure
+{
+    COPY,
+    CLEAR,
+    MAXIMUM
+};
+
+struct BigFloatStorageInput
+{
+    BigFloatStorageProcedure operation;
+    std::array<Byte, 5> source_tail;
+    std::array<Byte, 5> expected_tail;
+};
+
+class TestBigFloatStorageProcedures
+    : public TestBigFloatValue,
+      public testing::WithParamInterface<std::tuple<int, BigLifetime, BigFloatStorageInput>>
+{
+};
+
+TEST_P(TestBigFloatStorageProcedures, preservesBytesDestinationSourcePaddingAndAllocation)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const BigFloatStorageInput &input = std::get<2>(GetParam());
+    BigArena &arena = bf_arena(std::get<1>(GetParam()));
+    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+    std::vector<Byte> source_bytes(size);
+    std::copy(input.source_tail.begin(), input.source_tail.end(), source_bytes.end() - 5);
+    BigFloat source = BigFloat::from_legacy(source_bytes.data(), source_bytes.size());
+    std::fill_n(source.data() + size, source.arena().block_size() - size, Byte{0x3c});
+    const std::vector<Byte> original_source(source.data(), source.data() + source.arena().block_size());
+    BigFloat destination{arena};
+    const Byte *const address = destination.data();
+    const std::size_t stride = arena.block_size();
+    std::fill_n(destination.data(), stride, Byte{0xa5});
+    std::vector<Byte> expected(stride, 0xa5);
+    std::fill_n(expected.begin(), size, Byte{0});
+    std::copy(input.expected_tail.begin(), input.expected_tail.end(), expected.begin() + size - 5);
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+    const std::array<int, 7> lengths{
+        g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+
+    switch (input.operation)
+    {
+    case BigFloatStorageProcedure::COPY:
+        EXPECT_EQ(&destination, &copy_bf(destination, std::as_const(source)));
+        break;
+    case BigFloatStorageProcedure::CLEAR:
+        EXPECT_EQ(&destination, &clear_bf(destination));
+        break;
+    case BigFloatStorageProcedure::MAXIMUM:
+        EXPECT_EQ(&destination, &max_bf(destination));
+        break;
+    }
+
+    EXPECT_EQ(expected, std::vector<Byte>(destination.data(), destination.data() + stride));
+    EXPECT_EQ(original_source, std::vector<Byte>(source.data(), source.data() + source.arena().block_size()));
+    EXPECT_EQ(address, destination.data());
+    EXPECT_EQ(&arena, &destination.arena());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(lengths,
+        (std::array<int, 7>{
+            g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsLifetimesAndOperations, TestBigFloatStorageProcedures,
+    testing::Combine(testing::Values(4, 12, 60, 64, 708),
+        testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY),
+        testing::Values(BigFloatStorageInput{BigFloatStorageProcedure::COPY, {0x40, 1, 0, 0, 0}, {0x40, 1, 0, 0, 0}},
+            BigFloatStorageInput{BigFloatStorageProcedure::COPY, {0xc0, 0xfe, 0xff, 0, 0}, {0xc0, 0xfe, 0xff, 0, 0}},
+            BigFloatStorageInput{BigFloatStorageProcedure::COPY, {}, {}},
+            BigFloatStorageInput{BigFloatStorageProcedure::CLEAR, {0xc0, 0xfe, 0xff, 0, 0}, {}},
+            BigFloatStorageInput{BigFloatStorageProcedure::MAXIMUM, {0xc0, 0xfe, 0xff, 0, 0},
+                {0, 1, 0, static_cast<Byte>((std::numeric_limits<long double>::max_exponent / 8) % 256),
+                    static_cast<Byte>((std::numeric_limits<long double>::max_exponent / 8) / 256)}})));
 
 struct BigFloatParseCase
 {

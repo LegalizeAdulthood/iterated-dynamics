@@ -101,8 +101,8 @@ int initialize_mandel_sticky_pixel()
         float_to_bf(g_param_z_bf.x, g_init.x);
         add_a_bf(g_param_z_bf.x.data(), offset.data());
         float_to_bf(g_param_z_bf.y, g_init.y);
-        copy_bf(g_old_z_bf.x.data(), g_param_z_bf.x.data());
-        copy_bf(g_old_z_bf.y.data(), g_param_z_bf.y.data());
+        copy_bf(g_old_z_bf.x, g_param_z_bf.x);
+        copy_bf(g_old_z_bf.y, g_param_z_bf.y);
     }
     return 1;
 }

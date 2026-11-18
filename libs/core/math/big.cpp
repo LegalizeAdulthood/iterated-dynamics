@@ -1510,6 +1510,31 @@ Byte *float_to_bf(Byte *r, LDouble f)
     return r;
 }
 
+/********************************************************************/
+// r = 0
+Byte *clear_bf(Byte *r)
+{
+    std::memset(r, 0, g_bf_length + 2); // set array to zero
+    return r;
+}
+
+/********************************************************************/
+// r = n
+Byte *copy_bf(Byte *r, const Byte *n)
+{
+    std::memcpy(r, n, g_bf_length + 2);
+    return r;
+}
+
+/********************************************************************/
+// r = max positive value
+Byte *max_bf(Byte *r)
+{
+    int_to_bf(r, 1);
+    BIG_SET16(r + g_bf_length, static_cast<S16>(LDBL_MAX_EXP / 8));
+    return r;
+}
+
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat

@@ -145,6 +145,9 @@ private:
     BigArena::Allocation m_storage;
 };
 
+BigFloat &clear_bf(BigFloat &r);
+BigFloat &copy_bf(BigFloat &r, const BigFloat &n);
+BigFloat &max_bf(BigFloat &r);
 BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
 BigFloat &float_to_bf(BigFloat &r, LDouble value);

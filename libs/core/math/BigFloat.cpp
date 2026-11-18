@@ -1221,6 +1221,24 @@ BigFloat BigFloat::atan2(const BigFloat &x) const
     return result;
 }
 
+BigFloat &clear_bf(BigFloat &r)
+{
+    clear_bf(r.data());
+    return r;
+}
+
+BigFloat &copy_bf(BigFloat &r, const BigFloat &n)
+{
+    copy_bf(r.data(), n.data());
+    return r;
+}
+
+BigFloat &max_bf(BigFloat &r)
+{
+    max_bf(r.data());
+    return r;
+}
+
 BigFloat &str_to_bf(BigFloat &r, const std::string_view text)
 {
     str_to_bf(r.data(), text, g_bf_tmp1.data());

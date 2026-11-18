@@ -437,7 +437,7 @@ void adjust_corner_bf()
         if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && cmp_bf(g_bf_y_3rd.data(), g_bf_y_max.data()) != 0)
         {
             // xx3rd = xxmin;
-            copy_bf(g_bf_x_3rd.data(), g_bf_x_min.data());
+            copy_bf(g_bf_x_3rd, g_bf_x_min);
         }
     }
 
@@ -445,7 +445,7 @@ void adjust_corner_bf()
     if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && cmp_bf(g_bf_y_3rd.data(), g_bf_y_min.data()) != 0)
     {
         // xx3rd = xxmax;
-        copy_bf(g_bf_x_3rd.data(), g_bf_x_max.data());
+        copy_bf(g_bf_x_3rd, g_bf_x_max);
     }
 
     // ftemp=fabs(yy3rd-yymin);
@@ -461,7 +461,7 @@ void adjust_corner_bf()
         if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && cmp_bf(g_bf_x_3rd.data(), g_bf_x_max.data()) != 0)
         {
             // yy3rd = yymin;
-            copy_bf(g_bf_y_3rd.data(), g_bf_y_min.data());
+            copy_bf(g_bf_y_3rd, g_bf_y_min);
         }
     }
 
@@ -469,7 +469,7 @@ void adjust_corner_bf()
     if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && cmp_bf(g_bf_x_3rd.data(), g_bf_x_min.data()) != 0)
     {
         // yy3rd = yymax;
-        copy_bf(g_bf_y_3rd.data(), g_bf_y_max.data());
+        copy_bf(g_bf_y_3rd, g_bf_y_max);
     }
 }
 
@@ -595,26 +595,26 @@ static bool adjust_to_limits_bf(const double expand)
 
     // setup array for easier manipulation
     // corner_x[0] = xxmin;
-    copy_bf(b_corner_x[0].data(), g_bf_x_min.data());
+    copy_bf(b_corner_x[0], g_bf_x_min);
 
     // corner_x[1] = xxmax;
-    copy_bf(b_corner_x[1].data(), g_bf_x_max.data());
+    copy_bf(b_corner_x[1], g_bf_x_max);
 
     // corner_x[2] = xx3rd;
-    copy_bf(b_corner_x[2].data(), g_bf_x_3rd.data());
+    copy_bf(b_corner_x[2], g_bf_x_3rd);
 
     // corner_x[3] = xxmin+(xxmax-xx3rd);
     sub_bf(b_corner_x[3].data(), g_bf_x_max.data(), g_bf_x_3rd.data());
     add_a_bf(b_corner_x[3].data(), g_bf_x_min.data());
 
     // corner_y[0] = yymax;
-    copy_bf(b_corner_y[0].data(), g_bf_y_max.data());
+    copy_bf(b_corner_y[0], g_bf_y_max);
 
     // corner_y[1] = yymin;
-    copy_bf(b_corner_y[1].data(), g_bf_y_min.data());
+    copy_bf(b_corner_y[1], g_bf_y_min);
 
     // corner_y[2] = yy3rd;
-    copy_bf(b_corner_y[2].data(), g_bf_y_3rd.data());
+    copy_bf(b_corner_y[2], g_bf_y_3rd);
 
     // corner_y[3] = yymin+(yymax-yy3rd);
     sub_bf(b_corner_y[3].data(), g_bf_y_max.data(), g_bf_y_3rd.data());

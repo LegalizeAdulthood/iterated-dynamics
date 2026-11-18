@@ -358,7 +358,7 @@ void TestBigFloatFormat::prepare_value(const char *text)
     }
     else
     {
-        clear_bf(m_value.data());
+        clear_bf(m_value);
     }
 }
 

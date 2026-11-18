@@ -1151,8 +1151,8 @@ TEST_F(TestBigNumJulia, viewportTransitionRestoresJuliaParameterAndKeepsBailoutE
     float_to_bf(g_bf_y_min, -1);
     float_to_bf(g_bf_y_max, 1);
     float_to_bf(g_bf_y_3rd, -1);
-    clear_bf(g_bf_params[0].data());
-    clear_bf(g_bf_params[1].data());
+    clear_bf(g_bf_params[0]);
+    clear_bf(g_bf_params[1]);
     g_col = 128;
     g_row = 256;
     g_magnitude_limit = 16;

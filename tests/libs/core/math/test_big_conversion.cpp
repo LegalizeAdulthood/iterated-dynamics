@@ -16,7 +16,9 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
+#include <limits>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <vector>
 
@@ -52,6 +54,62 @@ void TestBigNumConversionBase::TearDown()
 {
     free_bf_vars();
 }
+
+enum class BigFloatByteProcedure
+{
+    COPY,
+    CLEAR,
+    MAXIMUM
+};
+
+class TestBigFloatByteProcedures : public TestBigNumConversionBase,
+                                   public testing::WithParamInterface<std::tuple<int, BigFloatByteProcedure>>
+{
+};
+
+TEST_P(TestBigFloatByteProcedures, preservesExactExtentSourceReturnAddressAndGuards)
+{
+    ValueSaver<int> bf_length{g_bf_length, std::get<0>(GetParam())};
+    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+    const std::array<int, 7> lengths{
+        g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    const std::vector<Byte> source(size, 0x35);
+    std::vector<Byte> destination(size + 16, 0xa5);
+    std::vector<Byte> expected(size + 16, 0xa5);
+    Byte *const output = destination.data() + 8;
+
+    switch (std::get<1>(GetParam()))
+    {
+    case BigFloatByteProcedure::COPY:
+        std::copy(source.begin(), source.end(), expected.begin() + 8);
+        EXPECT_EQ(output, copy_bf(output, source.data()));
+        break;
+    case BigFloatByteProcedure::CLEAR:
+        std::fill_n(expected.begin() + 8, size, Byte{0});
+        EXPECT_EQ(output, clear_bf(output));
+        break;
+    case BigFloatByteProcedure::MAXIMUM:
+    {
+        constexpr int exponent = std::numeric_limits<long double>::max_exponent / 8;
+        std::fill_n(expected.begin() + 8, size, Byte{0});
+        expected[8 + size - 4] = 1;
+        expected[8 + size - 2] = static_cast<Byte>(exponent % 256);
+        expected[8 + size - 1] = static_cast<Byte>(exponent / 256);
+        EXPECT_EQ(output, max_bf(output));
+        break;
+    }
+    }
+
+    EXPECT_EQ(expected, destination);
+    EXPECT_EQ(std::vector<Byte>(size, 0x35), source);
+    EXPECT_EQ(lengths,
+        (std::array<int, 7>{
+            g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+}
+
+INSTANTIATE_TEST_SUITE_P(LengthsAndOperations, TestBigFloatByteProcedures,
+    testing::Combine(testing::Values(8, 12, 64, 712),
+        testing::Values(BigFloatByteProcedure::COPY, BigFloatByteProcedure::CLEAR, BigFloatByteProcedure::MAXIMUM)));
 
 struct BigNumConversionInput
 {

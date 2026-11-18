@@ -215,19 +215,19 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
     str_to_bf(center.y, "0.000125");
     str_to_bf(actual.x, "0.99900000000000000000000000000000000000001");
     str_to_bf(actual.y, "-0.000125");
-    copy_bf(expected.x.data(), actual.x.data());
-    copy_bf(expected.y.data(), actual.y.data());
+    copy_bf(expected.x, actual.x);
+    copy_bf(expected.y, actual.y);
 
     for (int step = 0; step < 8; ++step)
     {
         SCOPED_TRACE(step);
         int_to_bf(powered.x, 1);
-        clear_bf(powered.y.data());
+        clear_bf(powered.y);
         for (int factor = 0; factor < GetParam(); ++factor)
         {
             product = powered * expected;
-            copy_bf(powered.x.data(), product.x.data());
-            copy_bf(powered.y.data(), product.y.data());
+            copy_bf(powered.x, product.x);
+            copy_bf(powered.y, product.y);
         }
         add_bf(expected.x.data(), powered.x.data(), center.x.data());
         add_bf(expected.y.data(), powered.y.data(), center.y.data());
@@ -309,7 +309,7 @@ std::complex<double> TestSignedPowerState::precise_power(const std::complex<doub
     float_to_bf(value.x, z.real());
     float_to_bf(value.y, z.imag());
     int_to_bf(exponent.x, g_c_exponent);
-    clear_bf(exponent.y.data());
+    clear_bf(exponent.y);
     result = pow(value, exponent);
     return {static_cast<double>(bf_to_float(result.x)), static_cast<double>(bf_to_float(result.y))};
 }
@@ -470,20 +470,20 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
     int_to_bf(exponent.x, GetParam().exponent);
-    clear_bf(exponent.y.data());
+    clear_bf(exponent.y);
     float_to_bf(center.x, 0.125);
     float_to_bf(center.y, -0.0625);
     str_to_bf(seed.x, GetParam().real);
     if (is_bf_zero(seed.x.data()))
     {
-        clear_bf(seed.y.data());
+        clear_bf(seed.y);
     }
     else
     {
         float_to_bf(seed.y, 0.125);
     }
-    copy_bf(actual.x.data(), seed.x.data());
-    copy_bf(actual.y.data(), seed.y.data());
+    copy_bf(actual.x, seed.x);
+    copy_bf(actual.y, seed.y);
     expected = pow(seed, exponent);
     add_a_bf(expected.x.data(), center.x.data());
     add_a_bf(expected.y.data(), center.y.data());
@@ -811,8 +811,8 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
     float_to_bf(center.y, -0.03125);
     str_to_bf(seed.x, "-0.75000000000000000000000000000000000000001");
     str_to_bf(seed.y, GetParam().imaginary);
-    copy_bf(actual.x.data(), seed.x.data());
-    copy_bf(actual.y.data(), seed.y.data());
+    copy_bf(actual.x, seed.x);
+    copy_bf(actual.y, seed.y);
     expected = pow(seed, exponent);
     add_a_bf(expected.x.data(), center.x.data());
     add_a_bf(expected.y.data(), center.y.data());
@@ -847,8 +847,8 @@ TEST_P(TestPreciseComplexPowerZero, zeroReferenceProducesTheCenter)
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     float_to_bf(center.x, 0.0625);
     float_to_bf(center.y, -0.03125);
-    clear_bf(actual.x.data());
-    clear_bf(actual.y.data());
+    clear_bf(actual.x);
+    clear_bf(actual.y);
 
     mandel_z_power_ref_pt_bf(center, actual);
 

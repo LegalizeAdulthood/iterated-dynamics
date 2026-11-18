@@ -273,15 +273,6 @@ void norm_sign_bf(BigFloatPtr r, const bool positive)
 }
 
 /********************************************************************/
-// r = max positive value
-BigFloatPtr max_bf(BigFloatPtr r)
-{
-    int_to_bf(r, 1);
-    BIG_SET16(r+g_bf_length, static_cast<S16>(LDBL_MAX_EXP/8));
-    return r;
-}
-
-/********************************************************************/
 // r < 0 ?
 // returns 1 if negative, 0 if positive or zero
 bool is_bf_neg(BigFloatConstPtr n)
