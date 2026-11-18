@@ -32,7 +32,7 @@ int divide_brot5_bf_per_pixel()
     g_bf_tmp = g_delta2_x_bf * static_cast<U16>(g_row);
 
     g_param_z_bf.x += g_bf_tmp;
-    add_a_bf(g_param_z_bf.x.data(), g_bf_x_min.data());
+    add_a_bf(g_param_z_bf.x, g_bf_x_min);
 
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
     /* note: in next four lines, g_old_z_bf is just used as a temporary variable */

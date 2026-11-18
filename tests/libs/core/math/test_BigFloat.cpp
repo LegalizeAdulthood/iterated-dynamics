@@ -932,43 +932,105 @@ void TestBigFloatArithmetic::SetUp()
     init_bf_length(GetParam());
 }
 
+class TestBigFloatAddition : public TestBigFloatValue, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestBigFloatAddition, preservesOperandsAliasesDestinationIdentityAndPadding)
+{
+    init_bf_length(GetParam());
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    const BigFloat left{arena, 1.25L};
+    const BigFloat right{arena, -0.5L};
+    const std::vector<Byte> original_left = encoded_value(left);
+    const std::vector<Byte> original_right = encoded_value(right);
+    BigFloat left_alias{arena, left};
+    BigFloat right_alias{arena, right};
+    BigFloat result{arena};
+    const Byte *const address = result.data();
+    const Byte *const left_address = left_alias.data();
+    const Byte *const right_address = right_alias.data();
+    const std::size_t size = arena.value_size();
+    const std::size_t padding = arena.block_size() - size;
+    std::fill_n(result.data(), arena.block_size(), Byte{0xa5});
+    std::fill_n(left_alias.data() + size, padding, Byte{0x5a});
+    std::fill_n(right_alias.data() + size, padding, Byte{0x3c});
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark mark = save_stack();
+    const std::array<Byte, 5> sum_tail{0, 0xc0, 0, 0xff, 0xff};
+    std::vector<Byte> expected(size);
+    std::copy(sum_tail.begin(), sum_tail.end(), expected.end() - 5);
+
+    EXPECT_EQ(&result, &add_bf(result, left, right));
+    EXPECT_EQ(expected, encoded_value(result));
+    EXPECT_EQ(&left_alias, &add_bf(left_alias, left_alias, right));
+    EXPECT_EQ(expected, encoded_value(left_alias));
+    EXPECT_EQ(&right_alias, &add_bf(right_alias, left, right_alias));
+    EXPECT_EQ(expected, encoded_value(right_alias));
+    copy_bf(result, left);
+    EXPECT_EQ(&result, &add_a_bf(result, right));
+    EXPECT_EQ(expected, encoded_value(result));
+
+    copy_bf(result, left);
+    const std::array<Byte, 5> doubled_tail{0x80, 2, 0, 0, 0};
+    std::copy(doubled_tail.begin(), doubled_tail.end(), expected.end() - 5);
+    EXPECT_EQ(&result, &add_a_bf(result, result));
+    EXPECT_EQ(expected, encoded_value(result));
+
+    EXPECT_EQ(original_left, encoded_value(left));
+    EXPECT_EQ(original_right, encoded_value(right));
+    EXPECT_EQ(address, result.data());
+    EXPECT_EQ(left_address, left_alias.data());
+    EXPECT_EQ(right_address, right_alias.data());
+    EXPECT_EQ(
+        std::vector<Byte>(padding, 0xa5), std::vector<Byte>(result.data() + size, result.data() + size + padding));
+    EXPECT_EQ(std::vector<Byte>(padding, 0x5a),
+        std::vector<Byte>(left_alias.data() + size, left_alias.data() + size + padding));
+    EXPECT_EQ(std::vector<Byte>(padding, 0x3c),
+        std::vector<Byte>(right_alias.data() + size, right_alias.data() + size + padding));
+    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatAddition, testing::Values(4, 64, 708));
+
 TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
 {
-    auto left = encoded_value(BigFloat{"-7.5"});
-    auto right = encoded_value(BigFloat{"2.5"});
-    const auto original_left = left;
-    const auto original_right = right;
-    std::vector<Byte> result(static_cast<std::size_t>(g_r_bf_length + 2));
+    BigFloat left{"-7.5"};
+    BigFloat right{"2.5"};
+    const std::vector<Byte> original_left = encoded_value(left);
+    const std::vector<Byte> original_right = encoded_value(right);
+    BigFloat result{bf_arena(BigLifetime::WORKING)};
 
-    add_bf(result.data(), left.data(), right.data());
-    EXPECT_EQ("-5.0", bf_to_string(BigFloat::from_legacy(result.data(), result.size()), 8));
+    add_bf(result, left, right);
+    EXPECT_EQ("-5.0", bf_to_string(result, 8));
     sub_bf(result.data(), left.data(), right.data());
-    EXPECT_EQ("-10.0", bf_to_string(BigFloat::from_legacy(result.data(), result.size()), 8));
+    EXPECT_EQ("-10.0", bf_to_string(result, 8));
     mult_bf(result.data(), left.data(), right.data());
-    EXPECT_EQ("-18.75", bf_to_string(BigFloat::from_legacy(result.data(), result.size()), 8));
+    EXPECT_EQ("-18.75", bf_to_string(result, 8));
     div_bf(result.data(), left.data(), right.data());
-    EXPECT_EQ("-3.0", bf_to_string(BigFloat::from_legacy(result.data(), result.size()), 8));
+    EXPECT_EQ("-3.0", bf_to_string(result, 8));
 
-    EXPECT_EQ(original_left, left);
-    EXPECT_EQ(original_right, right);
+    EXPECT_EQ(original_left, encoded_value(left));
+    EXPECT_EQ(original_right, encoded_value(right));
 }
 
 TEST_P(TestBigFloatArithmetic, legacyInPlaceSamplesPreserveTheRightOperand)
 {
-    auto left = encoded_value(BigFloat{"-7.5"});
-    auto right = encoded_value(BigFloat{"2.5"});
-    const auto original_right = right;
+    BigFloat left{"-7.5"};
+    BigFloat right{"2.5"};
+    const std::vector<Byte> original_right = encoded_value(right);
 
-    add_a_bf(left.data(), right.data());
-    EXPECT_EQ("-5.0", bf_to_string(BigFloat::from_legacy(left.data(), left.size()), 8));
+    add_a_bf(left, right);
+    EXPECT_EQ("-5.0", bf_to_string(left, 8));
     sub_a_bf(left.data(), right.data());
-    EXPECT_EQ("-7.5", bf_to_string(BigFloat::from_legacy(left.data(), left.size()), 8));
-    add_a_bf(left.data(), left.data());
-    EXPECT_EQ("-15.0", bf_to_string(BigFloat::from_legacy(left.data(), left.size()), 8));
+    EXPECT_EQ("-7.5", bf_to_string(left, 8));
+    add_a_bf(left, left);
+    EXPECT_EQ("-15.0", bf_to_string(left, 8));
     sub_a_bf(left.data(), left.data());
-    EXPECT_EQ("0.0", bf_to_string(BigFloat::from_legacy(left.data(), left.size()), 8));
+    EXPECT_EQ("0.0", bf_to_string(left, 8));
 
-    EXPECT_EQ(original_right, right);
+    EXPECT_EQ(original_right, encoded_value(right));
 }
 
 TEST_P(TestBigFloatArithmetic, arithmeticPreservesOperandsAndReturnsIndependentValues)
@@ -1062,12 +1124,11 @@ TEST_P(TestBigFloatArithmetic, expressionsMatchLegacySequencesAndOutliveTheirTem
     auto raw_left = original_left;
     auto raw_right = original_right;
     auto raw_divisor = original_divisor;
-    std::vector<Byte> expected(static_cast<std::size_t>(g_r_bf_length + 2));
-    add_bf(expected.data(), raw_left.data(), raw_right.data());
+    BigFloat expected{bf_arena(BigLifetime::WORKING)};
+    add_bf(expected, left, right);
     div_bf(expected.data(), expected.data(), raw_divisor.data());
     mult_bf(expected.data(), expected.data(), raw_left.data());
     sub_bf(expected.data(), expected.data(), raw_right.data());
-    expected.resize(static_cast<std::size_t>(g_bf_length + 2));
     const auto marker = save_stack();
 
     const BigFloat result = ((left + right) / divisor) * left - right;
@@ -1075,7 +1136,7 @@ TEST_P(TestBigFloatArithmetic, expressionsMatchLegacySequencesAndOutliveTheirTem
     bf_stack().allocate_single();
     restore_stack(marker);
 
-    EXPECT_EQ(expected, encoded_value(result));
+    EXPECT_EQ(encoded_value(expected), encoded_value(result));
     EXPECT_EQ("72.0", unrelated.to_string(8));
     EXPECT_EQ(original_left, encoded_value(left));
     EXPECT_EQ(original_right, encoded_value(right));

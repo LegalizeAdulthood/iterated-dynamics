@@ -229,8 +229,8 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
             copy_bf(powered.x, product.x);
             copy_bf(powered.y, product.y);
         }
-        add_bf(expected.x.data(), powered.x.data(), center.x.data());
-        add_bf(expected.y.data(), powered.y.data(), center.y.data());
+        add_bf(expected.x, powered.x, center.x);
+        add_bf(expected.y, powered.y, center.y);
         mandel_z_power_ref_pt_bf(center, actual);
         sub_bf(difference.data(), actual.x.data(), expected.x.data());
         EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
@@ -485,8 +485,8 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     copy_bf(actual.x, seed.x);
     copy_bf(actual.y, seed.y);
     expected = pow(seed, exponent);
-    add_a_bf(expected.x.data(), center.x.data());
-    add_a_bf(expected.y.data(), center.y.data());
+    add_a_bf(expected.x, center.x);
+    add_a_bf(expected.y, center.y);
 
     mandel_z_power_ref_pt_bf(center, actual);
 
@@ -814,8 +814,8 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
     copy_bf(actual.x, seed.x);
     copy_bf(actual.y, seed.y);
     expected = pow(seed, exponent);
-    add_a_bf(expected.x.data(), center.x.data());
-    add_a_bf(expected.y.data(), center.y.data());
+    add_a_bf(expected.x, center.x);
+    add_a_bf(expected.y, center.y);
 
     mandel_z_power_ref_pt_bf(center, actual);
 

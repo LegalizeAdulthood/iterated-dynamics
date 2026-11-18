@@ -567,7 +567,7 @@ int mandel_per_pixel_bf()
     g_bf_tmp = g_delta2_x_bf * static_cast<U16>(g_row);
 
     g_param_z_bf.x += g_bf_tmp;
-    add_a_bf(g_param_z_bf.x.data(), g_bf_x_min.data());
+    add_a_bf(g_param_z_bf.x, g_bf_x_min);
 
     // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bf is just used as a temporary variable
@@ -649,7 +649,7 @@ int julia_per_pixel_bf()
     g_bf_tmp = g_delta2_x_bf * static_cast<U16>(g_row);
 
     g_old_z_bf.x += g_bf_tmp;
-    add_a_bf(g_old_z_bf.x.data(), g_bf_x_min.data());
+    add_a_bf(g_old_z_bf.x, g_bf_x_min);
 
     // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bf is just used as a temporary variable

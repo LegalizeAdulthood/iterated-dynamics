@@ -93,109 +93,6 @@ void validate_buffer(BigFloatConstPtr buffer, const std::size_t size, const std:
     }
 }
 
-// Align both mantissas in place; return their common exponent.
-S16 align_exponents(BigFloatPtr n1, BigFloatPtr n2)
-{
-    int scale;
-    int fill_byte;
-    S16 r_exp;
-
-    // scale n1 or n2
-    // compare exp's
-    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
-    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
-    if (BIG_ACCESS_S16(n1_exp) > BIG_ACCESS_S16(n2_exp))
-    {
-        // scale n2
-        scale = BIG_ACCESS_S16(n1_exp) - BIG_ACCESS_S16(n2_exp); // n1exp - n2exp
-        if (scale < g_bf_length)
-        {
-            fill_byte = is_bf_neg(n2) ? 0xFF : 0x00;
-            std::memmove(n2, n2 + scale, g_bf_length - scale);
-            std::memset(n2 + g_bf_length - scale, fill_byte, scale);
-        }
-        else
-        {
-            clear_bf(n2);
-        }
-        BIG_SET_S16(n2_exp, BIG_ACCESS_S16(n1_exp)); // *n2exp = *n1exp; set exp's =
-        r_exp = BIG_ACCESS_S16(n2_exp);
-    }
-    else if (BIG_ACCESS_S16(n1_exp) < BIG_ACCESS_S16(n2_exp))
-    {
-        // scale n1
-        scale = BIG_ACCESS_S16(n2_exp) - BIG_ACCESS_S16(n1_exp); // n2exp - n1exp
-        if (scale < g_bf_length)
-        {
-            fill_byte = is_bf_neg(n1) ? 0xFF : 0x00;
-            std::memmove(n1, n1 + scale, g_bf_length - scale);
-            std::memset(n1 + g_bf_length - scale, fill_byte, scale);
-        }
-        else
-        {
-            clear_bf(n1);
-        }
-        BIG_SET_S16(n1_exp, BIG_ACCESS_S16(n2_exp)); // *n1exp = *n2exp; set exp's =
-        r_exp = BIG_ACCESS_S16(n2_exp);
-    }
-    else
-    {
-        r_exp = BIG_ACCESS_S16(n1_exp);
-    }
-    return r_exp;
-}
-
-// SIDE-EFFECTS: n1 and n2 can be "de-normalized" and lose precision
-BigFloatPtr add(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    if (is_bf_zero(n1))
-    {
-        copy_bf(r, n2);
-        return r;
-    }
-    if (is_bf_zero(n2))
-    {
-        copy_bf(r, n1);
-        return r;
-    }
-
-    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
-    BIG_SET_S16(r_exp, align_exponents(n1, n2));
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    add_bn(r, n1, n2);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-    return r;
-}
-
-// r += n
-BigFloatPtr add_assign(BigFloatPtr r, BigFloatPtr n)
-{
-    if (is_bf_zero(r))
-    {
-        copy_bf(r, n);
-        return r;
-    }
-    if (is_bf_zero(n))
-    {
-        return r;
-    }
-
-    align_exponents(r, n);
-
-    int bnl = g_bn_length;
-    g_bn_length = g_bf_length;
-    add_a_bn(r, n);
-    g_bn_length = bnl;
-
-    norm_bf(r);
-
-    return r;
-}
-
 // SIDE-EFFECTS: n1 and n2 can be "de-normalized" and lose precision
 BigFloatPtr subtract(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
@@ -1031,8 +928,7 @@ BigFloat BigFloat::operator-() const
 
 BigFloat &BigFloat::operator+=(const BigFloat &right)
 {
-    compound_operation(m_storage.data(), right.m_storage.data(), add_assign);
-    return *this;
+    return add_a_bf(*this, right);
 }
 
 BigFloat &BigFloat::operator-=(const BigFloat &right)
@@ -1062,7 +958,7 @@ BigFloat &BigFloat::operator/=(const U16 right)
 BigFloat BigFloat::operator+(const BigFloat &right) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), add);
+    add_bf(result, *this, right);
     return result;
 }
 
@@ -1211,6 +1107,18 @@ BigFloat &abs_bf(BigFloat &r, const BigFloat &n)
 BigFloat &abs_a_bf(BigFloat &r)
 {
     abs_a_bf(r.data());
+    return r;
+}
+
+BigFloat &add_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
+{
+    binary_operation(r.data(), n1.data(), n2.data(), unsafe_add_bf);
+    return r;
+}
+
+BigFloat &add_a_bf(BigFloat &r, const BigFloat &n)
+{
+    compound_operation(r.data(), n.data(), unsafe_add_a_bf);
     return r;
 }
 
@@ -1465,11 +1373,6 @@ BigFloatPtr unsafe_atan2_bf(BigFloatPtr r, BigFloatPtr y, BigFloatPtr x)
     return arctangent2(r, y, x);
 }
 
-BigFloatPtr unsafe_add_a_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    return add_assign(r, n);
-}
-
 BigFloatPtr unsafe_sub_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     return subtract(r, n1, n2);
@@ -1490,11 +1393,6 @@ BigFloatPtr unsafe_div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
     return divide(r, n1, n2);
 }
 
-BigFloatPtr add_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
-{
-    return binary_operation(r, n1, n2, add);
-}
-
 BigFloatPtr sub_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     return binary_operation(r, n1, n2, subtract);
@@ -1508,11 +1406,6 @@ BigFloatPtr mult_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 BigFloatPtr div_bf(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
 {
     return binary_operation(r, n1, n2, divide);
-}
-
-BigFloatPtr add_a_bf(BigFloatPtr r, BigFloatPtr n)
-{
-    return compound_operation(r, n, add_assign);
 }
 
 BigFloatPtr sub_a_bf(BigFloatPtr r, BigFloatPtr n)

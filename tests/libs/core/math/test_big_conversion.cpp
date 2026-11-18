@@ -271,6 +271,52 @@ INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteAbs,
         BigFloatByteAbsInput{{0x40, 1, 0, 0, 0}, {0x40, 1, 0, 0, 0}},
         BigFloatByteAbsInput{{0, 0, 0xff, 0xff, 0xff}, {0, 1, 0, 0, 0}}));
 
+struct BigFloatByteAdditionInput
+{
+    std::array<Byte, 5> left_tail;
+    std::array<Byte, 5> right_tail;
+    std::array<Byte, 5> aligned_right_tail;
+    std::array<Byte, 5> result_tail;
+};
+
+class TestBigFloatByteAddition : public testing::TestWithParam<BigFloatByteAdditionInput>
+{
+};
+
+TEST_P(TestBigFloatByteAddition, inPlaceKernelAlignsMantissasAndPreservesPadding)
+{
+    constexpr int length = 8;
+    constexpr int size = length + 2;
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const ValueSaver<int> bn_length{g_bn_length, 4};
+    const BigFloatByteAdditionInput &input = GetParam();
+    alignas(U16) std::array<Byte, size + 2> left{};
+    alignas(U16) std::array<Byte, size + 2> right{};
+    std::copy(input.left_tail.begin(), input.left_tail.end(), left.begin() + size - 5);
+    std::copy(input.right_tail.begin(), input.right_tail.end(), right.begin() + size - 5);
+    left.back() = 0x5a;
+    right.back() = 0xa5;
+    std::array<Byte, size + 2> expected_left{};
+    std::array<Byte, size + 2> expected_right{};
+    std::copy(input.result_tail.begin(), input.result_tail.end(), expected_left.begin() + size - 5);
+    std::copy(input.aligned_right_tail.begin(), input.aligned_right_tail.end(), expected_right.begin() + size - 5);
+    expected_left.back() = 0x5a;
+    expected_right.back() = 0xa5;
+
+    EXPECT_EQ(left.data(), unsafe_add_a_bf(left.data(), right.data()));
+
+    EXPECT_EQ(expected_left, left);
+    EXPECT_EQ(expected_right, right);
+    EXPECT_EQ(4, g_bn_length);
+    EXPECT_EQ(length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(Alignment, TestBigFloatByteAddition,
+    testing::Values(BigFloatByteAdditionInput{{0x40, 1, 0, 0, 0}, {0, 0x80, 0xff, 0xff, 0xff}, {0x80, 0xff, 0xff, 0, 0},
+                        {0, 0xc0, 0, 0xff, 0xff}},
+        BigFloatByteAdditionInput{{0, 0x80, 0, 0xff, 0xff}, {0x40, 1, 0, 0, 0}, {0x40, 1, 0, 0, 0}, {0xc0, 1, 0, 0, 0}},
+        BigFloatByteAdditionInput{{0x40, 1, 0, 0, 0}, {0, 1, 0, 0xf8, 0xff}, {}, {0x40, 1, 0, 0, 0}}));
+
 struct BigNumConversionInput
 {
     const char *name;

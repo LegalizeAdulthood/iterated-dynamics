@@ -754,7 +754,9 @@ TEST_F(TestBigFloat, stackStorageCrossesSixtyFourKilobytes)
         }
         BigFloatPtr value = bf_stack().allocate_single();
         BigFloat{2.5}.copy_to_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
-        add_bf(value, value, g_bf_x_min.data());
+        copy_bf(g_bf_tmp_copy1.data(), value);
+        copy_bf(g_bf_tmp_copy2.data(), g_bf_x_min.data());
+        unsafe_add_bf(value, g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data());
         EXPECT_GT(big_memory_stats().temporaries, OLD_ARENA_SIZE);
         BigFloat observed_float = BigFloat::from_legacy(value, static_cast<std::size_t>(g_bf_length + 2));
         EXPECT_EQ(3.75L, bf_to_float(observed_float));

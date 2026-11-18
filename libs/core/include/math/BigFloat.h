@@ -157,6 +157,8 @@ BigFloat &neg_bf(BigFloat &r, const BigFloat &n);
 BigFloat &neg_a_bf(BigFloat &r);
 BigFloat &abs_bf(BigFloat &r, const BigFloat &n);
 BigFloat &abs_a_bf(BigFloat &r);
+BigFloat &add_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2);
+BigFloat &add_a_bf(BigFloat &r, const BigFloat &n);
 BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
 BigFloat &float_to_bf(BigFloat &r, LDouble value);

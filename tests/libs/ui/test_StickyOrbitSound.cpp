@@ -99,7 +99,7 @@ int initialize_mandel_sticky_pixel()
         float_to_bf(offset, 1e-40);
         mult_a_bf_int(offset.data(), static_cast<U16>(g_col));
         float_to_bf(g_param_z_bf.x, g_init.x);
-        add_a_bf(g_param_z_bf.x.data(), offset.data());
+        add_a_bf(g_param_z_bf.x, offset);
         float_to_bf(g_param_z_bf.y, g_init.y);
         copy_bf(g_old_z_bf.x, g_param_z_bf.x);
         copy_bf(g_old_z_bf.y, g_param_z_bf.y);

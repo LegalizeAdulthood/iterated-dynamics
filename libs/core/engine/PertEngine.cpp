@@ -816,13 +816,13 @@ void PertEngine::inverted_coordinate(BFComplex &coordinate, const std::complex<d
     sub_bf(delta.data(), g_bf_x_3rd.data(), g_bf_x_min.data());
     delta *= vertical;
     coordinate.x += delta;
-    add_a_bf(coordinate.x.data(), g_bf_x_min.data());
+    add_a_bf(coordinate.x, g_bf_x_min);
     sub_bf(coordinate.y.data(), g_bf_y_3rd.data(), g_bf_y_max.data());
     coordinate.y *= vertical;
     sub_bf(delta.data(), g_bf_y_min.data(), g_bf_y_3rd.data());
     delta *= horizontal;
     coordinate.y += delta;
-    add_a_bf(coordinate.y.data(), g_bf_y_max.data());
+    add_a_bf(coordinate.y, g_bf_y_max);
     g_inversion.apply(coordinate);
     if (g_fractal_type == FractalType::BURNING_SHIP)
     {

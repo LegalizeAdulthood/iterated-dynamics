@@ -169,10 +169,10 @@ TEST_F(TestBigFloatViewportPrecision, subtractsDeepCornersBeforeMachineConversio
 {
     set_corners({{0.25, 0.125}, {0.25, 0.125}, {0.25, 0.125}});
     BigFloat offset{"1e-40"};
-    add_a_bf(g_bf_x_max.data(), offset.data());
+    add_a_bf(g_bf_x_max, offset);
     sub_a_bf(g_bf_x_min.data(), offset.data());
     sub_a_bf(g_bf_x_3rd.data(), offset.data());
-    add_a_bf(g_bf_y_max.data(), offset.data());
+    add_a_bf(g_bf_y_max, offset);
     sub_a_bf(g_bf_y_min.data(), offset.data());
     sub_a_bf(g_bf_y_3rd.data(), offset.data());
     BigFloat x{bf_arena(BigLifetime::TEMPORARY)};

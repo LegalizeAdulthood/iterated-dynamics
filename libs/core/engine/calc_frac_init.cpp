@@ -557,11 +557,11 @@ static bool adjust_to_limits_bf(const double expand)
     b_limit = limit;
     b_expand = expand;
 
-    add_bf(b_center_x.data(), g_bf_x_min.data(), g_bf_x_max.data());
+    add_bf(b_center_x, g_bf_x_min, g_bf_x_max);
     b_center_x = b_center_x.half();
 
     // center_y = (yymin+yymax)/2;
-    add_bf(b_center_y.data(), g_bf_y_min.data(), g_bf_y_max.data());
+    add_bf(b_center_y, g_bf_y_min, g_bf_y_max);
     b_center_y = b_center_y.half();
 
     // if (xxmin == center_x) {
@@ -605,7 +605,7 @@ static bool adjust_to_limits_bf(const double expand)
 
     // corner_x[3] = xxmin+(xxmax-xx3rd);
     sub_bf(b_corner_x[3].data(), g_bf_x_max.data(), g_bf_x_3rd.data());
-    add_a_bf(b_corner_x[3].data(), g_bf_x_min.data());
+    add_a_bf(b_corner_x[3], g_bf_x_min);
 
     // corner_y[0] = yymax;
     copy_bf(b_corner_y[0], g_bf_y_max);
@@ -618,7 +618,7 @@ static bool adjust_to_limits_bf(const double expand)
 
     // corner_y[3] = yymin+(yymax-yy3rd);
     sub_bf(b_corner_y[3].data(), g_bf_y_max.data(), g_bf_y_3rd.data());
-    add_a_bf(b_corner_y[3].data(), g_bf_y_min.data());
+    add_a_bf(b_corner_y[3], g_bf_y_min);
 
     // if caller wants image size adjusted, do that first
     if (expand != 1.0)

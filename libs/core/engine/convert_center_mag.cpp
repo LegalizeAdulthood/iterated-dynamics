@@ -138,10 +138,10 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
         sub_bf(height_bf.data(), g_bf_y_max.data(), g_bf_y_min.data());
         const LDouble height = height_bf.to_float();
         // *ctr_x = (x_min + x_max)/2;
-        add_bf(ctr_x.data(), g_bf_x_min.data(), g_bf_x_max.data());
+        add_bf(ctr_x, g_bf_x_min, g_bf_x_max);
         ctr_x = ctr_x.half();
         // *ctr_y = (y_min + y_max)/2;
-        add_bf(ctr_y.data(), g_bf_y_min.data(), g_bf_y_max.data());
+        add_bf(ctr_y, g_bf_y_min, g_bf_y_max);
         ctr_y = ctr_y.half();
         mag  = 2/height;
         x_mag_factor = static_cast<double>(height / (DEFAULT_ASPECT * width));
@@ -199,10 +199,10 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
 
         // these are the only two variables that must use big precision
         // *ctr_x = (x_min + x_max)/2;
-        add_bf(ctr_x.data(), g_bf_x_min.data(), g_bf_x_max.data());
+        add_bf(ctr_x, g_bf_x_min, g_bf_x_max);
         ctr_x = ctr_x.half();
         // *ctr_y = (y_min + y_max)/2;
-        add_bf(ctr_y.data(), g_bf_y_min.data(), g_bf_y_max.data());
+        add_bf(ctr_y, g_bf_y_min, g_bf_y_max);
         ctr_y = ctr_y.half();
 
         const LDouble height = b * std::sin(tmp_a);
