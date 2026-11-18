@@ -193,7 +193,6 @@ Byte *mult_a_bf10_int(Byte *r, int dec, misc::U16 n);
 Byte *div_a_bf10_int(Byte *r, int dec, misc::U16 n);
 std::string bf10_to_string_e(const Byte *n, int dec);
 std::string bf10_to_string_f(const Byte *n, int dec);
-BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx);
 bool is_bf_zero(const Byte *n);
 int convert_bf(Byte *new_num, const Byte *old_num, int new_bf_len, int old_bf_len);
 // Decode a stored mantissa and exponent; return the next packed value.

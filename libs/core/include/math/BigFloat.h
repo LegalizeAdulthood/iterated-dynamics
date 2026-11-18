@@ -177,6 +177,7 @@ BigFloat &div_a_bf_int(BigFloat &r, misc::U16 u);
 BigFloat &exp_bf(BigFloat &r, const BigFloat &n);
 BigFloat &ln_bf(BigFloat &r, const BigFloat &n);
 BigFloat &sin_cos_bf(BigFloat &s, BigFloat &c, const BigFloat &n);
+BigFloat &atan2_bf(BigFloat &r, const BigFloat &ny, const BigFloat &nx);
 BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
 BigFloat &float_to_bf(BigFloat &r, LDouble value);

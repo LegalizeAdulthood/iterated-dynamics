@@ -284,7 +284,7 @@ TEST_P(TestBigFloatWorkspaceRamp, preservesOperandsAndRestoresBorrowedWorkspaceW
     }
     else
     {
-        atan2_bf(result.data(), input.data(), one.data());
+        atan2_bf(result, input, one);
     }
 
     EXPECT_EQ(length, g_bf_length);

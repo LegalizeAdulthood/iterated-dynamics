@@ -349,7 +349,7 @@ TEST_P(TestBigComplex, realValueFunctionsPreserveTheirOperands)
     EXPECT_EQ(result.x, exp(input.y));
     ln_bf(result.x, raw.x);
     expect_precision(result.x, log(input.x));
-    atan2_bf(result.x.data(), raw.y.data(), raw.x.data());
+    atan2_bf(result.x, raw.y, raw.x);
     expect_precision(result.x, atan2(input.y, input.x));
     sin_cos_bf(result.x, result.y, raw.y);
     const auto [sine, cosine] = sin_cos(input.y);

@@ -28,24 +28,6 @@ void bf_hex_dump(const BigFloat &r)
     std::printf(" e %04hX\n", static_cast<S16>(BIG_ACCESS16(r.data() + g_bf_length)));
 }
 
-/**********************************************************************/
-// The rest of the functions are "safe" versions of the routines that
-// have side effects which alter the parameters.
-// Most bf routines change values of parameters, not just the sign.
-/**********************************************************************/
-
-
-/**********************************************************************/
-BigFloatPtr atan2_bf(BigFloatPtr r, BigFloatPtr ny, BigFloatPtr nx)
-{
-    copy_bf(g_bf_tmp_copy1.data(), ny);
-    copy_bf(g_bf_tmp_copy2.data(), nx);
-    unsafe_atan2_bf(r, g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data(), g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data(),
-        g_bf_tmp3.data(), g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data(), g_bf_tmp_copy1.data(),
-        g_bf_tmp_copy2.data());
-    return r;
-}
-
 /********************************************************************/
 // extracts the mantissa and exponent of f
 // finds m and n such that 1<=|m|<10 and f = m*10^n

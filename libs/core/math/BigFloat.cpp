@@ -397,11 +397,7 @@ std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
 BigFloat BigFloat::atan2(const BigFloat &x) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    copy_bf(g_bf_tmp_copy1.data(), data());
-    copy_bf(g_bf_tmp_copy2.data(), x.data());
-    unsafe_atan2_bf(result.data(), g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data(), g_bf_pi.data(), g_bf_tmp1.data(),
-        g_bf_tmp2.data(), g_bf_tmp3.data(), g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data(), g_bf_tmp_copy1.data(),
-        g_bf_tmp_copy2.data());
+    atan2_bf(result, *this, x);
     return result;
 }
 
@@ -591,6 +587,16 @@ BigFloat &sin_cos_bf(BigFloat &s, BigFloat &c, const BigFloat &n)
     copy_bf(g_bf_tmp_copy1.data(), n.data());
     unsafe_sin_cos_bf(s.data(), c.data(), g_bf_tmp_copy1.data(), g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
     return s;
+}
+
+BigFloat &atan2_bf(BigFloat &r, const BigFloat &ny, const BigFloat &nx)
+{
+    copy_bf(g_bf_tmp_copy1.data(), ny.data());
+    copy_bf(g_bf_tmp_copy2.data(), nx.data());
+    unsafe_atan2_bf(r.data(), g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data(), g_bf_pi.data(), g_bf_tmp1.data(),
+        g_bf_tmp2.data(), g_bf_tmp3.data(), g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data(), g_bf_tmp_copy1.data(),
+        g_bf_tmp_copy2.data());
+    return r;
 }
 
 BigFloat &str_to_bf(BigFloat &r, const std::string_view text)
