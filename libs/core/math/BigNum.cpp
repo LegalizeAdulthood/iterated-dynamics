@@ -5,8 +5,6 @@
 //
 #include <math/BigNum.h>
 
-#include "BigStorage.h"
-
 #include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
@@ -51,11 +49,6 @@ BigArena::Allocation native_storage(BigArena &arena, const LDouble value)
 }
 
 } // namespace
-
-void reduce_bn_product(Byte *value)
-{
-    std::memmove(value, msb_bn(value), g_bn_length);
-}
 
 BigNum::BigNum() noexcept = default;
 

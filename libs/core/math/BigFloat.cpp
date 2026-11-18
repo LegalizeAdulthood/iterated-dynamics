@@ -5,8 +5,7 @@
 //
 #include <math/BigFloat.h>
 
-#include "BigStorage.h"
-
+#include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigNum.h>
 
@@ -91,11 +90,6 @@ BigArena::Allocation native_storage(BigArena &arena, const LDouble value)
 }
 
 } // namespace
-
-void reduce_bf_product(Byte *value)
-{
-    std::memmove(value, value + g_padding, g_bf_length + 2);
-}
 
 /********************************************************************/
 // bf_hexdump() - for debugging, dumps to stdout
