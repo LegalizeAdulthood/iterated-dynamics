@@ -1617,6 +1617,59 @@ int cmp_bf(const Byte *n1, const Byte *n2)
     return 0;
 }
 
+// The following used to be in bigfltc.c
+/********************************************************************/
+// normalize big float
+Byte *norm_bf(Byte *r)
+{
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+
+    // check for overflow
+    Byte hi_byte = r[g_bf_length - 1];
+    if (hi_byte != 0x00 && hi_byte != 0xFF)
+    {
+        std::memmove(r, r + 1, g_bf_length - 1);
+        r[g_bf_length - 1] = static_cast<Byte>(hi_byte & 0x80 ? 0xFF : 0x00);
+        BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp) + static_cast<S16>(1)); // exp
+    }
+
+    // check for underflow
+    else
+    {
+        int scale;
+        for (scale = 2; scale < g_bf_length && r[g_bf_length - scale] == hi_byte; scale++)
+        {
+            // do nothing
+        }
+        if (scale == g_bf_length && hi_byte == 0) // zero
+        {
+            BIG_SET_S16(r_exp, 0);
+        }
+        else
+        {
+            scale -= 2;
+            if (scale > 0) // it did underflow
+            {
+                std::memmove(r + scale, r, g_bf_length - scale - 1);
+                std::memset(r, 0, scale);
+                BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp) - static_cast<S16>(scale)); // exp
+            }
+        }
+    }
+
+    return r;
+}
+
+/********************************************************************/
+// normalize big float with forced sign
+// positive = 1, force to be positive
+//          = 0, force to be negative
+void norm_sign_bf(Byte *r, const bool positive)
+{
+    norm_bf(r);
+    r[g_bf_length - 1] = static_cast<Byte>(positive ? 0x00 : 0xFF);
+}
+
 // r = -n
 Byte *neg_bf(Byte *r, const Byte *n)
 {

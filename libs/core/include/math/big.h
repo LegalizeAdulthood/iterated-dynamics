@@ -205,8 +205,8 @@ LDouble scale_value(LDouble f, LDouble b , int n);
 LDouble extract_10(LDouble f, int *exp_ptr);
 LDouble scale_10(LDouble f, int n);
 
-BigFloatPtr norm_bf(BigFloatPtr r);
-void norm_sign_bf(BigFloatPtr r, bool positive);
+Byte *norm_bf(Byte *r);
+void norm_sign_bf(Byte *r, bool positive);
 Byte *max_bf(Byte *r);
 int cmp_bf(const Byte *n1, const Byte *n2);
 bool is_bf_neg(const Byte *n);
