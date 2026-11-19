@@ -1034,10 +1034,10 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
     g_temp_sqr_x = g_temp_sqr_y = 0.0;
     if (input.math == BFMathType::BIG_NUM)
     {
-        float_to_bn(g_param_z_bn.x, 2.0);
-        float_to_bn(g_param_z_bn.y, input.imag);
-        clear_bn(g_old_z_bn.x);
-        clear_bn(g_old_z_bn.y);
+        g_param_z_bn.x = 2;
+        g_param_z_bn.y = input.imag;
+        g_old_z_bn.x = 0;
+        g_old_z_bn.y = 0;
         square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
         square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
     }
@@ -1335,7 +1335,7 @@ void PerturbationIterationTest::initialize_reference(
         {
             if (g_bf_math == BFMathType::BIG_NUM)
             {
-                float_to_bn(g_close_enough_bn, g_close_enough);
+                g_close_enough_bn = g_close_enough;
             }
             else
             {
@@ -4309,6 +4309,10 @@ struct StarTrailJuliaStep
     double square_x;
     double square_y;
     double magnitude;
+    BNComplex fixed_input;
+    BNComplex fixed_output;
+    BNComplex fixed_cache_before;
+    BNComplex fixed_cache_after;
     std::vector<Byte> input_bytes;
     std::vector<Byte> output_bytes;
     std::vector<Byte> cache_x_before;
@@ -4333,10 +4337,9 @@ int record_star_trail_julia()
     step.magnitude = g_magnitude;
     if (big_num)
     {
-        step.input_bytes.assign(g_old_z_bn.x.data(), g_old_z_bn.x.data() + g_bn_length);
-        step.input_bytes.insert(step.input_bytes.end(), g_old_z_bn.y.data(), g_old_z_bn.y.data() + g_bn_length);
-        step.cache_x_before.assign(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_bn_length);
-        step.cache_y_before.assign(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_bn_length);
+        step.fixed_input = g_old_z_bn;
+        step.fixed_cache_before.x = g_tmp_sqr_x_bn;
+        step.fixed_cache_before.y = g_tmp_sqr_y_bn;
     }
     const int escaped = big_num ? julia_orbit_bn() : julia_orbit();
     step.output = big_num
@@ -4344,10 +4347,9 @@ int record_star_trail_julia()
         : g_new_z;
     if (big_num)
     {
-        step.output_bytes.assign(g_new_z_bn.x.data(), g_new_z_bn.x.data() + g_bn_length);
-        step.output_bytes.insert(step.output_bytes.end(), g_new_z_bn.y.data(), g_new_z_bn.y.data() + g_bn_length);
-        step.cache_x_after.assign(g_tmp_sqr_x_bn.data(), g_tmp_sqr_x_bn.data() + g_bn_length);
-        step.cache_y_after.assign(g_tmp_sqr_y_bn.data(), g_tmp_sqr_y_bn.data() + g_bn_length);
+        step.fixed_output = g_new_z_bn;
+        step.fixed_cache_after.x = g_tmp_sqr_x_bn;
+        step.fixed_cache_after.y = g_tmp_sqr_y_bn;
     }
     s_star_trail_julia_steps.push_back(std::move(step));
     return escaped;
@@ -4474,9 +4476,8 @@ TEST_P(TestBigNumStarTrailContinuation, preservesCanonicalContinuationCachesAndS
     if (input.precise)
     {
         const BigNum coordinate = BigNum{1} + BigNum{0x1p-80};
-        std::vector<Byte> expected(coordinate.data(), coordinate.data() + g_bn_length);
-        expected.insert(expected.end(), coordinate.data(), coordinate.data() + g_bn_length);
-        EXPECT_EQ(expected, big_num.steps.front().input_bytes);
+        const BNComplex expected{coordinate, coordinate};
+        EXPECT_EQ(expected, big_num.steps.front().fixed_input);
     }
     EXPECT_EQ(big_num.steps.back().output, big_num.final_observation);
     if (input.shared_steps == 15)
@@ -4510,9 +4511,8 @@ TEST_P(TestBigNumStarTrailContinuation, preservesCanonicalContinuationCachesAndS
         SCOPED_TRACE(i);
         const StarTrailJuliaStep &previous = big_num.steps[i - 1];
         const StarTrailJuliaStep &current = big_num.steps[i];
-        EXPECT_EQ(previous.output_bytes, current.input_bytes);
-        EXPECT_EQ(previous.cache_x_after, current.cache_x_before);
-        EXPECT_EQ(previous.cache_y_after, current.cache_y_before);
+        EXPECT_EQ(previous.fixed_output, current.fixed_input);
+        EXPECT_EQ(previous.fixed_cache_after, current.fixed_cache_before);
         if (i > 1)
         {
             EXPECT_EQ(previous.output, current.observation);
@@ -8843,7 +8843,7 @@ void TestDeepPeriodicity::SetUp()
     ASSERT_EQ(GetParam().math, g_bf_math);
     if (GetParam().math == BFMathType::BIG_NUM)
     {
-        float_to_bn(g_close_enough_bn, GetParam().tolerance);
+        g_close_enough_bn = GetParam().tolerance;
     }
     else
     {
@@ -8920,13 +8920,13 @@ void TestPeriodicityReplay::SetUp()
         init_bf_dec(1610);
         m_big_float = true;
         ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
-        clear_bn(g_x_min_bn);
-        clear_bn(g_y_max_bn);
-        clear_bn(g_delta_x_bn);
-        clear_bn(g_delta_y_bn);
-        clear_bn(g_delta2_x_bn);
-        clear_bn(g_delta2_y_bn);
-        float_to_bn(g_close_enough_bn, g_close_enough);
+        g_x_min_bn = 0;
+        g_y_max_bn = 0;
+        g_delta_x_bn = 0;
+        g_delta_y_bn = 0;
+        g_delta2_x_bn = 0;
+        g_delta2_y_bn = 0;
+        g_close_enough_bn = g_close_enough;
         g_dispatch.set_per_pixel(mandel_per_pixel_bn);
         g_dispatch.set_orbit_calc(julia_orbit_bn);
     }

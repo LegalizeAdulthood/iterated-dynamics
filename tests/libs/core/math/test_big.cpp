@@ -2561,6 +2561,15 @@ TEST_P(TestBigNumByteCanonicalProduct, discardsLowMultiplyBitsUsingTheExistingWi
     EXPECT_EQ(original, quantum);
     EXPECT_EQ(original_half, half);
     EXPECT_EQ(0xa5, product.back());
+
+    std::vector<Byte> canonical(g_bn_length + 1, 0xa5);
+    copy_bn(canonical.data(), msb_bn(product.data()));
+    EXPECT_EQ(canonical.data(), double_a_bn(canonical.data()));
+
+    std::vector<Byte> doubled(g_bn_length, negative ? Byte{0xff} : Byte{0});
+    doubled.front() = negative ? Byte{0xfe} : Byte{0};
+    doubled.push_back(0xa5);
+    EXPECT_EQ(doubled, canonical);
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigNumByteCanonicalProduct,
