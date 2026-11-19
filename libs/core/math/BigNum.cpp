@@ -287,7 +287,7 @@ BigNum &BigNum::operator/=(const BigNum &right)
 
 BigNum &BigNum::operator/=(const U16 right)
 {
-    div_a_bn_int(*this, right);
+    div_a_bn_int(data(), right);
     return *this;
 }
 
@@ -325,7 +325,8 @@ BigNum BigNum::operator*(const U16 right) const
 BigNum BigNum::operator/(const BigNum &right) const
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
-    div_bn(result, *this, right);
+    div_bn(result.data(), data(), right.data(), bn_product_scratch().data(), g_bn_tmp2.data(), g_bn_tmp3.data(),
+        g_bn_tmp_copy1.data(), g_bn_tmp_copy2.data());
     return result;
 }
 
@@ -455,31 +456,6 @@ BigNum &sub_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
     return r;
 }
 
-BigNum &div_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
-{
-    div_bn(r.data(), n1.data(), n2.data(), bn_product_scratch().data(), g_bn_tmp2.data(), g_bn_tmp3.data(),
-        g_bn_tmp_copy1.data(), g_bn_tmp_copy2.data());
-    return r;
-}
-
-BigNum &unsafe_inv_bn(BigNum &r, BigNum &n)
-{
-    unsafe_inv_bn(r.data(), n.data(), bn_product_scratch().data(), g_bn_tmp2.data(), g_bn_tmp3.data());
-    return r;
-}
-
-BigNum &unsafe_div_bn_int(BigNum &r, BigNum &n, const U16 u)
-{
-    unsafe_div_bn_int(r.data(), n.data(), u);
-    return r;
-}
-
-BigNum &div_a_bn_int(BigNum &r, const U16 u)
-{
-    div_a_bn_int(r.data(), u);
-    return r;
-}
-
 BigNum abs_bn(const BigNum &source)
 {
     BigNum result{bn_arena(BigLifetime::WORKING)};
@@ -531,18 +507,6 @@ bool is_bn_zero(const BigNum &n)
 bool is_bn_not_zero(const BigNum &n)
 {
     return is_bn_not_zero(n.data());
-}
-
-BigNum &neg_bn(BigNum &r, const BigNum &n)
-{
-    neg_bn(r.data(), n.data());
-    return r;
-}
-
-BigNum &neg_a_bn(BigNum &r)
-{
-    neg_a_bn(r.data());
-    return r;
 }
 
 BigNum &double_bn(BigNum &r, const BigNum &n)

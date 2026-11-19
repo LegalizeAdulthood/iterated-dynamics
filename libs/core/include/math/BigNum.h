@@ -106,10 +106,6 @@ private:
 };
 
 BigNum sqr(const BigNum &value);
-BigNum &div_bn(BigNum &r, const BigNum &n1, const BigNum &n2);
-BigNum &unsafe_inv_bn(BigNum &r, BigNum &n);
-BigNum &unsafe_div_bn_int(BigNum &r, BigNum &n, misc::U16 u);
-BigNum &div_a_bn_int(BigNum &r, misc::U16 u);
 long bn_to_int(const BigNum &n);
 BigNum &str_to_bn(BigNum &r, std::string_view text);
 BigNum &int_to_bn(BigNum &r, long value);
@@ -121,8 +117,6 @@ BigNum &max_bn(BigNum &r);
 bool is_bn_neg(const BigNum &n);
 bool is_bn_zero(const BigNum &n);
 bool is_bn_not_zero(const BigNum &n);
-BigNum &neg_bn(BigNum &r, const BigNum &n);
-BigNum &neg_a_bn(BigNum &r);
 BigNum &double_bn(BigNum &r, const BigNum &n);
 BigNum &half_bn(BigNum &r, const BigNum &n);
 BigNum &half_a_bn(BigNum &r);
