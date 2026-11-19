@@ -270,43 +270,15 @@ MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_l
     m_int_length(int_length),
     m_padding(padding)
 {
-    const auto init_big_num = [this](BigNum &target)
-    {
-        BigNum value{big_num.working};
-        std::destroy_at(&target);
-        ::new (&target) BigNum{std::move(value)};
-    };
-    init_bn_product_scratch(big_num.working);
-    init_big_num(g_bn_tmp2);
-    init_big_num(g_bn_tmp3);
-    g_bn_tmp_copy1 = big_num.working.allocate_double();
-    g_bn_tmp_copy2 = big_num.working.allocate_double();
-    init_big_num(g_old_z_bn.x);
-    init_big_num(g_old_z_bn.y);
-    init_big_num(g_tmp_sqr_x_bn);
-    init_big_num(g_tmp_sqr_y_bn);
-    init_big_num(g_bn_tmp);
-    const auto init_big_float = [this](BigFloat &target)
-    {
-        BigFloat value{big_float.working};
-        std::destroy_at(&target);
-        ::new (&target) BigFloat{std::move(value)};
-    };
-    init_big_float(g_bf_tmp1);
-    init_big_float(g_bf_tmp2);
-    init_big_float(g_bf_tmp3);
-    init_big_float(g_bf_tmp4);
-    init_big_float(g_bf_tmp5);
-    init_big_float(g_bf_tmp6);
-    g_bf_tmp_copy1 = big_float.working.allocate_double();
-    g_bf_tmp_copy2 = big_float.working.allocate_double();
-    init_big_float(g_bf_pi);
 }
 
 MathArenas::~MathArenas()
 {
-    // The private scratch owner has already released its allocation at exit.
-    unbind(false);
+    if (m_bound)
+    {
+        // The private scratch owner has already released its allocation at exit.
+        unbind(false);
+    }
 }
 
 void MathArenas::change_precision(const int bn_length, const int bf_length, const int int_length, const int padding,
@@ -424,7 +396,6 @@ void MathArenas::bind(const bool preserve_parameters)
         }
         std::memset(target.data(), 0, big_float.working.block_size());
     };
-    init_big_float(g_bf_pi);
     init_big_float(g_bf_tmp1);
     init_big_float(g_bf_tmp2);
     init_big_float(g_bf_tmp3);
@@ -441,6 +412,7 @@ void MathArenas::bind(const bool preserve_parameters)
     };
     init_big_float_copy(g_bf_tmp_copy1);
     init_big_float_copy(g_bf_tmp_copy2);
+    init_big_float(g_bf_pi);
     g_delta_x_bf = 0;
     g_delta_y_bf = 0;
     g_delta2_x_bf = 0;
