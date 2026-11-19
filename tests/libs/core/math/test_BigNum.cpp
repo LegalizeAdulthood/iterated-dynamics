@@ -159,16 +159,9 @@ namespace
 
 struct BigNumIntegerInput
 {
-    const char *name;
-    std::uint32_t integer_bits;
-    bool fractional;
+    LDouble value;
     std::array<long, 3> expected;
 };
-
-void PrintTo(const BigNumIntegerInput &input, std::ostream *out)
-{
-    *out << input.name;
-}
 
 } // namespace
 
@@ -188,55 +181,39 @@ void TestBigNumIntegerObservation::SetUp()
     ASSERT_EQ(integer_length, g_int_length);
 }
 
-TEST_P(TestBigNumIntegerObservation, extractsIntegerBitsWithoutChangingSourceStorageOrAllocating)
+TEST_P(TestBigNumIntegerObservation, extractsIntegerBitsWithoutChangingTheValueOrAllocating)
 {
     const BigNumIntegerInput &input = std::get<2>(GetParam());
-    std::vector<Byte> bytes(g_bn_length, input.fractional ? Byte{0x80} : Byte{0});
-    for (int byte = 0; byte < g_int_length; ++byte)
-    {
-        bytes[g_bn_length - g_int_length + byte] = static_cast<Byte>(input.integer_bits >> (8 * byte));
-    }
-    BigStackSaver saved;
     const BigStackMark mark = save_stack();
     BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
     BigArena::Allocation reservation = temporary.allocate_single();
-    const Byte *const address = reservation.data();
+    const BigArena::Index index = reservation.index();
     reservation.reset();
+    const BigNum original{input.value};
     const std::size_t working_high_water = bn_arena(BigLifetime::WORKING).high_water_mark();
     {
-        BigNum value = BigNum::from_legacy(temporary, bytes.data(), bytes.size());
-        const std::size_t stride = temporary.block_size();
-        std::fill(value.data() + g_bn_length, value.data() + stride, Byte{0xa5});
-        const std::vector<Byte> original(value.data(), value.data() + stride);
+        const BigNum value{temporary, input.value};
         const std::size_t high_water = temporary.high_water_mark();
-        const BigNum &source = value;
 
-        const long result = bn_to_int(source);
+        const long result = bn_to_int(value);
 
         const int expected_index = g_int_length == 1 ? 0 : g_int_length == 2 ? 1 : 2;
         EXPECT_EQ(input.expected[expected_index], result);
-        EXPECT_EQ(address, value.data());
-        EXPECT_EQ(original, std::vector<Byte>(value.data(), value.data() + stride));
-        EXPECT_EQ(bytes, encoded_value(value));
+        EXPECT_EQ(original, value);
         EXPECT_EQ(working_high_water, bn_arena(BigLifetime::WORKING).high_water_mark());
         EXPECT_EQ(high_water, temporary.high_water_mark());
         EXPECT_EQ(mark, save_stack());
     }
+    const BigArena::Allocation reused = temporary.allocate_single();
+    EXPECT_EQ(index, reused.index());
     EXPECT_EQ(mark, save_stack());
-    BigArena::Allocation reused = temporary.allocate_single();
-    EXPECT_EQ(address, reused.data());
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigNumIntegerObservation,
     testing::Combine(testing::Values(4, 8, 12, 60, 64, 672), testing::Values(1, 2, 4),
-        testing::Values(BigNumIntegerInput{"Zero", 0, false, {0, 0, 0}}, BigNumIntegerInput{"One", 1, false, {1, 1, 1}},
-            BigNumIntegerInput{"BelowSign", 0x7fffffff, false, {255, 65535, 2147483647}},
-            BigNumIntegerInput{"AtSign", 0x80000000, false, {0, 0, static_cast<long>(std::uint32_t{0x80000000})}},
-            BigNumIntegerInput{
-                "AllOnes", 0xffffffff, false, {255, 65535, static_cast<long>(std::uint32_t{0xffffffff})}},
-            BigNumIntegerInput{"PositiveFraction", 1, true, {1, 1, 1}},
-            BigNumIntegerInput{
-                "NegativeFraction", 0xfffffffe, true, {254, 65534, static_cast<long>(std::uint32_t{0xfffffffe})}})));
+        testing::Values(BigNumIntegerInput{0, {0, 0, 0}}, BigNumIntegerInput{1, {1, 1, 1}},
+            BigNumIntegerInput{1.5L, {1, 1, 1}},
+            BigNumIntegerInput{-2, {254, 65534, static_cast<long>(std::uint32_t{0xfffffffe})}})));
 
 namespace
 {
@@ -263,30 +240,6 @@ void PrintTo(const BigNumScalarInput &input, std::ostream *out)
     *out << input.text;
 }
 
-std::vector<Byte> scalar_bytes(const long magnitude, const bool half, const bool negative)
-{
-    std::vector<Byte> bytes(g_bn_length);
-    for (int byte = 0; byte < g_int_length; ++byte)
-    {
-        bytes[g_bn_length - g_int_length + byte] =
-            static_cast<Byte>(static_cast<std::uint64_t>(magnitude) >> (8 * byte));
-    }
-    if (half && g_bn_length > g_int_length)
-    {
-        bytes[g_bn_length - g_int_length - 1] = 0x80;
-    }
-    if (negative)
-    {
-        unsigned carry = 1;
-        for (Byte &byte : bytes)
-        {
-            const unsigned sum = (byte ^ 0xffU) + carry;
-            byte = static_cast<Byte>(sum);
-            carry = sum >> 8;
-        }
-    }
-    return bytes;
-}
 
 } // namespace
 
@@ -307,58 +260,29 @@ void TestBigNumScalarInterfaces::SetUp()
     ASSERT_EQ(integer_length, g_int_length);
 }
 
-TEST_P(TestBigNumScalarInterfaces, preservesBytesIdentityRestorationFormattingAndExistingWorkspace)
+TEST_P(TestBigNumScalarInterfaces, observesConstructedValuesWithoutChangingTheSourceOrAllocating)
 {
     const BigNumScalarInput &input = std::get<2>(GetParam());
     const BigNumScalarCall call = std::get<3>(GetParam());
     const bool half = call != BigNumScalarCall::INTEGER && input.half;
     const bool has_fraction = half && g_bn_length > g_int_length;
-    const LDouble native = (input.negative ? -1 : 1) * (input.magnitude + (input.half ? 0.5L : 0.0L));
-    LDouble expected_float = (input.negative ? -1 : 1) * (input.magnitude + (has_fraction ? 0.5L : 0.0L));
-    if (expected_float == 0)
+    const LDouble native = (input.negative ? -1 : 1) * (input.magnitude + (half ? 0.5L : 0.0L));
+    LDouble expected = (input.negative ? -1 : 1) * (input.magnitude + (has_fraction ? 0.5L : 0.0L));
+    if (expected == 0)
     {
-        expected_float = 0;
+        expected = 0;
     }
-    const std::vector<Byte> expected = scalar_bytes(input.magnitude, half, input.negative);
-    BigNum value{bn_arena(BigLifetime::WORKING)};
-    const Byte *const address = value.data();
-    const std::size_t stride = value.arena().block_size();
-    std::fill_n(value.data(), stride, Byte{0xa5});
+    const BigNum value = call == BigNumScalarCall::PARSE ? BigNum{std::string_view{input.text}} : BigNum{native};
+    const BigNum original{value};
     const std::size_t high_water = value.arena().high_water_mark();
     const BigStackMark mark = save_stack();
 
-    if (call == BigNumScalarCall::PARSE)
-    {
-        EXPECT_EQ(&value, &str_to_bn(value, input.text));
-    }
-    else if (call == BigNumScalarCall::INTEGER)
-    {
-        EXPECT_EQ(&value, &int_to_bn(value, input.negative ? -input.magnitude : input.magnitude));
-    }
-    else
-    {
-        EXPECT_EQ(&value, &float_to_bn(value, native));
-    }
+    const LDouble observed = value.to_float();
 
-    EXPECT_EQ(expected, encoded_value(value));
-    std::fill_n(g_bn_tmp_copy1.data(), 2 * stride, Byte{0x5a});
-    EXPECT_EQ(expected_float, bn_to_float(value));
-    EXPECT_EQ(std::signbit(expected_float), std::signbit(bn_to_float(value)));
-    EXPECT_EQ(std::vector<Byte>(2 * stride, 0x5a),
-        std::vector<Byte>(g_bn_tmp_copy1.data(), g_bn_tmp_copy1.data() + 2 * stride));
-    const BigNum &source = value;
-    EXPECT_EQ(expected_float, source.to_float());
-    EXPECT_EQ(expected, std::vector<Byte>(g_bn_tmp_copy1.data(), g_bn_tmp_copy1.data() + g_bn_length));
-    EXPECT_EQ(std::vector<Byte>(2 * stride - g_bn_length, 0x5a),
-        std::vector<Byte>(g_bn_tmp_copy1.data() + g_bn_length, g_bn_tmp_copy1.data() + 2 * stride));
-    std::fill_n(g_bn_tmp_copy2.data(), 2 * stride, Byte{0x3c});
-    EXPECT_EQ(has_fraction ? input.fractional_text : input.integer_text, bn_to_string(source, 8));
-    EXPECT_EQ(std::vector<Byte>(2 * stride - g_bn_length, 0x3c),
-        std::vector<Byte>(g_bn_tmp_copy2.data() + g_bn_length, g_bn_tmp_copy2.data() + 2 * stride));
-    EXPECT_EQ(expected, encoded_value(value));
-    EXPECT_EQ(address, value.data());
-    EXPECT_EQ(std::vector<Byte>(stride - g_bn_length, 0xa5),
-        std::vector<Byte>(value.data() + g_bn_length, value.data() + stride));
+    EXPECT_EQ(expected, observed);
+    EXPECT_EQ(std::signbit(expected), std::signbit(observed));
+    EXPECT_EQ(has_fraction ? input.fractional_text : input.integer_text, value.to_string(8));
+    EXPECT_EQ(original, value);
     EXPECT_EQ(high_water, value.arena().high_water_mark());
     EXPECT_EQ(mark, save_stack());
 }
@@ -400,46 +324,15 @@ void TestBigNumLayout::SetUp()
     ASSERT_EQ(GetParam(), g_int_length);
 }
 
-TEST_P(TestBigNumLayout, integerScalarMaximumRetainsLowIntegerBytes)
+
+TEST_P(TestBigNumLayout, formattingPreservesTheValue)
 {
-    const long native = std::numeric_limits<long>::max();
-    std::vector<Byte> expected(g_bn_length);
-    for (int byte = 0; byte < g_int_length; ++byte)
-    {
-        expected[g_bn_length - g_int_length + byte] =
-            static_cast<Byte>(static_cast<std::uint64_t>(native) >> (8 * byte));
-    }
-    BigNum value{bn_arena(BigLifetime::WORKING)};
+    const BigNum value{"-12.5"};
+    const BigNum original{value};
 
-    EXPECT_EQ(&value, &int_to_bn(value, native));
-
-    EXPECT_EQ(expected, encoded_value(value));
-}
-
-TEST_P(TestBigNumLayout, integerScalarMinimumRetainsLowIntegerBytes)
-{
-    const long native = std::numeric_limits<long>::min();
-    std::vector<Byte> expected(g_bn_length);
-    for (int byte = 0; byte < g_int_length; ++byte)
-    {
-        expected[g_bn_length - g_int_length + byte] =
-            static_cast<Byte>(static_cast<std::uint64_t>(native) >> (8 * byte));
-    }
-    BigNum value{bn_arena(BigLifetime::WORKING)};
-
-    EXPECT_EQ(&value, &int_to_bn(value, native));
-
-    EXPECT_EQ(expected, encoded_value(value));
-}
-
-TEST_P(TestBigNumLayout, legacyFormattingPreservesInputBytes)
-{
-    BigNum value{"-12.5"};
-    const std::vector<Byte> original = encoded_value(value);
-
-    EXPECT_EQ("-12.5", bn_to_string(value, 8));
-    EXPECT_EQ("-12.5", bn_to_string(value, 0));
-    EXPECT_EQ(original, encoded_value(value));
+    EXPECT_EQ("-12.5", value.to_string(8));
+    EXPECT_EQ("-12.5", value.to_string(0));
+    EXPECT_EQ(original, value);
 }
 
 TEST_F(TestBigNumValue, zeroConstructionLeavesTheLegacyStackUnchanged)
@@ -473,20 +366,23 @@ TEST_F(TestBigNumValue, assignsNativeScalarsWithoutSharingCopies)
     EXPECT_EQ("-7.", value.to_string());
 }
 
-TEST_F(TestBigNumValue, supportsSmallestAndLargestLegacyLayouts)
+class TestBigNumConstructionPrecision : public TestBigNumValue, public testing::WithParamInterface<int>
 {
-    for (const int length : {4, 672})
-    {
-        SCOPED_TRACE(length);
-        init_bf_length(length);
+};
 
-        const BigNum value{"-1.25"};
+TEST_P(TestBigNumConstructionPrecision, constructsAndConvertsAtTheSelectedPrecision)
+{
+    const int length = GetParam();
+    init_bf_length(length);
 
-        EXPECT_EQ("-1.25", value.to_string(8));
-        EXPECT_EQ(static_cast<std::size_t>(length), encoded_value(value).size());
-        EXPECT_EQ(encoded_value(value), encoded_value(BigNum{BigFloat{value}}));
-    }
+    const BigNum value{"-1.25"};
+
+    EXPECT_EQ("-1.25", value.to_string(8));
+    EXPECT_EQ(static_cast<std::size_t>(length), value.arena().value_size());
+    EXPECT_EQ(value, BigNum{BigFloat{value}});
 }
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumConstructionPrecision, testing::Values(4, 672));
 
 TEST_F(TestBigNumValue, importedBytesSurviveArenaRewindAndReuse)
 {
@@ -603,23 +499,18 @@ TEST_F(TestBigNumValue, rejectsNonfiniteScalarInputWithoutChangingTheValue)
 TEST_F(TestBigNumValue, formattingPreservesInputAndRejectsNegativeDigitCounts)
 {
     const BigNum value{"-1.25"};
-    const auto original = encoded_value(value);
+    const BigNum original{value};
 
     EXPECT_EQ("-1.25", value.to_string(8));
     EXPECT_EQ("-1.25", value.to_string());
     EXPECT_THROW(value.to_string(-1), std::invalid_argument);
-    EXPECT_EQ(original, encoded_value(value));
+    EXPECT_EQ(original, value);
 }
 
 TEST_P(TestBigNumLayout, constructorsUseTheActiveFixedPointLayout)
 {
-    const std::size_t ones_byte = static_cast<std::size_t>(g_bn_length - g_int_length);
-    std::vector<Byte> expected(static_cast<std::size_t>(g_bn_length));
-    expected[ones_byte] = 1;
-    expected[ones_byte - 1] = 0x40;
-
-    EXPECT_EQ(expected, encoded_value(BigNum{1.25L}));
-    EXPECT_EQ(expected, encoded_value(BigNum{"1.25"}));
+    EXPECT_EQ(1.25L, BigNum{1.25L}.to_float());
+    EXPECT_EQ(1.25L, BigNum{"1.25"}.to_float());
 }
 
 TEST_P(TestBigNumLayout, explicitConversionsPreserveBitsBeyondMachinePrecision)
@@ -1153,31 +1044,6 @@ TEST_F(TestBigNumValue, comparisonsReadNumericalValuesWithoutChangingOperands)
     }
 }
 
-TEST_P(TestBigNumProducts, constMachineConversionRetainsLegacyResultsAndInputBytes)
-{
-    std::vector<std::vector<Byte>> inputs{encoded_value(BigNum{0}),
-        encoded_value(BigNum{"-1.2345678901234567890123456789"}),
-        encoded_value(BigNum{"1.2345678901234567890123456789"})};
-    inputs.emplace_back(g_bn_length, 0);
-    inputs.back().front() = 1;
-    inputs.emplace_back(g_bn_length, 0xff);
-    inputs.emplace_back(g_bn_length, 0);
-    inputs.back().back() = 0x80;
-    inputs.emplace_back(g_bn_length, 0xff);
-    inputs.back().back() = 0x7f;
-    for (const auto &bytes : inputs)
-    {
-        const BigNum value = BigNum::from_legacy(bn_arena(BigLifetime::PERSISTENT), bytes.data(), bytes.size());
-        BigNum legacy = BigNum::from_legacy(bytes.data(), bytes.size());
-        const LDouble expected = bn_to_float(legacy);
-
-        const LDouble actual = value.to_float();
-
-        EXPECT_EQ(expected, actual);
-        EXPECT_EQ(std::signbit(expected), std::signbit(actual));
-        EXPECT_EQ(bytes, encoded_value(value));
-    }
-}
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumProducts, testing::Values(4, 8, 12, 672));
 
@@ -2341,16 +2207,9 @@ protected:
         free_bf_vars();
     }
 
-    std::string round_trip(char *input, const int decimals)
+    static std::string round_trip(const std::string_view input, const int decimals)
     {
-        BigNum value{bn_arena(BigLifetime::TEMPORARY)};
-        str_to_bn(value, input);
-        return format(value, decimals);
-    }
-
-    static std::string format(const BigNum &value, const int decimals)
-    {
-        return bn_to_string(value, decimals);
+        return BigNum{bn_arena(BigLifetime::TEMPORARY), input}.to_string(decimals);
     }
 
     ValueSaver<int> m_saved_bf_digits;
@@ -2370,9 +2229,7 @@ class TestBigNumFormatting : public TestBigNum, public testing::WithParamInterfa
 
 TEST_P(TestBigNumFormatting, formatsParsedValue)
 {
-    std::string input{GetParam().input};
-
-    EXPECT_EQ(GetParam().expected, round_trip(input.data(), GetParam().decimals));
+    EXPECT_EQ(GetParam().expected, round_trip(GetParam().input, GetParam().decimals));
 }
 
 TEST_P(TestBigNumFormatting, releasesTemporaryStorageAfterFormatting)
@@ -2382,9 +2239,8 @@ TEST_P(TestBigNumFormatting, releasesTemporaryStorageAfterFormatting)
     const auto index = probe.index();
     probe.reset();
     const auto marker = save_stack();
-    std::string input{GetParam().input};
 
-    EXPECT_EQ(GetParam().expected, round_trip(input.data(), GetParam().decimals));
+    EXPECT_EQ(GetParam().expected, round_trip(GetParam().input, GetParam().decimals));
 
     auto reused = temporary.allocate_single();
     EXPECT_EQ(index, reused.index());
@@ -2401,10 +2257,9 @@ TEST_F(TestBigNum, formatsZeroValue)
 {
     const auto marker = save_stack();
     {
-        BigNum value{bn_arena(BigLifetime::TEMPORARY)};
-        int_to_bn(value, 0);
+        const BigNum value{bn_arena(BigLifetime::TEMPORARY), 0};
 
-        EXPECT_EQ("0.", format(value, 5));
+        EXPECT_EQ("0.", value.to_string(5));
     }
     EXPECT_EQ(marker, save_stack());
 }

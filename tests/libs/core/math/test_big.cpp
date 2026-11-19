@@ -1326,6 +1326,212 @@ private:
     ValueSaver<fractals::FractalType> m_fractal_type{fractals::g_fractal_type, fractals::FractalType::MANDEL};
 };
 
+namespace
+{
+
+struct BigNumIntegerInput
+{
+    const char *name;
+    std::uint32_t integer_bits;
+    bool fractional;
+    std::array<long, 3> expected;
+};
+
+void PrintTo(const BigNumIntegerInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+} // namespace
+
+class TestBigNumByteIntegerObservation : public TestBigNumByteKernel,
+                                         public testing::WithParamInterface<std::tuple<int, int, BigNumIntegerInput>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumByteIntegerObservation::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    init_layout(std::get<0>(GetParam()), integer_length);
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumByteIntegerObservation, extractsIntegerBitsWithoutChangingSourceBytes)
+{
+    const BigNumIntegerInput &input = std::get<2>(GetParam());
+    std::vector<Byte> bytes(g_bn_length, input.fractional ? Byte{0x80} : Byte{0});
+    for (int byte = 0; byte < g_int_length; ++byte)
+    {
+        bytes[g_bn_length - g_int_length + byte] = static_cast<Byte>(input.integer_bits >> (8 * byte));
+    }
+    bytes.push_back(0xa5);
+    const std::vector<Byte> original = bytes;
+    const int expected_index = g_int_length == 1 ? 0 : g_int_length == 2 ? 1 : 2;
+
+    EXPECT_EQ(input.expected[expected_index], bn_to_int(bytes.data()));
+    EXPECT_EQ(original, bytes);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigNumByteIntegerObservation,
+    testing::Combine(testing::Values(4, 8, 12, 60, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(BigNumIntegerInput{"Zero", 0, false, {0, 0, 0}}, BigNumIntegerInput{"One", 1, false, {1, 1, 1}},
+            BigNumIntegerInput{"BelowSign", 0x7fffffff, false, {255, 65535, 2147483647}},
+            BigNumIntegerInput{"AtSign", 0x80000000, false, {0, 0, static_cast<long>(std::uint32_t{0x80000000})}},
+            BigNumIntegerInput{
+                "AllOnes", 0xffffffff, false, {255, 65535, static_cast<long>(std::uint32_t{0xffffffff})}},
+            BigNumIntegerInput{"PositiveFraction", 1, true, {1, 1, 1}},
+            BigNumIntegerInput{
+                "NegativeFraction", 0xfffffffe, true, {254, 65534, static_cast<long>(std::uint32_t{0xfffffffe})}})));
+
+namespace
+{
+
+enum class BigNumScalarCall
+{
+    PARSE,
+    INTEGER,
+    FLOAT
+};
+
+struct BigNumScalarInput
+{
+    const char *text;
+    long magnitude;
+    bool half;
+    bool negative;
+    const char *fractional_text;
+    const char *integer_text;
+};
+
+void PrintTo(const BigNumScalarInput &input, std::ostream *out)
+{
+    *out << input.text;
+}
+
+std::vector<Byte> scalar_bytes(const long magnitude, const bool half, const bool negative)
+{
+    std::vector<Byte> bytes(g_bn_length);
+    for (int byte = 0; byte < g_int_length; ++byte)
+    {
+        bytes[g_bn_length - g_int_length + byte] =
+            static_cast<Byte>(static_cast<std::uint64_t>(magnitude) >> (8 * byte));
+    }
+    if (half && g_bn_length > g_int_length)
+    {
+        bytes[g_bn_length - g_int_length - 1] = 0x80;
+    }
+    if (negative)
+    {
+        unsigned carry = 1;
+        for (Byte &byte : bytes)
+        {
+            const unsigned sum = (byte ^ 0xffU) + carry;
+            byte = static_cast<Byte>(sum);
+            carry = sum >> 8;
+        }
+    }
+    return bytes;
+}
+
+} // namespace
+
+class TestBigNumByteScalarInterfaces
+    : public TestBigNumByteKernel,
+      public testing::WithParamInterface<std::tuple<int, int, BigNumScalarInput, BigNumScalarCall>>
+{
+};
+
+TEST_P(TestBigNumByteScalarInterfaces, preservesExactEncodingReturnAddressAndGuards)
+{
+    const int integer_length = std::get<1>(GetParam());
+    init_layout(std::get<0>(GetParam()), integer_length);
+    ASSERT_EQ(integer_length, g_int_length);
+    const BigNumScalarInput &input = std::get<2>(GetParam());
+    const BigNumScalarCall call = std::get<3>(GetParam());
+    const bool half = call != BigNumScalarCall::INTEGER && input.half;
+    const bool has_fraction = half && g_bn_length > g_int_length;
+    const LDouble native = (input.negative ? -1 : 1) * (input.magnitude + (input.half ? 0.5L : 0.0L));
+    std::vector<Byte> expected = scalar_bytes(input.magnitude, half, input.negative);
+    expected.push_back(0xa5);
+    std::vector<Byte> value(g_bn_length + 1, 0xa5);
+
+    if (call == BigNumScalarCall::PARSE)
+    {
+        EXPECT_EQ(value.data(), str_to_bn(value.data(), input.text));
+    }
+    else if (call == BigNumScalarCall::INTEGER)
+    {
+        EXPECT_EQ(value.data(), int_to_bn(value.data(), input.negative ? -input.magnitude : input.magnitude));
+    }
+    else
+    {
+        EXPECT_EQ(value.data(), float_to_bn(value.data(), native));
+    }
+    EXPECT_EQ(expected, value);
+
+    EXPECT_EQ(has_fraction ? input.fractional_text : input.integer_text, unsafe_bn_to_string(value.data(), 8));
+    EXPECT_EQ(0xa5, value.back());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsInputsAndCalls, TestBigNumByteScalarInterfaces,
+    testing::Combine(testing::Values(4, 12, 60, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(BigNumScalarInput{"0", 0, false, false, "0.", "0."},
+            BigNumScalarInput{"42", 42, false, false, "42.", "42."},
+            BigNumScalarInput{"12.5", 12, true, false, "12.5", "12."},
+            BigNumScalarInput{"-12.5", 12, true, true, "-12.5", "-12."},
+            BigNumScalarInput{"-0.5", 0, true, true, "-0.5", "0."},
+            BigNumScalarInput{"+12.5", 12, true, false, "12.5", "12."},
+            BigNumScalarInput{"12.500", 12, true, false, "12.5", "12."},
+            BigNumScalarInput{"12.5x", 0, false, false, "0.", "0."},
+            BigNumScalarInput{"12e3", 12, false, false, "12.", "12."}),
+        testing::Values(BigNumScalarCall::PARSE, BigNumScalarCall::INTEGER, BigNumScalarCall::FLOAT)));
+
+struct BigNumByteMachineInput
+{
+    Byte fill;
+    Byte low_byte;
+    Byte fraction_byte;
+    Byte integer_byte;
+    LDouble whole;
+    int low_units;
+};
+
+class TestBigNumByteMachineObservation : public TestBigNumByteKernel,
+                                         public testing::WithParamInterface<std::tuple<int, BigNumByteMachineInput>>
+{
+};
+
+TEST_P(TestBigNumByteMachineObservation, observesSignedBoundariesAndLowBitsAndRestoresTheSource)
+{
+    const auto [length, input] = GetParam();
+    init_layout(length, 1);
+    const int fraction_bits = 8 * (g_bn_length - g_int_length);
+    std::vector<Byte> bytes(g_bn_length + 2, input.fill);
+    bytes[0] = 0x5a;
+    bytes[1] = input.low_byte;
+    bytes[g_bn_length - 1] = input.fraction_byte;
+    bytes[g_bn_length] = input.integer_byte;
+    bytes.back() = 0xa5;
+    const std::vector<Byte> original = bytes;
+    const LDouble low = std::ldexp(static_cast<LDouble>(input.low_units), -fraction_bits);
+    const LDouble expected = input.whole == 0 ? low : input.whole + low;
+
+    const LDouble result = bn_to_float(bytes.data() + 1);
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(std::signbit(expected), std::signbit(result));
+    EXPECT_EQ(original, bytes);
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndInputs, TestBigNumByteMachineObservation,
+    testing::Combine(testing::Values(4, 8, 12, 672),
+        testing::Values(BigNumByteMachineInput{0, 0, 0, 0, 0, 0}, BigNumByteMachineInput{0, 0, 0x40, 1, 1.25L, 0},
+            BigNumByteMachineInput{0, 0, 0xc0, 0xfe, -1.25L, 0}, BigNumByteMachineInput{0, 1, 0, 0, 0, 1},
+            BigNumByteMachineInput{0xff, 0xff, 0xff, 0xff, 0, -1}, BigNumByteMachineInput{0, 0, 0, 0x80, -128, 0},
+            BigNumByteMachineInput{0xff, 0xff, 0xff, 0x7f, 128, -1})));
+
 class TestBigNumByteHexDump : public TestBigNumByteKernel, public testing::WithParamInterface<int>
 {
 protected:
@@ -1401,6 +1607,62 @@ INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumByteHexDump, testing::Values(4, 6
 class TestBigNumByteLayout : public TestBigNumByteKernel, public testing::WithParamInterface<int>
 {
 };
+
+TEST_P(TestBigNumByteLayout, integerScalarMaximumRetainsLowIntegerBytes)
+{
+    init_layout(32, GetParam());
+    ASSERT_EQ(GetParam(), g_int_length);
+    const long native = std::numeric_limits<long>::max();
+    std::vector<Byte> expected(g_bn_length);
+    for (int byte = 0; byte < g_int_length; ++byte)
+    {
+        expected[g_bn_length - g_int_length + byte] =
+            static_cast<Byte>(static_cast<std::uint64_t>(native) >> (8 * byte));
+    }
+    std::vector<Byte> value(g_bn_length + 1, 0xa5);
+    expected.push_back(0xa5);
+
+    EXPECT_EQ(value.data(), int_to_bn(value.data(), native));
+
+    EXPECT_EQ(expected, value);
+}
+
+TEST_P(TestBigNumByteLayout, integerScalarMinimumRetainsLowIntegerBytes)
+{
+    init_layout(32, GetParam());
+    ASSERT_EQ(GetParam(), g_int_length);
+    const long native = std::numeric_limits<long>::min();
+    std::vector<Byte> expected(g_bn_length);
+    for (int byte = 0; byte < g_int_length; ++byte)
+    {
+        expected[g_bn_length - g_int_length + byte] =
+            static_cast<Byte>(static_cast<std::uint64_t>(native) >> (8 * byte));
+    }
+    std::vector<Byte> value(g_bn_length + 1, 0xa5);
+    expected.push_back(0xa5);
+
+    EXPECT_EQ(value.data(), int_to_bn(value.data(), native));
+
+    EXPECT_EQ(expected, value);
+}
+
+TEST_P(TestBigNumByteLayout, nativeAndDecimalEncodingUseTheActiveLayout)
+{
+    init_layout(32, GetParam());
+    ASSERT_EQ(GetParam(), g_int_length);
+    const std::size_t ones_byte = static_cast<std::size_t>(g_bn_length - g_int_length);
+    std::vector<Byte> expected(g_bn_length + 1);
+    expected[ones_byte] = 1;
+    expected[ones_byte - 1] = 0x40;
+    expected.back() = 0xa5;
+    std::vector<Byte> native(g_bn_length + 1, 0xa5);
+    std::vector<Byte> decimal(g_bn_length + 1, 0xa5);
+
+    EXPECT_EQ(native.data(), float_to_bn(native.data(), 1.25L));
+    EXPECT_EQ(decimal.data(), str_to_bn(decimal.data(), "1.25"));
+    EXPECT_EQ(expected, native);
+    EXPECT_EQ(expected, decimal);
+}
 
 TEST_P(TestBigNumByteLayout, roundTripPreservesEncodedValuesAndInputs)
 {
