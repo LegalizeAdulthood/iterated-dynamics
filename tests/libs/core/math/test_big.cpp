@@ -2472,6 +2472,42 @@ TEST_P(TestBigNumByteDivision, divisionCapturesASharedInputBeforeWritingIt)
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndLayouts, TestBigNumByteDivision,
     testing::Combine(testing::Values(12, 32, 672), testing::Values(1, 2, 4), testing::Bool()));
 
+class TestBigNumByteDivisionScratch : public TestBigNumByteKernel, public testing::WithParamInterface<int>
+{
+};
+
+TEST_P(TestBigNumByteDivisionScratch, preservesBytesBeyondEachScratchExtent)
+{
+    init_layout(GetParam(), 1);
+    const int fractional_bytes = g_bn_length - g_int_length;
+    const std::vector<Byte> numerator = fixed_sample(g_bn_length, fractional_bytes, 6);
+    const std::vector<Byte> denominator = fixed_sample(g_bn_length, fractional_bytes, 2);
+    const std::vector<Byte> expected = fixed_sample(g_bn_length, fractional_bytes, 3);
+    std::vector<Byte> quotient(g_bn_length);
+    BigNumByteDivisionScratch scratch;
+    const std::array<std::vector<Byte> *, 5> buffers{
+        &scratch.product, &scratch.tmp2, &scratch.tmp3, &scratch.left_copy, &scratch.right_copy};
+    const std::vector<Byte> guard(16, 0xa5);
+    for (std::vector<Byte> *buffer : buffers)
+    {
+        buffer->insert(buffer->end(), guard.begin(), guard.end());
+    }
+
+    EXPECT_EQ(quotient.data(),
+        div_bn(quotient.data(), numerator.data(), denominator.data(), scratch.product.data(), scratch.tmp2.data(),
+            scratch.tmp3.data(), scratch.left_copy.data() + 1, scratch.right_copy.data() + 1));
+
+    EXPECT_EQ(expected, quotient);
+    for (std::size_t i = 0; i < buffers.size(); ++i)
+    {
+        SCOPED_TRACE(i);
+        const std::vector<Byte> &buffer = *buffers[i];
+        EXPECT_EQ(guard, std::vector<Byte>(buffer.end() - guard.size(), buffer.end()));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumByteDivisionScratch, testing::Values(4, 8, 12, 56, 60, 64, 672));
+
 class TestBigNumByteCanonicalProduct : public TestBigNumByteKernel,
                                        public testing::WithParamInterface<std::tuple<int, int, bool>>
 {

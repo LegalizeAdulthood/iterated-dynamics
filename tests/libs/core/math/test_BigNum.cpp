@@ -12,7 +12,6 @@
 
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstdint>
@@ -36,8 +35,6 @@ namespace
 {
 
 static_assert(!std::is_same_v<BigNum, BigFloat>);
-static_assert(!std::is_convertible_v<BigNum, BigNumPtr>);
-static_assert(!std::is_convertible_v<BigNumPtr, BigNum>);
 static_assert(!std::is_convertible_v<BigNum, BigFloat>);
 static_assert(!std::is_convertible_v<BigFloat, BigNum>);
 static_assert(!std::is_convertible_v<LDouble, BigNum>);
@@ -87,24 +84,6 @@ static_assert(std::is_same_v<decltype(int_to_bn(std::declval<BigNum &>(), long{}
 static_assert(std::is_same_v<decltype(float_to_bn(std::declval<BigNum &>(), LDouble{})), BigNum &>);
 static_assert(std::is_same_v<decltype(bn_to_float(std::declval<BigNum &>())), LDouble>);
 static_assert(std::is_same_v<decltype(bn_to_string(std::declval<const BigNum &>(), int{})), std::string>);
-
-std::vector<Byte> encoded_value(const BigNum &value)
-{
-    std::vector<Byte> result(static_cast<std::size_t>(g_bn_length));
-    value.copy_to_legacy(result.data(), result.size());
-    return result;
-}
-
-std::vector<Byte> encoded_integer(const long value)
-{
-    std::vector<Byte> result(g_bn_length);
-    const std::uint32_t bits = static_cast<std::uint32_t>(value);
-    for (int byte = 0; byte < g_int_length; ++byte)
-    {
-        result[g_bn_length - g_int_length + byte] = static_cast<Byte>(bits >> (8 * byte));
-    }
-    return result;
-}
 
 } // namespace
 
@@ -369,83 +348,76 @@ TEST_P(TestBigNumConstructionPrecision, constructsAndConvertsAtTheSelectedPrecis
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumConstructionPrecision, testing::Values(4, 672));
 
-TEST_F(TestBigNumValue, importedBytesSurviveArenaRewindAndReuse)
+TEST_F(TestBigNumValue, owningCopySurvivesTemporaryStackRewindAndReuse)
 {
-    // Borrow BigStack buffers here to test importing bytes across a real rewind.
-    const auto marker = save_stack();
-    const std::size_t size = static_cast<std::size_t>(g_bn_length);
-    BigNumPtr source = bn_stack().allocate_single();
-    BigNum{"-1.23456789012345678901234567890123456789"}.copy_to_legacy(source, size);
-    const std::vector<Byte> expected(source, source + size);
-    const BigNumConstPtr input = source;
-
-    const BigNum value = BigNum::from_legacy(input, size);
+    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
+    BigArena &working = bn_arena(BigLifetime::WORKING);
+    constexpr std::string_view text{"-1.23456789012345678901234567890123456789"};
+    const BigStackMark marker = save_stack();
+    const BigNum expected{text};
+    BigNum copy;
+    {
+        const BigNum source{temporary, text};
+        copy = BigNum{working, source};
+    }
+    bn_stack().allocate_single();
+    const std::size_t high_water = temporary.high_water_mark();
     restore_stack(marker);
-    BigNumPtr reused = bn_stack().allocate_single();
-    ASSERT_EQ(source, reused);
-    std::fill_n(reused, size, Byte{0xff});
+    bn_stack().allocate_single();
 
-    EXPECT_EQ(expected, encoded_value(value));
+    EXPECT_EQ(high_water, temporary.high_water_mark());
+    EXPECT_EQ(&working, &copy.arena());
+    EXPECT_EQ(expected, copy);
+    restore_stack(marker);
 }
 
-TEST_F(TestBigNumValue, exportedBytesAreIndependentOfTheValue)
-{
-    const BigNum value{"-1.25"};
-    auto exported = encoded_value(value);
-
-    std::fill(exported.begin(), exported.end(), Byte{0});
-
-    EXPECT_EQ("-1.25", value.to_string());
-}
-
-TEST_F(TestBigNumValue, copyingMovingAndExportDoNotRequireAnActiveArena)
+TEST_F(TestBigNumValue, copyingAndMovingDoNotRequireAnActiveArena)
 {
     BigNum original{"-1.23456789012345678901234567890123456789"};
-    const auto expected = encoded_value(original);
+    const BigNum expected{original};
     free_bf_vars();
 
     const BigNum copy{original};
     BigNum moved{std::move(original)};
     original = copy;
     moved = std::move(original);
-    std::vector<Byte> exported(expected.size());
-    moved.copy_to_legacy(exported.data(), exported.size());
 
-    EXPECT_EQ(expected, exported);
+    EXPECT_FALSE(original);
     init_bf_dec(40);
-    EXPECT_EQ(expected, encoded_value(copy));
-    EXPECT_EQ(expected, encoded_value(moved));
+    EXPECT_EQ(expected, copy);
+    EXPECT_EQ(expected, moved);
 }
 
 TEST_F(TestBigNumValue, copyAssignmentUsesTheCurrentArenaLayout)
 {
-    const int old_length = g_bn_length;
     g_bailout_test = Bailout::REAL;
     init_bf_dec(80);
     const BigNum original{"-1.25"};
-    BigNum assigned{2.5L};
+    BigArena &persistent = bn_arena(BigLifetime::PERSISTENT);
+    BigNum assigned{persistent, 2.5L};
+    const BigNum expected{original};
 
     assigned = original;
+    assigned += BigNum{2};
 
-    std::vector<Byte> too_small(old_length);
-    EXPECT_THROW(assigned.copy_to_legacy(too_small.data(), too_small.size()), std::invalid_argument);
-    EXPECT_EQ(BigNum{-1.25L}, assigned);
+    EXPECT_EQ(&persistent, &assigned.arena());
+    EXPECT_EQ(static_cast<std::size_t>(g_bn_length), assigned.arena().value_size());
+    EXPECT_EQ(BigNum{0.75L}, assigned);
+    EXPECT_EQ(expected, original);
 }
 
-TEST_F(TestBigNumValue, legacyBorrowsAccessOwnedStorage)
+TEST_F(TestBigNumValue, scalarAssignmentReusesItsSlotInAFullArena)
 {
-    static_assert(std::is_same_v<decltype(std::declval<BigNum &>().data()), BigNumPtr>);
-    static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().data()), BigNumConstPtr>);
-    BigNum value{-1.25L};
-    const auto *before = std::as_const(value).data();
-    EXPECT_EQ(before, value.data());
-    EXPECT_EQ(encoded_value(value), std::vector<Byte>(before, before + g_bn_length));
+    BigArena arena{static_cast<std::size_t>(g_bn_length), 2, [](Byte *) {}};
+    BigNum value{arena, -1.25L};
+    const BigNum neighbor{arena, -4};
+    ASSERT_EQ(arena.capacity(), arena.high_water_mark());
 
-    float_to_bn(value, 2.5L);
+    EXPECT_EQ(&value, &(value = 2.5L));
 
-    EXPECT_EQ(before, std::as_const(value).data());
+    EXPECT_EQ(&arena, &value.arena());
     EXPECT_EQ(BigNum{2.5L}, value);
-    EXPECT_EQ(encoded_value(value), std::vector<Byte>(value.data(), value.data() + g_bn_length));
+    EXPECT_EQ(BigNum{-4}, neighbor);
 }
 
 TEST_F(TestBigNumValue, movedFromValueCanBeReassigned)
@@ -457,19 +429,6 @@ TEST_F(TestBigNumValue, movedFromValueCanBeReassigned)
 
     EXPECT_EQ("-1.25", moved.to_string());
     EXPECT_EQ("2.5", original.to_string());
-}
-
-TEST_F(TestBigNumValue, adaptersRejectNullAndUndersizedBuffers)
-{
-    const BigNum value{"-1.25"};
-    std::vector<Byte> buffer(static_cast<std::size_t>(g_bn_length), Byte{0x5a});
-    const auto unchanged = buffer;
-
-    EXPECT_THROW(BigNum::from_legacy(nullptr, buffer.size()), std::invalid_argument);
-    EXPECT_THROW(BigNum::from_legacy(buffer.data(), buffer.size() - 1), std::invalid_argument);
-    EXPECT_THROW(value.copy_to_legacy(nullptr, buffer.size()), std::invalid_argument);
-    EXPECT_THROW(value.copy_to_legacy(buffer.data(), buffer.size() - 1), std::invalid_argument);
-    EXPECT_EQ(unchanged, buffer);
 }
 
 TEST_F(TestBigNumValue, rejectsNonfiniteScalarInputWithoutChangingTheValue)
@@ -609,15 +568,13 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndLimits, TestBigNumLayoutConversion,
         testing::Values(std::make_pair("1e400", 1), std::make_pair("-1e400", -1), std::make_pair("1e-400", 0),
             std::make_pair("-1e-400", 0))));
 
-TEST_F(TestBigNumValue, conversionAdaptersValidateDestinationBuffers)
+TEST_F(TestBigNumValue, bigFloatConversionRejectsAnUndersizedBigNumArena)
 {
     const BigFloat floating{"-1.25"};
-    std::vector<Byte> bn_buffer(static_cast<std::size_t>(g_bn_length), Byte{0x5a});
-    const auto original_bn = bn_buffer;
+    BigArena arena{static_cast<std::size_t>(g_bn_length - 1), 2, [](Byte *) {}};
 
-    EXPECT_THROW(floating.copy_to_legacy_num(nullptr, bn_buffer.size()), std::invalid_argument);
-    EXPECT_THROW(floating.copy_to_legacy_num(bn_buffer.data(), bn_buffer.size() - 1), std::invalid_argument);
-    EXPECT_EQ(original_bn, bn_buffer);
+    EXPECT_THROW((BigNum{arena, floating}), std::invalid_argument);
+    EXPECT_EQ(BigFloat{-1.25L}, floating);
 }
 
 TEST_F(TestBigNumValue, bigNumConversionRejectsAnUndersizedBigFloatArena)
@@ -1539,201 +1496,123 @@ TEST_P(TestBigNumKernelWindows, bigFloatMantissaProductsRestoreTheBigNumContext)
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndLayouts, TestBigNumKernelWindows,
     testing::Combine(testing::Values(12, 32, 672), testing::Values(1, 2, 4), testing::Bool()));
 
-namespace
-{
-
-enum class KernelSlot
-{
-    TMP1,
-    TMP2,
-    TMP3,
-    COPY1,
-    COPY2
-};
-
-} // namespace
-
-class TestBigNumKernelStorage : public TestBigNumValue, public testing::WithParamInterface<std::tuple<int, KernelSlot>>
+class TestBigNumKernelStorage : public TestBigNumValue, public testing::WithParamInterface<int>
 {
 protected:
     void SetUp() override;
-    Byte *buffer() const;
-    bool allocated() const;
-    std::size_t reservation_size() const;
-    void expect_owner() const;
+    static void expect_fresh_scratch();
 };
 
 void TestBigNumKernelStorage::SetUp()
 {
-    init_bf_length(std::get<0>(GetParam()));
+    init_bf_length(GetParam());
 }
 
-Byte *TestBigNumKernelStorage::buffer() const
-{
-    switch (std::get<1>(GetParam()))
-    {
-    case KernelSlot::TMP1:
-    {
-        BigArena &working = bn_arena(BigLifetime::WORKING);
-        const Byte *scratch{};
-        // Probe the working arena without committing or changing its storage.
-        working.prepare_relocation(working.value_size(), working.block_size(),
-            [&](Byte *destination, const Byte *source, std::size_t blocks)
-            {
-                std::fill_n(destination, blocks * working.block_size(), Byte{0});
-                if (is_bn_product_scratch(source))
-                {
-                    EXPECT_EQ(2U, blocks);
-                    scratch = source;
-                }
-            });
-        // The live arena storage is mutable outside the relocation callback.
-        return const_cast<Byte *>(scratch);
-    }
-    case KernelSlot::TMP2:
-        return g_bn_tmp2.data();
-    case KernelSlot::TMP3:
-        return g_bn_tmp3.data();
-    case KernelSlot::COPY1:
-        return g_bn_tmp_copy1.data();
-    case KernelSlot::COPY2:
-        return g_bn_tmp_copy2.data();
-    }
-    return nullptr;
-}
-
-bool TestBigNumKernelStorage::allocated() const
-{
-    switch (std::get<1>(GetParam()))
-    {
-    case KernelSlot::TMP1:
-        return buffer() != nullptr;
-    case KernelSlot::TMP2:
-        return static_cast<bool>(g_bn_tmp2);
-    case KernelSlot::TMP3:
-        return static_cast<bool>(g_bn_tmp3);
-    case KernelSlot::COPY1:
-        return static_cast<bool>(g_bn_tmp_copy1);
-    case KernelSlot::COPY2:
-        return static_cast<bool>(g_bn_tmp_copy2);
-    }
-    return false;
-}
-
-std::size_t TestBigNumKernelStorage::reservation_size() const
-{
-    const KernelSlot slot = std::get<1>(GetParam());
-    const std::size_t width = slot == KernelSlot::TMP2 || slot == KernelSlot::TMP3 ? 1 : 2;
-    return width * bn_arena(BigLifetime::WORKING).block_size();
-}
-
-void TestBigNumKernelStorage::expect_owner() const
+void TestBigNumKernelStorage::expect_fresh_scratch()
 {
     static_assert(std::is_same_v<decltype(g_bn_tmp2), BigNum>);
     static_assert(std::is_same_v<decltype(g_bn_tmp3), BigNum>);
     static_assert(std::is_same_v<decltype(g_bn_tmp_copy1), BigArena::Allocation>);
     static_assert(std::is_same_v<decltype(g_bn_tmp_copy2), BigArena::Allocation>);
-    BigArena &working = bn_arena(BigLifetime::WORKING);
-    switch (std::get<1>(GetParam()))
-    {
-    case KernelSlot::TMP1:
-        EXPECT_NE(nullptr, buffer());
-        break;
-    case KernelSlot::TMP2:
-        EXPECT_EQ(&working, &g_bn_tmp2.arena());
-        break;
-    case KernelSlot::TMP3:
-        EXPECT_EQ(&working, &g_bn_tmp3.arena());
-        break;
-    case KernelSlot::COPY1:
-        EXPECT_EQ(&working, &g_bn_tmp_copy1.arena());
-        EXPECT_EQ(2U, g_bn_tmp_copy1.blocks());
-        break;
-    case KernelSlot::COPY2:
-        EXPECT_EQ(&working, &g_bn_tmp_copy2.arena());
-        EXPECT_EQ(2U, g_bn_tmp_copy2.blocks());
-        break;
-    }
+    ASSERT_TRUE(g_bn_tmp2);
+    ASSERT_TRUE(g_bn_tmp3);
+    ASSERT_TRUE(g_bn_tmp_copy1);
+    ASSERT_TRUE(g_bn_tmp_copy2);
+    const BigArena &working = bn_arena(BigLifetime::WORKING);
+    EXPECT_EQ(&working, &g_bn_tmp2.arena());
+    EXPECT_EQ(&working, &g_bn_tmp3.arena());
+    EXPECT_EQ(&working, &g_bn_tmp_copy1.arena());
+    EXPECT_EQ(&working, &g_bn_tmp_copy2.arena());
+    EXPECT_EQ(2U, g_bn_tmp_copy1.blocks());
+    EXPECT_EQ(2U, g_bn_tmp_copy2.blocks());
+    EXPECT_EQ(0.0L, g_bn_tmp2.to_float());
+    EXPECT_EQ(0.0L, g_bn_tmp3.to_float());
+
+    const BigNum numerator{6};
+    const BigNum denominator{2};
+    BigNum quotient{0};
+    const std::size_t high_water = working.high_water_mark();
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(&quotient, &div_bn(quotient, numerator, denominator));
+    EXPECT_EQ(3.0L, quotient.to_float());
+    EXPECT_EQ(high_water, working.high_water_mark());
+    EXPECT_EQ(mark, save_stack());
 }
 
-TEST_P(TestBigNumKernelStorage, rebindingClearsTheWholeReservationWithoutAllocatingAgain)
+TEST_P(TestBigNumKernelStorage, rebindingClearsScratchAndKeepsTheReservations)
 {
-    ASSERT_TRUE(allocated());
-    expect_owner();
-    auto *const original = buffer();
-    std::fill_n(original, reservation_size(), Byte{0xa5});
-    const auto high_water = bn_arena(BigLifetime::WORKING).high_water_mark();
+    expect_fresh_scratch();
+    g_bn_tmp2 = 17;
+    g_bn_tmp3 = -23;
+    const BigArena::Index copy1 = g_bn_tmp_copy1.index();
+    const BigArena::Index copy2 = g_bn_tmp_copy2.index();
+    const std::size_t high_water = bn_arena(BigLifetime::WORKING).high_water_mark();
 
-    init_bf_length(std::get<0>(GetParam()));
+    init_bf_length(GetParam());
 
-    ASSERT_TRUE(allocated());
-    expect_owner();
-    EXPECT_EQ(original, buffer());
+    EXPECT_EQ(copy1, g_bn_tmp_copy1.index());
+    EXPECT_EQ(copy2, g_bn_tmp_copy2.index());
     EXPECT_EQ(high_water, bn_arena(BigLifetime::WORKING).high_water_mark());
-    EXPECT_EQ(std::vector<Byte>(reservation_size()), std::vector<Byte>(buffer(), buffer() + reservation_size()));
+    expect_fresh_scratch();
 }
 
-TEST_P(TestBigNumKernelStorage, kernelWritesPreserveBytesBeyondTheDocumentedExtent)
+TEST_P(TestBigNumKernelStorage, precisionChangesRebuildUsableScratchAndEmptyTheStack)
 {
-    ASSERT_TRUE(allocated());
-    expect_owner();
-    const KernelSlot slot = std::get<1>(GetParam());
-    const std::size_t extent = slot == KernelSlot::TMP1 ? g_r_length : g_bn_length;
-    ASSERT_LE(extent, reservation_size());
-    std::fill_n(buffer(), reservation_size(), Byte{0xa5});
+    expect_fresh_scratch();
+    g_bn_tmp2 = 17;
+    g_bn_tmp3 = -23;
+    bn_stack().allocate_double();
+    const int other_length = GetParam() == 672 ? 4 : 672;
 
-    const BigNum quotient = BigNum{6} / BigNum{2};
+    init_bf_length(other_length);
 
-    EXPECT_EQ(BigNum{3}, quotient);
-    EXPECT_EQ(std::vector<Byte>(reservation_size() - extent, 0xa5),
-        std::vector<Byte>(buffer() + extent, buffer() + reservation_size()));
+    EXPECT_EQ(static_cast<std::size_t>(other_length), bn_arena(BigLifetime::WORKING).value_size());
+    EXPECT_EQ(BigStackMark{}, save_stack());
+    EXPECT_EQ(0U, bn_arena(BigLifetime::TEMPORARY).high_water_mark());
+    expect_fresh_scratch();
+    g_bn_tmp2 = -17;
+    g_bn_tmp3 = 23;
+
+    init_bf_length(GetParam());
+
+    EXPECT_EQ(static_cast<std::size_t>(GetParam()), bn_arena(BigLifetime::WORKING).value_size());
+    expect_fresh_scratch();
 }
 
-TEST_P(TestBigNumKernelStorage, precisionChangesDiscardTheWholeScratchReservation)
+TEST_P(TestBigNumKernelStorage, repeatedCleanupReleasesAllScratchSlotsForReuse)
 {
-    ASSERT_TRUE(allocated());
-    expect_owner();
-    std::fill_n(buffer(), reservation_size(), Byte{0xa5});
-    const int original_length = std::get<0>(GetParam());
-
-    init_bf_length(original_length == 672 ? 4 : 672);
-
-    ASSERT_TRUE(allocated());
-    expect_owner();
-    EXPECT_EQ(std::vector<Byte>(reservation_size()), std::vector<Byte>(buffer(), buffer() + reservation_size()));
-    std::fill_n(buffer(), reservation_size(), Byte{0x5a});
-
-    init_bf_length(original_length);
-
-    ASSERT_TRUE(allocated());
-    expect_owner();
-    EXPECT_EQ(std::vector<Byte>(reservation_size()), std::vector<Byte>(buffer(), buffer() + reservation_size()));
-}
-
-TEST_P(TestBigNumKernelStorage, repeatedCleanupUnbindsAndReinitializationClearsScratch)
-{
-    ASSERT_TRUE(allocated());
-    expect_owner();
-    std::fill_n(buffer(), reservation_size(), Byte{0xa5});
+    expect_fresh_scratch();
+    BigArena &working = bn_arena(BigLifetime::WORKING);
+    const std::size_t high_water = working.high_water_mark();
 
     free_bf_vars();
-
-    EXPECT_FALSE(allocated());
+    EXPECT_FALSE(g_bn_tmp2);
+    EXPECT_FALSE(g_bn_tmp3);
+    EXPECT_FALSE(g_bn_tmp_copy1);
+    EXPECT_FALSE(g_bn_tmp_copy2);
 
     free_bf_vars();
+    EXPECT_FALSE(g_bn_tmp2);
+    EXPECT_FALSE(g_bn_tmp3);
+    EXPECT_FALSE(g_bn_tmp_copy1);
+    EXPECT_FALSE(g_bn_tmp_copy2);
+    {
+        std::vector<BigArena::Allocation> pairs;
+        pairs.reserve(high_water / 2);
+        for (std::size_t i = 0; i < high_water; i += 2)
+        {
+            pairs.emplace_back(working.allocate_double());
+        }
+        EXPECT_EQ(high_water, working.high_water_mark());
+    }
+    init_bf_length(GetParam());
 
-    EXPECT_FALSE(allocated());
-
-    init_bf_length(std::get<0>(GetParam()));
-
-    ASSERT_TRUE(allocated());
-    expect_owner();
-    EXPECT_EQ(std::vector<Byte>(reservation_size()), std::vector<Byte>(buffer(), buffer() + reservation_size()));
+    EXPECT_EQ(high_water, working.high_water_mark());
+    expect_fresh_scratch();
 }
 
-INSTANTIATE_TEST_SUITE_P(PrecisionsAndSlots, TestBigNumKernelStorage,
-    testing::Combine(testing::Values(4, 8, 12, 56, 60, 64, 672),
-        testing::Values(KernelSlot::TMP1, KernelSlot::TMP2, KernelSlot::TMP3, KernelSlot::COPY1, KernelSlot::COPY2)));
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumKernelStorage, testing::Values(4, 8, 12, 56, 60, 64, 672));
 
 class TestBigNumProductStorage : public TestBigNumValue, public testing::WithParamInterface<std::tuple<int, bool>>
 {
@@ -1749,14 +1628,12 @@ TEST_P(TestBigNumProductStorage, transfersTheFirstSlotAndReleasesTheCompanion)
     const bool squared = std::get<1>(GetParam());
     const BigNum left{"-7.5"};
     const BigNum right{"0.5"};
-    const std::vector<Byte> original_left = encoded_value(left);
-    const std::vector<Byte> original_right = encoded_value(right);
-    std::vector<Byte> expected = encoded_integer(squared ? 56 : -4);
-    expected[g_bn_length - g_int_length - 1] = 0x40;
+    const BigNum original_left{left};
+    const BigNum original_right{right};
+    const BigNum expected{squared ? 56.25L : -3.75L};
     BigArena &working = bn_arena(BigLifetime::WORKING);
     BigArena::Allocation reservation = working.allocate_double();
-    const Byte *const address = reservation.data();
-    std::fill_n(reservation.data(), 2 * working.block_size(), Byte{0xa5});
+    const BigArena::Index product_index = reservation.index();
     reservation.reset();
     const std::size_t high_water = working.high_water_mark();
     const BigStackMark mark = save_stack();
@@ -1765,21 +1642,23 @@ TEST_P(TestBigNumProductStorage, transfersTheFirstSlotAndReleasesTheCompanion)
         const BigNum result = squared ? left.sqr() : left * right;
 
         EXPECT_EQ(&working, &result.arena());
-        EXPECT_EQ(address, result.data());
-        EXPECT_EQ(expected, encoded_value(result));
-        EXPECT_EQ(original_left, encoded_value(left));
-        EXPECT_EQ(original_right, encoded_value(right));
+        EXPECT_EQ(expected, result);
+        EXPECT_EQ(original_left, left);
+        EXPECT_EQ(original_right, right);
         EXPECT_EQ(high_water, working.high_water_mark());
         EXPECT_EQ(mark, save_stack());
         BigArena::Allocation companion = working.allocate_single();
-        ASSERT_EQ(address + working.block_size(), companion.data());
+        ASSERT_EQ(product_index + 1, companion.index());
         EXPECT_EQ(1U, companion.blocks());
-        std::fill_n(companion.data(), working.block_size(), Byte{0x5a});
-        EXPECT_EQ(expected, encoded_value(result));
+        companion.reset();
+        const BigNum neighbor{working, 17};
+        EXPECT_EQ(17.0L, neighbor.to_float());
+        EXPECT_EQ(expected, result);
+        EXPECT_EQ(high_water, working.high_water_mark());
     }
 
     const BigArena::Allocation reused = working.allocate_double();
-    EXPECT_EQ(address, reused.data());
+    EXPECT_EQ(product_index, reused.index());
     EXPECT_EQ(high_water, working.high_water_mark());
 }
 
