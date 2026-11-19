@@ -129,24 +129,25 @@ TEST_P(TestBigFloatPiStorage, repeatedBindingClearsTheWholeReservationWithoutAll
     expect_pi_value();
 }
 
-TEST_P(TestBigFloatPiStorage, precisionChangesClearPiAndTableCopiesUseTheRelocatedSlot)
+TEST_P(TestBigFloatPiStorage, precisionChangesClearPiAndTableCopiesUseTheFreshSlot)
 {
     init_big_pi();
     std::fill_n(g_bf_pi.data(), bf_arena(BigLifetime::WORKING).block_size(), Byte{0xa5});
 
     init_bf_length(GetParam() == 708 ? 4 : 708);
 
-    BigArena &working = bf_arena(BigLifetime::WORKING);
+    const std::size_t other_slot_size = bf_arena(BigLifetime::WORKING).block_size();
     EXPECT_EQ(
-        std::vector<Byte>(working.block_size()), (std::vector<Byte>{g_bf_pi.data(), g_bf_pi.data() + working.block_size()}));
+        std::vector<Byte>(other_slot_size), (std::vector<Byte>{g_bf_pi.data(), g_bf_pi.data() + other_slot_size}));
     init_big_pi();
     expect_pi_value();
-    std::fill_n(g_bf_pi.data(), working.block_size(), Byte{0x5a});
+    std::fill_n(g_bf_pi.data(), other_slot_size, Byte{0x5a});
 
     init_bf_length(GetParam());
 
+    const std::size_t original_slot_size = bf_arena(BigLifetime::WORKING).block_size();
     EXPECT_EQ(
-        std::vector<Byte>(working.block_size()), (std::vector<Byte>{g_bf_pi.data(), g_bf_pi.data() + working.block_size()}));
+        std::vector<Byte>(original_slot_size), (std::vector<Byte>{g_bf_pi.data(), g_bf_pi.data() + original_slot_size}));
     init_big_pi();
     expect_pi_value();
 }
@@ -497,36 +498,56 @@ TEST_F(TestBigFloat, loweringPrecisionPreservesCornersWithoutOverrunningArena)
     EXPECT_NO_THROW(bf_stack().allocate_single());
 }
 
-TEST_F(TestBigFloat, precisionChangesPreserveAllCornersSavedCornersAndParameters)
+TEST_F(TestBigFloat, changingPrecisionRebuildsJuliaParametersAndTemporaryStorage)
 {
-    const auto parameters = []
+    g_fractal_type = FractalType::JULIA;
+    init_bf_length(12);
+    const ValueSaver real{g_params[0], -0.75};
+    const ValueSaver imag{g_params[1], 0.125};
+    g_bf_params[0] = 1.5L;
+    g_bf_params[1] = -2.0L;
+    bn_stack().allocate_single();
+    bf_stack().allocate_double();
+
+    init_bf_length(64);
+
+    EXPECT_EQ(-0.75L, g_bf_params[0].to_float());
+    EXPECT_EQ(0.125L, g_bf_params[1].to_float());
+    EXPECT_EQ(BigStackMark{}, save_stack());
+    EXPECT_EQ(0U, bn_arena(BigLifetime::TEMPORARY).high_water_mark());
+    EXPECT_EQ(0U, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
+}
+
+class TestBigFloatCornerPrecision : public TestBigFloat, public testing::WithParamInterface<std::pair<int, int>>
+{
+};
+
+TEST_P(TestBigFloatCornerPrecision, preservesCurrentAndSavedCorners)
+{
+    const auto [source_length, destination_length] = GetParam();
+    init_bf_length(source_length);
+    const std::array<BigFloat *, 12> corners{&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd,
+        &g_bf_y_3rd, &g_bf_save_x_min, &g_bf_save_x_max, &g_bf_save_y_min, &g_bf_save_y_max, &g_bf_save_x_3rd,
+        &g_bf_save_y_3rd};
+    const std::array<const char *, 12> expected{"-1.000000000000000000867361737988403547205962240695953369140625",
+        "0.75", "-1.25", "1.5", "-0.875", "-1.125", "-2.5", "2.25", "-1.875", "1.625", "-2.125",
+        "-1.999999999999999999132638262011596452794037759304046630859375"};
+    for (std::size_t i = 0; i < corners.size(); ++i)
     {
-        return std::array<BigFloat *, 22>{&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd,
-            &g_bf_params[0], &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4], &g_bf_params[5],
-            &g_bf_params[6], &g_bf_params[7], &g_bf_params[8], &g_bf_params[9], &g_bf_save_x_min, &g_bf_save_x_max,
-            &g_bf_save_y_min, &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
-    };
-    std::vector<std::vector<Byte>> expected;
-    for (BigFloat *value : parameters())
-    {
-        str_to_bf(*value, "-1.2345678901234567890123456789e-200");
-        value->data()[0] = static_cast<Byte>(expected.size() + 1);
-        expected.emplace_back(value->data(), value->data() + g_bf_length + 2);
+        *corners[i] = BigFloat{std::string_view{expected[i]}};
     }
-    for (int length : {64, 12, 32})
+
+    init_bf_length(destination_length);
+
+    for (std::size_t i = 0; i < corners.size(); ++i)
     {
-        init_bf_length(length);
-        const auto values = parameters();
-        for (std::size_t i = 0; i < values.size(); ++i)
-        {
-            std::vector<Byte> converted(g_bf_length + 2);
-            const std::size_t retained = std::min(converted.size(), expected[i].size());
-            std::copy_n(expected[i].end() - retained, retained, converted.end() - retained);
-            EXPECT_EQ(converted, (std::vector<Byte>{values[i]->data(), values[i]->data() + g_bf_length + 2}));
-            expected[i] = std::move(converted);
-        }
+        SCOPED_TRACE(i);
+        EXPECT_EQ(BigFloat{std::string_view{expected[i]}}, *corners[i]);
+        EXPECT_EQ(&bf_arena(BigLifetime::PERSISTENT), &corners[i]->arena());
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatCornerPrecision, testing::Values(std::pair{12, 64}, std::pair{64, 12}));
 
 TEST_F(TestBigFloat, nestedStackRewindsPreserveOuterValuesAndPersistentCorners)
 {
@@ -629,8 +650,10 @@ TEST_F(TestBigFloat, stackRewindCoalescesAReleasedNarrowedAllocationWithItsBorro
     EXPECT_EQ(index, reused.index());
 }
 
-TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAndLaterPrecisionGrowth)
+TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAtTheSamePrecision)
 {
+    constexpr int LENGTH = 12;
+    init_bf_length(LENGTH);
     auto floating = bf_arena(BigLifetime::WORKING).allocate_single();
     auto fixed = bn_arena(BigLifetime::PERSISTENT).allocate_single();
     BigFloat{-2.5}.copy_to_legacy(floating.data(), static_cast<std::size_t>(g_bf_length + 2));
@@ -641,7 +664,7 @@ TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAndLaterPrecisionGrowth)
     free_bf_vars();
     EXPECT_NE(nullptr, floating.data());
     EXPECT_NE(nullptr, fixed.data());
-    init_bf_length(64);
+    init_bf_length(LENGTH);
 
     EXPECT_EQ(floating_index, floating.index());
     EXPECT_EQ(fixed_index, fixed.index());
@@ -797,11 +820,11 @@ TEST_P(TestPersistentBigFloatParameters, preservesEverySerializedFieldAndRejects
         std::vector<Byte>(g_bf_x_min.data() + width, g_bf_x_min.data() + arena.block_size()));
 }
 
-TEST_P(TestPersistentBigFloatParameters, preservesValuesAcrossRelocationAndClearsThemOnReinitialization)
+TEST_P(TestPersistentBigFloatParameters, samePrecisionBindingPreservesValuesAndCleanupClearsThem)
 {
     g_fractal_type = FractalType::MANDEL_Z_POWER;
     init_bf_length(GetParam());
-    std::array<BigFloat *, 22> values{&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd,
+    const std::array<BigFloat *, 22> values{&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd,
         &g_bf_params[0], &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4], &g_bf_params[5],
         &g_bf_params[6], &g_bf_params[7], &g_bf_params[8], &g_bf_params[9], &g_bf_save_x_min, &g_bf_save_x_max,
         &g_bf_save_y_min, &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
@@ -809,12 +832,7 @@ TEST_P(TestPersistentBigFloatParameters, preservesValuesAcrossRelocationAndClear
     {
         float_to_bf(*values[i], -static_cast<LDouble>(i + 1));
     }
-    const int next_length = GetParam() == 4 ? 32 : 4;
-    init_bf_length(next_length);
-    values = {&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd, &g_bf_params[0],
-        &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4], &g_bf_params[5], &g_bf_params[6],
-        &g_bf_params[7], &g_bf_params[8], &g_bf_params[9], &g_bf_save_x_min, &g_bf_save_x_max, &g_bf_save_y_min,
-        &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
+    init_bf_length(GetParam());
     for (std::size_t i = 0; i < values.size(); ++i)
     {
         EXPECT_EQ(-static_cast<LDouble>(i + 1), bf_to_float(*values[i]));
@@ -1403,34 +1421,6 @@ TYPED_TEST(TestBigValueStorage, copiesMovesAndExportsRemainValidAfterContextRese
     EXPECT_EQ(expected, encoded(copy));
     EXPECT_EQ(expected, encoded(moved));
     EXPECT_EQ(expected, encoded(assigned));
-}
-
-TYPED_TEST(TestBigValueStorage, precisionChangesMigrateEveryAttachedLifetime)
-{
-    std::vector<TypeParam> values;
-    for (BigLifetime lifetime : {BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY})
-    {
-        values.emplace_back(value_arena<TypeParam>(lifetime), "-1.23456789012345678901234567890123456789");
-    }
-    for (int digits : {80, 20, 40})
-    {
-        const std::vector<Byte> old_bytes = encoded(values.front());
-        const int old_integer = g_int_length;
-        init_bf_dec(digits);
-        std::vector<Byte> expected(values.front().arena().value_size());
-        if constexpr (std::is_same_v<TypeParam, BigNum>)
-        {
-            ASSERT_EQ(old_integer, g_int_length);
-        }
-        // The most significant mantissa bytes and any exponent stay at the
-        // end of the encoding. Growth adds zeros at the fractional end.
-        const std::size_t retained = std::min(old_bytes.size(), expected.size());
-        std::copy(old_bytes.end() - retained, old_bytes.end(), expected.end() - retained);
-        for (const auto &value : values)
-        {
-            EXPECT_EQ(expected, encoded(value));
-        }
-    }
 }
 
 TYPED_TEST(TestBigValueStorage, temporaryRewindsLeavePersistentAndWorkingValuesIndependent)

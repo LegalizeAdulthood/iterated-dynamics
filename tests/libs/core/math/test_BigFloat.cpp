@@ -845,31 +845,25 @@ TEST_F(TestBigFloatValue, copyingAndMovingRemainValidWithoutAnActiveArena)
     EXPECT_EQ(expected, encoded_value(moved));
 }
 
-TEST_F(TestBigFloatValue, copyAssignmentUsesTheRelocatedArenaLayout)
+TEST_F(TestBigFloatValue, copyAssignmentUsesTheCurrentArenaLayout)
 {
+    init_bf_dec(80);
     const BigFloat original{"1.23456789012345678901234567890123456789"};
     const auto expected = encoded_value(original);
-    const int old_length = g_bf_length;
-    init_bf_dec(80);
     BigFloat assigned{2.5L};
 
     assigned = original;
 
     std::vector<Byte> exported(g_bf_length + 2);
-    std::vector<Byte> widened(g_bf_length - old_length);
-    widened.insert(widened.end(), expected.begin(), expected.end());
     assigned.copy_to_legacy(exported.data(), exported.size());
-    EXPECT_EQ(widened, exported);
-    EXPECT_EQ(widened, encoded_value(original));
-    init_bf_dec(40);
-    EXPECT_EQ(expected, encoded_value(assigned));
+    EXPECT_EQ(expected, exported);
+    EXPECT_EQ(expected, encoded_value(original));
 }
 
-TEST_F(TestBigFloatValue, destructionDoesNotRequireTheOriginalPrecision)
+TEST_F(TestBigFloatValue, destructionAfterContextResetReleasesStorage)
 {
     {
         const BigFloat value{"-1.25"};
-        init_bf_dec(80);
         free_bf_vars();
     }
 
@@ -878,7 +872,7 @@ TEST_F(TestBigFloatValue, destructionDoesNotRequireTheOriginalPrecision)
     EXPECT_EQ("2.5", value.to_string());
 }
 
-TEST_F(TestBigFloatValue, legacyBorrowsAccessOwnedStorageAndResolveRelocatedHandles)
+TEST_F(TestBigFloatValue, legacyBorrowsAccessOwnedStorage)
 {
     static_assert(std::is_same_v<decltype(std::declval<BigFloat &>().data()), BigFloatPtr>);
     static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().data()), BigFloatConstPtr>);
@@ -888,10 +882,8 @@ TEST_F(TestBigFloatValue, legacyBorrowsAccessOwnedStorageAndResolveRelocatedHand
     EXPECT_EQ(encoded_value(value), std::vector<Byte>(before, before + g_bf_length + 2));
 
     float_to_bf(value, 2.5L);
-    EXPECT_EQ(BigFloat{2.5L}, value);
-    init_bf_dec(80);
 
-    EXPECT_NE(before, std::as_const(value).data());
+    EXPECT_EQ(before, std::as_const(value).data());
     EXPECT_EQ(BigFloat{2.5L}, value);
     EXPECT_EQ(encoded_value(value), std::vector<Byte>(value.data(), value.data() + g_bf_length + 2));
 }
@@ -1863,8 +1855,8 @@ TEST_F(TestBigFloatValue, comparisonsUseNumericalValuesWithoutChangingOperands)
     }
 }
 
-class TestBigFloatPairRelocation : public TestBigFloatValue,
-                                   public testing::WithParamInterface<std::tuple<int, BigLifetime>>
+class TestBigFloatPairStorage : public TestBigFloatValue,
+                                public testing::WithParamInterface<std::tuple<int, BigLifetime>>
 {
 protected:
     void SetUp() override
@@ -1873,7 +1865,7 @@ protected:
     }
 };
 
-TEST_P(TestBigFloatPairRelocation, preservesPairedAllocationAcrossOwningInitialization)
+TEST_P(TestBigFloatPairStorage, reductionReleasesTheCompanionInEachLifetime)
 {
     BigArena &arena = bf_arena(std::get<1>(GetParam()));
     const std::size_t stride = (g_bf_length + 2 + 63) / 64 * 64;
@@ -1884,27 +1876,18 @@ TEST_P(TestBigFloatPairRelocation, preservesPairedAllocationAcrossOwningInitiali
     std::fill_n(pair.data(), 2 * stride, Byte{0});
     const BigFloat canonical{arena, -7.5L};
     const Byte *const address = pair.data();
-    const std::size_t capacity = arena.capacity();
-    const BigArena::Index index = pair.index();
-
-    init_bf_length(std::get<0>(GetParam()) == 56 ? 64 : 56);
-
-    EXPECT_EQ(static_cast<std::size_t>((g_bf_length + 2 + 63) / 64 * 64), arena.block_size());
-    EXPECT_NE(address, pair.data());
-    EXPECT_EQ(&arena, &pair.arena());
-    EXPECT_EQ(capacity, arena.capacity());
-    EXPECT_EQ(index, pair.index());
     EXPECT_EQ(2U, pair.blocks());
-    EXPECT_EQ(BigFloat{-7.5L}, canonical);
-    const Byte *const relocated = pair.data();
+
     pair.reduce();
-    EXPECT_EQ(relocated, pair.data());
+
+    EXPECT_EQ(address, pair.data());
     EXPECT_EQ(1U, pair.blocks());
     const BigArena::Allocation companion = arena.allocate_single();
-    EXPECT_EQ(relocated + arena.block_size(), companion.data());
+    EXPECT_EQ(address + arena.block_size(), companion.data());
+    EXPECT_EQ(BigFloat{-7.5L}, canonical);
 }
 
-INSTANTIATE_TEST_SUITE_P(LayoutsAndLifetimes, TestBigFloatPairRelocation,
+INSTANTIATE_TEST_SUITE_P(LayoutsAndLifetimes, TestBigFloatPairStorage,
     testing::Combine(testing::Values(4, 12, 52, 56, 64, 708),
         testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
 

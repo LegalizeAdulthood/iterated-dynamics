@@ -174,6 +174,20 @@ TEST_P(TestBigFloatBrowser, preservesExactCornersInputsAndTemporaryLifetimeAcros
     EXPECT_EQ(decimals, g_decimals);
 }
 
+TEST_P(TestBigFloatBrowser, reopensAfterAPrecisionChange)
+{
+    ASSERT_EQ(ID_KEY_ENTER, browse());
+
+    init_bf_length(64);
+
+    EXPECT_EQ(ID_KEY_ENTER, browse());
+    EXPECT_EQ(m_path, g_browse.selected_path);
+    EXPECT_EQ(2, g_box_x[0]);
+    EXPECT_EQ(2, g_box_y[0]);
+    EXPECT_EQ(5, g_box_x[3]);
+    EXPECT_EQ(5, g_box_y[3]);
+}
+
 TEST_P(TestBigFloatBrowser, preservesOrdinaryViewAcrossBrowsing)
 {
     free_bf_vars();

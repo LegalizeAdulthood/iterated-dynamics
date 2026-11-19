@@ -467,12 +467,11 @@ rescan:  // entry for changed browse parms
     s_browse_box_x.clear();
     s_browse_box_y.clear();
     s_browse_box_values.clear();
-    s_bt_a = BigFloat{};
-    s_bt_b = BigFloat{};
-    s_bt_c = BigFloat{};
-    s_bt_d = BigFloat{};
-    s_bt_e = BigFloat{};
-    s_bt_f = BigFloat{};
+    for (BigFloat *coefficient : {&s_bt_a, &s_bt_b, &s_bt_c, &s_bt_d, &s_bt_e, &s_bt_f})
+    {
+        std::destroy_at(coefficient);
+        ::new (coefficient) BigFloat{};
+    }
     if (s_old_bf_math == BFMathType::NONE)
     {
         free_bf_vars();

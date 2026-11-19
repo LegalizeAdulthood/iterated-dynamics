@@ -109,8 +109,6 @@ int convert_bn(Byte *new_num, const Byte *old_num, int new_bn_len, int new_int_l
 void convert_bn_signed(
     Byte *new_num, const Byte *old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
 
-void migrate_bn(Byte *destination, const Byte *source, std::size_t blocks, int new_bn_length, int new_int_length,
-    int new_padding, int old_bn_length, int old_int_length, int old_padding);
 // "safe" versions
 Byte *full_mult_bn(Byte *r, Byte *n1, Byte *n2);
 Byte *mult_bn(Byte *r, Byte *n1, Byte *n2);

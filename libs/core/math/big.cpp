@@ -542,18 +542,6 @@ void convert_bn_signed(Byte *new_num, const Byte *old_num, const int new_bn_len,
     }
 }
 
-void migrate_bn(Byte *destination, const Byte *source, const std::size_t blocks, const int new_bn_length,
-    const int new_int_length, const int new_padding, const int old_bn_length, const int old_int_length,
-    const int old_padding)
-{
-    const bool product = blocks == 2;
-    const int old_length = product ? old_bn_length + old_padding : old_bn_length;
-    const int old_integer = product ? 2 * old_int_length : old_int_length;
-    const int new_length = product ? new_bn_length + new_padding : new_bn_length;
-    const int new_integer = product ? 2 * new_int_length : new_int_length;
-    convert_bn_signed(destination, source, new_length, new_integer, old_length, old_integer);
-}
-
 /*********************************************************************/
 //  bn = floor(bf)
 //  Converts a bigfloat to a bignumber (integer)

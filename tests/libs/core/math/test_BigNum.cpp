@@ -536,50 +536,22 @@ TEST_F(TestBigNumValue, copyingMovingAndExportDoNotRequireAnActiveArena)
     EXPECT_EQ(expected, encoded_value(moved));
 }
 
-TEST_F(TestBigNumValue, copyAssignmentAndDestructionUseTheRelocatedArenaLayout)
+TEST_F(TestBigNumValue, copyAssignmentUsesTheCurrentArenaLayout)
 {
+    const int old_length = g_bn_length;
+    g_bailout_test = Bailout::REAL;
+    init_bf_dec(80);
     const BigNum original{"-1.25"};
-    const auto expected = encoded_value(original);
-    g_bailout_test = Bailout::REAL;
-    init_bf_dec(80);
+    BigNum assigned{2.5L};
 
-    {
-        BigNum assigned{2.5L};
-        assigned = original;
-        std::vector<Byte> too_small(expected.size());
-        EXPECT_THROW(assigned.copy_to_legacy(too_small.data(), too_small.size()), std::invalid_argument);
-        std::vector<Byte> exported(g_bn_length);
-        assigned.copy_to_legacy(exported.data(), exported.size());
+    assigned = original;
 
-        EXPECT_EQ(encoded_value(BigNum{-1.25L}), exported);
-        free_bf_vars();
-    }
-
-    g_bailout_test = Bailout::MOD;
-    init_bf_dec(40);
-    EXPECT_EQ("-1.25", original.to_string());
+    std::vector<Byte> too_small(old_length);
+    EXPECT_THROW(assigned.copy_to_legacy(too_small.data(), too_small.size()), std::invalid_argument);
+    EXPECT_EQ(BigNum{-1.25L}, assigned);
 }
 
-TEST_F(TestBigNumValue, relocationSignExtendsNegativeValuesWhenTheIntegerPartGrows)
-{
-    BigNum value{bn_arena(BigLifetime::PERSISTENT), -1.25L};
-    ASSERT_EQ(1, g_int_length);
-    g_bailout_test = Bailout::REAL;
-    init_bf_dec(80);
-    ASSERT_EQ(2, g_int_length);
-    EXPECT_EQ(BigNum{-1.25L}, value);
-    g_user.bailout_value = 100;
-    init_bf_dec(80);
-    ASSERT_EQ(4, g_int_length);
-    EXPECT_EQ(BigNum{-1.25L}, value);
-    g_bailout_test = Bailout::MOD;
-    g_user.bailout_value = 0;
-    init_bf_dec(40);
-    ASSERT_EQ(1, g_int_length);
-    EXPECT_EQ(BigNum{-1.25L}, value);
-}
-
-TEST_F(TestBigNumValue, legacyBorrowsAccessOwnedStorageAndResolveRelocatedHandles)
+TEST_F(TestBigNumValue, legacyBorrowsAccessOwnedStorage)
 {
     static_assert(std::is_same_v<decltype(std::declval<BigNum &>().data()), BigNumPtr>);
     static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().data()), BigNumConstPtr>);
@@ -589,10 +561,8 @@ TEST_F(TestBigNumValue, legacyBorrowsAccessOwnedStorageAndResolveRelocatedHandle
     EXPECT_EQ(encoded_value(value), std::vector<Byte>(before, before + g_bn_length));
 
     float_to_bn(value, 2.5L);
-    EXPECT_EQ(BigNum{2.5L}, value);
-    init_bf_dec(80);
 
-    EXPECT_NE(before, std::as_const(value).data());
+    EXPECT_EQ(before, std::as_const(value).data());
     EXPECT_EQ(BigNum{2.5L}, value);
     EXPECT_EQ(encoded_value(value), std::vector<Byte>(value.data(), value.data() + g_bn_length));
 }
