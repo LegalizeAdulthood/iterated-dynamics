@@ -1597,6 +1597,16 @@ Byte *copy_bf(Byte *r, const Byte *n)
     return r;
 }
 
+// For debugging, dump the active mantissa and exponent to stdout.
+void bf_hex_dump_snapshot(const Byte *r)
+{
+    for (int i = 0; i < g_bf_length; i++)
+    {
+        std::printf("%02X ", r[i]);
+    }
+    std::printf(" e %04hX\n", static_cast<S16>(BIG_ACCESS16(r + g_bf_length)));
+}
+
 void reduce_bf_product(Byte *value)
 {
     std::memmove(value, value + g_padding, g_bf_length + 2);

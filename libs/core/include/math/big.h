@@ -120,9 +120,7 @@ Byte *div_bn(Byte *r, const Byte *n1, const Byte *n2, Byte *tmp1, Byte *tmp2, By
 bool is_bn_zero(const Byte *n);
 Byte *float_to_bn(Byte *r, LDouble f);
 
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
 void bf_hex_dump_snapshot(const Byte *r);
-#endif
 Byte *str_to_bf(Byte *r, std::string_view s, Byte *tmp1);
 Byte *bf_to_bn(Byte *n, const Byte *f);
 Byte *bn_to_bf(Byte *f, const Byte *n);

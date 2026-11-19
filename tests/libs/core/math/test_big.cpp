@@ -2034,23 +2034,12 @@ TEST(TestBigFloatDiagnosticBytes, hexDumpPrintsShiftedShortenedWorkspace)
     const std::array<Byte, 10> bytes{0x00, 0x09, 0x8a, 0xff, 0x12, 0x34, 0x80, 0xfe, 0xfe, 0xff};
     std::copy(bytes.begin(), bytes.end(), shortened);
     const std::vector<Byte> original = workspace;
-    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    ASSERT_GT(workspace.size(), size);
-    BigArena dump_arena{size, 2, [](Byte *) {}};
-    const BigFloat snapshot = BigFloat::from_legacy(dump_arena, shortened, size);
-    EXPECT_EQ(&dump_arena, &snapshot.arena());
-    EXPECT_NE(shortened, snapshot.data());
-    std::array<Byte, 10> observed{};
-    snapshot.copy_to_legacy(observed.data(), observed.size());
-    EXPECT_EQ(bytes, observed);
     testing::internal::CaptureStdout();
 
-    bf_hex_dump(snapshot);
+    bf_hex_dump_snapshot(shortened);
 
     const std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ("00 09 8A FF 12 34 80 FE  e FFFE\n", output);
-    snapshot.copy_to_legacy(observed.data(), observed.size());
-    EXPECT_EQ(bytes, observed);
     EXPECT_EQ(original, workspace);
     EXPECT_EQ(8, g_bf_length);
 }

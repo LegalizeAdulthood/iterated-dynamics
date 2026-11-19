@@ -11,7 +11,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdio>
 #include <cstring>
 #include <stdexcept>
 #include <utility>
@@ -140,21 +139,8 @@ std::string format_bf(
 
 void bf_hex_dump(const BigFloat &r)
 {
-    for (int i = 0; i < g_bf_length; i++)
-    {
-        std::printf("%02X ", *(r.data() + i));
-    }
-    std::printf(" e %04hX\n", static_cast<S16>(BIG_ACCESS16(r.data() + g_bf_length)));
+    bf_hex_dump_snapshot(r.data());
 }
-
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-void bf_hex_dump_snapshot(const Byte *r)
-{
-    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    BigArena dump_arena{size, 2, reduce_bf_product};
-    bf_hex_dump(BigFloat::from_legacy(dump_arena, r, size));
-}
-#endif
 
 BigFloat::BigFloat() noexcept = default;
 
