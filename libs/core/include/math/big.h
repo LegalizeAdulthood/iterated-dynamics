@@ -48,6 +48,7 @@ void calc_lengths();
 Byte *clear_bn(Byte *r);
 Byte *max_bn(Byte *r);
 Byte *copy_bn(Byte *r, const Byte *n);
+void bn_hex_dump(const Byte *r);
 Byte *msb_bn(Byte *value);
 const Byte *msb_bn(const Byte *value);
 void reduce_bn_product(Byte *value);

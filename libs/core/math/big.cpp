@@ -735,6 +735,16 @@ Byte *copy_bn(Byte *r, const Byte *n)
     return r;
 }
 
+// For debugging, dump the active fixed-point bytes to stdout.
+void bn_hex_dump(const Byte *r)
+{
+    for (int i = 0; i < g_bn_length; i++)
+    {
+        std::printf("%02X ", r[i]);
+    }
+    std::printf("\n");
+}
+
 // r = n1 + n2
 Byte *add_bn(Byte *r, const Byte *n1, const Byte *n2)
 {

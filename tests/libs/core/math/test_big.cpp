@@ -1326,6 +1326,78 @@ private:
     ValueSaver<fractals::FractalType> m_fractal_type{fractals::g_fractal_type, fractals::FractalType::MANDEL};
 };
 
+class TestBigNumByteHexDump : public TestBigNumByteKernel, public testing::WithParamInterface<int>
+{
+protected:
+    void SetUp() override;
+    static void expect_hex_dump(const std::vector<Byte> &bytes, const std::string &expected);
+};
+
+void TestBigNumByteHexDump::SetUp()
+{
+    init_layout(GetParam(), 1);
+    ASSERT_EQ(GetParam(), g_bn_length);
+    ASSERT_EQ(1, g_int_length);
+}
+
+void TestBigNumByteHexDump::expect_hex_dump(const std::vector<Byte> &bytes, const std::string &expected)
+{
+    const std::vector<Byte> original = bytes;
+    testing::internal::CaptureStdout();
+
+    bn_hex_dump(bytes.data());
+
+    const std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(expected + '\n', output);
+    EXPECT_EQ(original, bytes);
+}
+
+TEST_P(TestBigNumByteHexDump, hexDumpPrintsZeroAndPreservesInput)
+{
+    const int length = GetParam();
+    const std::vector<Byte> bytes(static_cast<std::size_t>(length));
+    std::string expected;
+    for (int i = 0; i < length; ++i)
+    {
+        expected += "00 ";
+    }
+
+    expect_hex_dump(bytes, expected);
+}
+
+TEST_P(TestBigNumByteHexDump, hexDumpPrintsNegativeValueAndPreservesInput)
+{
+    const int length = GetParam();
+    std::vector<Byte> bytes(static_cast<std::size_t>(length));
+    bytes[bytes.size() - 2] = 0xc0;
+    bytes.back() = 0xfe; // -1.25 in the active fixed-point layout.
+    std::string expected;
+    for (int i = 0; i < length - 2; ++i)
+    {
+        expected += "00 ";
+    }
+    expected += "C0 FE ";
+
+    expect_hex_dump(bytes, expected);
+}
+
+TEST_P(TestBigNumByteHexDump, hexDumpPrintsHighBitBytesInStorageOrder)
+{
+    const std::array<Byte, 4> pattern{0x00, 0x09, 0x8a, 0xff};
+    const int length = GetParam();
+    std::vector<Byte> bytes(static_cast<std::size_t>(length));
+    std::string expected;
+    for (int i = 0; i < length; i += 4)
+    {
+        std::copy(pattern.begin(), pattern.end(), bytes.begin() + i);
+        expected += "00 09 8A FF ";
+    }
+
+    expect_hex_dump(bytes, expected);
+}
+
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumByteHexDump, testing::Values(4, 672));
+
 class TestBigNumByteLayout : public TestBigNumByteKernel, public testing::WithParamInterface<int>
 {
 };

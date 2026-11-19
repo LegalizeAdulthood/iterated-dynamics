@@ -73,6 +73,7 @@ public:
 
     LDouble to_float() const;
     std::string to_string(int digits = 0) const;
+    void hex_dump() const;
 
     // Borrowed buffers require a numeric value and expire on arena relocation.
     BigNumPtr data() noexcept
@@ -171,7 +172,5 @@ extern BNComplex g_old_z_bn;
 extern BNComplex g_param_z_bn;
 extern BNComplex g_saved_z_bn;
 extern BNComplex g_new_z_bn;
-
-void bn_hex_dump(const BigNum &r);
 
 } // namespace id::math

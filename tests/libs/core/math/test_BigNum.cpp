@@ -41,7 +41,7 @@ static_assert(!std::is_convertible_v<BigNumPtr, BigNum>);
 static_assert(!std::is_convertible_v<BigNum, BigFloat>);
 static_assert(!std::is_convertible_v<BigFloat, BigNum>);
 static_assert(!std::is_convertible_v<LDouble, BigNum>);
-static_assert(std::is_same_v<decltype(&bn_hex_dump), void (*)(const BigNum &)>);
+static_assert(std::is_same_v<decltype(&BigNum::hex_dump), void (BigNum::*)() const>);
 static_assert(std::is_void_v<decltype(square_bn(std::declval<BigNum &>(), std::declval<BigNum &>()))>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() * std::declval<const BigNum &>()), BigNum>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().sqr()), BigNum>);
@@ -119,18 +119,6 @@ std::vector<Byte> saturation_bytes(const bool negative)
     result.front() = negative ? Byte{1} : Byte{0xff};
     result.back() = negative ? Byte{0x80} : Byte{0x7f};
     return result;
-}
-
-void expect_hex_dump(const BigNum &value, const std::string &expected)
-{
-    const auto original = encoded_value(value);
-    testing::internal::CaptureStdout();
-
-    bn_hex_dump(value);
-
-    const std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(expected + '\n', output);
-    EXPECT_EQ(original, encoded_value(value));
 }
 
 } // namespace
@@ -497,66 +485,6 @@ TEST_F(TestBigNumValue, supportsSmallestAndLargestLegacyLayouts)
         EXPECT_EQ("-1.25", value.to_string(8));
         EXPECT_EQ(static_cast<std::size_t>(length), encoded_value(value).size());
         EXPECT_EQ(encoded_value(value), encoded_value(BigNum{BigFloat{value}}));
-    }
-}
-
-TEST_F(TestBigNumValue, hexDumpPrintsZeroAndPreservesInput)
-{
-    for (const int length : {4, 672})
-    {
-        SCOPED_TRACE(length);
-        init_bf_length(length);
-        ASSERT_EQ(length, g_bn_length);
-        std::vector<Byte> bytes(static_cast<std::size_t>(length));
-        std::string expected;
-        for (int i = 0; i < length; ++i)
-        {
-            expected += "00 ";
-        }
-
-        expect_hex_dump(BigNum::from_legacy(bytes.data(), bytes.size()), expected);
-    }
-}
-
-TEST_F(TestBigNumValue, hexDumpPrintsNegativeValueAndPreservesInput)
-{
-    for (const int length : {4, 672})
-    {
-        SCOPED_TRACE(length);
-        init_bf_length(length);
-        ASSERT_EQ(length, g_bn_length);
-        ASSERT_EQ(1, g_int_length);
-        std::vector<Byte> bytes(static_cast<std::size_t>(length));
-        bytes[bytes.size() - 2] = 0xc0;
-        bytes.back() = 0xfe; // -1.25 in the active fixed-point layout.
-        std::string expected;
-        for (int i = 0; i < length - 2; ++i)
-        {
-            expected += "00 ";
-        }
-        expected += "C0 FE ";
-
-        expect_hex_dump(BigNum::from_legacy(bytes.data(), bytes.size()), expected);
-    }
-}
-
-TEST_F(TestBigNumValue, hexDumpPrintsHighBitBytesInStorageOrder)
-{
-    const std::array<Byte, 4> pattern{0x00, 0x09, 0x8a, 0xff};
-    for (const int length : {4, 672})
-    {
-        SCOPED_TRACE(length);
-        init_bf_length(length);
-        ASSERT_EQ(length, g_bn_length);
-        std::vector<Byte> bytes(static_cast<std::size_t>(length));
-        std::string expected;
-        for (int i = 0; i < length; i += 4)
-        {
-            std::copy(pattern.begin(), pattern.end(), bytes.begin() + i);
-            expected += "00 09 8A FF ";
-        }
-
-        expect_hex_dump(BigNum::from_legacy(bytes.data(), bytes.size()), expected);
     }
 }
 
