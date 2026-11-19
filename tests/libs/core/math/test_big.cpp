@@ -2765,6 +2765,25 @@ TEST_P(TestBigNumByteProducts, reductionCopiesOnlyTheCanonicalWindow)
     EXPECT_EQ(expected, guarded);
 }
 
+TEST_P(TestBigNumByteProducts, arenaReducesProductsThroughItsConfiguredFunction)
+{
+    init_layout(GetParam(), 1);
+    BigArena &arena = bn_arena(BigLifetime::TEMPORARY);
+    BigArena::Allocation product = arena.allocate_double();
+    std::vector<Byte> expected(g_bn_length);
+    expected.front() = 0x35;
+    expected.back() = 0x7f;
+    std::copy(expected.begin(), expected.end(), product.data() + g_shift_factor);
+    const BigArena::Index index = product.index();
+
+    product.reduce();
+
+    EXPECT_EQ(expected, std::vector<Byte>(product.data(), product.data() + expected.size()));
+    EXPECT_EQ(index, product.index());
+    const BigArena::Allocation half = arena.allocate_single();
+    EXPECT_EQ(index + 1, half.index());
+}
+
 class TestBigNumByteProductRelocation
     : public TestBigNumByteKernel,
       public testing::WithParamInterface<std::tuple<int, std::pair<int, int>, bool, BigLifetime>>

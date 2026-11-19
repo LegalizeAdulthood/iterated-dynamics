@@ -2,7 +2,6 @@
 // Copyright 2026 Richard Thomson.
 //
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 
 #include <engine/bailout_formula.h>
 #include <engine/UserData.h>
@@ -1925,9 +1924,10 @@ TEST_P(TestBigFloatProductLifetime, temporaryRewindsPreservePairedAllocationsAnd
     const BigStackMark mark = save_stack();
     {
         BigStackSaver saved;
+        const std::vector<Byte> fixed_sentinel(2 * bn_arena(BigLifetime::TEMPORARY).block_size(), 0xa5);
         Byte *const fixed = bn_stack().allocate_double();
         Byte *const floating = bf_stack().allocate_double();
-        BigNum{-5}.copy_to_legacy(fixed, g_bn_length);
+        std::copy(fixed_sentinel.begin(), fixed_sentinel.end(), fixed);
         BigFloat{6.25L}.copy_to_legacy(floating, static_cast<std::size_t>(g_bf_length + 2));
         const BigArena::Allocation local = product.clone(temporary);
         const BigStackMark middle = save_stack();
@@ -1939,7 +1939,7 @@ TEST_P(TestBigFloatProductLifetime, temporaryRewindsPreservePairedAllocationsAnd
             EXPECT_EQ(bytes, paired_bytes(nested));
         }
         EXPECT_EQ(middle, save_stack());
-        EXPECT_EQ(-5.0L, BigNum::from_legacy(fixed, g_bn_length).to_float());
+        EXPECT_TRUE(std::equal(fixed_sentinel.begin(), fixed_sentinel.end(), fixed));
         BigFloat observed_float = BigFloat::from_legacy(floating, static_cast<std::size_t>(g_bf_length + 2));
         EXPECT_EQ(6.25L, bf_to_float(observed_float));
         EXPECT_EQ(bytes, paired_bytes(local));
