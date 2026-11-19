@@ -339,30 +339,6 @@ BigNum BigNum::sqr() const
     return result;
 }
 
-void square_bn(BigNum &result, BigNum &source)
-{
-    BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
-    square_bn(product.data(), source.data());
-    copy_bn(result.data(), msb_bn(product.data()));
-}
-
-void mult_bn(BigNum &result, BigNum &left, BigNum &right)
-{
-    const bool sign1 = is_bn_neg(left.data());
-    const bool sign2 = is_bn_neg(right.data());
-    BigNumProduct product{bn_arena(BigLifetime::TEMPORARY)};
-    unsafe_mult_bn(product.data(), left.data(), right.data());
-    if (sign1)
-    {
-        neg_a_bn(left.data());
-    }
-    if (sign2)
-    {
-        neg_a_bn(right.data());
-    }
-    copy_bn(result.data(), msb_bn(product.data()));
-}
-
 bool BigNum::operator==(const BigNum &right) const
 {
     return cmp_bn(data(), right.data()) == 0;
@@ -572,12 +548,6 @@ BigNum &neg_a_bn(BigNum &r)
 BigNum &double_bn(BigNum &r, const BigNum &n)
 {
     double_bn(r.data(), n.data());
-    return r;
-}
-
-BigNum &double_a_bn(BigNum &r)
-{
-    double_a_bn(r.data());
     return r;
 }
 

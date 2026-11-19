@@ -481,7 +481,7 @@ void TestBigNumBailoutProductStorage::SetUp()
     g_magnitude_limit = std::get<3>(GetParam()) ? 0.5 : 32;
 }
 
-TEST_P(TestBigNumBailoutProductStorage, reservesCanonicalMetricAndReusesPrivateSqrScratchWithoutTouchingNeighbors)
+TEST_P(TestBigNumBailoutProductStorage, reusesTemporaryMetricStorageWithoutTouchingNeighbors)
 {
     const Bailout mode = std::get<2>(GetParam());
     const bool escape = std::get<3>(GetParam());
@@ -501,15 +501,15 @@ TEST_P(TestBigNumBailoutProductStorage, reservesCanonicalMetricAndReusesPrivateS
     const BigArena::Index slot_index = slot.index();
     BigNum neighbor{temporary, -11};
 
-    BigArena::Allocation scratch = temporary.allocate_double();
-    const BigArena::Index scratch_index = scratch.index();
+    BigArena::Allocation pair = temporary.allocate_double();
+    const BigArena::Index pair_index = pair.index();
     BigArena::Allocation second_pair;
     if (mode == Bailout::MANH)
     {
         second_pair = temporary.allocate_double();
     }
     second_pair.reset();
-    scratch.reset();
+    pair.reset();
     slot.reset();
     const std::size_t high_water = temporary.high_water_mark();
     g_old_z_bn.x = -7;
@@ -520,8 +520,7 @@ TEST_P(TestBigNumBailoutProductStorage, reservesCanonicalMetricAndReusesPrivateS
     EXPECT_EQ(escape ? 1 : 0, g_bailout_bignum());
 
     // The isolated half holds abs_x (MANH) or the metric (MANR).
-    // MANH's abs_y and metric share a pair. Only sqr scratch needs
-    // another pair, released before the canonical limit is constructed.
+    // MANH uses a pair for abs_y and the metric, and another slot for the limit.
     EXPECT_EQ(high_water, temporary.high_water_mark());
     EXPECT_EQ(mark, save_stack());
     EXPECT_EQ(BigNum{-11}, neighbor);
@@ -543,7 +542,7 @@ TEST_P(TestBigNumBailoutProductStorage, reservesCanonicalMetricAndReusesPrivateS
     BigArena::Allocation reused_slot = temporary.allocate_single();
     EXPECT_EQ(slot_index, reused_slot.index());
     BigArena::Allocation first = temporary.allocate_double();
-    EXPECT_EQ(scratch_index, first.index());
+    EXPECT_EQ(pair_index, first.index());
     if (mode == Bailout::MANH)
     {
         BigArena::Allocation second = temporary.allocate_double();
@@ -580,8 +579,8 @@ TEST_P(TestBigNumBailoutContinuation, repeatedOrbitCallsMatchTheOrdinaryBailoutC
     g_old_z_bn.y = 1;
     g_param_z_bn.x = 1;
     g_param_z_bn.y = 0;
-    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+    g_tmp_sqr_x_bn = g_old_z_bn.x.sqr();
+    g_tmp_sqr_y_bn = g_old_z_bn.y.sqr();
     const std::array<DComplex, 2> expected{{{1, 2}, {-2, escape ? 2.0 : 4.0}}};
 
     for (int iteration = 0; iteration < 2; ++iteration)
@@ -670,10 +669,10 @@ TEST_P(TestBigNumJuliaProduct, preservesCanonicalProductOperandsAndTemporaryLife
     g_old_z_bn.y = input.initial.y;
     g_param_z_bn.x = input.parameter.x;
     g_param_z_bn.y = input.parameter.y;
-    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+    g_tmp_sqr_x_bn = g_old_z_bn.x.sqr();
+    g_tmp_sqr_y_bn = g_old_z_bn.y.sqr();
     BigArena::Allocation reservation = temporary.allocate_single();
-    const BigArena::Index product_index = reservation.index();
+    const BigArena::Index slot_index = reservation.index();
     BigNum companion{temporary, -19};
     BigArena::Allocation scratch = temporary.allocate_double();
     const BigArena::Index scratch_index = scratch.index();
@@ -702,7 +701,7 @@ TEST_P(TestBigNumJuliaProduct, preservesCanonicalProductOperandsAndTemporaryLife
                     EXPECT_EQ(scratch_index, probe.index());
                     EXPECT_EQ(high_water, temporary.high_water_mark());
                     BigArena::Allocation single = temporary.allocate_single();
-                    EXPECT_NE(product_index, single.index());
+                    EXPECT_EQ(slot_index, single.index());
                 }
                 if (borrow_stack)
                 {
@@ -726,7 +725,7 @@ TEST_P(TestBigNumJuliaProduct, preservesCanonicalProductOperandsAndTemporaryLife
     EXPECT_EQ(BigNum{sqr(input.next.x)}, g_tmp_sqr_x_bn);
     EXPECT_EQ(BigNum{sqr(input.next.y)}, g_tmp_sqr_y_bn);
     BigArena::Allocation released = temporary.allocate_single();
-    EXPECT_EQ(product_index, released.index());
+    EXPECT_EQ(slot_index, released.index());
     BigArena::Allocation reused_scratch = temporary.allocate_double();
     EXPECT_EQ(scratch_index, reused_scratch.index());
     if (borrow_stack)
@@ -773,8 +772,8 @@ TEST_P(TestBigNumJuliaCanonicalProduct, discardsLowProductBitsBeforeDoubling)
     }
     g_old_z_bn.x = negative ? -quantum : quantum;
     g_old_z_bn.y = 0.5L;
-    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+    g_tmp_sqr_x_bn = g_old_z_bn.x.sqr();
+    g_tmp_sqr_y_bn = g_old_z_bn.y.sqr();
     const BigNum expected_y = negative ? -(quantum + quantum) : BigNum{0};
     const BigNum original_x{g_old_z_bn.x};
 
@@ -793,19 +792,15 @@ TEST_P(TestBigNumJuliaCanonicalProduct, preservesFixedWidthOverflowAndDestinatio
     g_old_z_bn.y = 100;
     g_param_z_bn.x = 1;
     g_overflow = true;
-    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
-    BigArena &working = bn_arena(BigLifetime::WORKING);
+    g_tmp_sqr_x_bn = g_old_z_bn.x.sqr();
+    g_tmp_sqr_y_bn = g_old_z_bn.y.sqr();
+    const BigArena &working = bn_arena(BigLifetime::WORKING);
     const BigNum expected_y{static_cast<LDouble>(wrapped_integer(negative ? -20000 : 20000))};
-    // The additions in the orbit reuse one working slot for their result.
-    working.allocate_single().reset();
-    const std::size_t high_water = working.high_water_mark();
 
     EXPECT_EQ(1, julia_orbit_bn());
 
     EXPECT_EQ(&working, &g_new_z_bn.x.arena());
     EXPECT_EQ(&working, &g_new_z_bn.y.arena());
-    EXPECT_EQ(high_water, working.high_water_mark());
     EXPECT_EQ(BigNum{1}, g_new_z_bn.x);
     EXPECT_EQ(expected_y, g_new_z_bn.y);
     EXPECT_TRUE(g_overflow);
@@ -1073,15 +1068,13 @@ TEST_P(TestBigNumSqrStorage, sqrPreservesTheOtherCacheAndReusesScratch)
     EXPECT_EQ(BigNum{0}, value);
     value = 17;
     other = -11;
-    BigNum source{-3};
-    BigArena::Allocation scratch = temporary.allocate_double();
-    const BigArena::Index scratch_index = scratch.index();
-    scratch.reset();
+    const BigNum source{-3};
+    working.allocate_double().reset();
     const std::size_t high_water = working.high_water_mark();
     const std::size_t temporary_high_water = temporary.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    square_bn(value, source);
+    value = source.sqr();
 
     EXPECT_EQ(&working, &value.arena());
     EXPECT_EQ(high_water, working.high_water_mark());
@@ -1090,9 +1083,6 @@ TEST_P(TestBigNumSqrStorage, sqrPreservesTheOtherCacheAndReusesScratch)
     EXPECT_EQ(BigNum{9}, value);
     EXPECT_EQ(BigNum{-11}, other);
     EXPECT_EQ(BigNum{-3}, source);
-    const BigArena::Allocation reused = temporary.allocate_double();
-    EXPECT_EQ(scratch_index, reused.index());
-    EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
 }
 
 TEST_P(TestBigNumSqrStorage, subtractionAndDoublingPreserveTheOtherCache)
@@ -1106,7 +1096,7 @@ TEST_P(TestBigNumSqrStorage, subtractionAndDoublingPreserveTheOtherCache)
     value -= other;
     EXPECT_EQ(BigNum{5}, value);
     EXPECT_EQ(5, bn_to_int(value));
-    double_a_bn(value);
+    value += value;
     EXPECT_EQ(10, bn_to_int(value));
     EXPECT_EQ(BigNum{10}, value);
     EXPECT_EQ(original_other, other);

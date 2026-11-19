@@ -178,8 +178,8 @@ int main()
     g_old_z_bn.y = 0.125;
     g_param_z_bn.x = -0.2;
     g_param_z_bn.y = 0.4;
-    square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+    g_tmp_sqr_x_bn = g_old_z_bn.x.sqr();
+    g_tmp_sqr_y_bn = g_old_z_bn.y.sqr();
     measure("bn_julia_orbit", 10000, [] { s_result = julia_orbit_bn() != 0; });
 
     g_fractal_type = FractalType::JULIA_Z_POWER;

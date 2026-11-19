@@ -39,7 +39,6 @@ static_assert(!std::is_convertible_v<BigNum, BigFloat>);
 static_assert(!std::is_convertible_v<BigFloat, BigNum>);
 static_assert(!std::is_convertible_v<LDouble, BigNum>);
 static_assert(std::is_same_v<decltype(&BigNum::hex_dump), void (BigNum::*)() const>);
-static_assert(std::is_void_v<decltype(square_bn(std::declval<BigNum &>(), std::declval<BigNum &>()))>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() * std::declval<const BigNum &>()), BigNum>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().sqr()), BigNum>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() + std::declval<const BigNum &>()), BigNum>);
@@ -51,13 +50,10 @@ static_assert(!std::is_void_v<decltype(abs_a_bn(std::declval<BigNum &>()))>);
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() = std::declval<const BigNum &>()), BigNum &>);
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() += std::declval<const BigNum &>()), BigNum &>);
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() -= std::declval<const BigNum &>()), BigNum &>);
-static_assert(
-    std::is_void_v<decltype(mult_bn(std::declval<BigNum &>(), std::declval<BigNum &>(), std::declval<BigNum &>()))>);
 
 static_assert(std::is_same_v<decltype(clear_bn(std::declval<BigNum &>())), BigNum &>);
 static_assert(std::is_same_v<decltype(max_bn(std::declval<BigNum &>())), BigNum &>);
 static_assert(std::is_same_v<decltype(neg_a_bn(std::declval<BigNum &>())), BigNum &>);
-static_assert(std::is_same_v<decltype(double_a_bn(std::declval<BigNum &>())), BigNum &>);
 static_assert(std::is_same_v<decltype(half_a_bn(std::declval<BigNum &>())), BigNum &>);
 static_assert(std::is_same_v<decltype(neg_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
 static_assert(std::is_same_v<decltype(double_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
@@ -731,13 +727,11 @@ TEST_P(TestBigNumLayout, expressionsMatchDestinationProceduresAndOutliveTheirTem
     BigArena &working = bn_arena(BigLifetime::WORKING);
     BigNum numerator{working, left};
     BigNum quotient{working};
-    BigNum product{working};
     BigNum expected{working};
-    BigNum left_copy{left};
     // Use fresh destinations so division starts with zero low bytes.
     numerator += right;
     div_bn(quotient, numerator, divisor);
-    mult_bn(product, quotient, left_copy);
+    const BigNum product = quotient * left;
     sub_bn(expected, product, right);
     const BigStackMark marker = save_stack();
 
@@ -840,19 +834,17 @@ void TestBigNumRetainedSqr::SetUp()
 TEST_P(TestBigNumRetainedSqr, canonicalSqrPreservesDestinationSourceAndScratchLifetime)
 {
     BigArena &arena = bn_arena(BigLifetime::WORKING);
-    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
-    BigNum source{std::get<2>(GetParam()) ? -2.0L : 2.0L};
+    const BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
+    const BigNum source{std::get<2>(GetParam()) ? -2.0L : 2.0L};
     BigNum destination{arena};
     const BigNum expected{4};
     const BigNum original_source{source};
-    BigArena::Allocation scratch = temporary.allocate_double();
-    const BigArena::Index scratch_index = scratch.index();
-    scratch.reset();
+    arena.allocate_double().reset();
     const std::size_t working_high_water = arena.high_water_mark();
     const std::size_t temporary_high_water = temporary.high_water_mark();
     const BigStackMark stack_mark = save_stack();
 
-    square_bn(destination, source);
+    destination = source.sqr();
 
     EXPECT_EQ(expected, destination);
     EXPECT_EQ(&arena, &destination.arena());
@@ -860,21 +852,17 @@ TEST_P(TestBigNumRetainedSqr, canonicalSqrPreservesDestinationSourceAndScratchLi
     EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
     EXPECT_EQ(stack_mark, save_stack());
     EXPECT_EQ(original_source, source);
-    BigArena::Allocation reused = temporary.allocate_double();
-    EXPECT_EQ(scratch_index, reused.index());
-    EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
 }
 
 TEST_P(TestBigNumRetainedSqr, canonicalSqrPreservesFixedWidthOverflow)
 {
     // Squaring the largest signed integer wraps to 1 at the canonical width.
     const LDouble magnitude = std::ldexp(LDouble{1}, 8 * g_int_length - 1) - 1;
-    BigNum source{std::get<2>(GetParam()) ? -magnitude : magnitude};
+    const BigNum source{std::get<2>(GetParam()) ? -magnitude : magnitude};
     const BigNum original_source{source};
-    BigNum destination{bn_arena(BigLifetime::WORKING)};
     const BigNum expected{1};
 
-    square_bn(destination, source);
+    const BigNum destination = source.sqr();
 
     EXPECT_EQ(expected, destination);
     EXPECT_EQ(original_source, source);
@@ -929,25 +917,22 @@ TEST_P(TestBigNumRetainedMultiply, owningMultiplyPreservesDestinationArenaOperan
 {
     const RetainedMultiplyInput input = std::get<2>(GetParam());
     BigArena &arena = bn_arena(BigLifetime::WORKING);
-    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
-    BigNum left{static_cast<LDouble>(input.left)};
-    BigNum distinct_right{static_cast<LDouble>(input.right)};
-    BigNum &right = input.shared ? left : distinct_right;
+    const BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
+    const BigNum left{static_cast<LDouble>(input.left)};
+    const BigNum distinct_right{static_cast<LDouble>(input.right)};
+    const BigNum &right = input.shared ? left : distinct_right;
     BigNum destination{arena};
     const int product = input.left * (input.shared ? input.left : input.right);
     const BigNum expected{static_cast<LDouble>(product)};
-    const int restored_left = input.shared && input.left < 0 ? -input.left : input.left;
-    const BigNum expected_left{static_cast<LDouble>(restored_left)};
+    const BigNum expected_left{left};
     const BigNum original_right{distinct_right};
-    BigArena::Allocation scratch = temporary.allocate_double();
-    const BigArena::Index scratch_index = scratch.index();
-    scratch.reset();
+    arena.allocate_double().reset();
     const std::size_t working_high_water = arena.high_water_mark();
     const std::size_t temporary_high_water = temporary.high_water_mark();
     const BigStackMark stack_mark = save_stack();
     const std::array<int, 9> lengths = kernel_lengths();
 
-    mult_bn(destination, left, right);
+    destination = left * right;
 
     EXPECT_EQ(expected, destination);
     EXPECT_EQ(&arena, &destination.arena());
@@ -957,9 +942,6 @@ TEST_P(TestBigNumRetainedMultiply, owningMultiplyPreservesDestinationArenaOperan
     EXPECT_EQ(lengths, kernel_lengths());
     EXPECT_EQ(expected_left, left);
     EXPECT_EQ(original_right, distinct_right);
-    const BigArena::Allocation reused = temporary.allocate_double();
-    EXPECT_EQ(scratch_index, reused.index());
-    EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndAliasing, TestBigNumRetainedMultiply,
@@ -1242,7 +1224,7 @@ TEST_P(TestBigNumUnary, preservesDestinationIdentityAliasesAndAllocation)
         EXPECT_EQ(&destination, &double_bn(destination, std::as_const(source)));
         break;
     case UnaryOperation::DOUBLE_ASSIGN:
-        EXPECT_EQ(&destination, &double_a_bn(destination));
+        EXPECT_EQ(&destination, &(destination += destination));
         break;
     case UnaryOperation::HALF:
         EXPECT_EQ(&destination, &half_bn(destination, std::as_const(source)));

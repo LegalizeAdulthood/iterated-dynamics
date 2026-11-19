@@ -1038,8 +1038,8 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
         g_param_z_bn.y = input.imag;
         g_old_z_bn.x = 0;
         g_old_z_bn.y = 0;
-        square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
-        square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
+        g_tmp_sqr_x_bn = g_old_z_bn.x.sqr();
+        g_tmp_sqr_y_bn = g_old_z_bn.y.sqr();
     }
     else if (input.math == BFMathType::BIG_FLT)
     {

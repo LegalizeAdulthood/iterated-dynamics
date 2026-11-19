@@ -106,8 +106,6 @@ private:
 };
 
 BigNum sqr(const BigNum &value);
-void square_bn(BigNum &result, BigNum &source);
-void mult_bn(BigNum &result, BigNum &left, BigNum &right);
 BigNum &div_bn(BigNum &r, const BigNum &n1, const BigNum &n2);
 BigNum &unsafe_inv_bn(BigNum &r, BigNum &n);
 BigNum &unsafe_div_bn_int(BigNum &r, BigNum &n, misc::U16 u);
@@ -126,7 +124,6 @@ bool is_bn_not_zero(const BigNum &n);
 BigNum &neg_bn(BigNum &r, const BigNum &n);
 BigNum &neg_a_bn(BigNum &r);
 BigNum &double_bn(BigNum &r, const BigNum &n);
-BigNum &double_a_bn(BigNum &r);
 BigNum &half_bn(BigNum &r, const BigNum &n);
 BigNum &half_a_bn(BigNum &r);
 BigNum &mult_a_bn_int(BigNum &r, misc::U16 u);

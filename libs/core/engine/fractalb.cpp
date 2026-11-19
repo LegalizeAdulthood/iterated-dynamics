@@ -542,13 +542,12 @@ int mandel_per_pixel_bn()
         g_old_z_bn.y += g_new_z_bn.y;
     }
 
-    // square has side effect - must copy first
     g_new_z_bn.x = g_old_z_bn.x;
     g_new_z_bn.y = g_old_z_bn.y;
 
     // Store canonical g_bn_length-byte squares in the caches.
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    g_tmp_sqr_x_bn = g_new_z_bn.x.sqr();
+    g_tmp_sqr_y_bn = g_new_z_bn.y.sqr();
 
     return 1;                  // 1st iteration has been done
 }
@@ -631,13 +630,12 @@ int julia_per_pixel_bn()
     g_new_z_bn.x += g_new_z_bn.y;
     g_old_z_bn.y = g_y_max_bn - g_new_z_bn.x;
 
-    // square has side effect - must copy first
     g_new_z_bn.x = g_old_z_bn.x;
     g_new_z_bn.y = g_old_z_bn.y;
 
     // Store canonical g_bn_length-byte squares in the caches.
-    square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
-    square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
+    g_tmp_sqr_x_bn = g_new_z_bn.x.sqr();
+    g_tmp_sqr_y_bn = g_new_z_bn.y.sqr();
 
     return 1;                  // 1st iteration has been done
 }
@@ -672,15 +670,14 @@ int julia_per_pixel_bf()
 int julia_orbit_bn()
 {
     BigStackSaver saved;
-    BigNum product{bn_arena(BigLifetime::TEMPORARY)};
 
     // new.x = tmpsqrx - tmpsqry + parm.x;
     g_tmp_sqr_x_bn -= g_tmp_sqr_y_bn;
     g_new_z_bn.x = g_tmp_sqr_x_bn + g_param_z_bn.x;
 
     // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;
-    mult_bn(product, g_old_z_bn.x, g_old_z_bn.y);
-    double_a_bn(product);
+    BigNum product = g_old_z_bn.x * g_old_z_bn.y;
+    product += product;
     g_new_z_bn.y = product + g_param_z_bn.y;
 
     return g_bailout_bignum();
