@@ -15,6 +15,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <utility>
+#include <vector>
 
 using namespace id::misc;
 
@@ -116,6 +117,20 @@ BigArena::Allocation native_storage(BigArena &arena, const LDouble value)
     std::memset(storage.data(), 0, arena.block_size());
     float_to_bf(storage.data(), value);
     return storage;
+}
+
+std::string format_bf(
+    const BigFloat &value, const int dec, std::string (*format)(Byte *source, int digits, Byte *decimal))
+{
+    Byte *const scratch = g_bf_tmp_copy1.data();
+    copy_bf(scratch, value.data());
+    if (bf_to_float(scratch) == 0.0)
+    {
+        return "0.0";
+    }
+
+    std::vector<Byte> decimal(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
+    return format(scratch, dec, decimal.data());
 }
 
 } // namespace
@@ -610,22 +625,19 @@ const Byte *unpack_bf(BigFloat &destination, const Byte *source, const int store
 /**********************************************************************/
 std::string bf_to_string(const BigFloat &r, const int dec)
 {
-    copy_bf(g_bf_tmp_copy1.data(), r.data());
-    return unsafe_bf_to_string(g_bf_tmp_copy1.data(), dec);
+    return format_bf(r, dec, unsafe_bf_to_string);
 }
 
 /**********************************************************************/
 std::string bf_to_string_e(const BigFloat &r, const int dec)
 {
-    copy_bf(g_bf_tmp_copy1.data(), r.data());
-    return unsafe_bf_to_string_e(g_bf_tmp_copy1.data(), dec);
+    return format_bf(r, dec, unsafe_bf_to_string_e);
 }
 
 /**********************************************************************/
 std::string bf_to_string_f(const BigFloat &r, const int dec)
 {
-    copy_bf(g_bf_tmp_copy1.data(), r.data());
-    return unsafe_bf_to_string_f(g_bf_tmp_copy1.data(), dec);
+    return format_bf(r, dec, unsafe_bf_to_string_f);
 }
 
 BigFloat abs(const BigFloat &value)

@@ -2706,6 +2706,22 @@ INSTANTIATE_TEST_SUITE_P(LayoutsModesAndSigns, TestBigFloatFormatterStorage,
         testing::Values(BigFloatFormatMode::GENERAL, BigFloatFormatMode::SCIENTIFIC, BigFloatFormatMode::FIXED),
         testing::Bool()));
 
+class TestBigFloatFormatterUnderflow : public TestBigFloatFormat,
+                                       public testing::WithParamInterface<decltype(&bf_to_string)>
+{
+};
+
+TEST_P(TestBigFloatFormatterUnderflow, formatsNonzeroValueBelowNativeRangeAsZero)
+{
+    prepare_value("1e-5000");
+
+    ASSERT_TRUE(is_bf_not_zero(m_value));
+    EXPECT_EQ("0.0", GetParam()(m_value, 5));
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    Formatters, TestBigFloatFormatterUnderflow, testing::Values(bf_to_string, bf_to_string_e, bf_to_string_f));
+
 TEST_F(TestBigFloatFormat, formatsAtMaximumSupportedPrecision)
 {
     g_fractal_type = FractalType::MANDEL_Z_POWER;

@@ -13,7 +13,6 @@
 #include <cstring>
 #include <string>
 #include <string_view>
-#include <vector>
 
 using namespace id::misc;
 
@@ -71,8 +70,6 @@ S16 BIG_SET_S16(S16 *addr, S16 val)
 
 namespace
 {
-
-using BigFloat10 = Byte *;
 
 bool is_digit(const char c)
 {
@@ -3482,6 +3479,7 @@ std::string bf10_to_string_f(const Byte *n, int dec)
 /********************************************************************/
 // bftostring() - converts a bigfloat into a scientific notation string
 // dec - decimal places, 0 for max
+// decimal - zeroed buffer of (dec == 0 ? g_decimals : dec) + 4 bytes
 //   r - bigfloat
 //   will convert to a floating point notation
 //   SIDE-EFFECT: the bigfloat, r, is destroyed.
@@ -3489,16 +3487,8 @@ std::string bf10_to_string_f(const Byte *n, int dec)
 // USES: g_bf_tmp1 - g_bf_tmp2
 /********************************************************************/
 
-std::string unsafe_bf_to_string(Byte *r, const int dec)
+std::string unsafe_bf_to_string(Byte *r, const int dec, Byte *decimal)
 {
-    LDouble value = bf_to_float(r);
-    if (value == 0.0)
-    {
-        return "0.0";
-    }
-
-    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
-    BigFloat10 decimal{storage.data()};
     unsafe_bf_to_bf10(decimal, dec, r);
     int power = static_cast<S16>(BIG_ACCESS16(decimal + dec + 2)); // where the exponent is stored
     if (power > -4 && power < 6)                                   // tinker with this
@@ -3508,30 +3498,14 @@ std::string unsafe_bf_to_string(Byte *r, const int dec)
     return bf10_to_string_e(decimal, dec);
 }
 
-std::string unsafe_bf_to_string_e(Byte *r, const int dec)
+std::string unsafe_bf_to_string_e(Byte *r, const int dec, Byte *decimal)
 {
-    LDouble value = bf_to_float(r);
-    if (value == 0.0)
-    {
-        return "0.0";
-    }
-
-    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
-    BigFloat10 decimal{storage.data()};
     unsafe_bf_to_bf10(decimal, dec, r);
     return bf10_to_string_e(decimal, dec);
 }
 
-std::string unsafe_bf_to_string_f(Byte *r, const int dec)
+std::string unsafe_bf_to_string_f(Byte *r, const int dec, Byte *decimal)
 {
-    LDouble value = bf_to_float(r);
-    if (value == 0.0)
-    {
-        return "0.0";
-    }
-
-    std::vector<Byte> storage(static_cast<std::size_t>(dec == 0 ? g_decimals : dec) + 4);
-    BigFloat10 decimal{storage.data()};
     unsafe_bf_to_bf10(decimal, dec, r);
     return bf10_to_string_f(decimal, dec);
 }
