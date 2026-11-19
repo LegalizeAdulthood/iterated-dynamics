@@ -453,12 +453,6 @@ BigNum &int_to_bn(BigNum &r, const long value)
     return r;
 }
 
-BigNum &float_to_bn(BigNum &r, const LDouble value)
-{
-    float_to_bn(r.data(), value);
-    return r;
-}
-
 LDouble bn_to_float(BigNum &value)
 {
     return bn_to_float(value.data());
@@ -505,16 +499,6 @@ BigNum sub_bn(const BigNum &left, const BigNum &right)
     return result;
 }
 
-void add_a_bn(BigNum &result, const BigNum &source)
-{
-    add_bn(result.data(), result.data(), source.data());
-}
-
-void sub_a_bn(BigNum &result, const BigNum &source)
-{
-    sub_bn(result.data(), result.data(), source.data());
-}
-
 BigNum &div_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
 {
     div_bn(r.data(), n1.data(), n2.data(), bn_product_scratch().data(), g_bn_tmp2.data(), g_bn_tmp3.data(),
@@ -538,11 +522,6 @@ BigNum &div_a_bn_int(BigNum &r, const U16 u)
 {
     div_a_bn_int(r.data(), u);
     return r;
-}
-
-void copy_bn(BigNum &result, const BigNum &source)
-{
-    copy_bn(result.data(), source.data());
 }
 
 BigNum mult_bn_int(const BigNum &source, const U16 factor)

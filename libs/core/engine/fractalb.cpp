@@ -505,14 +505,14 @@ int mandel_per_pixel_bn()
     g_param_z_bn.x = g_delta_x_bn * static_cast<U16>(g_col);
     mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
 
-    add_a_bn(g_param_z_bn.x, g_bn_tmp);
+    g_param_z_bn.x += g_bn_tmp;
     g_param_z_bn.x += g_x_min_bn;
 
     // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bn is just used as a temporary variable
     mult_bn_int(g_old_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
     mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
-    add_a_bn(g_old_z_bn.x, g_old_z_bn.y);
+    g_old_z_bn.x += g_old_z_bn.y;
     sub_bn(g_param_z_bn.y, g_y_max_bn, g_old_z_bn.x);
 
     if (g_use_init_orbit == InitOrbitMode::VALUE)
@@ -522,29 +522,29 @@ int mandel_per_pixel_bn()
     }
     else
     {
-        copy_bn(g_old_z_bn.x, g_param_z_bn.x);
-        copy_bn(g_old_z_bn.y, g_param_z_bn.y);
+        g_old_z_bn.x = g_param_z_bn.x;
+        g_old_z_bn.y = g_param_z_bn.y;
     }
 
     if ((g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61) && g_bof_match_book_images)
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
-        float_to_bn(g_old_z_bn.x, g_params[0]); // initial perturbation of parameters set
-        float_to_bn(g_old_z_bn.y, g_params[1]);
+        g_old_z_bn.x = g_params[0]; // initial perturbation of parameters set
+        g_old_z_bn.y = g_params[1];
         g_color_iter = -1;
     }
     else
     {
         g_new_z_bn.x = g_params[0];
         g_new_z_bn.y = g_params[1];
-        add_a_bn(g_old_z_bn.x, g_new_z_bn.x);
-        add_a_bn(g_old_z_bn.y, g_new_z_bn.y);
+        g_old_z_bn.x += g_new_z_bn.x;
+        g_old_z_bn.y += g_new_z_bn.y;
     }
 
     // square has side effect - must copy first
-    copy_bn(g_new_z_bn.x, g_old_z_bn.x);
-    copy_bn(g_new_z_bn.y, g_old_z_bn.y);
+    g_new_z_bn.x = g_old_z_bn.x;
+    g_new_z_bn.y = g_old_z_bn.y;
 
     // Store canonical g_bn_length-byte squares in the caches.
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
@@ -621,8 +621,8 @@ int julia_per_pixel_bn()
     mult_bn_int(g_old_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
     mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
 
-    add_a_bn(g_old_z_bn.x, g_bn_tmp);
-    add_a_bn(g_old_z_bn.x, g_x_min_bn);
+    g_old_z_bn.x += g_bn_tmp;
+    g_old_z_bn.x += g_x_min_bn;
 
     // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bn is just used as a temporary variable
@@ -632,8 +632,8 @@ int julia_per_pixel_bn()
     sub_bn(g_old_z_bn.y, g_y_max_bn, g_new_z_bn.x);
 
     // square has side effect - must copy first
-    copy_bn(g_new_z_bn.x, g_old_z_bn.x);
-    copy_bn(g_new_z_bn.y, g_old_z_bn.y);
+    g_new_z_bn.x = g_old_z_bn.x;
+    g_new_z_bn.y = g_old_z_bn.y;
 
     // Store canonical g_bn_length-byte squares in the caches.
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
@@ -675,7 +675,7 @@ int julia_orbit_bn()
     BigNum product{bn_arena(BigLifetime::TEMPORARY)};
 
     // new.x = tmpsqrx - tmpsqry + parm.x;
-    sub_a_bn(g_tmp_sqr_x_bn, g_tmp_sqr_y_bn);
+    g_tmp_sqr_x_bn -= g_tmp_sqr_y_bn;
     add_bn(g_new_z_bn.x, g_tmp_sqr_x_bn, g_param_z_bn.x);
 
     // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;

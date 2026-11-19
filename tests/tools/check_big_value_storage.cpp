@@ -174,10 +174,10 @@ int main()
     g_fractal_type = FractalType::MANDEL;
     init_bf_dec(40);
     measure_values<BigNum>("bn_scalar", "bn_complex_power");
-    float_to_bn(g_old_z_bn.x, 0.25);
-    float_to_bn(g_old_z_bn.y, 0.125);
-    float_to_bn(g_param_z_bn.x, -0.2);
-    float_to_bn(g_param_z_bn.y, 0.4);
+    g_old_z_bn.x = 0.25;
+    g_old_z_bn.y = 0.125;
+    g_param_z_bn.x = -0.2;
+    g_param_z_bn.y = 0.4;
     square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
     measure("bn_julia_orbit", 10000, [] { s_result = julia_orbit_bn() != 0; });

@@ -115,7 +115,6 @@ BigNum &div_a_bn_int(BigNum &r, misc::U16 u);
 long bn_to_int(const BigNum &n);
 BigNum &str_to_bn(BigNum &r, std::string_view text);
 BigNum &int_to_bn(BigNum &r, long value);
-BigNum &float_to_bn(BigNum &r, LDouble value);
 LDouble bn_to_float(BigNum &value);
 std::string bn_to_string(const BigNum &value, int digits);
 int cmp_bn(const BigNum &n1, const BigNum &n2);
@@ -140,9 +139,6 @@ BigNum sub_bn(const BigNum &left, const BigNum &right);
 BigNum mult_bn_int(const BigNum &source, misc::U16 factor);
 BigNum abs_bn(const BigNum &source);
 BigNum &abs_a_bn(BigNum &r);
-void copy_bn(BigNum &result, const BigNum &source);
-void add_a_bn(BigNum &result, const BigNum &source);
-void sub_a_bn(BigNum &result, const BigNum &source);
 
 using BNComplex = Complex<BigNum>;
 

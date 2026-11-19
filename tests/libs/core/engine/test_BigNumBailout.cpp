@@ -1101,7 +1101,7 @@ TEST_P(TestBigNumSqrStorage, subtractionAndDoublingPreserveTheOtherCache)
     other = 4;
     const BigNum original_other{other};
 
-    sub_a_bn(value, other);
+    value -= other;
     EXPECT_EQ(BigNum{5}, value);
     EXPECT_EQ(5, bn_to_int(value));
     double_a_bn(value);

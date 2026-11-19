@@ -69,7 +69,7 @@ protected:
         }
         for (size_t i = 0; i < std::size(bn_corners); ++i)
         {
-            float_to_bn(*bn_corners[i], values[i]);
+            *bn_corners[i] = values[i];
         }
     }
 
