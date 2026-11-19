@@ -75,7 +75,7 @@ BigFloatPtr compound_operation(
     return operation(result, g_bf_tmp_copy1.data());
 }
 
-BigFloatPtr multiply(BigFloatPtr r, BigFloatPtr n1, BigFloatPtr n2)
+Byte *multiply(Byte *r, Byte *n1, Byte *n2)
 {
     if (is_bf_zero(n1) || is_bf_zero(n2))
     {
