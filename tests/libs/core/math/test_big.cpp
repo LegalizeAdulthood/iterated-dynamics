@@ -1970,6 +1970,18 @@ INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatToBigNumBytes,
         BigFloatToBigNumInput{"PositiveOverflow", 1, {0, 0, 0, 0, 0, 0, 1, 0, 1, 0}, {0xff, 0xff, 0xff, 0x7f}},
         BigFloatToBigNumInput{"NegativeOverflow", 1, {0, 0, 0, 0, 0, 0, 0xfe, 0xff, 1, 0}, {1, 0, 0, 0x80}},
         BigFloatToBigNumInput{
+            "TwoIntegerBytesPositiveOverflow", 2, {0, 0, 0, 0, 0, 0, 1, 0, 2, 0}, {0xff, 0xff, 0xff, 0x7f}},
+        BigFloatToBigNumInput{
+            "TwoIntegerBytesNegativeOverflow", 2, {0, 0, 0, 0, 0, 0, 0xfe, 0xff, 2, 0}, {1, 0, 0, 0x80}},
+        BigFloatToBigNumInput{
+            "FourIntegerBytesPositiveOverflow", 4, {0, 0, 0, 0, 0, 0, 1, 0, 4, 0}, {0xff, 0xff, 0xff, 0x7f}},
+        BigFloatToBigNumInput{
+            "FourIntegerBytesNegativeOverflow", 4, {0, 0, 0, 0, 0, 0, 0xfe, 0xff, 4, 0}, {1, 0, 0, 0x80}},
+        BigFloatToBigNumInput{"TwoIntegerBytesPositiveUnderflow", 2, {0, 0, 0, 0, 0, 0, 1, 0, 0xfd, 0xff}, {}},
+        BigFloatToBigNumInput{"TwoIntegerBytesNegativeUnderflow", 2, {0, 0, 0, 0, 0, 0, 0xfe, 0xff, 0xfd, 0xff}, {}},
+        BigFloatToBigNumInput{"FourIntegerBytesPositiveUnderflow", 4, {0, 0, 0, 0, 0, 0, 1, 0, 0xff, 0xff}, {}},
+        BigFloatToBigNumInput{"FourIntegerBytesNegativeUnderflow", 4, {0, 0, 0, 0, 0, 0, 0xfe, 0xff, 0xff, 0xff}, {}},
+        BigFloatToBigNumInput{
             "ShortenedMantissa", 1, {0x11, 0x22, 0x33, 0x44, 0x55, 0, 0, 0}, {0x22, 0x33, 0x44, 0x55}}),
     [](const testing::TestParamInfo<BigFloatToBigNumInput> &info) { return info.param.name; });
 

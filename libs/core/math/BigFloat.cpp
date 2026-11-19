@@ -176,9 +176,8 @@ BigFloat::BigFloat(BigArena &arena, const std::string_view text) :
 }
 
 BigFloat::BigFloat(BigArena &arena, const BigNum &value) :
-    BigFloat(arena)
+    BigFloat(value.to_big_float(arena))
 {
-    value.copy_to_legacy_float(m_storage.data(), encoded_size());
 }
 
 BigFloat::BigFloat(const BigFloat &value) :
@@ -591,11 +590,6 @@ BigFloat &float_to_bf(BigFloat &r, const LDouble value)
 {
     float_to_bf(r.data(), value);
     return r;
-}
-
-void bn_to_bf(BigFloat &destination, const BigNum &source)
-{
-    source.copy_to_legacy_float(destination.data(), static_cast<std::size_t>(g_bf_length + 2));
 }
 
 LDouble bf_to_float(BigFloat &value)

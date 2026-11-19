@@ -1152,13 +1152,13 @@ bool PertEngine::save_precise_value(std::size_t &remaining)
     if (!m_pixel.precise_saved.x)
     {
         m_pixel.precise_saved = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-        m_pixel.precise_tolerance = BigFloat{bf_arena(BigLifetime::WORKING)};
         if (g_bf_math == BFMathType::BIG_NUM)
         {
-            bn_to_bf(m_pixel.precise_tolerance, g_close_enough_bn);
+            m_pixel.precise_tolerance = BigFloat{bf_arena(BigLifetime::WORKING), g_close_enough_bn};
         }
         else
         {
+            m_pixel.precise_tolerance = BigFloat{bf_arena(BigLifetime::WORKING)};
             m_pixel.precise_tolerance = g_close_enough_bf;
         }
     }

@@ -227,6 +227,20 @@ BigNum &BigNum::operator=(BigNum &&value)
     return *this;
 }
 
+BigNum &BigNum::operator=(const BigFloat &value)
+{
+    if (m_storage)
+    {
+        value.copy_to_legacy_num(data(), encoded_size());
+    }
+    else
+    {
+        BigArena &destination = m_storage.arena_ptr() != nullptr ? arena() : bn_arena(BigLifetime::WORKING);
+        *this = BigNum{destination, value};
+    }
+    return *this;
+}
+
 BigNum &BigNum::operator=(const LDouble value)
 {
     validate_scalar(value);
@@ -413,10 +427,13 @@ void BigNum::copy_to_legacy(BigNumPtr destination, const std::size_t size) const
     std::copy_n(data(), encoded_size(), destination);
 }
 
-void BigNum::copy_to_legacy_float(Byte *destination, const std::size_t size) const
+BigFloat BigNum::to_big_float(BigArena &arena) const
 {
-    validate_buffer(destination, size, static_cast<std::size_t>(g_bf_length) + 2);
+    BigFloat result{arena};
+    Byte *const destination = result.data();
+    validate_buffer(destination, arena.value_size(), static_cast<std::size_t>(g_bf_length) + 2);
     bn_to_bf(destination, data());
+    return result;
 }
 
 BigNum sqr(const BigNum &value)
@@ -440,11 +457,6 @@ BigNum &float_to_bn(BigNum &r, const LDouble value)
 {
     float_to_bn(r.data(), value);
     return r;
-}
-
-void bf_to_bn(BigNum &destination, const BigFloat &source)
-{
-    source.copy_to_legacy_num(destination.data(), static_cast<std::size_t>(g_bn_length));
 }
 
 LDouble bn_to_float(BigNum &value)

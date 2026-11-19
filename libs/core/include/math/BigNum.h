@@ -37,6 +37,7 @@ public:
     BigNum(BigNum &&value) noexcept;
     BigNum &operator=(const BigNum &value);
     BigNum &operator=(BigNum &&value);
+    BigNum &operator=(const BigFloat &value);
     BigNum &operator=(LDouble value);
 
     // Tests for an allocated value, including numeric zero.
@@ -72,6 +73,7 @@ public:
     bool operator>=(const BigNum &right) const;
 
     LDouble to_float() const;
+    BigFloat to_big_float(BigArena &arena) const;
     std::string to_string(int digits = 0) const;
     void hex_dump() const;
 
@@ -90,7 +92,6 @@ public:
     static BigNum from_legacy(BigNumConstPtr source, std::size_t size);
     static BigNum from_legacy(BigArena &arena, BigNumConstPtr source, std::size_t size);
     void copy_to_legacy(BigNumPtr destination, std::size_t size) const;
-    void copy_to_legacy_float(Byte *destination, std::size_t size) const;
 
 private:
     explicit BigNum(BigArena::Allocation storage);
@@ -115,7 +116,6 @@ long bn_to_int(const BigNum &n);
 BigNum &str_to_bn(BigNum &r, std::string_view text);
 BigNum &int_to_bn(BigNum &r, long value);
 BigNum &float_to_bn(BigNum &r, LDouble value);
-void bf_to_bn(BigNum &destination, const BigFloat &source);
 LDouble bn_to_float(BigNum &value);
 std::string bn_to_string(const BigNum &value, int digits);
 int cmp_bn(const BigNum &n1, const BigNum &n2);

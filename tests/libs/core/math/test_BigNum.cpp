@@ -654,74 +654,73 @@ TEST_P(TestBigNumLayout, constructorsUseTheActiveFixedPointLayout)
 
 TEST_P(TestBigNumLayout, explicitConversionsPreserveBitsBeyondMachinePrecision)
 {
-    std::vector<Byte> expected(static_cast<std::size_t>(g_bn_length));
-    expected.front() = 1;
-    expected[static_cast<std::size_t>(g_bn_length - g_int_length)] = 1;
-    const BigNum fixed = BigNum::from_legacy(expected.data(), expected.size());
+    const BigNum fixed{"1.000000000000000000000000000000000000001"};
+    ASSERT_GT(fixed, BigNum{1});
+    ASSERT_EQ(1.0L, fixed.to_float());
 
     const BigFloat floating{fixed};
-    const auto original_float = encoded_value(floating);
-    const BigNum restored{floating};
 
-    EXPECT_EQ(expected, encoded_value(fixed));
-    EXPECT_EQ(expected, encoded_value(restored));
-    EXPECT_EQ(original_float, encoded_value(floating));
+    EXPECT_GT(floating, BigFloat{1});
+    EXPECT_EQ(fixed, BigNum{floating});
 }
 
 TEST_P(TestBigNumLayout, inPlaceBigFloatConversionPreservesSourceAndDestinationStorage)
 {
     const BigFloat source{"-1.25"};
-    const std::vector<Byte> original_source = encoded_value(source);
-    std::vector<Byte> expected = encoded_integer(-2);
-    expected[g_bn_length - g_int_length - 1] = 0xc0;
+    const BigFloat expected_source{-1.25L};
+    const BigNum expected{-1.25L};
     BigArena &arena = bn_arena(BigLifetime::PERSISTENT);
     const BigArena &working = bn_arena(BigLifetime::WORKING);
     BigNum destination{arena, 23};
-    Byte *const address = destination.data();
-    std::fill(address + expected.size(), address + arena.block_size(), Byte{0x5a});
     const std::size_t high_water = arena.high_water_mark();
     const std::size_t working_high_water = working.high_water_mark();
 
-    static_assert(std::is_void_v<decltype(bf_to_bn(destination, source))>);
-    bf_to_bn(destination, source);
+    static_assert(std::is_same_v<decltype(destination = source), BigNum &>);
+    BigNum &assigned = (destination = source);
 
-    ASSERT_EQ(address, destination.data());
+    EXPECT_EQ(&destination, &assigned);
     EXPECT_EQ(&arena, &destination.arena());
     EXPECT_EQ(high_water, arena.high_water_mark());
     EXPECT_EQ(working_high_water, working.high_water_mark());
-    EXPECT_EQ(expected, encoded_value(destination));
-    EXPECT_EQ(original_source, encoded_value(source));
-    EXPECT_EQ(std::vector<Byte>(arena.block_size() - expected.size(), 0x5a),
-        std::vector<Byte>(address + expected.size(), address + arena.block_size()));
+    EXPECT_EQ(expected, destination);
+    EXPECT_EQ(expected_source, source);
 }
 
-TEST_P(TestBigNumLayout, inPlaceBigNumConversionPreservesSourceAndDestinationStorage)
+TEST_P(TestBigNumLayout, bigNumConversionUsesTheSelectedBigFloatArena)
 {
     const BigNum source{"-1.25"};
-    const std::vector<Byte> original_source = encoded_value(source);
-    std::vector<Byte> expected(static_cast<std::size_t>(g_bf_length + 2));
-    expected[g_bf_length - 3] = 0xc0;
-    expected[g_bf_length - 2] = 0xfe;
-    expected[g_bf_length - 1] = 0xff;
-    BigArena &arena = bf_arena(BigLifetime::PERSISTENT);
-    const BigArena &working = bf_arena(BigLifetime::WORKING);
-    BigFloat destination{arena, 23};
-    Byte *const address = destination.data();
-    std::fill(address + expected.size(), address + arena.block_size(), Byte{0x5a});
-    const std::size_t high_water = arena.high_water_mark();
-    const std::size_t working_high_water = working.high_water_mark();
+    const BigNum expected_source{-1.25L};
+    const BigFloat expected{-1.25L};
+    const std::size_t size = bf_arena(BigLifetime::WORKING).value_size();
+    BigArena arena{size, 2, [](Byte *) {}};
+    const BigFloat occupied{arena, 23};
 
-    static_assert(std::is_void_v<decltype(bn_to_bf(destination, source))>);
-    bn_to_bf(destination, source);
+    static_assert(std::is_same_v<decltype(source.to_big_float(arena)), BigFloat>);
+    const BigFloat destination = source.to_big_float(arena);
 
-    ASSERT_EQ(address, destination.data());
     EXPECT_EQ(&arena, &destination.arena());
-    EXPECT_EQ(high_water, arena.high_water_mark());
-    EXPECT_EQ(working_high_water, working.high_water_mark());
-    EXPECT_EQ(expected, encoded_value(destination));
-    EXPECT_EQ(original_source, encoded_value(source));
-    EXPECT_EQ(std::vector<Byte>(arena.block_size() - expected.size(), 0x5a),
-        std::vector<Byte>(address + expected.size(), address + arena.block_size()));
+    EXPECT_EQ(expected, destination);
+    EXPECT_EQ(expected_source, source);
+    EXPECT_EQ(23.0L, occupied.to_float());
+}
+
+TEST_F(TestBigNumValue, bigFloatConversionAssignsIntoEmptyOwners)
+{
+    const BigFloat source{"-1.25"};
+    const BigNum expected{-1.25L};
+    BigNum unbound;
+    BigArena &arena = bn_arena(BigLifetime::PERSISTENT);
+    BigNum bound{arena, 23};
+    const BigNum moved{std::move(bound)};
+
+    unbound = source;
+    bound = source;
+
+    EXPECT_EQ(&bn_arena(BigLifetime::WORKING), &unbound.arena());
+    EXPECT_EQ(&arena, &bound.arena());
+    EXPECT_EQ(expected, unbound);
+    EXPECT_EQ(expected, bound);
+    EXPECT_EQ(23.0L, moved.to_float());
 }
 
 class TestBigNumLayoutConversion : public TestBigNumValue,
@@ -736,15 +735,27 @@ TEST_P(TestBigNumLayoutConversion, owningConversionsKeepLegacyOverflowAndUnderfl
     ASSERT_EQ(integer_length, g_int_length);
     const std::pair<const char *, int> &input = std::get<1>(GetParam());
     const BigFloat floating{input.first};
-    const std::vector<Byte> original = encoded_value(floating);
+    const BigFloat original{floating};
     const int saturation = input.second;
-    const std::vector<Byte> expected =
-        saturation == 0 ? std::vector<Byte>(g_bn_length) : saturation_bytes(saturation < 0);
 
     const BigNum fixed{floating};
+    BigNum assigned{23};
+    assigned = floating;
 
-    EXPECT_EQ(expected, encoded_value(fixed));
-    EXPECT_EQ(original, encoded_value(floating));
+    EXPECT_EQ(fixed, assigned);
+    EXPECT_EQ(original, floating);
+    if (saturation == 0)
+    {
+        EXPECT_EQ(BigNum{0}, fixed);
+    }
+    else if (saturation > 0)
+    {
+        EXPECT_GT(fixed, BigNum{64});
+    }
+    else
+    {
+        EXPECT_LT(fixed, BigNum{-64});
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsAndLimits, TestBigNumLayoutConversion,
@@ -754,19 +765,22 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndLimits, TestBigNumLayoutConversion,
 
 TEST_F(TestBigNumValue, conversionAdaptersValidateDestinationBuffers)
 {
-    const BigNum fixed{"-1.25"};
-    const BigFloat floating{fixed};
+    const BigFloat floating{"-1.25"};
     std::vector<Byte> bn_buffer(static_cast<std::size_t>(g_bn_length), Byte{0x5a});
-    std::vector<Byte> bf_buffer(static_cast<std::size_t>(g_bf_length + 2), Byte{0x5a});
     const auto original_bn = bn_buffer;
-    const auto original_bf = bf_buffer;
 
-    EXPECT_THROW(fixed.copy_to_legacy_float(nullptr, bf_buffer.size()), std::invalid_argument);
-    EXPECT_THROW(fixed.copy_to_legacy_float(bf_buffer.data(), bf_buffer.size() - 1), std::invalid_argument);
     EXPECT_THROW(floating.copy_to_legacy_num(nullptr, bn_buffer.size()), std::invalid_argument);
     EXPECT_THROW(floating.copy_to_legacy_num(bn_buffer.data(), bn_buffer.size() - 1), std::invalid_argument);
     EXPECT_EQ(original_bn, bn_buffer);
-    EXPECT_EQ(original_bf, bf_buffer);
+}
+
+TEST_F(TestBigNumValue, bigNumConversionRejectsAnUndersizedBigFloatArena)
+{
+    const BigNum source{"-1.25"};
+    BigArena arena{static_cast<std::size_t>(g_bf_length + 1), 2, [](Byte *) {}};
+
+    EXPECT_THROW(source.to_big_float(arena), std::invalid_argument);
+    EXPECT_THROW((BigFloat{arena, source}), std::invalid_argument);
 }
 
 namespace

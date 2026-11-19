@@ -279,12 +279,12 @@ bool mandel_per_image_bn()
     BigNum bn_temp1{bn_arena(BigLifetime::TEMPORARY)};
     BigNum bn_temp2{bn_arena(BigLifetime::TEMPORARY)};
 
-    bf_to_bn(g_x_min_bn, g_bf_x_min);
-    bf_to_bn(g_x_max_bn, g_bf_x_max);
-    bf_to_bn(g_y_min_bn, g_bf_y_min);
-    bf_to_bn(g_y_max_bn, g_bf_y_max);
-    bf_to_bn(g_x_3rd_bn, g_bf_x_3rd);
-    bf_to_bn(g_y_3rd_bn, g_bf_y_3rd);
+    g_x_min_bn = g_bf_x_min;
+    g_x_max_bn = g_bf_x_max;
+    g_y_min_bn = g_bf_y_min;
+    g_y_max_bn = g_bf_y_max;
+    g_x_3rd_bn = g_bf_x_3rd;
+    g_y_3rd_bn = g_bf_y_3rd;
 
     g_bf_math = BFMathType::BIG_NUM;
 
@@ -337,8 +337,8 @@ bool mandel_per_image_bn()
     switch (g_fractal_type)
     {
     case FractalType::JULIA:
-        bf_to_bn(g_param_z_bn.x, g_bf_params[0]);
-        bf_to_bn(g_param_z_bn.y, g_bf_params[1]);
+        g_param_z_bn.x = g_bf_params[0];
+        g_param_z_bn.y = g_bf_params[1];
         break;
 
     case FractalType::MANDEL_Z_POWER:
@@ -355,8 +355,8 @@ bool mandel_per_image_bn()
 
     case FractalType::JULIA_Z_POWER:
         init_big_pi();
-        bf_to_bn(g_param_z_bn.x, g_bf_params[0]);
-        bf_to_bn(g_param_z_bn.y, g_bf_params[1]);
+        g_param_z_bn.x = g_bf_params[0];
+        g_param_z_bn.y = g_bf_params[1];
         if (g_c_exponent & 1 || g_params[3] != 0.0 || static_cast<double>(g_c_exponent) != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;

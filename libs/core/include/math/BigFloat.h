@@ -146,7 +146,6 @@ BigFloat &atan2_bf(BigFloat &r, const BigFloat &ny, const BigFloat &nx);
 BigFloat &str_to_bf(BigFloat &r, std::string_view text);
 BigFloat &int_to_bf(BigFloat &r, long value);
 BigFloat &float_to_bf(BigFloat &r, LDouble value);
-void bn_to_bf(BigFloat &destination, const BigNum &source);
 LDouble bf_to_float(BigFloat &value);
 const Byte *unpack_bf(BigFloat &destination, const Byte *source, int stored_length);
 std::string bf_to_string(const BigFloat &r, int dec);
