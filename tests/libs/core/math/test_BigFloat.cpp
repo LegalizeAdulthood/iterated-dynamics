@@ -17,8 +17,11 @@
 #include <cmath>
 #include <cstring>
 #include <limits>
+#include <memory>
+#include <new>
 #include <ostream>
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -2348,5 +2351,383 @@ INSTANTIATE_TEST_SUITE_P(LayoutsCallsAndInputs, TestBigFloatLegacySqr,
         testing::Values(LegacySqrInput{"Positive", 2, 0, 4, 0}, LegacySqrInput{"Negative", -3, 0, 9, 0},
             LegacySqrInput{"LargeExponent", -2, 500, 4, 1000}, LegacySqrInput{"SmallExponent", 3, -700, 9, -1400},
             LegacySqrInput{"Zero", 0, 0, 0, 0})));
+
+namespace
+{
+
+class TestBigFloat : public testing::Test
+{
+protected:
+    TestBigFloat() :
+        m_saved_bailout_value(g_user.bailout_value, 0),
+        m_saved_bailout_test(g_bailout_test, Bailout::MOD),
+        m_saved_bf_digits(g_bf_digits, 0),
+        m_saved_fractal_type(g_fractal_type, FractalType::MANDEL)
+    {
+    }
+
+    void SetUp() override
+    {
+        init_bf_dec(20);
+    }
+
+    void TearDown() override
+    {
+        free_bf_vars();
+    }
+
+    ValueSaver<long> m_saved_bailout_value;
+    ValueSaver<Bailout> m_saved_bailout_test;
+    ValueSaver<int> m_saved_bf_digits;
+    ValueSaver<FractalType> m_saved_fractal_type;
+};
+
+} // namespace
+
+struct BigFloatRampInput
+{
+    const char *name;
+    bool logarithm;
+    const char *input;
+    const char *expected;
+};
+
+class TestBigFloatWorkspaceRamp : public TestBigFloat,
+                                  public testing::WithParamInterface<std::tuple<int, BigFloatRampInput>>
+{
+};
+
+TEST_P(TestBigFloatWorkspaceRamp, preservesOperandsAndRestoresBorrowedWorkspaceWindows)
+{
+    g_fractal_type = FractalType::JULIA_Z_POWER;
+    init_bf_length(std::get<0>(GetParam()));
+    init_big_pi();
+    const auto &test = std::get<1>(GetParam());
+    BigFloat input{test.input};
+    BigFloat result{0};
+    BigFloat one{1};
+    const std::vector<Byte> original(input.data(), input.data() + g_bf_length + 2);
+    auto *const tmp3 = g_bf_tmp3.data();
+    auto *const tmp5 = g_bf_tmp5.data();
+    auto *const pi = g_bf_pi.data();
+    const std::vector<Byte> original_pi(pi, pi + g_bf_length + 2);
+    const int length = g_bf_length;
+    const int bn_length = g_bn_length;
+    const auto high_water = bf_arena(BigLifetime::WORKING).high_water_mark();
+    const auto stack = save_stack();
+
+    if (test.logarithm)
+    {
+        ln_bf(result, input);
+    }
+    else
+    {
+        atan2_bf(result, input, one);
+    }
+
+    EXPECT_EQ(length, g_bf_length);
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(tmp3, g_bf_tmp3.data());
+    EXPECT_EQ(tmp5, g_bf_tmp5.data());
+    EXPECT_EQ(pi, g_bf_pi.data());
+    EXPECT_EQ(original_pi, (std::vector<Byte>{g_bf_pi.data(), g_bf_pi.data() + g_bf_length + 2}));
+    EXPECT_EQ(high_water, bf_arena(BigLifetime::WORKING).high_water_mark());
+    EXPECT_EQ(stack, save_stack());
+    EXPECT_EQ(original, (std::vector<Byte>{input.data(), input.data() + g_bf_length + 2}));
+    EXPECT_EQ(test.expected, bf_to_string(result, 12));
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndOperations, TestBigFloatWorkspaceRamp,
+    testing::Combine(testing::Values(32, 64, 708),
+        testing::Values(BigFloatRampInput{"LogTwo", true, "2", "0.69314718056"},
+            BigFloatRampInput{"AtanHalf", false, "0.5", "0.463647609001"},
+            BigFloatRampInput{"AtanTwo", false, "2", "1.10714871779"})),
+    [](const testing::TestParamInfo<TestBigFloatWorkspaceRamp::ParamType> &info)
+    { return std::string{std::get<1>(info.param).name} + '_' + std::to_string(std::get<0>(info.param)); });
+
+struct BigFloatParseInput
+{
+    const char *name;
+    std::string storage;
+    std::size_t length;
+    LDouble expected;
+};
+
+class TestBigFloatParse : public TestBigFloat, public testing::WithParamInterface<BigFloatParseInput>
+{
+};
+
+TEST_P(TestBigFloatParse, parsesTheSpecifiedText)
+{
+    const std::string_view text{GetParam().storage.data(), GetParam().length};
+    const BigStackMark marker = save_stack();
+    {
+        BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+
+        str_to_bf(value, text);
+
+        EXPECT_EQ(GetParam().expected, bf_to_float(value));
+    }
+    EXPECT_EQ(marker, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatParse,
+    testing::Values(BigFloatParseInput{"PlainDecimal", "1.25", 4, 1.25L},
+        BigFloatParseInput{"UnterminatedView", "1.25x", 4, 1.25L}, BigFloatParseInput{"Exponent", "1.25e2", 6, 125.0L}),
+    [](const testing::TestParamInfo<BigFloatParseInput> &info) { return info.param.name; });
+
+class TestBigFloatFormat : public TestBigFloat
+{
+protected:
+    void TearDown() override;
+    void prepare_value(const char *text);
+
+    BigFloat m_value{};
+};
+
+void TestBigFloatFormat::prepare_value(const char *text)
+{
+    BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+    std::destroy_at(&m_value);
+    ::new (&m_value) BigFloat{std::move(value)};
+    if (text)
+    {
+        str_to_bf(m_value, text);
+    }
+    else
+    {
+        clear_bf(m_value);
+    }
+}
+
+void TestBigFloatFormat::TearDown()
+{
+    m_value = BigFloat{};
+    TestBigFloat::TearDown();
+}
+
+TEST_F(TestBigFloatFormat, generalFormatHandlesZero)
+{
+    prepare_value(nullptr);
+
+    EXPECT_EQ("0.0", bf_to_string(m_value, 5));
+}
+
+TEST_F(TestBigFloatFormat, resetReleasesItsTemporarySlot)
+{
+    BigArena &temporary = bf_arena(BigLifetime::TEMPORARY);
+    BigArena::Allocation probe = temporary.allocate_single();
+    const BigArena::Index index = probe.index();
+    probe.reset();
+    const BigStackMark marker = save_stack();
+
+    prepare_value("1.25");
+    EXPECT_EQ(&temporary, &m_value.arena());
+    EXPECT_EQ("1.25", bf_to_string(m_value, 5));
+    EXPECT_EQ(marker, save_stack());
+
+    m_value = BigFloat{};
+    ASSERT_FALSE(m_value);
+
+    BigArena::Allocation reused = temporary.allocate_single();
+    EXPECT_EQ(index, reused.index());
+    EXPECT_EQ(marker, save_stack());
+}
+
+struct BigFloatFormatInput
+{
+    const char *name;
+    const char *input;
+    int decimals;
+    const char *expected;
+};
+
+class TestBigFloatGeneralFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatGeneralFormat::SetUp()
+{
+    TestBigFloat::SetUp();
+    prepare_value(GetParam().input);
+}
+
+TEST_P(TestBigFloatGeneralFormat, selectsNotationAndFormatsDecimal)
+{
+    const BigFloat &input = m_value;
+    EXPECT_EQ(GetParam().expected, bf_to_string(input, GetParam().decimals));
+}
+
+// Preserve the legacy carry truncation while refactoring decimal storage.
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatGeneralFormat,
+    testing::Values(BigFloatFormatInput{"Negative", "-1.25", 5, "-1.25"},
+        BigFloatFormatInput{"RoundDown", "1.2344", 4, "1.234"}, BigFloatFormatInput{"RoundUp", "1.2346", 4, "1.235"},
+        BigFloatFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999"},
+        BigFloatFormatInput{"SmallFixed", "0.00125", 8, "0.00125"},
+        BigFloatFormatInput{"SmallScientific", "0.000125", 8, "1.25e-4"},
+        BigFloatFormatInput{"LargeFixed", "125000", 8, "125000.0"},
+        BigFloatFormatInput{"FewDigitsLargeFixed", "125000", 3, "125000.0"},
+        BigFloatFormatInput{"LargeScientific", "1250000", 8, "1.25e6"},
+        BigFloatFormatInput{"DefaultPrecision", "1.0000123456789012345", 0, "1.0000123456789012345"}),
+    [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
+
+class TestBigFloatFixedFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatFixedFormat::SetUp()
+{
+    TestBigFloat::SetUp();
+    prepare_value(GetParam().input);
+}
+
+TEST_P(TestBigFloatFixedFormat, formatsFixedDecimal)
+{
+    const BigFloat &input = m_value;
+    EXPECT_EQ(GetParam().expected, bf_to_string_f(input, GetParam().decimals));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatFixedFormat,
+    testing::Values(BigFloatFormatInput{"Zero", nullptr, 5, "0.0"},
+        BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25"}, BigFloatFormatInput{"Negative", "-1.25", 5, "-1.25"},
+        BigFloatFormatInput{"RoundDown", "1.2344", 4, "1.234"}, BigFloatFormatInput{"RoundUp", "1.2346", 4, "1.235"},
+        BigFloatFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999"},
+        BigFloatFormatInput{"SmallExponent", "0.000125", 8, "0.000125"},
+        BigFloatFormatInput{"LargeExponent", "1250000", 8, "1250000.0"},
+        BigFloatFormatInput{"FewDigitsLargeExponent", "1250000", 3, "1250000.0"},
+        BigFloatFormatInput{"SingleDigit", "1.25", 1, "1.0"},
+        BigFloatFormatInput{"DefaultPrecision", "1.234567890123456789", 0, "1.234567890123456789"}),
+    [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
+
+class TestBigFloatScientificFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigFloatScientificFormat::SetUp()
+{
+    TestBigFloat::SetUp();
+    prepare_value(GetParam().input);
+}
+
+TEST_P(TestBigFloatScientificFormat, formatsScientificDecimal)
+{
+    const BigFloat &input = m_value;
+    EXPECT_EQ(GetParam().expected, bf_to_string_e(input, GetParam().decimals));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatScientificFormat,
+    testing::Values(BigFloatFormatInput{"Zero", nullptr, 5, "0.0"},
+        BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25e0"},
+        BigFloatFormatInput{"Negative", "-1.25", 5, "-1.25e0"},
+        BigFloatFormatInput{"RoundDown", "1.2344", 4, "1.234e0"},
+        BigFloatFormatInput{"RoundUp", "1.2346", 4, "1.235e0"},
+        BigFloatFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999e0"},
+        BigFloatFormatInput{"SmallExponent", "0.000125", 8, "1.25e-4"},
+        BigFloatFormatInput{"LargeExponent", "1250000", 8, "1.25e6"},
+        BigFloatFormatInput{"SingleDigit", "1.25", 1, "1.0e0"},
+        BigFloatFormatInput{"DefaultPrecision", "1.234567890123456789", 0, "1.234567890123456789e0"}),
+    [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
+
+enum class BigFloatFormatMode
+{
+    GENERAL,
+    SCIENTIFIC,
+    FIXED
+};
+
+class TestBigFloatFormatterStorage : public TestBigFloatFormat,
+                                     public testing::WithParamInterface<std::tuple<int, BigFloatFormatMode, bool>>
+{
+};
+
+TEST_P(TestBigFloatFormatterStorage, preservesInputScratchBoundsSharedLengthsAndExistingReservations)
+{
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    init_bf_length(std::get<0>(GetParam()));
+    const BigFloatFormatMode mode = std::get<1>(GetParam());
+    const bool negative = std::get<2>(GetParam());
+    prepare_value(negative ? "-1.25" : "1.25");
+    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
+    const std::size_t stride = m_value.arena().block_size();
+    const std::size_t copy_size = 2 * bf_arena(BigLifetime::WORKING).block_size();
+    std::fill(m_value.data() + size, m_value.data() + stride, Byte{0xa5});
+    const std::vector<Byte> original(m_value.data(), m_value.data() + stride);
+    std::fill_n(g_bf_tmp_copy1.data(), copy_size, Byte{0x5a});
+    std::fill_n(g_bf_tmp_copy2.data(), copy_size, Byte{0x3c});
+    const Byte *const input = m_value.data();
+    const Byte *const scratch = g_bf_tmp_copy1.data();
+    const std::size_t working_high_water = bf_arena(BigLifetime::WORKING).high_water_mark();
+    const std::size_t temporary_high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
+    const BigStackMark mark = save_stack();
+    const int bn_length = g_bn_length;
+    const int bf_length = g_bf_length;
+    const int int_length = g_int_length;
+    std::string expected{negative ? "-1.25" : "1.25"};
+    std::string actual;
+
+    switch (mode)
+    {
+    case BigFloatFormatMode::GENERAL:
+        actual = bf_to_string(m_value, 12);
+        break;
+    case BigFloatFormatMode::SCIENTIFIC:
+        expected += "e0";
+        actual = bf_to_string_e(m_value, 12);
+        break;
+    case BigFloatFormatMode::FIXED:
+        actual = bf_to_string_f(m_value, 12);
+        break;
+    }
+
+    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(original, std::vector<Byte>(m_value.data(), m_value.data() + stride));
+    EXPECT_EQ(std::vector<Byte>(size, 0), std::vector<Byte>(scratch, scratch + size));
+    EXPECT_EQ(std::vector<Byte>(copy_size - size, 0x5a), std::vector<Byte>(scratch + size, scratch + copy_size));
+    EXPECT_EQ(std::vector<Byte>(copy_size, 0x3c),
+        std::vector<Byte>(g_bf_tmp_copy2.data(), g_bf_tmp_copy2.data() + copy_size));
+    EXPECT_EQ(input, m_value.data());
+    EXPECT_EQ(scratch, g_bf_tmp_copy1.data());
+    EXPECT_EQ(working_high_water, bf_arena(BigLifetime::WORKING).high_water_mark());
+    EXPECT_EQ(temporary_high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(bf_length, g_bf_length);
+    EXPECT_EQ(int_length, g_int_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsModesAndSigns, TestBigFloatFormatterStorage,
+    testing::Combine(testing::Values(4, 12, 64, 708),
+        testing::Values(BigFloatFormatMode::GENERAL, BigFloatFormatMode::SCIENTIFIC, BigFloatFormatMode::FIXED),
+        testing::Bool()));
+
+TEST_F(TestBigFloatFormat, formatsAtMaximumSupportedPrecision)
+{
+    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    init_bf_length(708);
+    prepare_value("-1.25");
+
+    EXPECT_EQ("-1.25", bf_to_string(m_value, g_bf_decimals));
+    EXPECT_EQ("-1.25", bf_to_string_f(m_value, g_bf_decimals));
+    EXPECT_EQ("-1.25e0", bf_to_string_e(m_value, g_bf_decimals));
+}
+
+TEST_F(TestBigFloatFormat, repeatedFormattingPreservesTheValue)
+{
+    prepare_value("-1.234567890123456789");
+    const std::string original{
+        reinterpret_cast<const char *>(m_value.data()), static_cast<std::size_t>(g_bf_length + 2)};
+    const BigFloat &input = m_value;
+
+    EXPECT_EQ("-1.23", bf_to_string(input, 3));
+    EXPECT_EQ("-1.234567890123456789e0", bf_to_string_e(input, 0));
+    EXPECT_EQ("-1.2346", bf_to_string_f(input, 5));
+    EXPECT_EQ(original, (std::string{reinterpret_cast<const char *>(m_value.data()), original.size()}));
+}
 
 } // namespace id::test

@@ -5,8 +5,10 @@
 #include <engine/UserData.h>
 #include <fractals/fractype.h>
 #include <math/big_init.h>
+#include <math/BigComplex.h>
 #include <math/BigFloat.h>
 #include <math/BigNum.h>
+#include <math/complex_fn.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
@@ -15,10 +17,7 @@
 #include <array>
 #include <cstdint>
 #include <limits>
-#include <memory>
-#include <new>
 #include <string>
-#include <string_view>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -185,352 +184,6 @@ TEST_P(TestBigFloatPiStorage, repeatedCleanupUnbindsPiAndReinitializationRestore
 }
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatPiStorage, testing::Values(4, 12, 56, 64, 708));
-
-struct BigFloatRampInput
-{
-    const char *name;
-    bool logarithm;
-    const char *input;
-    const char *expected;
-};
-
-class TestBigFloatWorkspaceRamp : public TestBigFloat,
-                                  public testing::WithParamInterface<std::tuple<int, BigFloatRampInput>>
-{
-};
-
-TEST_P(TestBigFloatWorkspaceRamp, preservesOperandsAndRestoresBorrowedWorkspaceWindows)
-{
-    g_fractal_type = FractalType::JULIA_Z_POWER;
-    init_bf_length(std::get<0>(GetParam()));
-    init_big_pi();
-    const auto &test = std::get<1>(GetParam());
-    BigFloat input{test.input};
-    BigFloat result{0};
-    BigFloat one{1};
-    const std::vector<Byte> original(input.data(), input.data() + g_bf_length + 2);
-    auto *const tmp3 = g_bf_tmp3.data();
-    auto *const tmp5 = g_bf_tmp5.data();
-    auto *const pi = g_bf_pi.data();
-    const std::vector<Byte> original_pi(pi, pi + g_bf_length + 2);
-    const int length = g_bf_length;
-    const int bn_length = g_bn_length;
-    const auto high_water = bf_arena(BigLifetime::WORKING).high_water_mark();
-    const auto stack = save_stack();
-
-    if (test.logarithm)
-    {
-        ln_bf(result, input);
-    }
-    else
-    {
-        atan2_bf(result, input, one);
-    }
-
-    EXPECT_EQ(length, g_bf_length);
-    EXPECT_EQ(bn_length, g_bn_length);
-    EXPECT_EQ(tmp3, g_bf_tmp3.data());
-    EXPECT_EQ(tmp5, g_bf_tmp5.data());
-    EXPECT_EQ(pi, g_bf_pi.data());
-    EXPECT_EQ(original_pi, (std::vector<Byte>{g_bf_pi.data(), g_bf_pi.data() + g_bf_length + 2}));
-    EXPECT_EQ(high_water, bf_arena(BigLifetime::WORKING).high_water_mark());
-    EXPECT_EQ(stack, save_stack());
-    EXPECT_EQ(original, (std::vector<Byte>{input.data(), input.data() + g_bf_length + 2}));
-    EXPECT_EQ(test.expected, bf_to_string(result, 12));
-}
-
-INSTANTIATE_TEST_SUITE_P(PrecisionsAndOperations, TestBigFloatWorkspaceRamp,
-    testing::Combine(testing::Values(32, 64, 708),
-        testing::Values(BigFloatRampInput{"LogTwo", true, "2", "0.69314718056"},
-            BigFloatRampInput{"AtanHalf", false, "0.5", "0.463647609001"},
-            BigFloatRampInput{"AtanTwo", false, "2", "1.10714871779"})),
-    [](const testing::TestParamInfo<TestBigFloatWorkspaceRamp::ParamType> &info)
-    { return std::string{std::get<1>(info.param).name} + '_' + std::to_string(std::get<0>(info.param)); });
-
-struct BigFloatParseInput
-{
-    const char *name;
-    std::string storage;
-    std::size_t length;
-    LDouble expected;
-};
-
-class TestBigFloatParse : public TestBigFloat, public testing::WithParamInterface<BigFloatParseInput>
-{
-};
-
-TEST_P(TestBigFloatParse, parsesTheSpecifiedText)
-{
-    const std::string_view text{GetParam().storage.data(), GetParam().length};
-    const BigStackMark marker = save_stack();
-    {
-        BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
-
-        str_to_bf(value, text);
-
-        EXPECT_EQ(GetParam().expected, bf_to_float(value));
-    }
-    EXPECT_EQ(marker, save_stack());
-}
-
-INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatParse,
-    testing::Values(BigFloatParseInput{"PlainDecimal", "1.25", 4, 1.25L},
-        BigFloatParseInput{"UnterminatedView", "1.25x", 4, 1.25L}, BigFloatParseInput{"Exponent", "1.25e2", 6, 125.0L}),
-    [](const testing::TestParamInfo<BigFloatParseInput> &info) { return info.param.name; });
-
-class TestBigFloatFormat : public TestBigFloat
-{
-protected:
-    void TearDown() override;
-    void prepare_value(const char *text);
-
-    BigFloat m_value{};
-};
-
-void TestBigFloatFormat::prepare_value(const char *text)
-{
-    BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
-    std::destroy_at(&m_value);
-    ::new (&m_value) BigFloat{std::move(value)};
-    if (text)
-    {
-        str_to_bf(m_value, text);
-    }
-    else
-    {
-        clear_bf(m_value);
-    }
-}
-
-void TestBigFloatFormat::TearDown()
-{
-    m_value = BigFloat{};
-    TestBigFloat::TearDown();
-}
-
-TEST_F(TestBigFloatFormat, generalFormatHandlesZero)
-{
-    prepare_value(nullptr);
-
-    EXPECT_EQ("0.0", bf_to_string(m_value, 5));
-}
-
-TEST_F(TestBigFloatFormat, resetReleasesItsTemporarySlot)
-{
-    BigArena &temporary = bf_arena(BigLifetime::TEMPORARY);
-    BigArena::Allocation probe = temporary.allocate_single();
-    const BigArena::Index index = probe.index();
-    probe.reset();
-    const BigStackMark marker = save_stack();
-
-    prepare_value("1.25");
-    EXPECT_EQ(&temporary, &m_value.arena());
-    EXPECT_EQ("1.25", bf_to_string(m_value, 5));
-    EXPECT_EQ(marker, save_stack());
-
-    m_value = BigFloat{};
-    ASSERT_FALSE(m_value);
-
-    BigArena::Allocation reused = temporary.allocate_single();
-    EXPECT_EQ(index, reused.index());
-    EXPECT_EQ(marker, save_stack());
-}
-
-struct BigFloatFormatInput
-{
-    const char *name;
-    const char *input;
-    int decimals;
-    const char *expected;
-};
-
-class TestBigFloatGeneralFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
-{
-protected:
-    void SetUp() override;
-};
-
-void TestBigFloatGeneralFormat::SetUp()
-{
-    TestBigFloat::SetUp();
-    prepare_value(GetParam().input);
-}
-
-TEST_P(TestBigFloatGeneralFormat, selectsNotationAndFormatsDecimal)
-{
-    const BigFloat &input = m_value;
-    EXPECT_EQ(GetParam().expected, bf_to_string(input, GetParam().decimals));
-}
-
-// Preserve the legacy carry truncation while refactoring decimal storage.
-INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatGeneralFormat,
-    testing::Values(BigFloatFormatInput{"Negative", "-1.25", 5, "-1.25"},
-        BigFloatFormatInput{"RoundDown", "1.2344", 4, "1.234"}, BigFloatFormatInput{"RoundUp", "1.2346", 4, "1.235"},
-        BigFloatFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999"},
-        BigFloatFormatInput{"SmallFixed", "0.00125", 8, "0.00125"},
-        BigFloatFormatInput{"SmallScientific", "0.000125", 8, "1.25e-4"},
-        BigFloatFormatInput{"LargeFixed", "125000", 8, "125000.0"},
-        BigFloatFormatInput{"FewDigitsLargeFixed", "125000", 3, "125000.0"},
-        BigFloatFormatInput{"LargeScientific", "1250000", 8, "1.25e6"},
-        BigFloatFormatInput{"DefaultPrecision", "1.0000123456789012345", 0, "1.0000123456789012345"}),
-    [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
-
-class TestBigFloatFixedFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
-{
-protected:
-    void SetUp() override;
-};
-
-void TestBigFloatFixedFormat::SetUp()
-{
-    TestBigFloat::SetUp();
-    prepare_value(GetParam().input);
-}
-
-TEST_P(TestBigFloatFixedFormat, formatsFixedDecimal)
-{
-    const BigFloat &input = m_value;
-    EXPECT_EQ(GetParam().expected, bf_to_string_f(input, GetParam().decimals));
-}
-
-INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatFixedFormat,
-    testing::Values(BigFloatFormatInput{"Zero", nullptr, 5, "0.0"},
-        BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25"}, BigFloatFormatInput{"Negative", "-1.25", 5, "-1.25"},
-        BigFloatFormatInput{"RoundDown", "1.2344", 4, "1.234"}, BigFloatFormatInput{"RoundUp", "1.2346", 4, "1.235"},
-        BigFloatFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999"},
-        BigFloatFormatInput{"SmallExponent", "0.000125", 8, "0.000125"},
-        BigFloatFormatInput{"LargeExponent", "1250000", 8, "1250000.0"},
-        BigFloatFormatInput{"FewDigitsLargeExponent", "1250000", 3, "1250000.0"},
-        BigFloatFormatInput{"SingleDigit", "1.25", 1, "1.0"},
-        BigFloatFormatInput{"DefaultPrecision", "1.234567890123456789", 0, "1.234567890123456789"}),
-    [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
-
-class TestBigFloatScientificFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
-{
-protected:
-    void SetUp() override;
-};
-
-void TestBigFloatScientificFormat::SetUp()
-{
-    TestBigFloat::SetUp();
-    prepare_value(GetParam().input);
-}
-
-TEST_P(TestBigFloatScientificFormat, formatsScientificDecimal)
-{
-    const BigFloat &input = m_value;
-    EXPECT_EQ(GetParam().expected, bf_to_string_e(input, GetParam().decimals));
-}
-
-INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatScientificFormat,
-    testing::Values(BigFloatFormatInput{"Zero", nullptr, 5, "0.0"},
-        BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25e0"},
-        BigFloatFormatInput{"Negative", "-1.25", 5, "-1.25e0"},
-        BigFloatFormatInput{"RoundDown", "1.2344", 4, "1.234e0"},
-        BigFloatFormatInput{"RoundUp", "1.2346", 4, "1.235e0"},
-        BigFloatFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999e0"},
-        BigFloatFormatInput{"SmallExponent", "0.000125", 8, "1.25e-4"},
-        BigFloatFormatInput{"LargeExponent", "1250000", 8, "1.25e6"},
-        BigFloatFormatInput{"SingleDigit", "1.25", 1, "1.0e0"},
-        BigFloatFormatInput{"DefaultPrecision", "1.234567890123456789", 0, "1.234567890123456789e0"}),
-    [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
-
-enum class BigFloatFormatMode
-{
-    GENERAL,
-    SCIENTIFIC,
-    FIXED
-};
-
-class TestBigFloatFormatterStorage : public TestBigFloatFormat,
-                                     public testing::WithParamInterface<std::tuple<int, BigFloatFormatMode, bool>>
-{
-};
-
-TEST_P(TestBigFloatFormatterStorage, preservesInputScratchBoundsSharedLengthsAndExistingReservations)
-{
-    g_fractal_type = FractalType::MANDEL_Z_POWER;
-    init_bf_length(std::get<0>(GetParam()));
-    const BigFloatFormatMode mode = std::get<1>(GetParam());
-    const bool negative = std::get<2>(GetParam());
-    prepare_value(negative ? "-1.25" : "1.25");
-    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    const std::size_t stride = m_value.arena().block_size();
-    const std::size_t copy_size = 2 * bf_arena(BigLifetime::WORKING).block_size();
-    std::fill(m_value.data() + size, m_value.data() + stride, Byte{0xa5});
-    const std::vector<Byte> original(m_value.data(), m_value.data() + stride);
-    std::fill_n(g_bf_tmp_copy1.data(), copy_size, Byte{0x5a});
-    std::fill_n(g_bf_tmp_copy2.data(), copy_size, Byte{0x3c});
-    const Byte *const input = m_value.data();
-    const Byte *const scratch = g_bf_tmp_copy1.data();
-    const std::size_t working_high_water = bf_arena(BigLifetime::WORKING).high_water_mark();
-    const std::size_t temporary_high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
-    const BigStackMark mark = save_stack();
-    const int bn_length = g_bn_length;
-    const int bf_length = g_bf_length;
-    const int int_length = g_int_length;
-    std::string expected{negative ? "-1.25" : "1.25"};
-    std::string actual;
-
-    switch (mode)
-    {
-    case BigFloatFormatMode::GENERAL:
-        actual = bf_to_string(m_value, 12);
-        break;
-    case BigFloatFormatMode::SCIENTIFIC:
-        expected += "e0";
-        actual = bf_to_string_e(m_value, 12);
-        break;
-    case BigFloatFormatMode::FIXED:
-        actual = bf_to_string_f(m_value, 12);
-        break;
-    }
-
-    EXPECT_EQ(expected, actual);
-    EXPECT_EQ(original, std::vector<Byte>(m_value.data(), m_value.data() + stride));
-    EXPECT_EQ(std::vector<Byte>(size, 0), std::vector<Byte>(scratch, scratch + size));
-    EXPECT_EQ(std::vector<Byte>(copy_size - size, 0x5a), std::vector<Byte>(scratch + size, scratch + copy_size));
-    EXPECT_EQ(std::vector<Byte>(copy_size, 0x3c),
-        std::vector<Byte>(g_bf_tmp_copy2.data(), g_bf_tmp_copy2.data() + copy_size));
-    EXPECT_EQ(input, m_value.data());
-    EXPECT_EQ(scratch, g_bf_tmp_copy1.data());
-    EXPECT_EQ(working_high_water, bf_arena(BigLifetime::WORKING).high_water_mark());
-    EXPECT_EQ(temporary_high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
-    EXPECT_EQ(mark, save_stack());
-    EXPECT_EQ(bn_length, g_bn_length);
-    EXPECT_EQ(bf_length, g_bf_length);
-    EXPECT_EQ(int_length, g_int_length);
-}
-
-INSTANTIATE_TEST_SUITE_P(LayoutsModesAndSigns, TestBigFloatFormatterStorage,
-    testing::Combine(testing::Values(4, 12, 64, 708),
-        testing::Values(BigFloatFormatMode::GENERAL, BigFloatFormatMode::SCIENTIFIC, BigFloatFormatMode::FIXED),
-        testing::Bool()));
-
-TEST_F(TestBigFloatFormat, formatsAtMaximumSupportedPrecision)
-{
-    g_fractal_type = FractalType::MANDEL_Z_POWER;
-    init_bf_length(708);
-    prepare_value("-1.25");
-
-    EXPECT_EQ("-1.25", bf_to_string(m_value, g_bf_decimals));
-    EXPECT_EQ("-1.25", bf_to_string_f(m_value, g_bf_decimals));
-    EXPECT_EQ("-1.25e0", bf_to_string_e(m_value, g_bf_decimals));
-}
-
-TEST_F(TestBigFloatFormat, repeatedFormattingPreservesTheValue)
-{
-    prepare_value("-1.234567890123456789");
-    const std::string original{
-        reinterpret_cast<const char *>(m_value.data()), static_cast<std::size_t>(g_bf_length + 2)};
-    const BigFloat &input = m_value;
-
-    EXPECT_EQ("-1.23", bf_to_string(input, 3));
-    EXPECT_EQ("-1.234567890123456789e0", bf_to_string_e(input, 0));
-    EXPECT_EQ("-1.2346", bf_to_string_f(input, 5));
-    EXPECT_EQ(original, (std::string{reinterpret_cast<const char *>(m_value.data()), original.size()}));
-}
 
 class TestActivePrecisionArena : public TestBigFloat
 {
@@ -1413,5 +1066,422 @@ INSTANTIATE_TEST_SUITE_P(PrecisionsAndSlots, TestBigFloatKernelStorage,
     testing::Combine(testing::Values(4, 12, 56, 64, 708),
         testing::Values(KernelSlot::TMP1, KernelSlot::TMP2, KernelSlot::TMP3, KernelSlot::TMP4, KernelSlot::TMP5,
             KernelSlot::TMP6, KernelSlot::COPY1, KernelSlot::COPY2)));
+
+class TestBigNumProductLifetime : public TestBigFloat, public testing::WithParamInterface<std::tuple<int, BigLifetime>>
+{
+};
+
+TEST_P(TestBigNumProductLifetime, temporaryRewindsPreserveLivePairedAllocations)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    BigArena &arena = bn_arena(std::get<1>(GetParam()));
+    BigArena::Allocation product = arena.allocate_double();
+    const std::vector<Byte> bytes(2 * arena.block_size(), 0x5a);
+    std::copy(bytes.begin(), bytes.end(), product.data());
+    const BigStackMark mark = save_stack();
+    {
+        BigStackSaver saved;
+        bn_stack().allocate_double();
+        const BigArena::Allocation local = product.clone(bn_arena(BigLifetime::TEMPORARY));
+        EXPECT_EQ(bytes, std::vector<Byte>(local.data(), local.data() + bytes.size()));
+    }
+
+    EXPECT_EQ(mark, save_stack());
+    EXPECT_EQ(bytes, std::vector<Byte>(product.data(), product.data() + bytes.size()));
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndLifetimes, TestBigNumProductLifetime,
+    testing::Combine(testing::Values(4, 12, 64, 672),
+        testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
+
+namespace
+{
+
+template <typename Value>
+BigArena &value_arena(const BigLifetime lifetime)
+{
+    if constexpr (std::is_same_v<Value, BigNum>)
+    {
+        return bn_arena(lifetime);
+    }
+    else
+    {
+        return bf_arena(lifetime);
+    }
+}
+
+template <typename Value>
+std::vector<Byte> encoded(const Value &value)
+{
+    std::vector<Byte> result(value.arena().value_size());
+    value.copy_to_legacy(result.data(), result.size());
+    return result;
+}
+
+void unused_reducer(Byte *)
+{
+}
+
+} // namespace
+
+template <typename Value>
+class TestBigValueStorage : public testing::Test
+{
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    ValueSaver<long> m_bailout{g_user.bailout_value, 0};
+    ValueSaver<Bailout> m_test{g_bailout_test, Bailout::MOD};
+    ValueSaver<int> m_digits{g_bf_digits, 0};
+    ValueSaver<FractalType> m_type{
+        g_fractal_type, std::is_same_v<Value, BigNum> ? FractalType::MANDEL : FractalType::JULIA_Z_POWER};
+};
+
+template <typename Value>
+void TestBigValueStorage<Value>::SetUp()
+{
+    init_bf_dec(40);
+    init_big_pi();
+}
+
+template <typename Value>
+void TestBigValueStorage<Value>::TearDown()
+{
+    free_bf_vars();
+}
+
+using ValueTypes = testing::Types<BigNum, BigFloat>;
+TYPED_TEST_SUITE(TestBigValueStorage, ValueTypes);
+
+template <typename Value>
+class TestBigNullValue : public testing::Test
+{
+};
+
+TYPED_TEST_SUITE(TestBigNullValue, ValueTypes);
+
+TYPED_TEST(TestBigNullValue, defaultConstructionAndNullLifetimeOperationsNeedNoArena)
+{
+    EXPECT_TRUE(std::is_nothrow_default_constructible_v<TypeParam>);
+    TypeParam value;
+    EXPECT_FALSE(value);
+    const TypeParam copy{value};
+    EXPECT_FALSE(copy);
+    TypeParam moved{std::move(value)};
+    EXPECT_FALSE(value);
+    EXPECT_FALSE(moved);
+    value = copy;
+    EXPECT_FALSE(value);
+    value = std::move(moved);
+    EXPECT_FALSE(value);
+    EXPECT_FALSE(moved);
+    const Complex<TypeParam> complex;
+    EXPECT_FALSE(complex.x);
+    EXPECT_FALSE(complex.y);
+}
+
+TYPED_TEST(TestBigValueStorage, assignmentInitializesNullValuesInTheWorkingAllocator)
+{
+    auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
+    TypeParam source{value_arena<TypeParam>(BigLifetime::PERSISTENT), -1.25L};
+    TypeParam working_source{2.5L};
+    TypeParam copied;
+    TypeParam moved;
+    TypeParam moved_from_working;
+    TypeParam scalar;
+
+    copied = source;
+    moved = std::move(source);
+    moved_from_working = std::move(working_source);
+    scalar = 0;
+
+    EXPECT_TRUE(copied);
+    EXPECT_TRUE(moved);
+    EXPECT_TRUE(moved_from_working);
+    EXPECT_FALSE(working_source);
+    EXPECT_TRUE(scalar);
+    EXPECT_EQ(&working, &copied.arena());
+    EXPECT_EQ(&working, &moved.arena());
+    EXPECT_EQ(&working, &moved_from_working.arena());
+    EXPECT_EQ(&working, &scalar.arena());
+    EXPECT_EQ(TypeParam{-1.25L}, copied);
+    EXPECT_EQ(TypeParam{-1.25L}, moved);
+    EXPECT_EQ(TypeParam{2.5L}, moved_from_working);
+    EXPECT_EQ(TypeParam{0}, scalar);
+}
+
+TYPED_TEST(TestBigValueStorage, copyingNullWithASelectedAllocatorDoesNotAllocate)
+{
+    auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
+    BigArena arena{working.value_size(), working.block_size(), 2, unused_reducer};
+    const TypeParam null;
+
+    const TypeParam selected{arena, null};
+    const TypeParam copy{selected};
+
+    EXPECT_FALSE(selected);
+    EXPECT_FALSE(copy);
+    EXPECT_EQ(&arena, &selected.arena());
+    EXPECT_EQ(&arena, &copy.arena());
+    EXPECT_EQ(0, arena.high_water_mark());
+}
+
+TYPED_TEST(TestBigValueStorage, assigningNullReleasesStorageAndRetainsTheDestinationAllocator)
+{
+    auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
+    BigArena arena{working.value_size(), working.block_size(), 2, unused_reducer};
+    TypeParam value{arena, 1.25L};
+    const TypeParam occupied{arena, 2.5L};
+    TypeParam null;
+
+    value = null;
+    EXPECT_FALSE(value);
+    EXPECT_EQ(&arena, &value.arena());
+    value = -1.25L;
+    EXPECT_EQ(TypeParam{-1.25L}, value);
+    value = std::move(null);
+    EXPECT_FALSE(value);
+    EXPECT_FALSE(null);
+    EXPECT_EQ(&arena, &value.arena());
+    value = 0;
+    EXPECT_TRUE(value);
+    EXPECT_EQ(TypeParam{0}, value);
+    EXPECT_EQ(TypeParam{2.5L}, occupied);
+}
+
+TYPED_TEST(TestBigValueStorage, constructionAndCopiesUseTheSelectedAllocator)
+{
+    auto &persistent = value_arena<TypeParam>(BigLifetime::PERSISTENT);
+    auto &temporary = value_arena<TypeParam>(BigLifetime::TEMPORARY);
+    TypeParam source{persistent, -1.25L};
+    const TypeParam text{persistent, "-2.5"};
+    const TypeParam copy{source};
+    const TypeParam selected_copy{temporary, source};
+    const TypeParam zero{temporary};
+
+    source = 3.75L;
+
+    EXPECT_EQ(&persistent, &source.arena());
+    EXPECT_EQ(&persistent, &copy.arena());
+    EXPECT_EQ(&temporary, &selected_copy.arena());
+    EXPECT_EQ(&temporary, &zero.arena());
+    EXPECT_EQ("-2.5", text.to_string());
+    EXPECT_EQ("-1.25", copy.to_string());
+    EXPECT_EQ("-1.25", selected_copy.to_string());
+    EXPECT_EQ(TypeParam{0}, zero);
+}
+
+TYPED_TEST(TestBigValueStorage, conversionsAndImportsUseDestinationRepresentationAndAllocator)
+{
+    using Other = std::conditional_t<std::is_same_v<TypeParam, BigNum>, BigFloat, BigNum>;
+    auto &persistent = value_arena<TypeParam>(BigLifetime::PERSISTENT);
+    const Other source{-1.25L};
+    const TypeParam converted{persistent, source};
+    const auto bytes = encoded(converted);
+    const auto imported = TypeParam::from_legacy(persistent, bytes.data(), bytes.size());
+
+    EXPECT_EQ(&persistent, &converted.arena());
+    EXPECT_EQ(&persistent, &imported.arena());
+    EXPECT_EQ(TypeParam{-1.25L}, converted);
+    EXPECT_EQ(bytes, encoded(imported));
+}
+
+TYPED_TEST(TestBigValueStorage, assignmentRetainsTheDestinationAllocator)
+{
+    auto &persistent = value_arena<TypeParam>(BigLifetime::PERSISTENT);
+    auto &temporary = value_arena<TypeParam>(BigLifetime::TEMPORARY);
+    TypeParam destination{persistent, 2.5L};
+    TypeParam source{temporary, -1.25L};
+
+    destination = source;
+    EXPECT_EQ(&persistent, &destination.arena());
+    EXPECT_EQ(TypeParam{-1.25L}, destination);
+    source = 3.75L;
+    destination = std::move(source);
+    EXPECT_EQ(&persistent, &destination.arena());
+    EXPECT_EQ(TypeParam{3.75L}, destination);
+    EXPECT_EQ(&temporary, &source.arena());
+    source = -2.5L;
+    EXPECT_EQ(TypeParam{3.75L}, destination);
+}
+
+TYPED_TEST(TestBigValueStorage, movedFromValuesRetainTheirAllocatorForReassignment)
+{
+    auto &temporary = value_arena<TypeParam>(BigLifetime::TEMPORARY);
+    TypeParam source{temporary, -1.25L};
+    TypeParam moved{std::move(source)};
+
+    EXPECT_EQ(&temporary, &source.arena());
+    EXPECT_EQ(&temporary, &moved.arena());
+    source = 2.5L;
+    EXPECT_EQ(TypeParam{-1.25L}, moved);
+    source = moved;
+    EXPECT_EQ(TypeParam{-1.25L}, source);
+}
+
+TYPED_TEST(TestBigValueStorage, aFullArenaPermitsMovesAndExistingDestinationAssignment)
+{
+    auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
+    BigArena arena{working.value_size(), working.block_size(), 2, unused_reducer};
+    TypeParam first{arena, -1.25L};
+    TypeParam second{arena, 2.5L};
+    const TypeParam outside{3.75L};
+
+    EXPECT_THROW((TypeParam{first}), PrecisionError);
+    TypeParam moved{std::move(first)};
+    first = std::move(second);
+    moved = outside;
+    first = outside;
+    EXPECT_EQ(&arena, &moved.arena());
+    EXPECT_EQ(&arena, &first.arena());
+    EXPECT_EQ(outside, first);
+    EXPECT_EQ(outside, moved);
+}
+
+TYPED_TEST(TestBigValueStorage, failedCrossArenaAssignmentToAnEmptyValuePreservesTheSource)
+{
+    auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
+    BigArena arena{working.value_size(), working.block_size(), 2, unused_reducer};
+    TypeParam destination{arena, -1.25L};
+    const TypeParam occupied{arena, 2.5L};
+    const TypeParam moved{std::move(destination)};
+    TypeParam outside{3.75L};
+
+    EXPECT_THROW(destination = std::move(outside), PrecisionError);
+    EXPECT_EQ(&arena, &destination.arena());
+    EXPECT_EQ(TypeParam{3.75L}, outside);
+    EXPECT_EQ(TypeParam{-1.25L}, moved);
+    EXPECT_EQ(TypeParam{2.5L}, occupied);
+}
+
+TYPED_TEST(TestBigValueStorage, eagerScalarAndComplexResultsUseTheWorkingAllocator)
+{
+    auto &persistent = value_arena<TypeParam>(BigLifetime::PERSISTENT);
+    auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
+    const TypeParam left{persistent, 1.25L};
+    const TypeParam right{persistent, 0.5L};
+    for (const auto &result : {left + right, left - right, left * right, left / right, -left, left.sqr()})
+    {
+        EXPECT_EQ(&working, &result.arena());
+    }
+    const Complex<TypeParam> value{left, right};
+    for (const auto &result : {+value, -value, value + value, value - value, value * value, value / value, value * 0.5,
+             0.5 * value, power(value, 1), power(value, 3), cube(value)})
+    {
+        EXPECT_EQ(&working, &result.x.arena());
+        EXPECT_EQ(&working, &result.y.arena());
+    }
+    if constexpr (std::is_same_v<TypeParam, BigFloat>)
+    {
+        EXPECT_EQ(&working, &left.half().arena());
+        EXPECT_EQ(&working, &left.log().arena());
+        EXPECT_EQ(&working, &right.exp().arena());
+        EXPECT_EQ(&working, &left.atan2(right).arena());
+        const auto trigonometric = right.sin_cos();
+        EXPECT_EQ(&working, &trigonometric.first.arena());
+        EXPECT_EQ(&working, &trigonometric.second.arena());
+    }
+    EXPECT_EQ(&persistent, &left.arena());
+    EXPECT_EQ(&persistent, &right.arena());
+}
+
+TYPED_TEST(TestBigValueStorage, copiesMovesAndExportsRemainValidAfterContextReset)
+{
+    auto &persistent = value_arena<TypeParam>(BigLifetime::PERSISTENT);
+    const TypeParam source{persistent, -1.25L};
+    TypeParam assigned{2.5L};
+    const auto expected = encoded(source);
+    free_bf_vars();
+
+    const TypeParam copy{source};
+    TypeParam moving{source};
+    const TypeParam moved{std::move(moving)};
+    assigned = copy;
+
+    EXPECT_EQ(expected, encoded(source));
+    EXPECT_EQ(expected, encoded(copy));
+    EXPECT_EQ(expected, encoded(moved));
+    EXPECT_EQ(expected, encoded(assigned));
+}
+
+TYPED_TEST(TestBigValueStorage, precisionChangesMigrateEveryAttachedLifetime)
+{
+    std::vector<TypeParam> values;
+    for (BigLifetime lifetime : {BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY})
+    {
+        values.emplace_back(value_arena<TypeParam>(lifetime), "-1.23456789012345678901234567890123456789");
+    }
+    for (int digits : {80, 20, 40})
+    {
+        const std::vector<Byte> old_bytes = encoded(values.front());
+        const int old_integer = g_int_length;
+        init_bf_dec(digits);
+        std::vector<Byte> expected(values.front().arena().value_size());
+        if constexpr (std::is_same_v<TypeParam, BigNum>)
+        {
+            ASSERT_EQ(old_integer, g_int_length);
+        }
+        // The most significant mantissa bytes and any exponent stay at the
+        // end of the encoding. Growth adds zeros at the fractional end.
+        const std::size_t retained = std::min(old_bytes.size(), expected.size());
+        std::copy(old_bytes.end() - retained, old_bytes.end(), expected.end() - retained);
+        for (const auto &value : values)
+        {
+            EXPECT_EQ(expected, encoded(value));
+        }
+    }
+}
+
+TYPED_TEST(TestBigValueStorage, temporaryRewindsLeavePersistentAndWorkingValuesIndependent)
+{
+    auto &persistent = value_arena<TypeParam>(BigLifetime::PERSISTENT);
+    TypeParam destination{persistent, 1.25L};
+    const TypeParam working{2.5L};
+    const auto before = save_stack();
+    {
+        BigStackSaver scope;
+        TypeParam temporary{value_arena<TypeParam>(BigLifetime::TEMPORARY), 1.25L};
+        bf_stack().allocate_double();
+        bn_stack().allocate_single();
+        destination = temporary + working;
+    }
+    EXPECT_EQ(before, save_stack());
+    EXPECT_EQ(&persistent, &destination.arena());
+    EXPECT_EQ(TypeParam{3.75L}, destination);
+    EXPECT_EQ(TypeParam{2.5L}, working);
+}
+
+TYPED_TEST(TestBigValueStorage, compoundAssignmentsRetainTheDestinationAllocator)
+{
+    auto &persistent = value_arena<TypeParam>(BigLifetime::PERSISTENT);
+    const TypeParam right{value_arena<TypeParam>(BigLifetime::TEMPORARY), 0.5L};
+    TypeParam destination{persistent, 1.25L};
+    destination += right;
+    EXPECT_EQ(&persistent, &destination.arena());
+    EXPECT_EQ(TypeParam{1.75L}, destination);
+    destination -= right;
+    EXPECT_EQ(&persistent, &destination.arena());
+    EXPECT_EQ(TypeParam{1.25L}, destination);
+    destination *= right;
+    EXPECT_EQ(&persistent, &destination.arena());
+    EXPECT_EQ(TypeParam{0.625L}, destination);
+    destination /= right;
+    EXPECT_EQ(&persistent, &destination.arena());
+    EXPECT_EQ(TypeParam{1.25L}, destination);
+}
+
+TYPED_TEST(TestBigValueStorage, constructionInitializesRecycledStorage)
+{
+    auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
+    BigArena arena{working.value_size(), working.block_size(), 2, unused_reducer};
+    auto previous = arena.allocate_single();
+    std::fill_n(previous.data(), arena.block_size(), Byte{0xff});
+    previous = {};
+
+    const TypeParam zero{arena};
+
+    EXPECT_EQ(std::vector<Byte>(arena.value_size()), encoded(zero));
+}
 
 } // namespace id::test

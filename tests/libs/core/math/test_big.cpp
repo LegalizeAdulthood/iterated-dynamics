@@ -1702,34 +1702,6 @@ INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndLifetimes, TestBigNumByteProductRelocati
             std::pair<int, int>{1, 1}, std::pair<int, int>{1, 2}, std::pair<int, int>{2, 4}, std::pair<int, int>{4, 1}),
         testing::Bool(), testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
 
-class TestBigNumProductLifetime : public TestBigNumByteKernel,
-                                  public testing::WithParamInterface<std::tuple<int, BigLifetime>>
-{
-};
-
-TEST_P(TestBigNumProductLifetime, temporaryRewindsPreserveLivePairedAllocations)
-{
-    init_layout(std::get<0>(GetParam()), 1);
-    BigArena &arena = bn_arena(std::get<1>(GetParam()));
-    BigArena::Allocation product = arena.allocate_double();
-    const std::vector<Byte> bytes(2 * arena.block_size(), 0x5a);
-    std::copy(bytes.begin(), bytes.end(), product.data());
-    const BigStackMark mark = save_stack();
-    {
-        BigStackSaver saved;
-        bn_stack().allocate_double();
-        const BigArena::Allocation local = product.clone(bn_arena(BigLifetime::TEMPORARY));
-        EXPECT_EQ(bytes, std::vector<Byte>(local.data(), local.data() + bytes.size()));
-    }
-
-    EXPECT_EQ(mark, save_stack());
-    EXPECT_EQ(bytes, std::vector<Byte>(product.data(), product.data() + bytes.size()));
-}
-
-INSTANTIATE_TEST_SUITE_P(PrecisionsAndLifetimes, TestBigNumProductLifetime,
-    testing::Combine(testing::Values(4, 12, 64, 672),
-        testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
-
 class TestBigNumByteProductWindows : public TestBigNumByteKernel,
                                      public testing::WithParamInterface<std::tuple<int, int>>
 {

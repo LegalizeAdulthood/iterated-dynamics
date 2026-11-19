@@ -138,17 +138,14 @@ add_executable(test-core
     io/test_trim_filename.cpp
     io/test_update_save_name.cpp
 
-    math/test_big_float.cpp
-    math/test_big_num.cpp
-    math/test_big_conversion.cpp
+    math/test_big.cpp
+    math/test_big_init.cpp
     math/test_BigArena.cpp
     math/test_BigComplex.cpp
     math/test_BigFloat.cpp
     math/test_BigNum.cpp
-    math/test_BigValueStorage.cpp
     math/test_cmplx.cpp
     math/test_fpu087.cpp
-    math/test_math.cpp
     math/test_round_float_double.cpp
 
     misc/test_driver.cpp
