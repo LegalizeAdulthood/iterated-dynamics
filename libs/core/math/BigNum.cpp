@@ -473,30 +473,10 @@ int cmp_bn(const BigNum &n1, const BigNum &n2)
     return cmp_bn(n1.data(), n2.data());
 }
 
-BigNum &add_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
-{
-    add_bn(r.data(), n1.data(), n2.data());
-    return r;
-}
-
-BigNum add_bn(const BigNum &left, const BigNum &right)
-{
-    BigNum result{bn_arena(BigLifetime::WORKING)};
-    add_bn(result.data(), left.data(), right.data());
-    return result;
-}
-
 BigNum &sub_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
 {
     sub_bn(r.data(), n1.data(), n2.data());
     return r;
-}
-
-BigNum sub_bn(const BigNum &left, const BigNum &right)
-{
-    BigNum result{bn_arena(BigLifetime::WORKING)};
-    sub_bn(result.data(), left.data(), right.data());
-    return result;
 }
 
 BigNum &div_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
@@ -521,19 +501,6 @@ BigNum &unsafe_div_bn_int(BigNum &r, BigNum &n, const U16 u)
 BigNum &div_a_bn_int(BigNum &r, const U16 u)
 {
     div_a_bn_int(r.data(), u);
-    return r;
-}
-
-BigNum mult_bn_int(const BigNum &source, const U16 factor)
-{
-    BigNum result{bn_arena(BigLifetime::WORKING)};
-    mult_bn_int(result.data(), source.data(), factor);
-    return result;
-}
-
-BigNum &mult_bn_int(BigNum &r, const BigNum &source, const U16 factor)
-{
-    mult_bn_int(r.data(), source.data(), factor);
     return r;
 }
 

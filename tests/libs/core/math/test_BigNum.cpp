@@ -42,15 +42,10 @@ static_assert(std::is_same_v<decltype(&BigNum::hex_dump), void (BigNum::*)() con
 static_assert(std::is_void_v<decltype(square_bn(std::declval<BigNum &>(), std::declval<BigNum &>()))>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() * std::declval<const BigNum &>()), BigNum>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().sqr()), BigNum>);
-static_assert(std::is_same_v<decltype(add_bn(std::declval<const BigNum &>(), std::declval<const BigNum &>())), BigNum>);
-static_assert(std::is_same_v<decltype(sub_bn(std::declval<const BigNum &>(), std::declval<const BigNum &>())), BigNum>);
-static_assert(std::is_same_v<decltype(mult_bn_int(std::declval<const BigNum &>(), U16{})), BigNum>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() + std::declval<const BigNum &>()), BigNum>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() - std::declval<const BigNum &>()), BigNum>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() * U16{}), BigNum>);
 static_assert(std::is_same_v<decltype(abs_bn(std::declval<const BigNum &>())), BigNum>);
-static_assert(std::is_same_v<decltype(add_bn(std::declval<BigNum &>(), std::declval<const BigNum &>(),
-                                 std::declval<const BigNum &>())),
-    BigNum &>);
-static_assert(
-    std::is_same_v<decltype(mult_bn_int(std::declval<BigNum &>(), std::declval<const BigNum &>(), U16{})), BigNum &>);
 static_assert(std::is_same_v<decltype(abs_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
 static_assert(!std::is_void_v<decltype(abs_a_bn(std::declval<BigNum &>()))>);
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() = std::declval<const BigNum &>()), BigNum &>);
@@ -734,13 +729,13 @@ TEST_P(TestBigNumLayout, expressionsMatchDestinationProceduresAndOutliveTheirTem
     const BigNum original_right{right};
     const BigNum original_divisor{divisor};
     BigArena &working = bn_arena(BigLifetime::WORKING);
-    BigNum numerator{working};
+    BigNum numerator{working, left};
     BigNum quotient{working};
     BigNum product{working};
     BigNum expected{working};
     BigNum left_copy{left};
     // Use fresh destinations so division starts with zero low bytes.
-    add_bn(numerator, left, right);
+    numerator += right;
     div_bn(quotient, numerator, divisor);
     mult_bn(product, quotient, left_copy);
     sub_bn(expected, product, right);
@@ -1107,6 +1102,12 @@ TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityAliasesAndUnch
     const BigNum original_source{source};
     const long initial = self ? source_integer : separate_integer;
     long expected_integer{};
+    if (operation == CanonicalProcedure::ADD_TO || operation == CanonicalProcedure::ADD_TO_SELF ||
+        operation == CanonicalProcedure::MULT_TO || operation == CanonicalProcedure::MULT_TO_SELF)
+    {
+        // Leave one reusable slot for the binary operator's result.
+        arena.allocate_single().reset();
+    }
     const std::size_t high_water = arena.high_water_mark();
 
     switch (operation)
@@ -1134,7 +1135,7 @@ TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityAliasesAndUnch
     case CanonicalProcedure::ADD_TO:
     case CanonicalProcedure::ADD_TO_SELF:
         expected_integer = initial + source_integer;
-        EXPECT_EQ(&destination, &add_bn(destination, destination, source));
+        EXPECT_EQ(&destination, &(destination = destination + source));
         break;
     case CanonicalProcedure::SUB_TO:
     case CanonicalProcedure::SUB_TO_SELF:
@@ -1144,7 +1145,7 @@ TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityAliasesAndUnch
     case CanonicalProcedure::MULT_TO:
     case CanonicalProcedure::MULT_TO_SELF:
         expected_integer = source_integer * 3;
-        EXPECT_EQ(&destination, &mult_bn_int(destination, source, U16{3}));
+        EXPECT_EQ(&destination, &(destination = source * U16{3}));
         break;
     case CanonicalProcedure::ABS_TO:
     case CanonicalProcedure::ABS_TO_SELF:

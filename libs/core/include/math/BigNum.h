@@ -130,13 +130,8 @@ BigNum &double_a_bn(BigNum &r);
 BigNum &half_bn(BigNum &r, const BigNum &n);
 BigNum &half_a_bn(BigNum &r);
 BigNum &mult_a_bn_int(BigNum &r, misc::U16 u);
-BigNum &add_bn(BigNum &r, const BigNum &n1, const BigNum &n2);
 BigNum &sub_bn(BigNum &r, const BigNum &n1, const BigNum &n2);
-BigNum &mult_bn_int(BigNum &r, const BigNum &source, misc::U16 factor);
 BigNum &abs_bn(BigNum &r, const BigNum &source);
-BigNum add_bn(const BigNum &left, const BigNum &right);
-BigNum sub_bn(const BigNum &left, const BigNum &right);
-BigNum mult_bn_int(const BigNum &source, misc::U16 factor);
 BigNum abs_bn(const BigNum &source);
 BigNum &abs_a_bn(BigNum &r);
 

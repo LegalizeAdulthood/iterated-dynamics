@@ -84,7 +84,7 @@ int initialize_mandel_sticky_pixel()
     {
         BigStackSaver saved;
         BigNum offset{bn_arena(BigLifetime::TEMPORARY), 1e-40};
-        mult_bn_int(offset, offset, static_cast<U16>(g_col));
+        offset = offset * static_cast<U16>(g_col);
         g_param_z_bn.x = g_init.x;
         g_param_z_bn.x += offset;
         g_param_z_bn.y = g_init.y;

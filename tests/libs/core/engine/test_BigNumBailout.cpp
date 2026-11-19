@@ -795,8 +795,10 @@ TEST_P(TestBigNumJuliaCanonicalProduct, preservesFixedWidthOverflowAndDestinatio
     g_overflow = true;
     square_bn(g_tmp_sqr_x_bn, g_old_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_old_z_bn.y);
-    const BigArena &working = bn_arena(BigLifetime::WORKING);
+    BigArena &working = bn_arena(BigLifetime::WORKING);
     const BigNum expected_y{static_cast<LDouble>(wrapped_integer(negative ? -20000 : 20000))};
+    // The additions in the orbit reuse one working slot for their result.
+    working.allocate_single().reset();
     const std::size_t high_water = working.high_water_mark();
 
     EXPECT_EQ(1, julia_orbit_bn());

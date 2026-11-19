@@ -180,7 +180,7 @@ static int bn_mod_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    add_bn(g_bn_tmp, g_tmp_sqr_x_bn, g_tmp_sqr_y_bn);
+    g_bn_tmp = g_tmp_sqr_x_bn + g_tmp_sqr_y_bn;
 
     if (bn_bailout_reached(g_bn_tmp))
     {
@@ -254,7 +254,7 @@ static int bn_manh_bailout()
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     abs_bn(abs_x, g_new_z_bn.x);
     abs_bn(abs_y, g_new_z_bn.y);
-    add_bn(g_bn_tmp, abs_x, abs_y);
+    g_bn_tmp = abs_x + abs_y;
     square_bn(metric, g_bn_tmp);
     if (bn_bailout_reached(metric))
     {
@@ -272,7 +272,7 @@ static int bn_manr_bailout()
 
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
+    g_bn_tmp = g_new_z_bn.x + g_new_z_bn.y; // don't need abs since we square it next
     square_bn(metric, g_bn_tmp);
     if (bn_bailout_reached(metric))
     {

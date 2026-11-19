@@ -503,17 +503,17 @@ int mandel_per_pixel_bn()
     }
     // parm.x = x_min + col*delx + row*delx2
     g_param_z_bn.x = g_delta_x_bn * static_cast<U16>(g_col);
-    mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
+    g_bn_tmp = g_delta2_x_bn * static_cast<U16>(g_row);
 
     g_param_z_bn.x += g_bn_tmp;
     g_param_z_bn.x += g_x_min_bn;
 
     // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bn is just used as a temporary variable
-    mult_bn_int(g_old_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
-    mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
+    g_old_z_bn.x = g_delta_y_bn * static_cast<U16>(g_row);
+    g_old_z_bn.y = g_delta2_y_bn * static_cast<U16>(g_col);
     g_old_z_bn.x += g_old_z_bn.y;
-    sub_bn(g_param_z_bn.y, g_y_max_bn, g_old_z_bn.x);
+    g_param_z_bn.y = g_y_max_bn - g_old_z_bn.x;
 
     if (g_use_init_orbit == InitOrbitMode::VALUE)
     {
@@ -618,8 +618,8 @@ int mandel_per_pixel_bf()
 int julia_per_pixel_bn()
 {
     // old.x = x_min + col*delx + row*delx2
-    mult_bn_int(g_old_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
-    mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
+    g_old_z_bn.x = g_delta_x_bn * static_cast<U16>(g_col);
+    g_bn_tmp = g_delta2_x_bn * static_cast<U16>(g_row);
 
     g_old_z_bn.x += g_bn_tmp;
     g_old_z_bn.x += g_x_min_bn;
@@ -629,7 +629,7 @@ int julia_per_pixel_bn()
     g_new_z_bn.x = g_delta_y_bn * static_cast<U16>(g_row);
     g_new_z_bn.y = g_delta2_y_bn * static_cast<U16>(g_col);
     g_new_z_bn.x += g_new_z_bn.y;
-    sub_bn(g_old_z_bn.y, g_y_max_bn, g_new_z_bn.x);
+    g_old_z_bn.y = g_y_max_bn - g_new_z_bn.x;
 
     // square has side effect - must copy first
     g_new_z_bn.x = g_old_z_bn.x;
@@ -676,12 +676,12 @@ int julia_orbit_bn()
 
     // new.x = tmpsqrx - tmpsqry + parm.x;
     g_tmp_sqr_x_bn -= g_tmp_sqr_y_bn;
-    add_bn(g_new_z_bn.x, g_tmp_sqr_x_bn, g_param_z_bn.x);
+    g_new_z_bn.x = g_tmp_sqr_x_bn + g_param_z_bn.x;
 
     // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;
     mult_bn(product, g_old_z_bn.x, g_old_z_bn.y);
     double_a_bn(product);
-    add_bn(g_new_z_bn.y, product, g_param_z_bn.y);
+    g_new_z_bn.y = product + g_param_z_bn.y;
 
     return g_bailout_bignum();
 }
