@@ -1801,6 +1801,757 @@ TEST_P(TestBigNumByteProducts, legacyProductTruncationKeepsTheSignedLowBit)
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigNumByteProducts, testing::Values(4, 8, 12, 672));
 
+namespace
+{
+
+std::vector<Byte> bn_saturation_bytes(const bool negative)
+{
+    std::vector<Byte> result(g_bn_length, negative ? Byte{0} : Byte{0xff});
+    result.front() = negative ? Byte{1} : Byte{0xff};
+    result.back() = negative ? Byte{0x80} : Byte{0x7f};
+    return result;
+}
+
+} // namespace
+
+namespace
+{
+
+enum class LayoutScalarInput
+{
+    NEGATIVE,
+    ZERO,
+    POSITIVE,
+    MINIMUM,
+    QUANTUM,
+    NEGATIVE_QUANTUM
+};
+
+std::vector<Byte> scalar_input_bytes(const LayoutScalarInput input)
+{
+    std::vector<Byte> parsed(g_bn_length);
+    switch (input)
+    {
+    case LayoutScalarInput::NEGATIVE:
+        str_to_bn(parsed.data(), "-1.2345678901234567890123456789");
+        return parsed;
+    case LayoutScalarInput::ZERO:
+        return std::vector<Byte>(g_bn_length);
+    case LayoutScalarInput::POSITIVE:
+        str_to_bn(parsed.data(), "1.2345678901234567890123456789");
+        return parsed;
+    case LayoutScalarInput::MINIMUM:
+    {
+        std::vector<Byte> result(g_bn_length);
+        result.back() = 0x80;
+        return result;
+    }
+    case LayoutScalarInput::QUANTUM:
+    {
+        std::vector<Byte> result(g_bn_length);
+        result.front() = 1;
+        return result;
+    }
+    case LayoutScalarInput::NEGATIVE_QUANTUM:
+        return std::vector<Byte>(g_bn_length, 0xff);
+    }
+    throw std::logic_error("Unexpected scalar input");
+}
+
+void negate_encoded_bytes(std::vector<Byte> &value)
+{
+    unsigned carry = 1;
+    for (Byte &byte : value)
+    {
+        const unsigned digit = (byte ^ 0xff) + carry;
+        byte = static_cast<Byte>(digit);
+        carry = digit >> 8;
+    }
+}
+
+std::vector<Byte> scalar_quotient_bytes(std::vector<Byte> value, const U16 divisor)
+{
+    const bool negative = (value.back() & 0x80) != 0;
+    if (divisor == 0)
+    {
+        return bn_saturation_bytes(negative);
+    }
+    if (negative)
+    {
+        negate_encoded_bytes(value);
+    }
+    unsigned remainder = 0;
+    for (std::size_t i = value.size(); i > 0; --i)
+    {
+        Byte &byte = value[i - 1];
+        const unsigned digit = (remainder << 8) | byte;
+        byte = static_cast<Byte>(digit / divisor);
+        remainder = digit % divisor;
+    }
+    if (negative)
+    {
+        negate_encoded_bytes(value);
+    }
+    return value;
+}
+
+} // namespace
+
+class TestBigNumByteScalar : public TestBigNumByteKernel,
+                             public testing::WithParamInterface<std::tuple<int, LayoutScalarInput, U16>>
+{
+protected:
+    void SetUp() override
+    {
+        const int integer_length = std::get<0>(GetParam());
+        init_layout(32, integer_length);
+        ASSERT_EQ(integer_length, g_int_length);
+    }
+};
+
+class TestBigNumByteScaling : public TestBigNumByteScalar
+{
+};
+
+TEST_P(TestBigNumByteScaling, unsignedScalingPreservesAllOperandBitsAndFixedWidthOverflow)
+{
+    const U16 factor = std::get<2>(GetParam());
+    std::vector<Byte> source = scalar_input_bytes(std::get<1>(GetParam()));
+    const std::vector<Byte> original = source;
+    std::vector<Byte> expected = original;
+    unsigned carry = 0;
+    for (Byte &byte : expected)
+    {
+        const unsigned digit = static_cast<unsigned>(byte) * factor + carry;
+        byte = static_cast<Byte>(digit);
+        carry = digit >> 8;
+    }
+
+    std::vector<Byte> result(g_bn_length + 1, 0xa5);
+    expected.push_back(0xa5);
+
+    EXPECT_EQ(result.data(), mult_bn_int(result.data(), source.data(), factor));
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original, source);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsInputsAndFactors, TestBigNumByteScaling,
+    testing::Combine(testing::Values(1, 2, 4),
+        testing::Values(LayoutScalarInput::NEGATIVE, LayoutScalarInput::ZERO, LayoutScalarInput::POSITIVE),
+        testing::Values<U16>(0, 1, 2, 255, 256, 32768, 65535)));
+
+class TestBigNumByteScalarDivision : public TestBigNumByteScalar
+{
+};
+
+TEST_P(TestBigNumByteScalarDivision, unsignedDivisionAssignmentPreservesRoundingAndZeroDivisorSaturation)
+{
+    const U16 divisor = std::get<2>(GetParam());
+    std::vector<Byte> value = scalar_input_bytes(std::get<1>(GetParam()));
+    std::vector<Byte> expected = scalar_quotient_bytes(value, divisor);
+    value.push_back(0xa5);
+    expected.push_back(0xa5);
+
+    EXPECT_EQ(value.data(), div_a_bn_int(value.data(), divisor));
+    EXPECT_EQ(expected, value);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsInputsAndDivisors, TestBigNumByteScalarDivision,
+    testing::Combine(testing::Values(1, 2, 4),
+        testing::Values(LayoutScalarInput::NEGATIVE, LayoutScalarInput::ZERO, LayoutScalarInput::POSITIVE,
+            LayoutScalarInput::MINIMUM, LayoutScalarInput::QUANTUM, LayoutScalarInput::NEGATIVE_QUANTUM),
+        testing::Values<U16>(0, 1, 2, 255, 256, 32768, 65535)));
+
+namespace
+{
+
+enum class UnaryOperation
+{
+    CLEAR,
+    MAX,
+    NEGATE,
+    NEGATE_ASSIGN,
+    DOUBLE,
+    DOUBLE_ASSIGN,
+    HALF,
+    HALF_ASSIGN,
+    MULT_ASSIGN
+};
+
+struct EncodedPattern
+{
+    U16 low;
+    Byte fill;
+    Byte high;
+};
+
+std::vector<Byte> encoded_pattern(const EncodedPattern &pattern)
+{
+    std::vector<Byte> bytes(static_cast<std::size_t>(g_bn_length), pattern.fill);
+    bytes[0] = static_cast<Byte>(pattern.low);
+    bytes[1] = static_cast<Byte>(pattern.low >> 8);
+    bytes.back() = pattern.high;
+    return bytes;
+}
+
+struct UnaryInput
+{
+    const char *name;
+    UnaryOperation operation;
+    EncodedPattern source;
+    EncodedPattern expected;
+    U16 factor{};
+};
+
+void PrintTo(const UnaryInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+struct ObservationInput
+{
+    const char *name;
+    EncodedPattern source;
+    int mismatch;
+    bool high_byte;
+};
+
+void PrintTo(const ObservationInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+} // namespace
+
+class TestBigNumByteUnary : public TestBigNumByteKernel,
+                            public testing::WithParamInterface<std::tuple<int, int, UnaryInput, bool>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumByteUnary::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    init_layout(std::get<0>(GetParam()), integer_length);
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumByteUnary, preservesDestinationAddressGuardsAndAliases)
+{
+    const UnaryInput &input = std::get<2>(GetParam());
+    const bool self = std::get<3>(GetParam());
+    std::vector<Byte> source_bytes = encoded_pattern(input.source);
+    source_bytes.push_back(0x5a);
+    const std::vector<Byte> original_source = source_bytes;
+    std::vector<Byte> separate = source_bytes;
+    separate.back() = 0xa5;
+    Byte *const source = source_bytes.data();
+    Byte *const destination = self ? source : separate.data();
+    std::vector<Byte> expected = encoded_pattern(input.expected);
+    expected.push_back(self ? 0x5a : 0xa5);
+
+    switch (input.operation)
+    {
+    case UnaryOperation::CLEAR:
+        EXPECT_EQ(destination, clear_bn(destination));
+        break;
+    case UnaryOperation::MAX:
+        EXPECT_EQ(destination, max_bn(destination));
+        break;
+    case UnaryOperation::NEGATE:
+        EXPECT_EQ(destination, neg_bn(destination, source));
+        break;
+    case UnaryOperation::NEGATE_ASSIGN:
+        EXPECT_EQ(destination, neg_a_bn(destination));
+        break;
+    case UnaryOperation::DOUBLE:
+        EXPECT_EQ(destination, double_bn(destination, source));
+        break;
+    case UnaryOperation::DOUBLE_ASSIGN:
+        EXPECT_EQ(destination, double_a_bn(destination));
+        break;
+    case UnaryOperation::HALF:
+        EXPECT_EQ(destination, half_bn(destination, source));
+        break;
+    case UnaryOperation::HALF_ASSIGN:
+        EXPECT_EQ(destination, half_a_bn(destination));
+        break;
+    case UnaryOperation::MULT_ASSIGN:
+        EXPECT_EQ(destination, mult_a_bn_int(destination, input.factor));
+        break;
+    }
+
+    EXPECT_EQ(expected, self ? source_bytes : separate);
+    if (!self)
+    {
+        EXPECT_EQ(original_source, source_bytes);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumByteUnary,
+    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(UnaryInput{"Clear", UnaryOperation::CLEAR, {0xfffd, 0xff, 0xff}, {0, 0, 0}},
+            UnaryInput{"Maximum", UnaryOperation::MAX, {3, 0, 0}, {0xffff, 0xff, 0x7f}},
+            UnaryInput{"NegatePositive", UnaryOperation::NEGATE, {3, 0, 0}, {0xfffd, 0xff, 0xff}},
+            UnaryInput{"NegateNegative", UnaryOperation::NEGATE, {0xfffd, 0xff, 0xff}, {3, 0, 0}},
+            UnaryInput{"NegateMinimum", UnaryOperation::NEGATE, {0, 0, 0x80}, {0, 0, 0x80}},
+            UnaryInput{"NegateInPlace", UnaryOperation::NEGATE_ASSIGN, {0xfffd, 0xff, 0xff}, {3, 0, 0}},
+            UnaryInput{"DoublePositive", UnaryOperation::DOUBLE, {3, 0, 0}, {6, 0, 0}},
+            UnaryInput{"DoubleNegative", UnaryOperation::DOUBLE, {0xfffd, 0xff, 0xff}, {0xfffa, 0xff, 0xff}},
+            UnaryInput{"DoubleOverflow", UnaryOperation::DOUBLE, {0xffff, 0xff, 0x7f}, {0xfffe, 0xff, 0xff}},
+            UnaryInput{"DoubleInPlace", UnaryOperation::DOUBLE_ASSIGN, {0xffff, 0xff, 0x7f}, {0xfffe, 0xff, 0xff}},
+            UnaryInput{"HalfPositiveOdd", UnaryOperation::HALF, {3, 0, 0}, {1, 0, 0}},
+            UnaryInput{"HalfNegativeOdd", UnaryOperation::HALF, {0xfffd, 0xff, 0xff}, {0xfffe, 0xff, 0xff}},
+            UnaryInput{"HalfMinimum", UnaryOperation::HALF, {0, 0, 0x80}, {0, 0, 0xc0}},
+            UnaryInput{"HalfInPlace", UnaryOperation::HALF_ASSIGN, {0xfffd, 0xff, 0xff}, {0xfffe, 0xff, 0xff}},
+            UnaryInput{"MultiplyZero", UnaryOperation::MULT_ASSIGN, {0xfffd, 0xff, 0xff}, {0, 0, 0}, 0},
+            UnaryInput{"MultiplyOne", UnaryOperation::MULT_ASSIGN, {0xffff, 0xff, 0x7f}, {0xffff, 0xff, 0x7f}, 1},
+            UnaryInput{"MultiplyUnsigned", UnaryOperation::MULT_ASSIGN, {0xffff, 0xff, 0xff}, {1, 0xff, 0xff}, 65535},
+            UnaryInput{"MultiplyOverflow", UnaryOperation::MULT_ASSIGN, {0, 0, 0x80}, {0, 0, 0}, 2}),
+        testing::Bool()));
+
+class TestBigNumByteObservations : public TestBigNumByteKernel,
+                                   public testing::WithParamInterface<std::tuple<int, int, ObservationInput>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumByteObservations::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    init_layout(std::get<0>(GetParam()), integer_length);
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumByteObservations, preservesExactMismatchAndSourceBytes)
+{
+    const ObservationInput &input = std::get<2>(GetParam());
+    const std::vector<Byte> value = encoded_pattern(input.source);
+    const std::vector<Byte> zero(g_bn_length);
+    const std::vector<Byte> original = value;
+    const int comparison = input.high_byte ? input.mismatch * g_bn_length : input.mismatch;
+
+    EXPECT_EQ(input.mismatch < 0, is_bn_neg(value.data()));
+    EXPECT_EQ(input.mismatch == 0, is_bn_zero(value.data()));
+    EXPECT_EQ(input.mismatch != 0, is_bn_not_zero(value.data()));
+    EXPECT_EQ(comparison, cmp_bn(value.data(), zero.data()));
+    EXPECT_EQ(-comparison, cmp_bn(zero.data(), value.data()));
+    EXPECT_EQ(0, cmp_bn(value.data(), value.data()));
+    EXPECT_EQ(original, value);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndValues, TestBigNumByteObservations,
+    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(ObservationInput{"Zero", {0, 0, 0}, 0, false}, ObservationInput{"Quantum", {1, 0, 0}, 1, false},
+            ObservationInput{"SecondByte", {256, 0, 0}, 2, false},
+            ObservationInput{"NegativeQuantum", {0xffff, 0xff, 0xff}, -1, true},
+            ObservationInput{"Maximum", {0xffff, 0xff, 0x7f}, 1, true},
+            ObservationInput{"Minimum", {0, 0, 0x80}, -1, true}, ObservationInput{"HighByte", {0, 0, 1}, 1, true})));
+
+namespace
+{
+
+enum class CanonicalProcedure
+{
+    COPY,
+    COPY_SELF,
+    ADD,
+    ADD_SELF,
+    SUB,
+    SUB_SELF,
+    ABS_NEGATIVE,
+    ABS_POSITIVE,
+    ADD_TO,
+    ADD_TO_SELF,
+    SUB_TO,
+    SUB_TO_SELF,
+    MULT_TO,
+    MULT_TO_SELF,
+    ABS_TO,
+    ABS_TO_SELF,
+    ABS_TO_POSITIVE
+};
+
+} // namespace
+
+class TestBigNumByteCanonicalProcedures : public TestBigNumByteKernel,
+                                          public testing::WithParamInterface<std::tuple<int, int, CanonicalProcedure>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumByteCanonicalProcedures::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    init_layout(std::get<0>(GetParam()), integer_length);
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumByteCanonicalProcedures, preservesDestinationAddressGuardsAndAliases)
+{
+    const CanonicalProcedure operation = std::get<2>(GetParam());
+    const long source_integer = operation == CanonicalProcedure::ABS_TO_POSITIVE ? 7 : -7;
+    const long separate_integer = operation == CanonicalProcedure::ABS_NEGATIVE ? -2 : 2;
+    const bool self = operation == CanonicalProcedure::COPY_SELF || operation == CanonicalProcedure::ADD_SELF ||
+        operation == CanonicalProcedure::SUB_SELF || operation == CanonicalProcedure::ADD_TO_SELF ||
+        operation == CanonicalProcedure::SUB_TO_SELF || operation == CanonicalProcedure::MULT_TO_SELF ||
+        operation == CanonicalProcedure::ABS_TO_SELF;
+    std::vector<Byte> source_bytes = fixed_sample(g_bn_length, g_bn_length - g_int_length, source_integer);
+    std::vector<Byte> separate = fixed_sample(g_bn_length, g_bn_length - g_int_length, separate_integer);
+    source_bytes.push_back(0x5a);
+    separate.push_back(0xa5);
+    const std::vector<Byte> original_source = source_bytes;
+    Byte *const source = source_bytes.data();
+    Byte *const destination = self ? source : separate.data();
+    const long initial = self ? source_integer : separate_integer;
+    long expected_integer{};
+
+    switch (operation)
+    {
+    case CanonicalProcedure::COPY:
+    case CanonicalProcedure::COPY_SELF:
+        expected_integer = source_integer;
+        EXPECT_EQ(destination, copy_bn(destination, source));
+        break;
+    case CanonicalProcedure::ADD:
+    case CanonicalProcedure::ADD_SELF:
+        expected_integer = initial + source_integer;
+        EXPECT_EQ(destination, add_bn(destination, destination, source));
+        break;
+    case CanonicalProcedure::SUB:
+    case CanonicalProcedure::SUB_SELF:
+        expected_integer = initial - source_integer;
+        EXPECT_EQ(destination, sub_bn(destination, destination, source));
+        break;
+    case CanonicalProcedure::ABS_NEGATIVE:
+    case CanonicalProcedure::ABS_POSITIVE:
+        expected_integer = std::abs(initial);
+        EXPECT_EQ(destination, abs_a_bn(destination));
+        break;
+    case CanonicalProcedure::ADD_TO:
+    case CanonicalProcedure::ADD_TO_SELF:
+        expected_integer = initial + source_integer;
+        EXPECT_EQ(destination, add_bn(destination, destination, source));
+        break;
+    case CanonicalProcedure::SUB_TO:
+    case CanonicalProcedure::SUB_TO_SELF:
+        expected_integer = initial - source_integer;
+        EXPECT_EQ(destination, sub_bn(destination, destination, source));
+        break;
+    case CanonicalProcedure::MULT_TO:
+    case CanonicalProcedure::MULT_TO_SELF:
+        expected_integer = source_integer * 3;
+        EXPECT_EQ(destination, mult_bn_int(destination, source, U16{3}));
+        break;
+    case CanonicalProcedure::ABS_TO:
+    case CanonicalProcedure::ABS_TO_SELF:
+    case CanonicalProcedure::ABS_TO_POSITIVE:
+        expected_integer = std::abs(source_integer);
+        EXPECT_EQ(destination, abs_bn(destination, source));
+        break;
+    }
+
+    std::vector<Byte> expected = fixed_sample(g_bn_length, g_bn_length - g_int_length, expected_integer);
+    expected.push_back(self ? 0x5a : 0xa5);
+    EXPECT_EQ(expected, self ? source_bytes : separate);
+    if (!self)
+    {
+        EXPECT_EQ(original_source, source_bytes);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumByteCanonicalProcedures,
+    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+        testing::Values(CanonicalProcedure::COPY, CanonicalProcedure::COPY_SELF, CanonicalProcedure::ADD,
+            CanonicalProcedure::ADD_SELF, CanonicalProcedure::SUB, CanonicalProcedure::SUB_SELF,
+            CanonicalProcedure::ABS_NEGATIVE, CanonicalProcedure::ABS_POSITIVE, CanonicalProcedure::ADD_TO,
+            CanonicalProcedure::ADD_TO_SELF, CanonicalProcedure::SUB_TO, CanonicalProcedure::SUB_TO_SELF,
+            CanonicalProcedure::MULT_TO, CanonicalProcedure::MULT_TO_SELF, CanonicalProcedure::ABS_TO,
+            CanonicalProcedure::ABS_TO_SELF, CanonicalProcedure::ABS_TO_POSITIVE)));
+
+enum class IntegerDivisionCall
+{
+    DISTINCT,
+    ALIASED,
+    IN_PLACE
+};
+
+class TestBigNumByteIntegerDivision
+    : public TestBigNumByteKernel,
+      public testing::WithParamInterface<std::tuple<int, int, U16, bool, IntegerDivisionCall>>
+{
+protected:
+    void SetUp() override;
+};
+
+void TestBigNumByteIntegerDivision::SetUp()
+{
+    const int integer_length = std::get<1>(GetParam());
+    init_layout(std::get<0>(GetParam()), integer_length);
+    ASSERT_EQ(integer_length, g_int_length);
+}
+
+TEST_P(TestBigNumByteIntegerDivision, preservesResultAddressSourceMutationAliasesAndGuards)
+{
+    const U16 divisor = std::get<2>(GetParam());
+    const bool negative = std::get<3>(GetParam());
+    const IntegerDivisionCall call = std::get<4>(GetParam());
+    const int fractional_bytes = g_bn_length - g_int_length;
+    std::vector<Byte> source = fixed_sample(g_bn_length, fractional_bytes, negative ? -6 : 6);
+    std::vector<Byte> destination = fixed_sample(g_bn_length, fractional_bytes, -17);
+    std::vector<Byte> expected = scalar_quotient_bytes(source, divisor);
+    std::vector<Byte> expected_source =
+        call == IntegerDivisionCall::DISTINCT ? fixed_sample(g_bn_length, fractional_bytes, 6) : expected;
+    source.push_back(0x5a);
+    destination.push_back(0xa5);
+    expected_source.push_back(0x5a);
+    const std::vector<Byte> untouched = destination;
+    std::vector<Byte> &result = call == IntegerDivisionCall::DISTINCT ? destination : source;
+    expected.push_back(result.back());
+
+    if (call == IntegerDivisionCall::IN_PLACE)
+    {
+        EXPECT_EQ(result.data(), div_a_bn_int(result.data(), divisor));
+    }
+    else
+    {
+        EXPECT_EQ(result.data(), unsafe_div_bn_int(result.data(), source.data(), divisor));
+    }
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(expected_source, source);
+    if (call != IntegerDivisionCall::DISTINCT)
+    {
+        EXPECT_EQ(untouched, destination);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsDivisorsSignsAndAliases, TestBigNumByteIntegerDivision,
+    testing::Combine(testing::Values(12, 32, 672), testing::Values(1, 2, 4), testing::Values<U16>(0, 1, 2, 256),
+        testing::Bool(),
+        testing::Values(IntegerDivisionCall::DISTINCT, IntegerDivisionCall::ALIASED, IntegerDivisionCall::IN_PLACE)));
+
+namespace
+{
+
+struct BigNumByteDivisionScratch
+{
+    std::vector<Byte> product = std::vector<Byte>(g_r_length);
+    std::vector<Byte> tmp2 = std::vector<Byte>(g_bn_length);
+    std::vector<Byte> tmp3 = std::vector<Byte>(g_bn_length);
+    // The legacy conversion scans one preceding byte for a zero input.
+    std::vector<Byte> left_copy = std::vector<Byte>(g_bn_length + 1);
+    std::vector<Byte> right_copy = std::vector<Byte>(g_bn_length + 1);
+};
+
+std::array<int, 9> big_num_kernel_lengths()
+{
+    return {g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding, g_shift_factor, g_bf_length, g_r_bf_length,
+        g_bf_decimals};
+}
+
+} // namespace
+
+class TestBigNumByteDivision : public TestBigNumByteKernel,
+                               public testing::WithParamInterface<std::tuple<int, int, bool>>
+{
+protected:
+    void SetUp() override
+    {
+        init_layout(std::get<0>(GetParam()), std::get<1>(GetParam()));
+        ASSERT_EQ(std::get<1>(GetParam()), g_int_length);
+    }
+};
+
+TEST_P(TestBigNumByteDivision, reciprocalRestoresPrecisionAndPreservesDestinationGuards)
+{
+    const bool negative = std::get<2>(GetParam());
+    const int fractional_bytes = g_bn_length - g_int_length;
+    std::vector<Byte> source = fixed_sample(g_bn_length, fractional_bytes, negative ? -2 : 2);
+    source.insert(source.begin(), 0x5a);
+    source.push_back(0x6b);
+    std::vector<Byte> expected_source = fixed_sample(g_bn_length, fractional_bytes, 2);
+    expected_source.insert(expected_source.begin(), 0x5a);
+    expected_source.push_back(0x6b);
+    std::vector<Byte> result(g_bn_length + 2);
+    result.front() = 0xa5;
+    result.back() = 0xa5;
+    std::vector<Byte> expected = fixed_sample(g_bn_length, fractional_bytes, negative ? -1 : 0, 0x80);
+    expected.insert(expected.begin(), 0xa5);
+    expected.push_back(0xa5);
+    const std::array<int, 9> lengths = big_num_kernel_lengths();
+    BigNumByteDivisionScratch scratch;
+
+    EXPECT_EQ(result.data() + 1,
+        unsafe_inv_bn(
+            result.data() + 1, source.data() + 1, scratch.product.data(), scratch.tmp2.data(), scratch.tmp3.data()));
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(expected_source, source);
+    EXPECT_EQ(lengths, big_num_kernel_lengths());
+}
+
+TEST_P(TestBigNumByteDivision, zeroAndOverflowInverseWriteOnlyTheCanonicalDestination)
+{
+    const int fractional_bytes = g_bn_length - g_int_length;
+    const bool negative = std::get<2>(GetParam());
+    const bool zero = std::get<0>(GetParam()) == 12 && !negative;
+    std::vector<Byte> source(g_bn_length + 2);
+    Byte *const input = source.data() + 1;
+    const LDouble magnitude = zero ? 0 : std::ldexp(LDouble{1}, -40);
+    float_to_bn(input, negative ? -magnitude : magnitude);
+    const std::vector<Byte> expected_source = [&]
+    {
+        std::vector<Byte> result(g_bn_length + 2);
+        if (!zero)
+        {
+            result[fractional_bytes - 4] = 1;
+        }
+        return result;
+    }();
+    std::vector<Byte> result(g_bn_length + 2, 0xa5);
+    std::vector<Byte> expected = bn_saturation_bytes(false);
+    expected.insert(expected.begin(), 0xa5);
+    expected.push_back(0xa5);
+    BigNumByteDivisionScratch scratch;
+    const std::array<int, 9> lengths = big_num_kernel_lengths();
+
+    EXPECT_EQ(result.data() + 1,
+        unsafe_inv_bn(result.data() + 1, input, scratch.product.data(), scratch.tmp2.data(), scratch.tmp3.data()));
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(expected_source, source);
+    EXPECT_EQ(lengths, big_num_kernel_lengths());
+}
+
+TEST_P(TestBigNumByteDivision, divisionCopiesAliasedOperandsAndPreservesGuards)
+{
+    const bool alias_left = std::get<2>(GetParam());
+    const int fractional_bytes = g_bn_length - g_int_length;
+    std::vector<Byte> left = fixed_sample(g_bn_length, fractional_bytes, -6);
+    std::vector<Byte> right = fixed_sample(g_bn_length, fractional_bytes, 2);
+    left.push_back(0x5a);
+    right.push_back(0x6b);
+    const std::vector<Byte> original_other = alias_left ? right : left;
+    std::vector<Byte> &result = alias_left ? left : right;
+    std::vector<Byte> expected = fixed_sample(g_bn_length, fractional_bytes, -3);
+    expected.push_back(result.back());
+    const std::array<int, 9> lengths = big_num_kernel_lengths();
+    BigNumByteDivisionScratch scratch;
+
+    EXPECT_EQ(result.data(),
+        div_bn(result.data(), left.data(), right.data(), scratch.product.data(), scratch.tmp2.data(),
+            scratch.tmp3.data(), scratch.left_copy.data() + 1, scratch.right_copy.data() + 1));
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original_other, alias_left ? right : left);
+    EXPECT_EQ(lengths, big_num_kernel_lengths());
+}
+
+TEST_P(TestBigNumByteDivision, divisionCapturesASharedInputBeforeWritingIt)
+{
+    const int fractional_bytes = g_bn_length - g_int_length;
+    std::vector<Byte> operand = fixed_sample(g_bn_length, fractional_bytes, std::get<2>(GetParam()) ? -2 : 2);
+    operand.push_back(0xa5);
+    std::vector<Byte> expected = fixed_sample(g_bn_length, fractional_bytes, 1);
+    expected.push_back(0xa5);
+    const std::array<int, 9> lengths = big_num_kernel_lengths();
+    BigNumByteDivisionScratch scratch;
+
+    EXPECT_EQ(operand.data(),
+        div_bn(operand.data(), operand.data(), operand.data(), scratch.product.data(), scratch.tmp2.data(),
+            scratch.tmp3.data(), scratch.left_copy.data() + 1, scratch.right_copy.data() + 1));
+
+    EXPECT_EQ(expected, operand);
+    EXPECT_EQ(lengths, big_num_kernel_lengths());
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndLayouts, TestBigNumByteDivision,
+    testing::Combine(testing::Values(12, 32, 672), testing::Values(1, 2, 4), testing::Bool()));
+
+class TestBigNumByteCanonicalProduct : public TestBigNumByteKernel,
+                                       public testing::WithParamInterface<std::tuple<int, int, bool>>
+{
+protected:
+    void SetUp() override
+    {
+        init_layout(std::get<0>(GetParam()), std::get<1>(GetParam()));
+        ASSERT_EQ(std::get<1>(GetParam()), g_int_length);
+    }
+};
+
+TEST_P(TestBigNumByteCanonicalProduct, discardsLowSqrBitsAndPreservesTheSourceAndGuard)
+{
+    const bool negative = std::get<2>(GetParam());
+    const int fractional_bytes = g_bn_length - g_int_length;
+    std::vector<Byte> source(g_bn_length, negative ? Byte{0xff} : Byte{0});
+    source.front() = negative ? Byte{0xff} : Byte{1};
+    source[fractional_bytes] = negative ? Byte{0xfe} : Byte{1};
+    source.push_back(0x5a);
+    const std::vector<Byte> original = source;
+    std::vector<Byte> product(g_r_length + 1, 0xa5);
+    // For |source| = 1 + q, q is one canonical LSB; q*q is discarded.
+    std::vector<Byte> expected(g_bn_length);
+    expected.front() = 2;
+    expected[fractional_bytes] = 1;
+
+    EXPECT_EQ(product.data(), square_bn(product.data(), source.data()));
+
+    EXPECT_EQ(expected, std::vector<Byte>(msb_bn(product.data()), msb_bn(product.data()) + g_bn_length));
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(0xa5, product.back());
+}
+
+TEST_P(TestBigNumByteCanonicalProduct, discardsLowMultiplyBitsUsingTheExistingWindow)
+{
+    const bool negative = std::get<2>(GetParam());
+    std::vector<Byte> quantum(g_bn_length, negative ? Byte{0xff} : Byte{0});
+    if (!negative)
+    {
+        quantum.front() = 1;
+    }
+    const std::vector<Byte> original = quantum;
+    std::vector<Byte> half = fixed_sample(g_bn_length, g_bn_length - g_int_length, 0, 0x80);
+    const std::vector<Byte> original_half = half;
+    const std::vector<Byte> expected(g_bn_length, negative ? Byte{0xff} : Byte{0});
+    std::vector<Byte> product(g_r_length + 1, 0xa5);
+
+    EXPECT_EQ(product.data(), mult_bn(product.data(), quantum.data(), half.data()));
+
+    EXPECT_EQ(expected, std::vector<Byte>(msb_bn(product.data()), msb_bn(product.data()) + g_bn_length));
+    EXPECT_EQ(original, quantum);
+    EXPECT_EQ(original_half, half);
+    EXPECT_EQ(0xa5, product.back());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigNumByteCanonicalProduct,
+    testing::Combine(testing::Values(8, 12, 56, 60, 64, 672), testing::Values(1, 2, 4), testing::Bool()));
+
+TEST_P(TestBigNumByteLayout, arithmeticWrapsAtTheFixedWidth)
+{
+    init_layout(32, GetParam());
+    std::vector<Byte> maximum = bn_saturation_bytes(false);
+    std::vector<Byte> minimum(g_bn_length);
+    minimum.back() = 0x80;
+    std::vector<Byte> quantum(g_bn_length);
+    quantum.front() = 1;
+    std::vector<Byte> expected_product(g_bn_length, 0xff);
+    expected_product.front() = 0xfe;
+    std::vector<Byte> result(g_bn_length);
+
+    add_bn(result.data(), maximum.data(), quantum.data());
+    EXPECT_EQ(minimum, result);
+    sub_bn(result.data(), minimum.data(), quantum.data());
+    EXPECT_EQ(maximum, result);
+    neg_bn(result.data(), minimum.data());
+    EXPECT_EQ(minimum, result);
+    mult_bn_int(result.data(), maximum.data(), 2);
+    EXPECT_EQ(expected_product, result);
+}
+
 TEST(TestBigNumByteProcedures, saturationAndNegationWriteOnlyTheCanonicalBytes)
 {
     const ValueSaver<int> length{g_bn_length, 4};
