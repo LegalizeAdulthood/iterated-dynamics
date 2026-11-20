@@ -54,14 +54,6 @@ static_assert(std::is_same_v<decltype(std::declval<BigNum &>() -= std::declval<c
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() /= std::declval<const BigNum &>()), BigNum &>);
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() /= U16{}), BigNum &>);
 
-static_assert(std::is_same_v<decltype(clear_bn(std::declval<BigNum &>())), BigNum &>);
-static_assert(std::is_same_v<decltype(max_bn(std::declval<BigNum &>())), BigNum &>);
-static_assert(std::is_same_v<decltype(double_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
-static_assert(std::is_same_v<decltype(mult_a_bn_int(std::declval<BigNum &>(), U16{})), BigNum &>);
-static_assert(std::is_same_v<decltype(is_bn_zero(std::declval<const BigNum &>())), bool>);
-static_assert(std::is_same_v<decltype(is_bn_not_zero(std::declval<const BigNum &>())), bool>);
-static_assert(std::is_same_v<decltype(str_to_bn(std::declval<BigNum &>(), std::string_view{})), BigNum &>);
-static_assert(std::is_same_v<decltype(int_to_bn(std::declval<BigNum &>(), long{})), BigNum &>);
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() = LDouble{}), BigNum &>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().to_float()), LDouble>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().to_string(int{})), std::string>);
@@ -661,17 +653,11 @@ TEST_P(TestBigNumLayout, divisionAssignmentMatchesAFreshResult)
     EXPECT_EQ(expected, value);
 }
 
-TEST_P(TestBigNumLayout, divisionKeepsLegacySaturationAndZeroResults)
+TEST_P(TestBigNumLayout, divisionOfZeroReturnsZero)
 {
-    BigNum maximum{0};
-    max_bn(maximum);
-    const BigNum negative_maximum = -maximum;
     const BigNum quarter{"0.25"};
     const BigNum zero{0};
 
-    EXPECT_EQ(maximum, maximum / quarter);
-    EXPECT_EQ(maximum, negative_maximum / zero);
-    EXPECT_EQ(negative_maximum, negative_maximum / quarter);
     EXPECT_EQ(zero, zero / zero);
     EXPECT_EQ(zero, zero / quarter);
 }
@@ -1105,8 +1091,9 @@ TEST_P(TestBigNumUnary, preservesDestinationIdentityAliasesAndAllocation)
     BigArena &arena = destination.arena();
     const BigNum original_source{source};
     const BigNum expected{input.expected};
-    if (input.operation == UnaryOperation::NEGATE || input.operation == UnaryOperation::HALF ||
-        input.operation == UnaryOperation::HALF_ASSIGN)
+    if (input.operation == UnaryOperation::NEGATE || input.operation == UnaryOperation::DOUBLE ||
+        input.operation == UnaryOperation::HALF || input.operation == UnaryOperation::HALF_ASSIGN ||
+        input.operation == UnaryOperation::MULT_ASSIGN)
     {
         arena.allocate_single().reset();
     }
@@ -1115,13 +1102,13 @@ TEST_P(TestBigNumUnary, preservesDestinationIdentityAliasesAndAllocation)
     switch (input.operation)
     {
     case UnaryOperation::CLEAR:
-        EXPECT_EQ(&destination, &clear_bn(destination));
+        destination.clear();
         break;
     case UnaryOperation::NEGATE:
         EXPECT_EQ(&destination, &(destination = -source));
         break;
     case UnaryOperation::DOUBLE:
-        EXPECT_EQ(&destination, &double_bn(destination, std::as_const(source)));
+        EXPECT_EQ(&destination, &(destination = source + source));
         break;
     case UnaryOperation::DOUBLE_ASSIGN:
         EXPECT_EQ(&destination, &(destination += destination));
@@ -1133,7 +1120,7 @@ TEST_P(TestBigNumUnary, preservesDestinationIdentityAliasesAndAllocation)
         EXPECT_EQ(&destination, &(destination = destination.half()));
         break;
     case UnaryOperation::MULT_ASSIGN:
-        EXPECT_EQ(&destination, &mult_a_bn_int(destination, input.factor));
+        EXPECT_EQ(&destination, &(destination = destination * input.factor));
         break;
     }
 
@@ -1175,20 +1162,9 @@ TEST_P(TestBigNumIntegerDivision, dividesInPlaceAndPreservesStorage)
 {
     const U16 divisor = std::get<2>(GetParam());
     const bool negative = std::get<3>(GetParam());
-    BigNum value{negative ? -6.0L : 6.0L};
-    BigNum expected{0};
-    if (divisor == 0)
-    {
-        max_bn(expected);
-        if (negative)
-        {
-            expected = -expected;
-        }
-    }
-    else
-    {
-        expected = (negative ? -6.0L : 6.0L) / divisor;
-    }
+    const LDouble input = negative ? -6.0L : 6.0L;
+    BigNum value{input};
+    const BigNum expected{input / divisor};
     const BigArena &arena = value.arena();
     const std::array<int, 9> lengths = kernel_lengths();
     const BigStackMark stack = save_stack();
@@ -1204,7 +1180,7 @@ TEST_P(TestBigNumIntegerDivision, dividesInPlaceAndPreservesStorage)
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsDivisorsAndSigns, TestBigNumIntegerDivision,
-    testing::Combine(testing::Values(12, 32, 672), testing::Values(1, 2, 4), testing::Values<U16>(0, 1, 2, 256),
+    testing::Combine(testing::Values(12, 32, 672), testing::Values(1, 2, 4), testing::Values<U16>(1, 2, 256),
         testing::Bool()));
 
 class TestBigNumKernelWindows : public TestBigNumValue, public testing::WithParamInterface<std::tuple<int, int, bool>>

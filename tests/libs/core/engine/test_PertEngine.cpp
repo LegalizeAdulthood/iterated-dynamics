@@ -9053,15 +9053,13 @@ TEST_F(TestPerturbationPixels, fixedPointInputsRetainSubMachineDigitsAndPreserve
     center.x = 0.25;
     center.y = 0;
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
-    BNComplex parameter{BigNum{bn_arena(BigLifetime::TEMPORARY)}, BigNum{bn_arena(BigLifetime::TEMPORARY)}};
-    BNComplex value{BigNum{bn_arena(BigLifetime::TEMPORARY)}, BigNum{bn_arena(BigLifetime::TEMPORARY)}};
-    str_to_bn(parameter.x, "0.125" + std::string(36, '0') + "1");
-    str_to_bn(parameter.y, "-0.0625" + std::string(35, '0') + "2");
-    str_to_bn(value.x, "0.25" + std::string(37, '0') + "3");
-    str_to_bn(value.y, "-0.125" + std::string(36, '0') + "4");
-    const auto encoded = [](const BigNum &number)
-    { return std::vector<Byte>{number.data(), number.data() + g_bn_length}; };
-    const std::array original{encoded(parameter.x), encoded(parameter.y), encoded(value.x), encoded(value.y)};
+    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
+    const BNComplex parameter{BigNum{temporary, "0.125" + std::string(36, '0') + "1"},
+        BigNum{temporary, "-0.0625" + std::string(35, '0') + "2"}};
+    const BNComplex value{BigNum{temporary, "0.25" + std::string(37, '0') + "3"},
+        BigNum{temporary, "-0.125" + std::string(36, '0') + "4"}};
+    const BNComplex original_parameter{parameter};
+    const BNComplex original_value{value};
     m_specific.pert_ref_bf = [](const BFComplex &parameter, BFComplex &z)
     {
         const BigFloat scale{"1e-40"};
@@ -9094,10 +9092,8 @@ TEST_F(TestPerturbationPixels, fixedPointInputsRetainSubMachineDigitsAndPreserve
     EXPECT_NEAR(-2.0, s_reference_coordinates.front().imag(), 1e-12);
     EXPECT_NEAR(3.0, s_reference_values.front().real(), 1e-12);
     EXPECT_NEAR(-4.0, s_reference_values.front().imag(), 1e-12);
-    EXPECT_EQ(original[0], encoded(parameter.x));
-    EXPECT_EQ(original[1], encoded(parameter.y));
-    EXPECT_EQ(original[2], encoded(value.x));
-    EXPECT_EQ(original[3], encoded(value.y));
+    EXPECT_EQ(original_parameter, parameter);
+    EXPECT_EQ(original_value, value);
     m_engine.finish_orbit();
 }
 

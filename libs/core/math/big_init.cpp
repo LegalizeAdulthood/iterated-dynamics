@@ -289,7 +289,7 @@ void MathArenas::bind(const bool preserve_parameters)
             std::destroy_at(&target);
             ::new (&target) BigNum{std::move(value)};
         }
-        std::memset(target.data(), 0, big_num.working.block_size());
+        target.clear();
     };
     init_bn_product_scratch(big_num.working);
     init_big_num(g_bn_tmp2);

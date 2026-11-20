@@ -16,9 +16,6 @@
 namespace id::math
 {
 
-using BigNumPtr = Byte *;
-using BigNumConstPtr = const Byte *;
-
 class BigFloat;
 class BigNum
 {
@@ -39,6 +36,7 @@ public:
     BigNum &operator=(BigNum &&value);
     BigNum &operator=(const BigFloat &value);
     BigNum &operator=(LDouble value);
+    void clear();
 
     // Tests for an allocated value, including numeric zero.
     explicit operator bool() const noexcept
@@ -80,24 +78,11 @@ public:
     std::string to_string(int digits = 0) const;
     void hex_dump() const;
 
-    // Borrowed buffers require a numeric value and expire on arena relocation.
-    BigNumPtr data() noexcept
-    {
-        return m_storage.data();
-    }
-
-    BigNumConstPtr data() const noexcept
-    {
-        return m_storage.data();
-    }
-
-    // Adapters copy encoded values without machine floating-point conversion.
-    static BigNum from_legacy(BigNumConstPtr source, std::size_t size);
-    static BigNum from_legacy(BigArena &arena, BigNumConstPtr source, std::size_t size);
-    void copy_to_legacy(BigNumPtr destination, std::size_t size) const;
-
 private:
     explicit BigNum(BigArena::Allocation storage);
+
+    Byte *data() noexcept;
+    const Byte *data() const noexcept;
 
     std::size_t encoded_size() const noexcept
     {
@@ -109,14 +94,6 @@ private:
 };
 
 BigNum sqr(const BigNum &value);
-BigNum &str_to_bn(BigNum &r, std::string_view text);
-BigNum &int_to_bn(BigNum &r, long value);
-BigNum &clear_bn(BigNum &r);
-BigNum &max_bn(BigNum &r);
-bool is_bn_zero(const BigNum &n);
-bool is_bn_not_zero(const BigNum &n);
-BigNum &double_bn(BigNum &r, const BigNum &n);
-BigNum &mult_a_bn_int(BigNum &r, misc::U16 u);
 
 using BNComplex = Complex<BigNum>;
 

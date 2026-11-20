@@ -2482,6 +2482,32 @@ TEST_P(TestBigNumByteDivision, divisionCapturesASharedInputBeforeWritingIt)
     EXPECT_EQ(lengths, big_num_kernel_lengths());
 }
 
+TEST_P(TestBigNumByteDivision, saturatesOnOverflowAndDivisionByZero)
+{
+    const int fractional_bytes = g_bn_length - g_int_length;
+    const std::vector<Byte> numerator = bn_saturation_bytes(std::get<2>(GetParam()));
+    const std::vector<Byte> quarter = fixed_sample(g_bn_length, fractional_bytes, 0, 0x40);
+    const std::vector<Byte> zero(g_bn_length);
+    std::vector<Byte> quotient(g_bn_length + 1, 0xa5);
+    BigNumByteDivisionScratch scratch;
+    const auto divide = [&](const std::vector<Byte> &denominator)
+    {
+        EXPECT_EQ(quotient.data(),
+            div_bn(quotient.data(), numerator.data(), denominator.data(), scratch.product.data(), scratch.tmp2.data(),
+                scratch.tmp3.data(), scratch.left_copy.data() + 1, scratch.right_copy.data() + 1));
+    };
+
+    std::vector<Byte> expected = numerator;
+    expected.push_back(0xa5);
+    divide(quarter);
+    EXPECT_EQ(expected, quotient);
+
+    expected = bn_saturation_bytes(false);
+    expected.push_back(0xa5);
+    divide(zero);
+    EXPECT_EQ(expected, quotient);
+}
+
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndLayouts, TestBigNumByteDivision,
     testing::Combine(testing::Values(12, 32, 672), testing::Values(1, 2, 4), testing::Bool()));
 

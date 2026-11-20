@@ -9,7 +9,6 @@
 #include <math/big_init.h>
 #include <math/BigFloat.h>
 
-#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <stdexcept>
@@ -33,12 +32,12 @@ public:
         return static_cast<bool>(m_storage);
     }
 
-    BigNumPtr data() noexcept
+    Byte *data() noexcept
     {
         return m_storage.data();
     }
 
-    BigNumConstPtr data() const noexcept
+    const Byte *data() const noexcept
     {
         return m_storage.data();
     }
@@ -73,14 +72,6 @@ BigNumProduct &bn_product_scratch()
     // allocation before the working arena is destroyed.
     static BigNumProduct scratch;
     return scratch;
-}
-
-void validate_buffer(BigNumConstPtr buffer, const std::size_t size, const std::size_t required)
-{
-    if (buffer == nullptr || size < required)
-    {
-        throw std::invalid_argument("BigNum requires a complete legacy value buffer");
-    }
 }
 
 void validate_scalar(const LDouble value)
@@ -183,7 +174,17 @@ BigNum::BigNum(BigNum &&value) noexcept = default;
 BigNum::BigNum(BigArena::Allocation storage) :
     m_storage(std::move(storage))
 {
-    std::memset(data(), 0, m_storage.blocks() * arena().block_size());
+    clear();
+}
+
+Byte *BigNum::data() noexcept
+{
+    return m_storage.data();
+}
+
+const Byte *BigNum::data() const noexcept
+{
+    return m_storage.data();
 }
 
 BigNum &BigNum::operator=(const BigNum &value)
@@ -252,6 +253,11 @@ BigNum &BigNum::operator=(const LDouble value)
     }
     float_to_bn(data(), value);
     return *this;
+}
+
+void BigNum::clear()
+{
+    std::memset(data(), 0, m_storage.blocks() * arena().block_size());
 }
 
 BigNum BigNum::operator-() const
@@ -404,83 +410,20 @@ std::string BigNum::to_string(const int digits) const
     return unsafe_bn_to_string(copy_bn(g_bn_tmp_copy2.data(), data()), digits);
 }
 
-BigNum BigNum::from_legacy(BigNumConstPtr source, const std::size_t size)
-{
-    return from_legacy(bn_arena(BigLifetime::WORKING), source, size);
-}
-
-BigNum BigNum::from_legacy(BigArena &arena, BigNumConstPtr source, const std::size_t size)
-{
-    BigNum result{arena};
-    validate_buffer(source, size, result.encoded_size());
-    std::copy_n(source, result.encoded_size(), result.data());
-    return result;
-}
-
-void BigNum::copy_to_legacy(BigNumPtr destination, const std::size_t size) const
-{
-    validate_buffer(destination, size, encoded_size());
-    std::copy_n(data(), encoded_size(), destination);
-}
-
 BigFloat BigNum::to_big_float(BigArena &arena) const
 {
     BigFloat result{arena};
-    Byte *const destination = result.data();
-    validate_buffer(destination, arena.value_size(), static_cast<std::size_t>(g_bf_length) + 2);
-    bn_to_bf(destination, data());
+    if (arena.value_size() < static_cast<std::size_t>(g_bf_length) + 2)
+    {
+        throw std::invalid_argument("BigNum requires a complete legacy value buffer");
+    }
+    bn_to_bf(result.data(), data());
     return result;
 }
 
 BigNum sqr(const BigNum &value)
 {
     return value.sqr();
-}
-
-BigNum &str_to_bn(BigNum &r, const std::string_view text)
-{
-    str_to_bn(r.data(), text);
-    return r;
-}
-
-BigNum &int_to_bn(BigNum &r, const long value)
-{
-    int_to_bn(r.data(), value);
-    return r;
-}
-
-BigNum &clear_bn(BigNum &r)
-{
-    clear_bn(r.data());
-    return r;
-}
-
-BigNum &max_bn(BigNum &r)
-{
-    max_bn(r.data());
-    return r;
-}
-
-bool is_bn_zero(const BigNum &n)
-{
-    return is_bn_zero(n.data());
-}
-
-bool is_bn_not_zero(const BigNum &n)
-{
-    return is_bn_not_zero(n.data());
-}
-
-BigNum &double_bn(BigNum &r, const BigNum &n)
-{
-    double_bn(r.data(), n.data());
-    return r;
-}
-
-BigNum &mult_a_bn_int(BigNum &r, const U16 u)
-{
-    mult_a_bn_int(r.data(), u);
-    return r;
 }
 
 /********************************************************************/
