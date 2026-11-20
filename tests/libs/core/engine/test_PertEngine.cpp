@@ -11885,8 +11885,8 @@ TEST_F(TestPrecisePerturbationContinuation, preciseReferenceReplacementYieldsWit
     value.x = 0.03125;
     value.y = -0.0625;
     offset = 1e-40;
-    add_a_bf(parameter.x, offset);
-    add_a_bf(value.x, offset);
+    parameter.x += offset;
+    value.x += offset;
     s_perturbation_orbit.clear();
     m_specific.pert_pt =
         [](const std::complex<double> &reference, std::complex<double> &delta, const std::complex<double> &displacement)
@@ -11949,8 +11949,8 @@ TEST_F(TestPerturbationPixels, preciseContinuationPreservesSubDoubleParameterAnd
     m_engine.finish_orbit();
     offset = 1e-40;
     const int references{m_engine.reference_count()};
-    add_a_bf(parameter.x, offset);
-    add_a_bf(value.x, offset);
+    parameter.x += offset;
+    value.x += offset;
     s_perturbation_orbit.clear();
     m_specific.pert_pt = record_coordinate;
     s_coordinates.clear();
@@ -12640,7 +12640,7 @@ TEST_F(TestPerturbationPixels, highPrecisionInitialOffsetPreservesCancellation)
     {
         BigStackSaver saved;
         BigFloat delta{bf_arena(BigLifetime::TEMPORARY), 1e-40};
-        add_a_bf(center.x, delta);
+        center.x += delta;
     }
     m_specific.pert_pt = record_perturbation_orbit;
     s_perturbation_orbit.clear();
@@ -12743,7 +12743,7 @@ void TestPreciseBailoutBoundary::SetUp()
         BigStackSaver saved;
         BigFloat delta{bf_arena(BigLifetime::TEMPORARY)};
         delta = offset;
-        add_a_bf(boundary.imaginary ? center.y : center.x, delta);
+        (boundary.imaginary ? center.y : center.x) += delta;
     }
 
     {
@@ -12753,7 +12753,7 @@ void TestPreciseBailoutBoundary::SetUp()
         coordinate.x = boundary.point.x;
         coordinate.y = boundary.point.y;
         delta = offset;
-        add_a_bf(boundary.imaginary ? coordinate.y : coordinate.x, delta);
+        (boundary.imaginary ? coordinate.y : coordinate.x) += delta;
         m_expected = {static_cast<double>(bf_to_float(coordinate.x)), static_cast<double>(bf_to_float(coordinate.y))};
     }
     m_engine.set_glitch_tolerance(reference_mode == 2 ? 2.0 : 0.0);
@@ -12809,7 +12809,7 @@ void TestPreciseMandelBoundary::SetUp()
         BigStackSaver saved;
         BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
         offset = sign * 1e-40;
-        add_a_bf(center.x, offset);
+        center.x += offset;
     }
 
     {
@@ -12821,7 +12821,7 @@ void TestPreciseMandelBoundary::SetUp()
         {
             m_expected_old = static_cast<double>(bf_to_float(z));
             square_bf(square, z);
-            add_bf(z, square, center.x);
+            z = square + center.x;
         }
         m_expected_new = static_cast<double>(bf_to_float(z));
         if (sign > 0)
@@ -12870,8 +12870,8 @@ TEST_F(TestPerturbationPixels, highPrecisionFixedOrbitPreservesSmallParameterOff
         BFComplex displacement{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
         displacement.x = 0.25;
         displacement.y = 0.125;
-        sub_bf(displacement.x, z.x, displacement.x);
-        sub_bf(displacement.y, z.y, displacement.y);
+        displacement.x = z.x - displacement.x;
+        displacement.y = z.y - displacement.y;
         s_reference_coordinates.emplace_back(bf_to_float(displacement.x), bf_to_float(displacement.y));
         mandel_ref_pt_bf(parameter, z);
     };
@@ -12900,7 +12900,7 @@ TEST_F(TestPerturbationPixels, deepAffineFramePreservesBothBasisVectors)
         BigFloat delta{bf_arena(BigLifetime::TEMPORARY)};
         value = center;
         delta = offset;
-        add_a_bf(value, delta);
+        value += delta;
     };
     set_offset(g_bf_x_min, 0.25, -3e-40);
     set_offset(g_bf_x_max, 0.25, 3e-40);
@@ -13797,9 +13797,9 @@ void TestDeepPerturbationGeometry::initialize_corners()
         BigStackSaver saved;
         BigFloat offset{bf_arena(BigLifetime::TEMPORARY), "3e-400"};
         g_bf_x_min = -2;
-        sub_a_bf(g_bf_x_min, offset);
+        g_bf_x_min -= offset;
         g_bf_x_max = -2;
-        add_a_bf(g_bf_x_max, offset);
+        g_bf_x_max += offset;
     }
     g_bf_x_3rd = g_bf_x_min;
     g_bf_y_min = 0;
@@ -13930,7 +13930,7 @@ TEST_F(TestDeepPerturbationGeometry, frameRetainsPreciseGeometryForReplacementRe
         BigStackSaver saved;
         BigFloat offset{bf_arena(BigLifetime::TEMPORARY), "1e-400"};
         g_bf_x_3rd = -2;
-        sub_a_bf(g_bf_x_3rd, offset);
+        g_bf_x_3rd -= offset;
     }
     initialize_frame();
     g_bf_x_min = -2;

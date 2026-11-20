@@ -811,18 +811,18 @@ void PertEngine::inverted_coordinate(BFComplex &coordinate, const std::complex<d
     scale = g_logical_screen.y_dots - 1;
     vertical /= scale;
 
-    sub_bf(coordinate.x, g_bf_x_max, g_bf_x_3rd);
+    coordinate.x = g_bf_x_max - g_bf_x_3rd;
     coordinate.x *= horizontal;
-    sub_bf(delta, g_bf_x_3rd, g_bf_x_min);
+    delta = g_bf_x_3rd - g_bf_x_min;
     delta *= vertical;
     coordinate.x += delta;
-    add_a_bf(coordinate.x, g_bf_x_min);
-    sub_bf(coordinate.y, g_bf_y_3rd, g_bf_y_max);
+    coordinate.x += g_bf_x_min;
+    coordinate.y = g_bf_y_3rd - g_bf_y_max;
     coordinate.y *= vertical;
-    sub_bf(delta, g_bf_y_min, g_bf_y_3rd);
+    delta = g_bf_y_min - g_bf_y_3rd;
     delta *= horizontal;
     coordinate.y += delta;
-    add_a_bf(coordinate.y, g_bf_y_max);
+    coordinate.y += g_bf_y_max;
     g_inversion.apply(coordinate);
     if (g_fractal_type == FractalType::BURNING_SHIP)
     {
