@@ -576,18 +576,18 @@ TEST_F(TestBigFloatJulia, affineSeedsKeepPreciseFixedParameterAndSquareCaches)
             EXPECT_EQ(1, julia_per_pixel_bf());
 
             EXPECT_EQ(37, g_color_iter);
-            EXPECT_NEAR(real, static_cast<double>(bf_to_float(g_old_z_bf.x)), tolerance);
-            EXPECT_NEAR(imag, static_cast<double>(bf_to_float(g_old_z_bf.y)), tolerance);
-            EXPECT_NEAR(real, static_cast<double>(bf_to_float(g_new_z_bf.x)), tolerance);
-            EXPECT_NEAR(imag, static_cast<double>(bf_to_float(g_new_z_bf.y)), tolerance);
-            EXPECT_NEAR(real * real, static_cast<double>(bf_to_float(g_tmp_sqr_x_bf)), tolerance);
-            EXPECT_NEAR(imag * imag, static_cast<double>(bf_to_float(g_tmp_sqr_y_bf)), tolerance);
+            EXPECT_NEAR(real, static_cast<double>(g_old_z_bf.x.to_float()), tolerance);
+            EXPECT_NEAR(imag, static_cast<double>(g_old_z_bf.y.to_float()), tolerance);
+            EXPECT_NEAR(real, static_cast<double>(g_new_z_bf.x.to_float()), tolerance);
+            EXPECT_NEAR(imag, static_cast<double>(g_new_z_bf.y.to_float()), tolerance);
+            EXPECT_NEAR(real * real, static_cast<double>(g_tmp_sqr_x_bf.to_float()), tolerance);
+            EXPECT_NEAR(imag * imag, static_cast<double>(g_tmp_sqr_y_bf.to_float()), tolerance);
             EXPECT_EQ(parameter, g_param_z_bf);
 
             EXPECT_EQ(0, julia_orbit_bf());
 
-            EXPECT_NEAR(real * real - imag * imag + 0.25, static_cast<double>(bf_to_float(g_new_z_bf.x)), tolerance);
-            EXPECT_NEAR(2 * real * imag - 0.125, static_cast<double>(bf_to_float(g_new_z_bf.y)), tolerance);
+            EXPECT_NEAR(real * real - imag * imag + 0.25, static_cast<double>(g_new_z_bf.x.to_float()), tolerance);
+            EXPECT_NEAR(2 * real * imag - 0.125, static_cast<double>(g_new_z_bf.y.to_float()), tolerance);
             EXPECT_EQ(parameter, g_param_z_bf);
         }
     }
@@ -686,16 +686,16 @@ TEST_P(TestBigFloatJuliaZPower, setupSeedsAndOrbitKeepTheFixedParameterAndExpone
     g_row = 256;
     ASSERT_EQ(1, g_dispatch.per_pixel()());
     EXPECT_EQ(37, g_color_iter);
-    EXPECT_NEAR(0.5, static_cast<double>(bf_to_float(g_old_z_bf.x)), 1e-14);
-    EXPECT_NEAR(0.25, static_cast<double>(bf_to_float(g_old_z_bf.y)), 1e-14);
+    EXPECT_NEAR(0.5, static_cast<double>(g_old_z_bf.x.to_float()), 1e-14);
+    EXPECT_NEAR(0.25, static_cast<double>(g_old_z_bf.y.to_float()), 1e-14);
     const std::complex<double> expected =
         std::pow(std::complex<double>{0.5, 0.25}, GetParam().exponent) + std::complex<double>{0.125, -0.0625};
     const double tolerance = 1e-12 * std::max(1.0, std::abs(expected));
 
     EXPECT_EQ(0, g_dispatch.orbit_calc()());
 
-    EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(g_new_z_bf.x)), tolerance);
-    EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(g_new_z_bf.y)), tolerance);
+    EXPECT_NEAR(expected.real(), static_cast<double>(g_new_z_bf.x.to_float()), tolerance);
+    EXPECT_NEAR(expected.imag(), static_cast<double>(g_new_z_bf.y.to_float()), tolerance);
     EXPECT_EQ(parameter, g_param_z_bf);
 }
 
@@ -710,8 +710,8 @@ TEST_P(TestBigFloatJuliaZPower, zeroSeedRetainsTheLegacyPowerConvention)
 
     EXPECT_EQ(0, g_dispatch.orbit_calc()());
 
-    EXPECT_NEAR(0.125, static_cast<double>(bf_to_float(g_new_z_bf.x)), 1e-14);
-    EXPECT_NEAR(-0.0625, static_cast<double>(bf_to_float(g_new_z_bf.y)), 1e-14);
+    EXPECT_NEAR(0.125, static_cast<double>(g_new_z_bf.x.to_float()), 1e-14);
+    EXPECT_NEAR(-0.0625, static_cast<double>(g_new_z_bf.y.to_float()), 1e-14);
 }
 
 TEST_P(TestBigFloatJuliaZPower, unitSeedKeepsTheInclusiveBailoutBoundary)

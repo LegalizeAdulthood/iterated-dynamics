@@ -166,7 +166,7 @@ bool relative_delta(const BFComplex &value, const BFComplex &reference, std::com
     BFComplex difference{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     difference.x = value.x - reference.x;
     difference.y = value.y - reference.y;
-    delta = {static_cast<double>(bf_to_float(difference.x)), static_cast<double>(bf_to_float(difference.y))};
+    delta = {static_cast<double>(difference.x.to_float()), static_cast<double>(difference.y.to_float())};
     // Subnormal displacements do not retain full relative precision.
     return (std::isnormal(delta.real()) || difference.x.is_zero()) &&
         (std::isnormal(delta.imag()) || difference.y.is_zero());
@@ -302,10 +302,10 @@ void PertEngine::initialize_frame_bf(const BFComplex &min, const BFComplex &max,
     m_half_vertical_bf.x = m_half_vertical_bf.x.half();
     m_half_vertical_bf.y = max.y - third.y;
     m_half_vertical_bf.y = m_half_vertical_bf.y.half();
-    m_half_horizontal = {static_cast<double>(bf_to_float(m_half_horizontal_bf.x)),
-        static_cast<double>(bf_to_float(m_half_horizontal_bf.y))};
+    m_half_horizontal = {
+        static_cast<double>(m_half_horizontal_bf.x.to_float()), static_cast<double>(m_half_horizontal_bf.y.to_float())};
     m_half_vertical = {
-        static_cast<double>(bf_to_float(m_half_vertical_bf.x)), static_cast<double>(bf_to_float(m_half_vertical_bf.y))};
+        static_cast<double>(m_half_vertical_bf.x.to_float()), static_cast<double>(m_half_vertical_bf.y.to_float())};
 }
 
 void PertEngine::initialize_frame(const std::complex<double> &center, const std::complex<double> &half_horizontal,
@@ -1135,8 +1135,8 @@ bool PertEngine::advance_precise_orbit(const std::size_t target, std::size_t &re
         {
             clamp_star_trail_point(m_pixel.precise_orbit);
         }
-        m_pixel.precise_previous = {static_cast<double>(bf_to_float(m_pixel.precise_orbit.x)),
-            static_cast<double>(bf_to_float(m_pixel.precise_orbit.y))};
+        m_pixel.precise_previous = {static_cast<double>(m_pixel.precise_orbit.x.to_float()),
+            static_cast<double>(m_pixel.precise_orbit.y.to_float())};
         g_cur_fractal_specific->pert_ref_bf(m_pixel.precise_coordinate, m_pixel.precise_orbit);
     }
     return true;
@@ -1280,8 +1280,8 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                     return CALC_YIELDED;
                 }
                 m_pixel.old = m_pixel.precise_previous;
-                m_pixel.w = {static_cast<double>(bf_to_float(m_pixel.precise_orbit.x)),
-                    static_cast<double>(bf_to_float(m_pixel.precise_orbit.y))};
+                m_pixel.w = {static_cast<double>(m_pixel.precise_orbit.x.to_float()),
+                    static_cast<double>(m_pixel.precise_orbit.y.to_float())};
                 m_pixel.magnitude = mag_squared(m_pixel.w);
                 escaped = precise_bailout_reached(m_pixel.precise_orbit);
                 if (m_explicit_orbit || resolve_power_branch)
@@ -1458,7 +1458,7 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                 {
                     const double tolerance{
                         static_cast<double>(g_bf_math == BFMathType::BIG_NUM ? g_close_enough_bn.to_float()
-                                                                             : bf_to_float(g_close_enough_bf))};
+                                                                             : g_close_enough_bf.to_float())};
                     const double candidate_tolerance{tolerance + m_pixel.saved_error + error};
                     caught = difference_x <= candidate_tolerance && difference_y <= candidate_tolerance;
                     if (caught)
@@ -1690,8 +1690,8 @@ void PertEngine::advance_reference_bf(const std::size_t end)
     for (; m_reference_sample < end; ++m_reference_sample)
     {
         std::complex<double> c;
-        c.real(bf_to_float(m_reference_z_bf.x));
-        c.imag(bf_to_float(m_reference_z_bf.y));
+        c.real(m_reference_z_bf.x.to_float());
+        c.imag(m_reference_z_bf.y.to_float());
 
         m_reference.orbit.push_back(c);
         // Norm is the squared version of abs and the perturbation tolerance is squared.
@@ -1702,8 +1702,8 @@ void PertEngine::advance_reference_bf(const std::size_t end)
         temp_real_bf = m_reference_z_bf.x * tmp_bf;
         temp_imag_bf = m_reference_z_bf.y * tmp_bf;
         std::complex<double> tolerance;
-        tolerance.real(bf_to_float(temp_real_bf));
-        tolerance.imag(bf_to_float(temp_imag_bf));
+        tolerance.real(temp_real_bf.to_float());
+        tolerance.imag(temp_imag_bf.to_float());
 
         m_reference.tolerance.push_back(mag_squared(tolerance));
 

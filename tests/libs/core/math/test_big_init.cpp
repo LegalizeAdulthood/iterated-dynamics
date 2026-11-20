@@ -328,7 +328,7 @@ TEST_P(TestArenaPrecisionLimit, rejectsRequestsPastTheBackendLimit)
 
     EXPECT_EQ(GetParam().length, g_bn_length);
     EXPECT_EQ(stack, save_stack());
-    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
+    EXPECT_EQ(1.25L, g_bf_x_min.to_float());
 }
 
 INSTANTIATE_TEST_SUITE_P(Backends, TestArenaPrecisionLimit,
@@ -501,7 +501,7 @@ TEST_F(TestBigFloat, loweringPrecisionPreservesCornersWithoutOverrunningArena)
     init_bf_dec(1200);
     g_bf_x_min = 1.25;
     init_bf_dec(20);
-    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
+    EXPECT_EQ(1.25L, g_bf_x_min.to_float());
     EXPECT_EQ(BigStackMark{}, save_stack());
     EXPECT_NO_THROW(bf_stack().allocate_single());
 }

@@ -149,8 +149,8 @@ TEST_P(TestDivideBrot5Orbit, retainsSetupFormulaAndSelectedBailout)
 
     EXPECT_EQ(escaped, divide_brot5_orbit_bf() != 0);
 
-    EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(g_new_z_bf.x)), tolerance);
-    EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(g_new_z_bf.y)), tolerance);
+    EXPECT_NEAR(expected.real(), static_cast<double>(g_new_z_bf.x.to_float()), tolerance);
+    EXPECT_NEAR(expected.imag(), static_cast<double>(g_new_z_bf.y.to_float()), tolerance);
     EXPECT_FALSE(g_overflow);
     EXPECT_EQ(stack, save_stack());
 }
@@ -188,8 +188,8 @@ TEST_F(TestDivideBrot5, affinePixelCoordinatesClearTheSeedWithoutCountingAnItera
             EXPECT_EQ(0, divide_brot5_bf_per_pixel());
 
             EXPECT_EQ(37, g_color_iter);
-            EXPECT_NEAR(real, static_cast<double>(bf_to_float(g_param_z_bf.x)), 1e-14);
-            EXPECT_NEAR(imag, static_cast<double>(bf_to_float(g_param_z_bf.y)), 1e-14);
+            EXPECT_NEAR(real, static_cast<double>(g_param_z_bf.x.to_float()), 1e-14);
+            EXPECT_NEAR(imag, static_cast<double>(g_param_z_bf.y.to_float()), 1e-14);
             EXPECT_EQ(BigFloat{0}, g_old_z_bf.x);
             EXPECT_EQ(BigFloat{0}, g_old_z_bf.y);
             EXPECT_EQ(BigFloat{0}, g_tmp_sqr_x_bf);
@@ -214,7 +214,7 @@ TEST_F(TestDivideBrot5, pixelCoordinatesRetainSubDoubleDisplacements)
     ASSERT_EQ(0, divide_brot5_bf_per_pixel());
 
     BigFloat displacement = g_param_z_bf.x - first;
-    EXPECT_NEAR(1e-40, static_cast<double>(bf_to_float(displacement)), 1e-52);
+    EXPECT_NEAR(1e-40, static_cast<double>(displacement.to_float()), 1e-52);
     EXPECT_GT(g_param_z_bf.x, first);
 }
 
@@ -224,8 +224,8 @@ TEST_F(TestDivideBrot5, zeroDenominatorsSetOverflowBeforeTheFinalParameterAdditi
     g_bailout_bigfloat = +[]
     {
         EXPECT_TRUE(g_overflow);
-        EXPECT_NEAR(0.125, static_cast<double>(bf_to_float(g_new_z_bf.x)), 1e-14);
-        EXPECT_NEAR(-0.25, static_cast<double>(bf_to_float(g_new_z_bf.y)), 1e-14);
+        EXPECT_NEAR(0.125, static_cast<double>(g_new_z_bf.x.to_float()), 1e-14);
+        EXPECT_NEAR(-0.25, static_cast<double>(g_new_z_bf.y.to_float()), 1e-14);
         return 17;
     };
     for (const bool zero_seed : {false, true})

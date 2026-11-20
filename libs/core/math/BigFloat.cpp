@@ -402,11 +402,6 @@ BigFloat &max_bf(BigFloat &r)
     return r;
 }
 
-LDouble bf_to_float(BigFloat &value)
-{
-    return bf_to_float(value.data());
-}
-
 const Byte *unpack_bf(BigFloat &destination, const Byte *source, const int stored_length)
 {
     return unpack_bf(destination.data(), source, stored_length);

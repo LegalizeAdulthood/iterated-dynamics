@@ -875,7 +875,7 @@ void TestFindPrecisionMetadata::expect_active_image() const
     EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
     EXPECT_EQ(m_length, g_bf_length);
     EXPECT_EQ(m_stack, save_stack());
-    EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
+    EXPECT_EQ(1.25L, g_bf_x_min.to_float());
     EXPECT_EQ((std::vector<Byte>{1, 2, 3}), g_resume_data);
 }
 

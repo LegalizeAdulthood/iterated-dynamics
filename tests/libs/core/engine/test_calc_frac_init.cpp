@@ -73,9 +73,9 @@ protected:
         {
             return g_image_region;
         }
-        return {{static_cast<double>(bf_to_float(g_bf_x_min)), static_cast<double>(bf_to_float(g_bf_y_min))},
-            {static_cast<double>(bf_to_float(g_bf_x_max)), static_cast<double>(bf_to_float(g_bf_y_max))},
-            {static_cast<double>(bf_to_float(g_bf_x_3rd)), static_cast<double>(bf_to_float(g_bf_y_3rd))}};
+        return {{static_cast<double>(g_bf_x_min.to_float()), static_cast<double>(g_bf_y_min.to_float())},
+            {static_cast<double>(g_bf_x_max.to_float()), static_cast<double>(g_bf_y_max.to_float())},
+            {static_cast<double>(g_bf_x_3rd.to_float()), static_cast<double>(g_bf_y_3rd.to_float())}};
     }
 
     MockDriver m_driver;
