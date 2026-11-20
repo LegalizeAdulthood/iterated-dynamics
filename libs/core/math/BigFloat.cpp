@@ -496,6 +496,13 @@ void BigFloat::hex_dump() const
     bf_hex_dump_snapshot(m_storage.data());
 }
 
+BigFloat BigFloat::convert_precision(BigArena &arena, const int new_length, const int old_length) const
+{
+    BigFloat result{arena};
+    convert_bf(result.m_storage.data(), m_storage.data(), new_length, old_length);
+    return result;
+}
+
 BigFloat BigFloat::from_legacy(BigFloatConstPtr source, const std::size_t size)
 {
     return from_legacy(bf_arena(BigLifetime::WORKING), source, size);

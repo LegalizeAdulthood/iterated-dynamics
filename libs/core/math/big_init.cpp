@@ -479,8 +479,7 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
             converted.reserve(corners.size());
             for (const BigFloat *corner : corners)
             {
-                BigFloat &value = converted.emplace_back(replacement->big_float.persistent);
-                convert_bf(value.data(), corner->data(), bf_length, g_bf_length);
+                converted.push_back(corner->convert_precision(replacement->big_float.persistent, bf_length, g_bf_length));
             }
             s_arenas->unbind(true);
             for (std::size_t i = 0; i < corners.size(); ++i)

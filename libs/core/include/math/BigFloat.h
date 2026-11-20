@@ -88,6 +88,8 @@ public:
     std::string to_scientific_string(int digits = 0) const;
     void hex_dump() const;
 
+    BigFloat convert_precision(BigArena &arena, int new_length, int old_length) const;
+
     // Borrowed buffers require a numeric value and expire on arena relocation.
     BigFloatPtr data() noexcept
     {
