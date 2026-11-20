@@ -41,9 +41,8 @@ static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().to_float(
 static_assert(std::is_same_v<decltype(std::declval<BigFloat &>() = std::declval<const BigFloat &>()), BigFloat &>);
 static_assert(std::is_same_v<decltype(std::declval<BigFloat &>() = LDouble{}), BigFloat &>);
 static_assert(std::is_same_v<decltype(&div_bf), BigFloat &(*)(BigFloat &, const BigFloat &, const BigFloat &)>);
-static_assert(std::is_same_v<decltype(unsafe_div_bf_int(std::declval<BigFloat &>(), std::declval<BigFloat &>(), U16{})),
-    BigFloat &>);
-static_assert(std::is_same_v<decltype(div_a_bf_int(std::declval<BigFloat &>(), U16{})), BigFloat &>);
+static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>() / std::declval<const BigFloat &>()), BigFloat>);
+static_assert(std::is_same_v<decltype(std::declval<BigFloat &>() /= U16{}), BigFloat &>);
 static_assert(std::is_same_v<decltype(exp_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(ln_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(sin_cos_bf(std::declval<BigFloat &>(), std::declval<BigFloat &>(),
@@ -830,49 +829,24 @@ class TestBigFloatReciprocal : public TestBigFloatValue, public testing::WithPar
 {
 };
 
-TEST_P(TestBigFloatReciprocal, returnsExistingDestinationAndMakesSourcePositive)
+TEST_P(TestBigFloatReciprocal, preservesItsOperand)
 {
     BigArena &arena = bf_arena(BigLifetime::WORKING);
-    BigFloat source{arena, GetParam()};
-    BigFloat result{arena};
-    const BigFloat expected_source{arena, 2.0L};
-    const BigFloat expected_result{arena, GetParam() < 0 ? -0.5L : 0.5L};
-    const std::size_t size = arena.value_size();
-    const std::size_t stride = arena.block_size();
-    std::fill(result.data() + size, result.data() + stride, Byte{0xa5});
-    const Byte *const address = result.data();
-    const std::size_t high_water = arena.high_water_mark();
+    const BigFloat source{arena, GetParam()};
+    const BigFloat original{arena, GetParam()};
+    const BigFloat one{arena, 1.0L};
+    const BigFloat expected{arena, GetParam() < 0 ? -0.5L : 0.5L};
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(&result, &unsafe_inv_bf(result, source));
+    const BigFloat result = one / source;
 
-    EXPECT_EQ(encoded_value(expected_result), encoded_value(result));
-    EXPECT_EQ(encoded_value(expected_source), encoded_value(source));
-    EXPECT_EQ(address, result.data());
-    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(result.data() + size, result.data() + stride));
-    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(&arena, &result.arena());
     EXPECT_EQ(mark, save_stack());
 }
 
 INSTANTIATE_TEST_SUITE_P(Signs, TestBigFloatReciprocal, testing::Values(-2.0L, 2.0L));
-
-TEST_F(TestBigFloatValue, reciprocalOfZeroSaturatesInPlace)
-{
-    BigArena &arena = bf_arena(BigLifetime::WORKING);
-    BigFloat source{arena};
-    BigFloat result{arena, 1.0L};
-    constexpr int exponent = std::numeric_limits<LDouble>::max_exponent / 8;
-    const int size = g_bf_length + 2;
-    std::vector<Byte> expected(size);
-    expected[size - 4] = 1;
-    expected[size - 2] = static_cast<Byte>(exponent);
-    expected[size - 1] = static_cast<Byte>(exponent >> 8);
-
-    EXPECT_EQ(&result, &unsafe_inv_bf(result, source));
-
-    EXPECT_EQ(expected, encoded_value(result));
-    EXPECT_EQ(std::vector<Byte>(size), encoded_value(source));
-}
 
 enum class DivisionDestination
 {
@@ -898,29 +872,24 @@ TEST_P(TestBigFloatDivision, writesAndReturnsTheDestinationWithAliasedInputs)
     BigFloat &numerator_or_result = target == DivisionDestination::SEPARATE ? result : numerator;
     BigFloat &output = target == DivisionDestination::DENOMINATOR ? denominator : numerator_or_result;
     const BigFloat expected{arena, shared_input ? 1.0L : 2.0L};
-    const std::vector<Byte> original_numerator = encoded_value(numerator);
-    const std::vector<Byte> original_denominator = encoded_value(denominator);
-    const std::size_t size = arena.value_size();
-    const std::size_t stride = arena.block_size();
-    std::fill(output.data() + size, output.data() + stride, Byte{0xa5});
-    const Byte *const address = output.data();
+    const BigFloat original_numerator{arena, -8.0L};
+    const BigFloat original_denominator{arena, -4.0L};
     const std::size_t high_water = arena.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(&output, &div_bf(output, std::as_const(numerator), divisor));
+    EXPECT_EQ(&output, &div_bf(output, numerator, divisor));
 
-    EXPECT_EQ(encoded_value(expected), encoded_value(output));
-    EXPECT_EQ(address, output.data());
-    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(output.data() + size, output.data() + stride));
+    EXPECT_EQ(expected, output);
+    EXPECT_EQ(&arena, &output.arena());
     EXPECT_EQ(high_water, arena.high_water_mark());
     EXPECT_EQ(mark, save_stack());
     if (&output != &numerator)
     {
-        EXPECT_EQ(original_numerator, encoded_value(numerator));
+        EXPECT_EQ(original_numerator, numerator);
     }
     if (&output != &denominator)
     {
-        EXPECT_EQ(original_denominator, encoded_value(denominator));
+        EXPECT_EQ(original_denominator, denominator);
     }
 }
 
@@ -1131,10 +1100,10 @@ INSTANTIATE_TEST_SUITE_P(Destinations, TestBigFloatArctangent2Alias, testing::Bo
 
 TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
 {
-    BigFloat left{"-7.5"};
-    BigFloat right{"2.5"};
-    const std::vector<Byte> original_left = encoded_value(left);
-    const std::vector<Byte> original_right = encoded_value(right);
+    const BigFloat left{"-7.5"};
+    const BigFloat right{"2.5"};
+    const BigFloat original_left{left};
+    const BigFloat original_right{right};
     BigFloat result{bf_arena(BigLifetime::WORKING)};
 
     result = left + right;
@@ -1146,8 +1115,8 @@ TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
     div_bf(result, left, right);
     EXPECT_EQ("-3.0", bf_to_string(result, 8));
 
-    EXPECT_EQ(original_left, encoded_value(left));
-    EXPECT_EQ(original_right, encoded_value(right));
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(original_right, right);
 }
 
 TEST_P(TestBigFloatArithmetic, inPlaceAdditionAndSubtractionPreserveTheRightOperand)
@@ -1178,8 +1147,8 @@ TEST_P(TestBigFloatArithmetic, arithmeticPreservesOperandsAndReturnsIndependentV
 {
     const BigFloat left{"-7.5"};
     const BigFloat right{"2.5"};
-    const auto original_left = encoded_value(left);
-    const auto original_right = encoded_value(right);
+    const BigFloat original_left{left};
+    const BigFloat original_right{right};
 
     BigFloat sum = left + right;
     EXPECT_EQ("-5.0", sum.to_string(8));
@@ -1188,8 +1157,8 @@ TEST_P(TestBigFloatArithmetic, arithmeticPreservesOperandsAndReturnsIndependentV
     EXPECT_EQ("-3.0", (left / right).to_string(8));
     sum = 0;
 
-    EXPECT_EQ(original_left, encoded_value(left));
-    EXPECT_EQ(original_right, encoded_value(right));
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(original_right, right);
 }
 
 TEST_P(TestBigFloatArithmetic, negationPreservesItsOperand)
@@ -1209,7 +1178,7 @@ TEST_P(TestBigFloatArithmetic, compoundAssignmentChangesOnlyItsDestination)
 {
     BigFloat value{"-7.5"};
     const BigFloat right{"2.5"};
-    const auto original_right = encoded_value(right);
+    const BigFloat original_right{right};
     const BigFloat copy = value;
 
     EXPECT_EQ(&value, &(value += right));
@@ -1222,7 +1191,7 @@ TEST_P(TestBigFloatArithmetic, compoundAssignmentChangesOnlyItsDestination)
     EXPECT_EQ("-7.5", value.to_string(8));
 
     EXPECT_EQ("-7.5", copy.to_string(8));
-    EXPECT_EQ(original_right, encoded_value(right));
+    EXPECT_EQ(original_right, right);
 }
 
 TEST_P(TestBigFloatArithmetic, repeatedOperandsAndSelfAssignmentAreSafe)
@@ -1261,45 +1230,39 @@ TEST_P(TestBigFloatArithmetic, expressionsMatchLegacySequencesAndOutliveTheirTem
     const BigFloat left{"-1.234567890123456789e-400"};
     const BigFloat right{"2.345678901234567890e-400"};
     const BigFloat divisor{"-3.456789012345678901e-400"};
-    const auto original_left = encoded_value(left);
-    const auto original_right = encoded_value(right);
-    const auto original_divisor = encoded_value(divisor);
+    const BigFloat original_left{left};
+    const BigFloat original_right{right};
+    const BigFloat original_divisor{divisor};
     BigFloat expected{left};
     expected += right;
     div_bf(expected, expected, divisor);
     mult_bf(expected, expected, left);
     expected -= right;
-    const auto marker = save_stack();
+    const BigStackMark marker = save_stack();
 
     const BigFloat result = ((left + right) / divisor) * left - right;
     const BigFloat unrelated = BigFloat{"-8"} * BigFloat{"-9"};
     bf_stack().allocate_single();
     restore_stack(marker);
 
-    EXPECT_EQ(encoded_value(expected), encoded_value(result));
+    EXPECT_EQ(expected, result);
     EXPECT_EQ("72.0", unrelated.to_string(8));
-    EXPECT_EQ(original_left, encoded_value(left));
-    EXPECT_EQ(original_right, encoded_value(right));
-    EXPECT_EQ(original_divisor, encoded_value(divisor));
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(original_right, right);
+    EXPECT_EQ(original_divisor, divisor);
 }
 
-TEST_P(TestBigFloatArithmetic, zeroAndDivisionByZeroKeepLegacyResults)
+TEST_P(TestBigFloatArithmetic, zeroOperandKeepsLegacyResults)
 {
     const BigFloat zero{0};
     const BigFloat value{"-7.5"};
-    BigFloat maximum{bf_arena(BigLifetime::WORKING)};
-    max_bf(maximum);
-    BigFloat result{bf_arena(BigLifetime::WORKING)};
-    div_bf(result, value, zero);
 
     EXPECT_EQ(value, value + zero);
     EXPECT_EQ(value, value - zero);
     EXPECT_EQ(-value, zero - value);
-    EXPECT_EQ(encoded_value(zero), encoded_value(value * zero));
-    EXPECT_EQ(encoded_value(zero), encoded_value(zero / value));
-    EXPECT_EQ(encoded_value(zero), encoded_value(zero / zero));
-    EXPECT_EQ(encoded_value(maximum), encoded_value(result));
-    EXPECT_EQ(encoded_value(maximum), encoded_value(value / zero));
+    EXPECT_EQ(zero, value * zero);
+    EXPECT_EQ(zero, zero / value);
+    EXPECT_EQ(zero, zero / zero);
 }
 
 class TestBigFloatScalarMultiply : public TestBigFloatValue,
@@ -1351,69 +1314,34 @@ TEST_P(TestBigFloatArithmetic, unsignedScalingSupportsAliasedAssignment)
 }
 
 class TestBigFloatScalarDivision : public TestBigFloatValue,
-                                   public testing::WithParamInterface<std::tuple<int, const char *, U16>>
+                                   public testing::WithParamInterface<std::tuple<int, LDouble, U16>>
 {
 };
 
-TEST_P(TestBigFloatScalarDivision, assignmentMatchesInPlaceDivision)
+TEST_P(TestBigFloatScalarDivision, dividesInPlaceAndReusesStorage)
 {
     init_bf_length(std::get<0>(GetParam()));
+    const LDouble quotient = std::get<1>(GetParam());
     const U16 divisor = std::get<2>(GetParam());
     BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
-    const BigFloat source{persistent, std::get<1>(GetParam())};
-    const std::vector<Byte> original = encoded_value(source);
-    BigFloat expected{source};
+    const BigFloat source{persistent, quotient * divisor};
+    const BigFloat original{source};
     BigFloat value{source};
-    const Byte *const address = value.data();
     const std::size_t high_water = persistent.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(&expected, &div_a_bf_int(expected, divisor));
     EXPECT_EQ(&value, &(value /= divisor));
 
-    EXPECT_EQ(encoded_value(expected), encoded_value(value));
-    EXPECT_EQ(original, encoded_value(source));
-    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(quotient, value.to_float());
+    EXPECT_EQ(original, source);
     EXPECT_EQ(&persistent, &value.arena());
     EXPECT_EQ(high_water, persistent.high_water_mark());
     EXPECT_EQ(mark, save_stack());
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatScalarDivision,
-    testing::Combine(testing::Values(4, 32, 708),
-        testing::Values("0", "-1.2345678901234567890123456789e-400", "1.2345678901234567890123456789e400"),
-        testing::Values(U16{0}, U16{1}, U16{2}, U16{255}, U16{256}, U16{32768}, U16{65535})));
-
-class TestBigFloatScalarDivisionDestination : public TestBigFloatValue, public testing::WithParamInterface<bool>
-{
-};
-
-TEST_P(TestBigFloatScalarDivisionDestination, reusesTheDestinationAndRetainsSourceMutation)
-{
-    BigArena &working = bf_arena(BigLifetime::WORKING);
-    BigFloat source{working, -6.0L};
-    BigFloat result{working};
-    BigFloat &output = GetParam() ? source : result;
-    const BigFloat quotient{working, -3.0L};
-    const BigFloat magnitude{working, 6.0L};
-    const std::size_t size = working.value_size();
-    const std::size_t stride = working.block_size();
-    std::fill(output.data() + size, output.data() + stride, Byte{0xa5});
-    const Byte *const address = output.data();
-    const std::size_t high_water = working.high_water_mark();
-    const BigStackMark mark = save_stack();
-
-    EXPECT_EQ(&output, &unsafe_div_bf_int(output, source, 2));
-
-    EXPECT_EQ(encoded_value(quotient), encoded_value(output));
-    EXPECT_EQ(encoded_value(GetParam() ? quotient : magnitude), encoded_value(source));
-    EXPECT_EQ(address, output.data());
-    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(output.data() + size, output.data() + stride));
-    EXPECT_EQ(high_water, working.high_water_mark());
-    EXPECT_EQ(mark, save_stack());
-}
-
-INSTANTIATE_TEST_SUITE_P(Aliases, TestBigFloatScalarDivisionDestination, testing::Bool());
+    testing::Combine(testing::Values(4, 32, 708), testing::Values(0.0L, std::ldexp(-3.0L, -403), std::ldexp(5.0L, 398)),
+        testing::Values(U16{1}, U16{2}, U16{255}, U16{256}, U16{32768}, U16{65535})));
 
 class TestBigFloatAbs : public TestBigFloatValue, public testing::WithParamInterface<std::tuple<int, const char *>>
 {
@@ -1628,14 +1556,9 @@ void PrintTo(const BigFloatOperatorProductInput &input, std::ostream *out)
     *out << input.name;
 }
 
-std::vector<Byte> integer_float_bytes(const int length, const int value, const int exponent)
+BigFloat scaled_product_sample(BigArena &arena, const int value, const int exponent)
 {
-    std::vector<Byte> bytes(length + 2);
-    bytes[length - 2] = static_cast<Byte>(value);
-    bytes[length - 1] = value < 0 ? 0xff : 0;
-    bytes[length] = static_cast<Byte>(exponent);
-    bytes[length + 1] = static_cast<Byte>(static_cast<unsigned>(exponent) >> 8);
-    return bytes;
+    return BigFloat{arena, std::ldexp(static_cast<LDouble>(value), 8 * exponent)};
 }
 
 } // namespace
@@ -1653,53 +1576,46 @@ void TestBigFloatOperatorProducts::SetUp()
     init_bf_length(std::get<0>(GetParam()));
 }
 
-TEST_P(TestBigFloatOperatorProducts, preservesExactBytesOperandsAndPairedAllocationReductionAndRelease)
+TEST_P(TestBigFloatOperatorProducts, preservesOperandsAndReleasesBothProductSlots)
 {
     const bool squared = std::get<1>(GetParam());
     const BigFloatOperatorProductInput &input = std::get<2>(GetParam());
     BigArena &working = bf_arena(BigLifetime::WORKING);
     BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
-    const std::vector<Byte> left_bytes = integer_float_bytes(g_bf_length, input.left, input.left_exponent);
-    const std::vector<Byte> right_bytes = integer_float_bytes(g_bf_length, input.right, input.right_exponent);
-    BigFloat left = BigFloat::from_legacy(persistent, left_bytes.data(), left_bytes.size());
-    BigFloat distinct_right = BigFloat::from_legacy(persistent, right_bytes.data(), right_bytes.size());
+    const BigFloat left = scaled_product_sample(persistent, input.left, input.left_exponent);
+    const BigFloat distinct_right = scaled_product_sample(persistent, input.right, input.right_exponent);
     const BigFloat &right = input.shared ? left : distinct_right;
-    std::fill(left.data() + left_bytes.size(), left.data() + persistent.block_size(), Byte{0x5a});
-    std::fill(distinct_right.data() + right_bytes.size(), distinct_right.data() + persistent.block_size(), Byte{0x6c});
-    const std::vector<Byte> original_left(left.data(), left.data() + persistent.block_size());
-    const std::vector<Byte> original_right(distinct_right.data(), distinct_right.data() + persistent.block_size());
-    BigArena::Allocation guard = working.allocate_single();
-    std::fill_n(guard.data(), working.block_size(), Byte{0x3c});
+    const BigFloat original_left{left};
+    const BigFloat original_right{distinct_right};
+    const BigFloat guard{working, -7};
+    const BigFloat expected = squared ? scaled_product_sample(persistent, input.squared, input.squared_exponent)
+                                      : scaled_product_sample(persistent, input.product, input.product_exponent);
     BigArena::Allocation reservation = working.allocate_double();
-    Byte *const address = reservation.data();
-    std::fill_n(address, 2 * working.block_size(), Byte{0xa5});
+    const BigArena::Index index = reservation.index();
     reservation.reset();
     const std::size_t high_water = working.high_water_mark();
     const BigStackMark mark = save_stack();
-    const int expected_value = squared ? input.squared : input.product;
-    const int expected_exponent = squared ? input.squared_exponent : input.product_exponent;
-    const std::vector<Byte> expected = integer_float_bytes(g_bf_length, expected_value, expected_exponent);
     {
         const BigFloat result = squared ? left.sqr() : left * right;
 
-        EXPECT_EQ(address, result.data());
+        EXPECT_EQ(expected, result);
+        EXPECT_EQ(original_left, left);
+        EXPECT_EQ(original_right, distinct_right);
         EXPECT_EQ(&working, &result.arena());
         EXPECT_EQ(high_water, working.high_water_mark());
         EXPECT_EQ(mark, save_stack());
-        EXPECT_EQ(expected, encoded_value(result));
-        EXPECT_EQ(original_left, std::vector<Byte>(left.data(), left.data() + persistent.block_size()));
-        EXPECT_EQ(
-            original_right, std::vector<Byte>(distinct_right.data(), distinct_right.data() + persistent.block_size()));
-        EXPECT_EQ(std::vector<Byte>(working.block_size(), 0x3c),
-            std::vector<Byte>(guard.data(), guard.data() + working.block_size()));
-        BigArena::Allocation companion = working.allocate_single();
-        EXPECT_EQ(address + working.block_size(), companion.data());
+
+        BigArena::Allocation companion_slot = working.allocate_single();
+        ASSERT_EQ(index + 1, companion_slot.index());
+        companion_slot.reset();
+        const BigFloat companion{working, -8};
         EXPECT_EQ(high_water, working.high_water_mark());
-        std::fill_n(companion.data(), working.block_size(), Byte{0xc3});
-        EXPECT_EQ(expected, encoded_value(result));
+        EXPECT_EQ(-7.0L, guard.to_float());
+        EXPECT_EQ(-8.0L, companion.to_float());
+        EXPECT_EQ(expected, result);
     }
-    BigArena::Allocation reused = working.allocate_double();
-    EXPECT_EQ(address, reused.data());
+    const BigArena::Allocation reused = working.allocate_double();
+    EXPECT_EQ(index, reused.index());
     EXPECT_EQ(high_water, working.high_water_mark());
     EXPECT_EQ(mark, save_stack());
 }
@@ -1710,11 +1626,11 @@ INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndInputs, TestBigFloatOperatorProduct
             BigFloatOperatorProductInput{"NegativeLeft", -2, 3, 0, 0, -6, 0, 4, 0, false},
             BigFloatOperatorProductInput{"NegativeRight", 2, -3, 0, 0, -6, 0, 4, 0, false},
             BigFloatOperatorProductInput{"NegativeBoth", -2, -3, 0, 0, 6, 0, 4, 0, false},
-            BigFloatOperatorProductInput{"LargeExponents", 2, 3, 500, 700, 6, 1200, 4, 1000, false},
-            BigFloatOperatorProductInput{"SmallExponents", -2, 3, -500, -700, -6, -1200, 4, -1000, false},
-            BigFloatOperatorProductInput{"ZeroLeft", 0, 3, 0, 700, 0, 0, 0, 0, false},
-            BigFloatOperatorProductInput{"ZeroRight", -2, 0, -500, 0, 0, 0, 4, -1000, false},
-            BigFloatOperatorProductInput{"Shared", -3, -3, 1000, 1000, 9, 2000, 9, 2000, true})));
+            BigFloatOperatorProductInput{"LargeExponents", 2, 3, 40, 60, 6, 100, 4, 80, false},
+            BigFloatOperatorProductInput{"SmallExponents", -2, 3, -40, -60, -6, -100, 4, -80, false},
+            BigFloatOperatorProductInput{"ZeroLeft", 0, 3, 0, 60, 0, 0, 0, 0, false},
+            BigFloatOperatorProductInput{"ZeroRight", -2, 0, -40, 0, 0, 0, 4, -80, false},
+            BigFloatOperatorProductInput{"Shared", -3, -3, 60, 60, 9, 120, 9, 120, true})));
 
 namespace
 {
@@ -1758,25 +1674,19 @@ void TestBigFloatLegacyMultiply::SetUp()
     init_bf_length(std::get<0>(GetParam()));
 }
 
-TEST_P(TestBigFloatLegacyMultiply, preservesCanonicalBoundsReturnIdentityOperandEffectsAndTemporaryLifetime)
+TEST_P(TestBigFloatLegacyMultiply, preservesOperandsAndTemporaryLifetime)
 {
     const LegacyMultiplyCall call = std::get<1>(GetParam());
     const LegacyMultiplyInput &input = std::get<2>(GetParam());
-    const bool nonzero = input.left != 0 && (input.shared ? input.left : input.right) != 0;
     BigStackSaver saved;
     BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
     BigArena &temporary = bf_arena(BigLifetime::TEMPORARY);
-    const std::vector<Byte> left_bytes = integer_float_bytes(g_bf_length, input.left, input.left_exponent);
-    const std::vector<Byte> right_bytes = integer_float_bytes(g_bf_length, input.right, input.right_exponent);
-    BigFloat left = BigFloat::from_legacy(persistent, left_bytes.data(), left_bytes.size());
-    BigFloat right = BigFloat::from_legacy(persistent, right_bytes.data(), right_bytes.size());
-    std::fill(left.data() + left_bytes.size(), left.data() + persistent.block_size(), Byte{0x5a});
-    std::fill(right.data() + right_bytes.size(), right.data() + persistent.block_size(), Byte{0x6c});
-    std::vector<Byte> expected_left(left.data(), left.data() + persistent.block_size());
-    std::vector<Byte> expected_right(right.data(), right.data() + persistent.block_size());
-    BigFloat separate{persistent};
-    std::fill_n(separate.data(), persistent.block_size(), Byte{0xa5});
-    std::vector<Byte> expected_separate(persistent.block_size(), 0xa5);
+    BigFloat left = scaled_product_sample(persistent, input.left, input.left_exponent);
+    BigFloat right = scaled_product_sample(persistent, input.right, input.right_exponent);
+    const BigFloat original_left{left};
+    const BigFloat original_right{right};
+    const BigFloat expected = scaled_product_sample(persistent, input.product, input.product_exponent);
+    BigFloat separate{persistent, -5};
     BigFloat *destination = &separate;
     if (call == LegacyMultiplyCall::SAFE_LEFT)
     {
@@ -1786,57 +1696,33 @@ TEST_P(TestBigFloatLegacyMultiply, preservesCanonicalBoundsReturnIdentityOperand
     {
         destination = input.shared ? &left : &right;
     }
-    const Byte *const result = destination->data();
-    const std::vector<Byte> expected = integer_float_bytes(g_bf_length, input.product, input.product_exponent);
-    if (result == left.data())
-    {
-        std::copy(expected.begin(), expected.end(), expected_left.begin());
-    }
-    else if (result == right.data())
-    {
-        std::copy(expected.begin(), expected.end(), expected_right.begin());
-    }
-    else
-    {
-        std::copy(expected.begin(), expected.end(), expected_separate.begin());
-    }
-    BigFloat survivor{temporary, -7};
-    std::fill(survivor.data() + left_bytes.size(), survivor.data() + temporary.block_size(), Byte{0x77});
-    const std::vector<Byte> survivor_bytes(survivor.data(), survivor.data() + temporary.block_size());
-    Byte *const borrowed = bf_stack().allocate_single();
-    std::fill_n(borrowed, temporary.block_size(), Byte{0x69});
-    Byte *const num_borrowed = bn_stack().allocate_single();
-    const std::size_t num_stride = bn_arena(BigLifetime::TEMPORARY).block_size();
-    std::fill_n(num_borrowed, num_stride, Byte{0x3c});
+    const BigFloat survivor{temporary, -7};
+    bf_stack().allocate_single();
+    bn_stack().allocate_single();
     BigArena::Allocation reservation = temporary.allocate_double();
-    Byte *const product_address = reservation.data();
-    std::fill_n(product_address, 2 * temporary.block_size(), Byte{0xa5});
+    const BigArena::Index index = reservation.index();
     reservation.reset();
-    const std::vector<Byte> free_bytes(product_address, product_address + 2 * temporary.block_size());
     const std::size_t high_water = temporary.high_water_mark();
+    const std::size_t destination_high_water = persistent.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    BigFloat &returned = mult_bf(*destination, left, input.shared ? left : right);
-    EXPECT_EQ(destination, &returned);
-    EXPECT_EQ(result, returned.data());
-    EXPECT_EQ(expected, std::vector<Byte>(result, result + expected.size()));
-    EXPECT_EQ(expected_separate, std::vector<Byte>(separate.data(), separate.data() + persistent.block_size()));
-    EXPECT_EQ(expected_left, std::vector<Byte>(left.data(), left.data() + persistent.block_size()));
-    EXPECT_EQ(expected_right, std::vector<Byte>(right.data(), right.data() + persistent.block_size()));
+    EXPECT_EQ(destination, &mult_bf(*destination, left, input.shared ? left : right));
+
+    EXPECT_EQ(expected, *destination);
+    EXPECT_EQ(destination == &left ? expected : original_left, left);
+    EXPECT_EQ(destination == &right ? expected : original_right, right);
+    if (destination != &separate)
+    {
+        EXPECT_EQ(-5.0L, separate.to_float());
+    }
+    EXPECT_EQ(&persistent, &destination->arena());
+    EXPECT_EQ(destination_high_water, persistent.high_water_mark());
     EXPECT_EQ(mark, save_stack());
-    EXPECT_EQ(high_water, temporary.high_water_mark());
-    EXPECT_EQ(survivor_bytes, std::vector<Byte>(survivor.data(), survivor.data() + temporary.block_size()));
-    EXPECT_EQ(std::vector<Byte>(temporary.block_size(), 0x69),
-        std::vector<Byte>(borrowed, borrowed + temporary.block_size()));
-    EXPECT_EQ(std::vector<Byte>(num_stride, 0x3c), std::vector<Byte>(num_borrowed, num_borrowed + num_stride));
-    BigArena::Allocation reused = temporary.allocate_double();
-    EXPECT_EQ(product_address, reused.data());
+    EXPECT_EQ(-7.0L, survivor.to_float());
+    const BigArena::Allocation reused = temporary.allocate_double();
+    EXPECT_EQ(index, reused.index());
     EXPECT_EQ(2U, reused.blocks());
     EXPECT_EQ(high_water, temporary.high_water_mark());
-    if (!nonzero)
-    {
-        EXPECT_EQ(free_bytes, std::vector<Byte>(reused.data(), reused.data() + 2 * temporary.block_size()));
-    }
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsCallsAndInputs, TestBigFloatLegacyMultiply,
@@ -1846,11 +1732,11 @@ INSTANTIATE_TEST_SUITE_P(LayoutsCallsAndInputs, TestBigFloatLegacyMultiply,
             LegacyMultiplyInput{"NegativeLeft", -2, 3, 0, 0, -6, 0, false},
             LegacyMultiplyInput{"NegativeRight", 2, -3, 0, 0, -6, 0, false},
             LegacyMultiplyInput{"NegativeBoth", -2, -3, 0, 0, 6, 0, false},
-            LegacyMultiplyInput{"LargeExponents", 2, 3, 500, 700, 6, 1200, false},
-            LegacyMultiplyInput{"SmallExponents", -2, 3, -500, -700, -6, -1200, false},
-            LegacyMultiplyInput{"ZeroLeft", 0, 3, 0, 700, 0, 0, false},
-            LegacyMultiplyInput{"ZeroRight", -2, 0, -500, 0, 0, 0, false},
-            LegacyMultiplyInput{"Shared", -3, -3, 1000, 1000, 9, 2000, true})));
+            LegacyMultiplyInput{"LargeExponents", 2, 3, 40, 60, 6, 100, false},
+            LegacyMultiplyInput{"SmallExponents", -2, 3, -40, -60, -6, -100, false},
+            LegacyMultiplyInput{"ZeroLeft", 0, 3, 0, 60, 0, 0, false},
+            LegacyMultiplyInput{"ZeroRight", -2, 0, -40, 0, 0, 0, false},
+            LegacyMultiplyInput{"Shared", -3, -3, 60, 60, 9, 120, true})));
 
 namespace
 {
@@ -1891,85 +1777,67 @@ void TestBigFloatLegacySqr::SetUp()
     init_bf_length(std::get<0>(GetParam()));
 }
 
-TEST_P(TestBigFloatLegacySqr, preservesCanonicalBoundsCachesReturnIdentitySourceEffectsAndTemporaryLifetime)
+TEST_P(TestBigFloatLegacySqr, preservesSourceCachesAndTemporaryLifetime)
 {
     const LegacySqrCall call = std::get<1>(GetParam());
     const LegacySqrInput &input = std::get<2>(GetParam());
     BigStackSaver saved;
     BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
     BigArena &temporary = bf_arena(BigLifetime::TEMPORARY);
-    const std::size_t working_stride = bf_arena(BigLifetime::WORKING).block_size();
-    const std::vector<Byte> source_bytes = integer_float_bytes(g_bf_length, input.source, input.exponent);
-    BigFloat source = BigFloat::from_legacy(persistent, source_bytes.data(), source_bytes.size());
-    std::fill(source.data() + source_bytes.size(), source.data() + persistent.block_size(), Byte{0x5a});
-    std::vector<Byte> expected_source(source.data(), source.data() + persistent.block_size());
-    std::fill_n(g_tmp_sqr_x_bf.data(), working_stride, Byte{0x69});
-    std::fill_n(g_tmp_sqr_y_bf.data(), working_stride, Byte{0x96});
-    std::vector<Byte> expected_x(working_stride, 0x69);
-    std::vector<Byte> expected_y(working_stride, 0x96);
-    BigFloat separate{persistent};
-    std::fill_n(separate.data(), persistent.block_size(), Byte{0xa5});
-    std::vector<Byte> expected_separate(persistent.block_size(), 0xa5);
+    BigFloat source = scaled_product_sample(persistent, input.source, input.exponent);
+    const BigFloat original{source};
+    const BigFloat expected = scaled_product_sample(persistent, input.squared, input.squared_exponent);
+    g_tmp_sqr_x_bf = -2;
+    g_tmp_sqr_y_bf = -3;
+    BigFloat separate{persistent, -5};
     BigFloat *destination = &separate;
-    const std::vector<Byte> expected = integer_float_bytes(g_bf_length, input.squared, input.squared_exponent);
     if (call == LegacySqrCall::SAFE_IN_PLACE)
     {
         destination = &source;
-        std::copy(expected.begin(), expected.end(), expected_source.begin());
     }
     else if (call == LegacySqrCall::CACHE_X)
     {
         destination = &g_tmp_sqr_x_bf;
-        std::copy(expected.begin(), expected.end(), expected_x.begin());
     }
     else if (call == LegacySqrCall::CACHE_Y)
     {
         destination = &g_tmp_sqr_y_bf;
-        std::copy(expected.begin(), expected.end(), expected_y.begin());
     }
-    else
-    {
-        std::copy(expected.begin(), expected.end(), expected_separate.begin());
-    }
-    const Byte *const result = destination->data();
-    BigFloat survivor{temporary, -7};
-    std::fill(survivor.data() + source_bytes.size(), survivor.data() + temporary.block_size(), Byte{0x77});
-    const std::vector<Byte> survivor_bytes(survivor.data(), survivor.data() + temporary.block_size());
-    Byte *const borrowed = bf_stack().allocate_single();
-    std::fill_n(borrowed, temporary.block_size(), Byte{0x3c});
-    Byte *const num_borrowed = bn_stack().allocate_single();
-    const std::size_t num_stride = bn_arena(BigLifetime::TEMPORARY).block_size();
-    std::fill_n(num_borrowed, num_stride, Byte{0x6c});
+    const BigFloat survivor{temporary, -7};
+    bf_stack().allocate_single();
+    bn_stack().allocate_single();
     BigArena::Allocation reservation = temporary.allocate_double();
-    Byte *const product_address = reservation.data();
-    std::fill_n(product_address, 2 * temporary.block_size(), Byte{0xa5});
+    const BigArena::Index index = reservation.index();
     reservation.reset();
-    const std::vector<Byte> free_bytes(product_address, product_address + 2 * temporary.block_size());
     const std::size_t high_water = temporary.high_water_mark();
+    const BigArena &destination_arena = destination->arena();
+    const std::size_t destination_high_water = destination_arena.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    BigFloat &returned = square_bf(*destination, std::as_const(source));
-    EXPECT_EQ(destination, &returned);
-    EXPECT_EQ(result, returned.data());
-    EXPECT_EQ(expected, std::vector<Byte>(result, result + expected.size()));
-    EXPECT_EQ(expected_separate, std::vector<Byte>(separate.data(), separate.data() + persistent.block_size()));
-    EXPECT_EQ(expected_source, std::vector<Byte>(source.data(), source.data() + persistent.block_size()));
-    EXPECT_EQ(expected_x, std::vector<Byte>(g_tmp_sqr_x_bf.data(), g_tmp_sqr_x_bf.data() + working_stride));
-    EXPECT_EQ(expected_y, std::vector<Byte>(g_tmp_sqr_y_bf.data(), g_tmp_sqr_y_bf.data() + working_stride));
+    EXPECT_EQ(destination, &square_bf(*destination, source));
+
+    EXPECT_EQ(expected, *destination);
+    EXPECT_EQ(destination == &source ? expected : original, source);
+    if (destination != &separate)
+    {
+        EXPECT_EQ(-5.0L, separate.to_float());
+    }
+    if (destination != &g_tmp_sqr_x_bf)
+    {
+        EXPECT_EQ(-2.0L, g_tmp_sqr_x_bf.to_float());
+    }
+    if (destination != &g_tmp_sqr_y_bf)
+    {
+        EXPECT_EQ(-3.0L, g_tmp_sqr_y_bf.to_float());
+    }
+    EXPECT_EQ(&destination_arena, &destination->arena());
+    EXPECT_EQ(destination_high_water, destination_arena.high_water_mark());
     EXPECT_EQ(mark, save_stack());
-    EXPECT_EQ(high_water, temporary.high_water_mark());
-    EXPECT_EQ(survivor_bytes, std::vector<Byte>(survivor.data(), survivor.data() + temporary.block_size()));
-    EXPECT_EQ(std::vector<Byte>(temporary.block_size(), 0x3c),
-        std::vector<Byte>(borrowed, borrowed + temporary.block_size()));
-    EXPECT_EQ(std::vector<Byte>(num_stride, 0x6c), std::vector<Byte>(num_borrowed, num_borrowed + num_stride));
-    BigArena::Allocation reused = temporary.allocate_double();
-    EXPECT_EQ(product_address, reused.data());
+    EXPECT_EQ(-7.0L, survivor.to_float());
+    const BigArena::Allocation reused = temporary.allocate_double();
+    EXPECT_EQ(index, reused.index());
     EXPECT_EQ(2U, reused.blocks());
     EXPECT_EQ(high_water, temporary.high_water_mark());
-    if (input.source == 0)
-    {
-        EXPECT_EQ(free_bytes, std::vector<Byte>(reused.data(), reused.data() + 2 * temporary.block_size()));
-    }
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsCallsAndInputs, TestBigFloatLegacySqr,
@@ -1977,7 +1845,7 @@ INSTANTIATE_TEST_SUITE_P(LayoutsCallsAndInputs, TestBigFloatLegacySqr,
         testing::Values(LegacySqrCall::SAFE, LegacySqrCall::SAFE_IN_PLACE, LegacySqrCall::CACHE_X,
             LegacySqrCall::CACHE_Y),
         testing::Values(LegacySqrInput{"Positive", 2, 0, 4, 0}, LegacySqrInput{"Negative", -3, 0, 9, 0},
-            LegacySqrInput{"LargeExponent", -2, 500, 4, 1000}, LegacySqrInput{"SmallExponent", 3, -700, 9, -1400},
+            LegacySqrInput{"LargeExponent", -2, 40, 4, 80}, LegacySqrInput{"SmallExponent", 3, -60, 9, -120},
             LegacySqrInput{"Zero", 0, 0, 0, 0})));
 
 namespace

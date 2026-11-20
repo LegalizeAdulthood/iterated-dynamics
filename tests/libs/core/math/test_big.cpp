@@ -1187,6 +1187,28 @@ TEST_P(TestBigFloatByteReciprocal, restoresPrecisionAndKeepsDestructiveWindowEff
         lengths, (std::array<int, 6>{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
 }
 
+TEST_P(TestBigFloatByteReciprocal, zeroSaturatesWithoutTouchingScratch)
+{
+    init_bf_length(GetParam());
+    constexpr int exponent = std::numeric_limits<LDouble>::max_exponent / 8;
+    std::vector<Byte> source = integer_bf_bytes(g_bf_length, 0, 0);
+    std::vector<Byte> expected = integer_bf_bytes(g_bf_length, 1, exponent);
+    source.push_back(0xa5);
+    expected.push_back(0xa5);
+    const std::vector<Byte> original = source;
+    std::vector<Byte> result(expected.size(), 0xa5);
+    const std::vector<Byte> scratch(expected.size(), 0x5a);
+    std::vector<Byte> tmp1 = scratch;
+    std::vector<Byte> tmp2 = scratch;
+
+    EXPECT_EQ(result.data(), unsafe_inv_bf(result.data(), source.data(), tmp1.data(), tmp2.data()));
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(scratch, tmp1);
+    EXPECT_EQ(scratch, tmp2);
+}
+
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatByteReciprocal, testing::Values(4, 64));
 
 class TestBigFloatByteDivision : public TestBigNumConversionBase, public testing::WithParamInterface<int>
@@ -1227,6 +1249,34 @@ TEST_P(TestBigFloatByteDivision, reappliesExponentsAndKeepsDestructiveOperandEff
     EXPECT_EQ(expected, denominator);
     EXPECT_EQ(
         lengths, (std::array<int, 6>{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+}
+
+TEST_P(TestBigFloatByteDivision, nonzeroNumeratorWithZeroDenominatorSaturates)
+{
+    init_bf_length(GetParam());
+    constexpr int exponent = std::numeric_limits<LDouble>::max_exponent / 8;
+    std::vector<Byte> numerator = integer_bf_bytes(g_bf_length, -8, 1);
+    std::vector<Byte> denominator = integer_bf_bytes(g_bf_length, 0, 0);
+    std::vector<Byte> expected = integer_bf_bytes(g_bf_length, 1, exponent);
+    numerator.push_back(0xa5);
+    denominator.push_back(0xa5);
+    expected.push_back(0xa5);
+    std::vector<Byte> expected_numerator = integer_bf_bytes(g_bf_length, -8, 0);
+    expected_numerator.push_back(0xa5);
+    const std::vector<Byte> original_denominator = denominator;
+    std::vector<Byte> result(expected.size(), 0xa5);
+    const std::vector<Byte> scratch(expected.size(), 0x5a);
+    std::vector<Byte> tmp1 = scratch;
+    std::vector<Byte> tmp2 = scratch;
+
+    EXPECT_EQ(
+        result.data(), unsafe_div_bf(result.data(), numerator.data(), denominator.data(), tmp1.data(), tmp2.data()));
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(expected_numerator, numerator);
+    EXPECT_EQ(original_denominator, denominator);
+    EXPECT_EQ(scratch, tmp1);
+    EXPECT_EQ(scratch, tmp2);
 }
 
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatByteDivision, testing::Values(4, 64));
