@@ -154,35 +154,44 @@ struct BigFloatByteComparisonInput
     int expected;
 };
 
-class TestBigFloatByteComparison : public testing::TestWithParam<BigFloatByteComparisonInput>
+class TestBigFloatByteComparison : public testing::TestWithParam<std::tuple<int, BigFloatByteComparisonInput>>
 {
 };
 
 TEST_P(TestBigFloatByteComparison, returnsTheSignedMismatchPosition)
 {
-    constexpr int length = 8;
+    const auto [length, input] = GetParam();
     const ValueSaver<int> bf_length{g_bf_length, length};
-    const BigFloatByteComparisonInput &input = GetParam();
-    alignas(U16) std::array<Byte, length + 2> left{};
-    alignas(U16) std::array<Byte, length + 2> right{};
+    std::vector<Byte> left(length + 2);
+    std::vector<Byte> right(length + 2);
     std::copy(input.left_tail.begin(), input.left_tail.end(), left.end() - 5);
     std::copy(input.right_tail.begin(), input.right_tail.end(), right.end() - 5);
-    const std::array<Byte, length + 2> original_left = left;
-    const std::array<Byte, length + 2> original_right = right;
+    const std::vector<Byte> original_left = left;
+    const std::vector<Byte> original_right = right;
+    int expected = input.expected;
+    if (expected != 0)
+    {
+        // The expected mismatch positions in the cases use an eight-byte mantissa.
+        const int extra_bytes = length - 8;
+        expected += expected < 0 ? -extra_bytes : extra_bytes;
+    }
 
-    EXPECT_EQ(input.expected, cmp_bf(left.data(), right.data()));
-    EXPECT_EQ(-input.expected, cmp_bf(right.data(), left.data()));
+    EXPECT_EQ(expected, cmp_bf(left.data(), right.data()));
+    EXPECT_EQ(-expected, cmp_bf(right.data(), left.data()));
+    EXPECT_EQ(0, cmp_bf(left.data(), left.data()));
     EXPECT_EQ(original_left, left);
     EXPECT_EQ(original_right, right);
 }
 
 INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteComparison,
-    testing::Values(BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x40, 1, 0, 0, 0}, 0},
-        BigFloatByteComparisonInput{{0, 0, 0, 0, 0}, {0xc0, 0xfe, 0xff, 0, 0}, 8},
-        BigFloatByteComparisonInput{{0, 0x80, 0, 0xff, 0xff}, {0x40, 1, 0, 0, 0}, -8},
-        BigFloatByteComparisonInput{{0, 0xfe, 0xff, 1, 0}, {0xc0, 0xfe, 0xff, 0, 0}, -8},
-        BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x40, 2, 0, 0, 0}, -7},
-        BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x80, 1, 0, 0, 0}, -6}));
+    testing::Combine(testing::Values(8, 68, 712),
+        testing::Values(BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x40, 1, 0, 0, 0}, 0},
+            BigFloatByteComparisonInput{{0, 0, 0, 0, 0}, {0xc0, 0xfe, 0xff, 0, 0}, 8},
+            BigFloatByteComparisonInput{{0, 0x80, 0, 0xff, 0xff}, {0x40, 1, 0, 0, 0}, -8},
+            BigFloatByteComparisonInput{{0, 0xfe, 0xff, 1, 0}, {0xc0, 0xfe, 0xff, 0, 0}, -8},
+            BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x40, 2, 0, 0, 0}, -7},
+            BigFloatByteComparisonInput{{0x40, 1, 0, 0, 0}, {0x80, 1, 0, 0, 0}, -6},
+            BigFloatByteComparisonInput{{0x80, 0xfe, 0xff, 0, 0}, {0xc0, 0xfe, 0xff, 0, 0}, -6})));
 
 struct BigFloatByteNegationInput
 {
@@ -395,6 +404,227 @@ class TestBigFloatBytePrecision : public TestBigNumConversionBase
 protected:
     ValueSaver<fractals::FractalType> m_fractal_type{fractals::g_fractal_type, fractals::FractalType::MANDEL_Z_POWER};
 };
+
+struct BigFloatByteParseCase
+{
+    std::string_view text;
+    std::array<Byte, 5> tail;
+};
+
+class TestBigFloatByteParseInterface : public TestBigFloatBytePrecision,
+                                       public testing::WithParamInterface<std::tuple<int, BigFloatByteParseCase>>
+{
+};
+
+TEST_P(TestBigFloatByteParseInterface, writesExactBytesAndPreservesDestinationAndScratchGuards)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const BigFloatByteParseCase &input = std::get<1>(GetParam());
+    const std::size_t size = static_cast<std::size_t>(g_bf_length) + 2;
+    std::vector<Byte> result(size + 4, 0xa5);
+    std::vector<Byte> scratch(size + 4, 0x3c);
+    std::vector<Byte> expected = result;
+    std::fill_n(expected.begin() + 2, size, Byte{0});
+    std::copy(input.tail.begin(), input.tail.end(), expected.end() - 2 - input.tail.size());
+    const int bn_length = g_bn_length;
+    const int bf_length = g_bf_length;
+
+    EXPECT_EQ(result.data() + 2, str_to_bf(result.data() + 2, input.text, scratch.data() + 2));
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(std::vector<Byte>(2, 0x3c), std::vector<Byte>(scratch.begin(), scratch.begin() + 2));
+    EXPECT_EQ(std::vector<Byte>(2, 0x3c), std::vector<Byte>(scratch.end() - 2, scratch.end()));
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(bf_length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigFloatByteParseInterface,
+    testing::Combine(testing::Values(4, 12, 60, 64, 708),
+        testing::Values(BigFloatByteParseCase{"1.25", {0x40, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatByteParseCase{"-1.25", {0xc0, 0xfe, 0xff, 0x00, 0x00}},
+            BigFloatByteParseCase{"+1.25", {0x40, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatByteParseCase{std::string_view{"1.25x", 4}, {0x40, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatByteParseCase{"1.25e2", {0x00, 0x7d, 0x00, 0x00, 0x00}},
+            BigFloatByteParseCase{"1.25E+2tail", {0x00, 0x7d, 0x00, 0x00, 0x00}},
+            BigFloatByteParseCase{"125e-2", {0x40, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatByteParseCase{"0.5", {0x00, 0x80, 0x00, 0xff, 0xff}},
+            BigFloatByteParseCase{"1.00390625", {0x01, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatByteParseCase{"junk1.25", {0x40, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatByteParseCase{"1.25e+", {0x40, 0x01, 0x00, 0x00, 0x00}}, BigFloatByteParseCase{"0", {}},
+            BigFloatByteParseCase{"-0", {}}, BigFloatByteParseCase{"", {}}, BigFloatByteParseCase{"+", {}},
+            BigFloatByteParseCase{"-", {}}, BigFloatByteParseCase{".", {}}, BigFloatByteParseCase{"garbage", {}},
+            BigFloatByteParseCase{"1.25x", {}})));
+
+struct BigFloatByteIntegerInput
+{
+    long value;
+    std::array<Byte, 7> tail;
+};
+
+class TestBigFloatByteIntegerInterface : public TestBigFloatBytePrecision,
+                                         public testing::WithParamInterface<std::tuple<int, BigFloatByteIntegerInput>>
+{
+};
+
+TEST_P(TestBigFloatByteIntegerInterface, encodesIntegersAndPreservesDestinationGuards)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const BigFloatByteIntegerInput &input = std::get<1>(GetParam());
+    const std::size_t size = static_cast<std::size_t>(g_bf_length) + 2;
+    std::vector<Byte> result(size + 4, 0xa5);
+    std::vector<Byte> expected = result;
+    std::fill_n(expected.begin() + 2, size, Byte{0});
+    std::copy(input.tail.begin(), input.tail.end(), expected.end() - 2 - input.tail.size());
+    const int bn_length = g_bn_length;
+    const int bf_length = g_bf_length;
+
+    EXPECT_EQ(result.data() + 2, int_to_bf(result.data() + 2, input.value));
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(bf_length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndIntegers, TestBigFloatByteIntegerInterface,
+    testing::Combine(testing::Values(4, 12, 60, 64, 708),
+        testing::Values(BigFloatByteIntegerInput{0, {}},
+            BigFloatByteIntegerInput{1, {0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatByteIntegerInput{-1, {0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff}},
+            BigFloatByteIntegerInput{127, {0x00, 0x00, 0x00, 0x7f, 0x00, 0x00, 0x00}},
+            BigFloatByteIntegerInput{-127, {0x00, 0x00, 0x00, 0x81, 0xff, 0x00, 0x00}},
+            BigFloatByteIntegerInput{128, {0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00}},
+            BigFloatByteIntegerInput{-128, {0x00, 0x00, 0x00, 0x80, 0xff, 0x00, 0x00}},
+            BigFloatByteIntegerInput{255, {0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00}},
+            BigFloatByteIntegerInput{-255, {0x00, 0x00, 0x00, 0x01, 0xff, 0x00, 0x00}},
+            BigFloatByteIntegerInput{256, {0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00}},
+            BigFloatByteIntegerInput{-256, {0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00}},
+            BigFloatByteIntegerInput{65535, {0x00, 0x00, 0xff, 0xff, 0x00, 0x01, 0x00}},
+            BigFloatByteIntegerInput{-65535, {0x00, 0x00, 0x01, 0x00, 0xff, 0x01, 0x00}},
+            BigFloatByteIntegerInput{65536, {0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00}},
+            BigFloatByteIntegerInput{-65536, {0x00, 0x00, 0x00, 0x00, 0xff, 0x01, 0x00}},
+            BigFloatByteIntegerInput{std::numeric_limits<S32>::max(), {0xff, 0xff, 0xff, 0x7f, 0x00, 0x03, 0x00}},
+            BigFloatByteIntegerInput{std::numeric_limits<S32>::min(), {0x00, 0x00, 0x00, 0x80, 0xff, 0x03, 0x00}})));
+
+struct BigFloatByteFloatingInput
+{
+    LDouble value;
+    std::array<Byte, 7> tail;
+    int fractional_bit{};
+};
+
+class TestBigFloatByteFloatingInput
+    : public TestBigFloatBytePrecision,
+      public testing::WithParamInterface<std::tuple<int, int, BigFloatByteFloatingInput>>
+{
+};
+
+TEST_P(TestBigFloatByteFloatingInput, encodesNativeValuesAndRestoresSharedLengths)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const int int_length = std::get<1>(GetParam());
+    const ValueSaver<int> integer_length{g_int_length, int_length};
+    const BigFloatByteFloatingInput &input = std::get<2>(GetParam());
+    const std::size_t size = static_cast<std::size_t>(g_bf_length) + 2;
+    std::vector<Byte> result(size + 4, 0xa5);
+    std::vector<Byte> expected = result;
+    std::fill_n(expected.begin() + 2, size, Byte{0});
+    std::copy(input.tail.begin(), input.tail.end(), expected.end() - 2 - input.tail.size());
+    if (input.fractional_bit != 0)
+    {
+        const int position = g_bf_length - 2 - (input.fractional_bit + 7) / 8;
+        if (position >= 0)
+        {
+            expected[2 + position] |= static_cast<Byte>(1U << ((8 - input.fractional_bit % 8) % 8));
+        }
+    }
+    const int bn_length = g_bn_length;
+    const int bf_length = g_bf_length;
+
+    EXPECT_EQ(result.data() + 2, float_to_bf(result.data() + 2, input.value));
+
+    EXPECT_EQ(expected, result);
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(bf_length, g_bf_length);
+    EXPECT_EQ(int_length, g_int_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsIntegerLengthsAndInputs, TestBigFloatByteFloatingInput,
+    testing::Combine(testing::Values(4, 12, 60, 64, 708), testing::Values(1, 2, 4),
+        testing::Values(BigFloatByteFloatingInput{0, {}}, BigFloatByteFloatingInput{-0.0L, {}},
+            BigFloatByteFloatingInput{1, {0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatByteFloatingInput{-1, {0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00}},
+            BigFloatByteFloatingInput{1.25L, {0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0x00}},
+            BigFloatByteFloatingInput{-1.25L, {0x00, 0x00, 0xc0, 0xfe, 0xff, 0x00, 0x00}},
+            BigFloatByteFloatingInput{0.5L, {0x00, 0x00, 0x00, 0x80, 0x00, 0xff, 0xff}},
+            BigFloatByteFloatingInput{-0.5L, {0x00, 0x00, 0x00, 0x80, 0xff, 0xff, 0xff}},
+            BigFloatByteFloatingInput{255, {0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00}},
+            BigFloatByteFloatingInput{256, {0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00}},
+            BigFloatByteFloatingInput{257, {0x00, 0x00, 0x01, 0x01, 0x00, 0x01, 0x00}},
+            BigFloatByteFloatingInput{65536, {0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00}},
+            BigFloatByteFloatingInput{1.0L / 256, {0x00, 0x00, 0x00, 0x01, 0x00, 0xff, 0xff}},
+            BigFloatByteFloatingInput{1.0L / 65536, {0x00, 0x00, 0x00, 0x01, 0x00, 0xfe, 0xff}},
+            BigFloatByteFloatingInput{std::ldexp(1.0L, 1023), {0x00, 0x00, 0x00, 0x80, 0x00, 0x7f, 0x00}},
+            BigFloatByteFloatingInput{-std::ldexp(1.0L, 1023), {0x00, 0x00, 0x00, 0x80, 0xff, 0x7f, 0x00}},
+            BigFloatByteFloatingInput{std::ldexp(1.0L, -1022), {0x00, 0x00, 0x00, 0x04, 0x00, 0x80, 0xff}},
+            BigFloatByteFloatingInput{1.0L + std::ldexp(1.0L, -52), {0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}, 52})));
+
+struct BigFloatByteOutputInput
+{
+    std::array<Byte, 7> tail;
+    LDouble expected;
+};
+
+class TestBigFloatByteOutputInterface
+    : public TestBigFloatBytePrecision,
+      public testing::WithParamInterface<std::tuple<int, int, BigFloatByteOutputInput>>
+{
+};
+
+TEST_P(TestBigFloatByteOutputInterface, observesSignedValuesAndRestoresInputAndLengths)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const int int_length = std::get<1>(GetParam());
+    const ValueSaver<int> integer_length{g_int_length, int_length};
+    const BigFloatByteOutputInput &input = std::get<2>(GetParam());
+    const std::size_t size = static_cast<std::size_t>(g_bf_length) + 2;
+    std::vector<Byte> value(size + 4, 0xa5);
+    std::fill_n(value.begin() + 2, size, Byte{0});
+    std::copy(input.tail.begin(), input.tail.end(), value.end() - 2 - input.tail.size());
+    const std::vector<Byte> original = value;
+    const int bn_length = g_bn_length;
+    const int bf_length = g_bf_length;
+
+    const LDouble actual = bf_to_float(value.data() + 2);
+
+    EXPECT_EQ(input.expected, actual);
+    EXPECT_EQ(std::signbit(input.expected), std::signbit(actual));
+    EXPECT_EQ(original, value);
+    EXPECT_EQ(bn_length, g_bn_length);
+    EXPECT_EQ(bf_length, g_bf_length);
+    EXPECT_EQ(int_length, g_int_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsIntegerLengthsAndInputs, TestBigFloatByteOutputInterface,
+    testing::Combine(testing::Values(4, 12, 60, 64, 708), testing::Values(1, 2, 4),
+        testing::Values(BigFloatByteOutputInput{{}, 0},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}, 1},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00}, -1},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0x00}, 1.25L},
+            BigFloatByteOutputInput{{0x00, 0x00, 0xc0, 0xfe, 0xff, 0x00, 0x00}, -1.25L},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x00, 0x80, 0x00, 0xff, 0xff}, 0.5L},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x00, 0x80, 0xff, 0xff, 0xff}, -0.5L},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00}, 255},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00}, 256},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x00, 0xff, 0x7f, 0x00, 0x00}, 32767},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00}, -32768},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x40, 0x01, 0x00, 0x0c, 0x00}, std::ldexp(1.25L, 96)},
+            BigFloatByteOutputInput{{0x00, 0x00, 0xc0, 0xfe, 0xff, 0xf4, 0xff}, -std::ldexp(1.25L, -96)},
+            BigFloatByteOutputInput{
+                {0x00, 0x00, 0x00, 0x01, 0x00, 0xb8, 0x0b}, std::numeric_limits<LDouble>::infinity()},
+            BigFloatByteOutputInput{
+                {0x00, 0x00, 0x00, 0xff, 0xff, 0xb8, 0x0b}, -std::numeric_limits<LDouble>::infinity()},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x00, 0x01, 0x00, 0x48, 0xf4}, 0.0L},
+            BigFloatByteOutputInput{{0x00, 0x00, 0x00, 0xff, 0xff, 0x48, 0xf4}, -0.0L})));
 
 class TestBigFloatByteMultiply : public TestBigFloatBytePrecision,
                                  public testing::WithParamInterface<std::tuple<int, BigFloatByteMultiplyInput>>

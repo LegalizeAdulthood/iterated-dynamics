@@ -36,13 +36,8 @@ namespace id::test
 namespace
 {
 
-static_assert(!std::is_convertible_v<BigFloat, BigFloatPtr>);
-static_assert(!std::is_convertible_v<BigFloatPtr, BigFloat>);
 static_assert(std::is_same_v<decltype(&bf_hex_dump), void (*)(const BigFloat &)>);
-static_assert(std::is_same_v<decltype(str_to_bf(std::declval<BigFloat &>(), std::string_view{})), BigFloat &>);
-static_assert(std::is_same_v<decltype(int_to_bf(std::declval<BigFloat &>(), long{})), BigFloat &>);
-static_assert(std::is_same_v<decltype(float_to_bf(std::declval<BigFloat &>(), LDouble{})), BigFloat &>);
-static_assert(std::is_same_v<decltype(bf_to_float(std::declval<BigFloat &>())), LDouble>);
+static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().to_float()), LDouble>);
 static_assert(
     std::is_same_v<decltype(copy_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
 static_assert(std::is_same_v<decltype(clear_bf(std::declval<BigFloat &>())), BigFloat &>);
@@ -216,24 +211,22 @@ class TestBigFloatSign : public TestBigFloatValue, public testing::WithParamInte
 {
 };
 
-TEST_P(TestBigFloatSign, observesConstValueWithoutChangingItsBytesOrStorage)
+TEST_P(TestBigFloatSign, comparesWithZeroWithoutChangingValueOrStorage)
 {
     init_bf_length(std::get<0>(GetParam()));
     const int sign = std::get<1>(GetParam());
     const BigFloat value{static_cast<LDouble>(sign) / 2};
-    const std::vector<Byte> original = encoded_value(value);
-    const Byte *const address = value.data();
+    const BigFloat original{value};
+    const BigFloat zero{0};
     const BigArena &arena = value.arena();
     const std::size_t high_water = arena.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(sign, sign_bf(value));
-    EXPECT_EQ(sign == 0, is_bf_zero(value));
-    EXPECT_EQ(sign < 0, is_bf_neg(value));
-    EXPECT_EQ(sign != 0, is_bf_not_zero(value));
-
-    EXPECT_EQ(original, encoded_value(value));
-    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(sign < 0, value < zero);
+    EXPECT_EQ(sign == 0, value == zero);
+    EXPECT_EQ(sign > 0, value > zero);
+    EXPECT_EQ(sign != 0, value != zero);
+    EXPECT_EQ(original, value);
     EXPECT_EQ(high_water, arena.high_water_mark());
     EXPECT_EQ(mark, save_stack());
 }
@@ -245,7 +238,6 @@ struct BigFloatComparisonInput
 {
     LDouble left;
     LDouble right;
-    int offset;
 };
 
 class TestBigFloatComparison : public TestBigFloatValue,
@@ -253,38 +245,31 @@ class TestBigFloatComparison : public TestBigFloatValue,
 {
 };
 
-TEST_P(TestBigFloatComparison, preservesTheMismatchPositionAndBothOperands)
+TEST_P(TestBigFloatComparison, comparesNumericallyAndPreservesBothOperands)
 {
     init_bf_length(std::get<0>(GetParam()));
     const BigFloatComparisonInput &input = std::get<1>(GetParam());
     const BigFloat left{input.left};
     const BigFloat right{input.right};
-    const std::vector<Byte> left_bytes = encoded_value(left);
-    const std::vector<Byte> right_bytes = encoded_value(right);
-    const Byte *const left_address = left.data();
-    const Byte *const right_address = right.data();
+    const BigFloat original_left{left};
+    const BigFloat original_right{right};
     const BigArena &arena = left.arena();
     const std::size_t high_water = arena.high_water_mark();
     const BigStackMark mark = save_stack();
-    const int position = g_bf_length - input.offset;
 
-    EXPECT_EQ(-position, cmp_bf(left, right));
-    EXPECT_EQ(position, cmp_bf(right, left));
-    EXPECT_EQ(0, cmp_bf(left, left));
-
-    EXPECT_EQ(left_bytes, encoded_value(left));
-    EXPECT_EQ(right_bytes, encoded_value(right));
-    EXPECT_EQ(left_address, left.data());
-    EXPECT_EQ(right_address, right.data());
+    EXPECT_LT(left, right);
+    EXPECT_GT(right, left);
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(original_right, right);
     EXPECT_EQ(high_water, arena.high_water_mark());
     EXPECT_EQ(mark, save_stack());
 }
 
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndInputs, TestBigFloatComparison,
     testing::Combine(testing::Values(4, 64, 708),
-        testing::Values(BigFloatComparisonInput{-1.25L, 0.0L, 0}, BigFloatComparisonInput{0.5L, 1.25L, 0},
-            BigFloatComparisonInput{-512.0L, -1.5L, 0}, BigFloatComparisonInput{1.25L, 2.25L, 1},
-            BigFloatComparisonInput{-1.5L, -1.25L, 2})));
+        testing::Values(BigFloatComparisonInput{-1.25L, 0.0L}, BigFloatComparisonInput{0.5L, 1.25L},
+            BigFloatComparisonInput{-512.0L, -1.5L}, BigFloatComparisonInput{1.25L, 2.25L},
+            BigFloatComparisonInput{-1.5L, -1.25L})));
 
 class TestBigFloatNegation : public TestBigFloatValue, public testing::WithParamInterface<int>
 {
@@ -329,7 +314,7 @@ INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatNegation, testing::Values(4, 64
 struct BigFloatParseCase
 {
     std::string_view text;
-    std::array<Byte, 5> tail;
+    LDouble expected;
 };
 
 class TestBigFloatParseInterface : public TestBigFloatValue,
@@ -337,35 +322,25 @@ class TestBigFloatParseInterface : public TestBigFloatValue,
 {
 };
 
-TEST_P(TestBigFloatParseInterface, preservesBytesDestinationAndExistingWorkspace)
+TEST_P(TestBigFloatParseInterface, constructsTheExpectedValueUsingExistingWorkspace)
 {
     init_bf_length(std::get<0>(GetParam()));
     const BigFloatParseCase &input = std::get<1>(GetParam());
     BigArena &arena = bf_arena(BigLifetime::WORKING);
-    BigFloat value{arena};
-    const Byte *const address = value.data();
-    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    const std::size_t stride = arena.block_size();
-    std::vector<Byte> expected(size);
-    std::copy(input.tail.begin(), input.tail.end(), expected.end() - 5);
-    std::fill_n(value.data(), stride, Byte{0xa5});
-    std::fill_n(g_bf_tmp1.data(), stride, Byte{0x3c});
-    std::fill_n(g_bf_tmp2.data(), stride, Byte{0x5a});
-    const Byte *const scratch = g_bf_tmp1.data();
+    const BigFloat expected{input.expected};
+    g_bf_tmp2 = -1.25L;
+    const BigFloat untouched{g_bf_tmp2};
+    arena.allocate_single().reset();
     const std::size_t high_water = arena.high_water_mark();
     const BigStackMark mark = save_stack();
     const int bn_length = g_bn_length;
     const int bf_length = g_bf_length;
 
-    EXPECT_EQ(&value, &str_to_bf(value, input.text));
+    const BigFloat value{arena, input.text};
 
-    EXPECT_EQ(expected, encoded_value(value));
-    EXPECT_EQ(address, value.data());
-    EXPECT_EQ(scratch, g_bf_tmp1.data());
-    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(value.data() + size, value.data() + stride));
-    EXPECT_EQ(
-        std::vector<Byte>(stride - size, 0x3c), std::vector<Byte>(g_bf_tmp1.data() + size, g_bf_tmp1.data() + stride));
-    EXPECT_EQ(std::vector<Byte>(stride, 0x5a), std::vector<Byte>(g_bf_tmp2.data(), g_bf_tmp2.data() + stride));
+    EXPECT_EQ(expected, value);
+    EXPECT_EQ(&arena, &value.arena());
+    EXPECT_EQ(untouched, g_bf_tmp2);
     EXPECT_EQ(high_water, arena.high_water_mark());
     EXPECT_EQ(mark, save_stack());
     EXPECT_EQ(bn_length, g_bn_length);
@@ -374,240 +349,97 @@ TEST_P(TestBigFloatParseInterface, preservesBytesDestinationAndExistingWorkspace
 
 INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigFloatParseInterface,
     testing::Combine(testing::Values(4, 12, 60, 64, 708),
-        testing::Values(BigFloatParseCase{"1.25", {0x40, 0x01, 0x00, 0x00, 0x00}},
-            BigFloatParseCase{"-1.25", {0xc0, 0xfe, 0xff, 0x00, 0x00}},
-            BigFloatParseCase{"+1.25", {0x40, 0x01, 0x00, 0x00, 0x00}},
-            BigFloatParseCase{std::string_view{"1.25x", 4}, {0x40, 0x01, 0x00, 0x00, 0x00}},
-            BigFloatParseCase{"1.25e2", {0x00, 0x7d, 0x00, 0x00, 0x00}},
-            BigFloatParseCase{"1.25E+2tail", {0x00, 0x7d, 0x00, 0x00, 0x00}},
-            BigFloatParseCase{"125e-2", {0x40, 0x01, 0x00, 0x00, 0x00}},
-            BigFloatParseCase{"0.5", {0x00, 0x80, 0x00, 0xff, 0xff}},
-            BigFloatParseCase{"1.00390625", {0x01, 0x01, 0x00, 0x00, 0x00}},
-            BigFloatParseCase{"junk1.25", {0x40, 0x01, 0x00, 0x00, 0x00}},
-            BigFloatParseCase{"1.25e+", {0x40, 0x01, 0x00, 0x00, 0x00}}, BigFloatParseCase{"0", {}},
-            BigFloatParseCase{"-0", {}}, BigFloatParseCase{"", {}}, BigFloatParseCase{"+", {}},
-            BigFloatParseCase{"-", {}}, BigFloatParseCase{".", {}}, BigFloatParseCase{"garbage", {}},
-            BigFloatParseCase{"1.25x", {}})));
+        testing::Values(BigFloatParseCase{"1.25", 1.25L}, BigFloatParseCase{"-1.25", -1.25L},
+            BigFloatParseCase{"+1.25", 1.25L}, BigFloatParseCase{std::string_view{"1.25x", 4}, 1.25L},
+            BigFloatParseCase{"1.25e2", 125}, BigFloatParseCase{"1.25E+2tail", 125}, BigFloatParseCase{"125e-2", 1.25L},
+            BigFloatParseCase{"0.5", 0.5L}, BigFloatParseCase{"1.00390625", 1.00390625L},
+            BigFloatParseCase{"junk1.25", 1.25L}, BigFloatParseCase{"1.25e+", 1.25L}, BigFloatParseCase{"0", 0},
+            BigFloatParseCase{"-0", 0}, BigFloatParseCase{"", 0}, BigFloatParseCase{"+", 0}, BigFloatParseCase{"-", 0},
+            BigFloatParseCase{".", 0}, BigFloatParseCase{"garbage", 0}, BigFloatParseCase{"1.25x", 0})));
 
-struct BigFloatIntegerInput
-{
-    long value;
-    std::array<Byte, 7> tail;
-};
-
-class TestBigFloatIntegerInterface : public TestBigFloatValue,
-                                     public testing::WithParamInterface<std::tuple<int, BigFloatIntegerInput>>
+class TestBigFloatScalarConstruction : public TestBigFloatValue,
+                                       public testing::WithParamInterface<std::tuple<int, LDouble>>
 {
 };
 
-TEST_P(TestBigFloatIntegerInterface, preservesBytesDestinationAndAllocation)
+TEST_P(TestBigFloatScalarConstruction, preservesTheNativeValueAndArena)
 {
-    init_bf_length(std::get<0>(GetParam()));
-    const BigFloatIntegerInput &input = std::get<1>(GetParam());
+    const auto [length, input] = GetParam();
+    init_bf_length(length);
     BigArena &arena = bf_arena(BigLifetime::WORKING);
-    BigFloat value{arena};
-    const Byte *const address = value.data();
-    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    const std::size_t stride = arena.block_size();
-    std::vector<Byte> expected(size);
-    std::copy(input.tail.begin(), input.tail.end(), expected.end() - 7);
-    std::fill_n(value.data(), stride, Byte{0xa5});
-    std::fill_n(g_bf_tmp1.data(), stride, Byte{0x3c});
+    arena.allocate_single().reset();
     const std::size_t high_water = arena.high_water_mark();
     const BigStackMark mark = save_stack();
-    const int bn_length = g_bn_length;
-    const int bf_length = g_bf_length;
 
-    EXPECT_EQ(&value, &int_to_bf(value, input.value));
+    const BigFloat value{arena, input};
 
-    EXPECT_EQ(expected, encoded_value(value));
-    EXPECT_EQ(address, value.data());
+    EXPECT_EQ(input, value.to_float());
     EXPECT_EQ(&arena, &value.arena());
-    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(value.data() + size, value.data() + stride));
-    EXPECT_EQ(std::vector<Byte>(stride, 0x3c), std::vector<Byte>(g_bf_tmp1.data(), g_bf_tmp1.data() + stride));
     EXPECT_EQ(high_water, arena.high_water_mark());
     EXPECT_EQ(mark, save_stack());
-    EXPECT_EQ(bn_length, g_bn_length);
-    EXPECT_EQ(bf_length, g_bf_length);
 }
 
-INSTANTIATE_TEST_SUITE_P(LayoutsAndIntegers, TestBigFloatIntegerInterface,
+INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigFloatScalarConstruction,
     testing::Combine(testing::Values(4, 12, 60, 64, 708),
-        testing::Values(BigFloatIntegerInput{0, {}},
-            BigFloatIntegerInput{1, {0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}},
-            BigFloatIntegerInput{-1, {0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff}},
-            BigFloatIntegerInput{127, {0x00, 0x00, 0x00, 0x7f, 0x00, 0x00, 0x00}},
-            BigFloatIntegerInput{-127, {0x00, 0x00, 0x00, 0x81, 0xff, 0x00, 0x00}},
-            BigFloatIntegerInput{128, {0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00}},
-            BigFloatIntegerInput{-128, {0x00, 0x00, 0x00, 0x80, 0xff, 0x00, 0x00}},
-            BigFloatIntegerInput{255, {0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00}},
-            BigFloatIntegerInput{-255, {0x00, 0x00, 0x00, 0x01, 0xff, 0x00, 0x00}},
-            BigFloatIntegerInput{256, {0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00}},
-            BigFloatIntegerInput{-256, {0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00}},
-            BigFloatIntegerInput{65535, {0x00, 0x00, 0xff, 0xff, 0x00, 0x01, 0x00}},
-            BigFloatIntegerInput{-65535, {0x00, 0x00, 0x01, 0x00, 0xff, 0x01, 0x00}},
-            BigFloatIntegerInput{65536, {0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00}},
-            BigFloatIntegerInput{-65536, {0x00, 0x00, 0x00, 0x00, 0xff, 0x01, 0x00}},
-            BigFloatIntegerInput{std::numeric_limits<S32>::max(), {0xff, 0xff, 0xff, 0x7f, 0x00, 0x03, 0x00}},
-            BigFloatIntegerInput{std::numeric_limits<S32>::min(), {0x00, 0x00, 0x00, 0x80, 0xff, 0x03, 0x00}})));
-
-struct BigFloatFloatingInput
-{
-    LDouble value;
-    std::array<Byte, 7> tail;
-    int fractional_bit{};
-};
-
-class TestBigFloatFloatingInput : public TestBigFloatValue,
-                                  public testing::WithParamInterface<std::tuple<int, int, BigFloatFloatingInput>>
-{
-};
-
-TEST_P(TestBigFloatFloatingInput, preservesBytesDestinationAndSharedLengthsWithoutAllocating)
-{
-    init_bf_length(std::get<0>(GetParam()));
-    const ValueSaver<int> integer_length{g_int_length, std::get<1>(GetParam())};
-    const BigFloatFloatingInput &input = std::get<2>(GetParam());
-    BigArena &arena = bf_arena(BigLifetime::WORKING);
-    BigFloat value{arena};
-    const Byte *const address = value.data();
-    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    const std::size_t stride = arena.block_size();
-    std::vector<Byte> expected(size);
-    std::copy(input.tail.begin(), input.tail.end(), expected.end() - 7);
-    if (input.fractional_bit != 0)
-    {
-        const int position = g_bf_length - 2 - (input.fractional_bit + 7) / 8;
-        if (position >= 0)
-        {
-            expected[position] |= static_cast<Byte>(1U << ((8 - input.fractional_bit % 8) % 8));
-        }
-    }
-    std::fill_n(value.data(), stride, Byte{0xa5});
-    std::fill_n(g_bf_tmp1.data(), stride, Byte{0x3c});
-    const std::size_t high_water = arena.high_water_mark();
-    const BigStackMark mark = save_stack();
-    const int bn_length = g_bn_length;
-    const int bf_length = g_bf_length;
-    const int int_length = g_int_length;
-
-    EXPECT_EQ(&value, &float_to_bf(value, input.value));
-
-    EXPECT_EQ(expected, encoded_value(value));
-    EXPECT_EQ(address, value.data());
-    EXPECT_EQ(&arena, &value.arena());
-    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(value.data() + size, value.data() + stride));
-    EXPECT_EQ(std::vector<Byte>(stride, 0x3c), std::vector<Byte>(g_bf_tmp1.data(), g_bf_tmp1.data() + stride));
-    EXPECT_EQ(high_water, arena.high_water_mark());
-    EXPECT_EQ(mark, save_stack());
-    EXPECT_EQ(bn_length, g_bn_length);
-    EXPECT_EQ(bf_length, g_bf_length);
-    EXPECT_EQ(int_length, g_int_length);
-}
-
-INSTANTIATE_TEST_SUITE_P(LayoutsIntegerLengthsAndInputs, TestBigFloatFloatingInput,
-    testing::Combine(testing::Values(4, 12, 60, 64, 708), testing::Values(1, 2, 4),
-        testing::Values(BigFloatFloatingInput{0, {}}, BigFloatFloatingInput{-0.0L, {}},
-            BigFloatFloatingInput{1, {0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}},
-            BigFloatFloatingInput{-1, {0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00}},
-            BigFloatFloatingInput{1.25L, {0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0x00}},
-            BigFloatFloatingInput{-1.25L, {0x00, 0x00, 0xc0, 0xfe, 0xff, 0x00, 0x00}},
-            BigFloatFloatingInput{0.5L, {0x00, 0x00, 0x00, 0x80, 0x00, 0xff, 0xff}},
-            BigFloatFloatingInput{-0.5L, {0x00, 0x00, 0x00, 0x80, 0xff, 0xff, 0xff}},
-            BigFloatFloatingInput{255, {0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00}},
-            BigFloatFloatingInput{256, {0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00}},
-            BigFloatFloatingInput{257, {0x00, 0x00, 0x01, 0x01, 0x00, 0x01, 0x00}},
-            BigFloatFloatingInput{65536, {0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00}},
-            BigFloatFloatingInput{1.0L / 256, {0x00, 0x00, 0x00, 0x01, 0x00, 0xff, 0xff}},
-            BigFloatFloatingInput{1.0L / 65536, {0x00, 0x00, 0x00, 0x01, 0x00, 0xfe, 0xff}},
-            BigFloatFloatingInput{std::ldexp(1.0L, 1023), {0x00, 0x00, 0x00, 0x80, 0x00, 0x7f, 0x00}},
-            BigFloatFloatingInput{-std::ldexp(1.0L, 1023), {0x00, 0x00, 0x00, 0x80, 0xff, 0x7f, 0x00}},
-            BigFloatFloatingInput{std::ldexp(1.0L, -1022), {0x00, 0x00, 0x00, 0x04, 0x00, 0x80, 0xff}},
-            BigFloatFloatingInput{1.0L + std::ldexp(1.0L, -52), {0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}, 52})));
+        testing::Values<LDouble>(0, -0.0L, 1, -1, 1.25L, -1.25L, 0.5L, -0.5L, 255, 256, 65536,
+            std::numeric_limits<S32>::max(), std::numeric_limits<S32>::min(), std::ldexp(1.0L, 1023),
+            -std::ldexp(1.0L, 1023), std::ldexp(1.0L, -1000))));
 
 struct BigFloatOutputInput
 {
-    std::array<Byte, 7> tail;
+    const char *text;
     LDouble expected;
 };
 
 class TestBigFloatOutputInterface : public TestBigFloatValue,
-                                    public testing::WithParamInterface<std::tuple<int, int, BigFloatOutputInput>>
+                                    public testing::WithParamInterface<std::tuple<int, BigFloatOutputInput>>
 {
 };
 
-TEST_P(TestBigFloatOutputInterface, restoresInputAndLengthsAndPreservesTheExistingCopyPolicy)
+TEST_P(TestBigFloatOutputInterface, observesConstValuesUsingExistingCopyStorage)
 {
-    init_bf_length(std::get<0>(GetParam()));
-    const ValueSaver<int> integer_length{g_int_length, std::get<1>(GetParam())};
-    const BigFloatOutputInput &input = std::get<2>(GetParam());
-    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    std::vector<Byte> bytes(size);
-    std::copy(input.tail.begin(), input.tail.end(), bytes.end() - 7);
-    BigFloat value = BigFloat::from_legacy(bytes.data(), bytes.size());
-    BigArena &arena = value.arena();
-    const std::size_t stride = arena.block_size();
-    const std::size_t copy_size = 2 * stride;
-    std::fill(value.data() + size, value.data() + stride, Byte{0xa5});
-    const std::vector<Byte> original(value.data(), value.data() + stride);
+    const auto [length, input] = GetParam();
+    init_bf_length(length);
+    const BigFloat value{bf_arena(BigLifetime::PERSISTENT), input.text};
+    const BigFloat original{value};
+    const BigArena &working = bf_arena(BigLifetime::WORKING);
+    const BigArena::Index copy_index = g_bf_tmp_copy1.index();
+    const std::size_t size = working.value_size();
+    const std::size_t copy_size = 2 * working.block_size();
     std::fill_n(g_bf_tmp_copy1.data(), copy_size, Byte{0x5a});
     std::fill_n(g_bf_tmp_copy2.data(), copy_size, Byte{0x3c});
-    const Byte *const address = value.data();
-    const Byte *const copy = g_bf_tmp_copy1.data();
-    const std::size_t high_water = arena.high_water_mark();
+    const std::size_t working_high_water = working.high_water_mark();
+    const std::size_t persistent_high_water = value.arena().high_water_mark();
     const BigStackMark mark = save_stack();
     const int bn_length = g_bn_length;
     const int bf_length = g_bf_length;
     const int int_length = g_int_length;
 
-    const LDouble actual = bf_to_float(value);
+    const LDouble actual = value.to_float();
 
     EXPECT_EQ(input.expected, actual);
     EXPECT_EQ(std::signbit(input.expected), std::signbit(actual));
-    EXPECT_EQ(original, std::vector<Byte>(value.data(), value.data() + stride));
-    EXPECT_EQ(std::vector<Byte>(copy_size, 0x5a),
-        std::vector<Byte>(g_bf_tmp_copy1.data(), g_bf_tmp_copy1.data() + copy_size));
-    EXPECT_EQ(std::vector<Byte>(copy_size, 0x3c),
-        std::vector<Byte>(g_bf_tmp_copy2.data(), g_bf_tmp_copy2.data() + copy_size));
-
-    const BigFloat &source = value;
-    const LDouble member_result = source.to_float();
-
-    EXPECT_EQ(input.expected, member_result);
-    EXPECT_EQ(std::signbit(input.expected), std::signbit(member_result));
-    EXPECT_EQ(bytes, std::vector<Byte>(g_bf_tmp_copy1.data(), g_bf_tmp_copy1.data() + size));
+    EXPECT_EQ(original, value);
+    EXPECT_EQ(copy_index, g_bf_tmp_copy1.index());
     EXPECT_EQ(std::vector<Byte>(copy_size - size, 0x5a),
         std::vector<Byte>(g_bf_tmp_copy1.data() + size, g_bf_tmp_copy1.data() + copy_size));
     EXPECT_EQ(std::vector<Byte>(copy_size, 0x3c),
         std::vector<Byte>(g_bf_tmp_copy2.data(), g_bf_tmp_copy2.data() + copy_size));
-    EXPECT_EQ(original, std::vector<Byte>(value.data(), value.data() + stride));
-    EXPECT_EQ(address, value.data());
-    EXPECT_EQ(copy, g_bf_tmp_copy1.data());
-    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(working_high_water, working.high_water_mark());
+    EXPECT_EQ(persistent_high_water, value.arena().high_water_mark());
     EXPECT_EQ(mark, save_stack());
     EXPECT_EQ(bn_length, g_bn_length);
     EXPECT_EQ(bf_length, g_bf_length);
     EXPECT_EQ(int_length, g_int_length);
 }
 
-INSTANTIATE_TEST_SUITE_P(LayoutsIntegerLengthsAndInputs, TestBigFloatOutputInterface,
-    testing::Combine(testing::Values(4, 12, 60, 64, 708), testing::Values(1, 2, 4),
-        testing::Values(BigFloatOutputInput{{}, 0}, BigFloatOutputInput{{0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}, 1},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00}, -1},
-            BigFloatOutputInput{{0x00, 0x00, 0x40, 0x01, 0x00, 0x00, 0x00}, 1.25L},
-            BigFloatOutputInput{{0x00, 0x00, 0xc0, 0xfe, 0xff, 0x00, 0x00}, -1.25L},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x80, 0x00, 0xff, 0xff}, 0.5L},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x80, 0xff, 0xff, 0xff}, -0.5L},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00}, 255},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00}, 256},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0xff, 0x7f, 0x00, 0x00}, 32767},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00}, -32768},
-            BigFloatOutputInput{{0x00, 0x00, 0x40, 0x01, 0x00, 0x0c, 0x00}, std::ldexp(1.25L, 96)},
-            BigFloatOutputInput{{0x00, 0x00, 0xc0, 0xfe, 0xff, 0xf4, 0xff}, -std::ldexp(1.25L, -96)},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x01, 0x00, 0xb8, 0x0b}, std::numeric_limits<LDouble>::infinity()},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0xff, 0xff, 0xb8, 0x0b}, -std::numeric_limits<LDouble>::infinity()},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0x01, 0x00, 0x48, 0xf4}, 0.0L},
-            BigFloatOutputInput{{0x00, 0x00, 0x00, 0xff, 0xff, 0x48, 0xf4}, -0.0L})));
+INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigFloatOutputInterface,
+    testing::Combine(testing::Values(4, 12, 60, 64, 708),
+        testing::Values(BigFloatOutputInput{"0", 0}, BigFloatOutputInput{"7.5", 7.5L},
+            BigFloatOutputInput{"-7.5", -7.5L},
+            BigFloatOutputInput{"1e10000", std::numeric_limits<LDouble>::infinity()},
+            BigFloatOutputInput{"-1e10000", -std::numeric_limits<LDouble>::infinity()},
+            BigFloatOutputInput{"1e-10000", 0.0L}, BigFloatOutputInput{"-1e-10000", -0.0L})));
 
 TEST_F(TestBigFloatValue, assignsNativeScalarValues)
 {
@@ -707,17 +539,19 @@ TEST_F(TestBigFloatValue, hexDumpPrintsHighBitMantissaAndSignedExponents)
     }
 }
 
-TEST_F(TestBigFloatValue, importsEncodedBytesWithoutMachineFloatConversion)
+TEST_F(TestBigFloatValue, copiesValuesBelowMachineRangeBetweenArenas)
 {
-    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    BigFloat source{bf_arena(BigLifetime::TEMPORARY)};
-    str_to_bf(source, "-1.23456789012345678901234567890123456789e-400");
-    const std::vector<Byte> expected(source.data(), source.data() + size);
+    constexpr std::string_view TEXT{"-1.23456789012345678901234567890123456789e-10000"};
+    BigFloat source{bf_arena(BigLifetime::TEMPORARY), TEXT};
+    BigArena &working = bf_arena(BigLifetime::WORKING);
+    const BigFloat value{working, source};
 
-    const BigFloat value = BigFloat::from_legacy(source.data(), size);
-    std::fill_n(source.data(), size, Byte{0});
+    source = 0;
 
-    EXPECT_EQ(expected, encoded_value(value));
+    EXPECT_LT(value, BigFloat{0});
+    EXPECT_EQ(0.0L, value.to_float());
+    EXPECT_EQ(BigFloat{TEXT}, value);
+    EXPECT_EQ(&working, &value.arena());
 }
 
 struct BigFloatUnpackInput
@@ -779,42 +613,19 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndLifetimes, TestBigFloatUnpack,
 
 TEST_F(TestBigFloatValue, valueSurvivesArenaRewindAndReuse)
 {
-    // Borrow BigStack buffers here to test importing bytes across a real rewind.
-    const auto marker = save_stack();
-    const std::size_t size = static_cast<std::size_t>(g_bf_length + 2);
-    BigFloatPtr source = bf_stack().allocate_single();
-    BigFloat{"1.23456789012345678901234567890123456789"}.copy_to_legacy(source, size);
-    const BigFloat value = BigFloat::from_legacy(source, size);
-    const auto expected = encoded_value(value);
+    constexpr std::string_view TEXT{"1.23456789012345678901234567890123456789"};
+    BigArena &temporary = bf_arena(BigLifetime::TEMPORARY);
+    const BigStackMark marker = save_stack();
+    Byte *const borrowed = bf_stack().allocate_single();
+    const BigFloat value{temporary, TEXT};
 
     restore_stack(marker);
-    BigFloatPtr reused = bf_stack().allocate_single();
-    ASSERT_EQ(source, reused);
-    std::fill_n(reused, size, Byte{0xff});
+    Byte *const reused = bf_stack().allocate_single();
+    ASSERT_EQ(borrowed, reused);
+    std::fill_n(reused, temporary.block_size(), Byte{0xff});
 
-    EXPECT_EQ(expected, encoded_value(value));
-}
-
-TEST_F(TestBigFloatValue, exportedBytesAreIndependentOfTheValue)
-{
-    const BigFloat value{"-1.25"};
-    auto exported = encoded_value(value);
-
-    std::fill(exported.begin(), exported.end(), Byte{0});
-
-    EXPECT_EQ("-1.25", value.to_string());
-}
-
-TEST_F(TestBigFloatValue, exportDoesNotRequireAnActiveArena)
-{
-    const BigFloat value{"1.23456789012345678901234567890123456789e-400"};
-    const auto expected = encoded_value(value);
-    free_bf_vars();
-    std::vector<Byte> exported(expected.size());
-
-    value.copy_to_legacy(exported.data(), exported.size());
-
-    EXPECT_EQ(expected, exported);
+    EXPECT_EQ(BigFloat{TEXT}, value);
+    EXPECT_EQ(&temporary, &value.arena());
 }
 
 TEST_F(TestBigFloatValue, copiesDoNotShareWritableValueStorage)
@@ -831,7 +642,7 @@ TEST_F(TestBigFloatValue, copiesDoNotShareWritableValueStorage)
 TEST_F(TestBigFloatValue, copyingAndMovingRemainValidWithoutAnActiveArena)
 {
     BigFloat original{"1.23456789012345678901234567890123456789"};
-    const auto expected = encoded_value(original);
+    const BigFloat expected{original};
     free_bf_vars();
 
     const BigFloat copy{original};
@@ -840,23 +651,25 @@ TEST_F(TestBigFloatValue, copyingAndMovingRemainValidWithoutAnActiveArena)
     moved = std::move(original);
 
     init_bf_dec(40);
-    EXPECT_EQ(expected, encoded_value(copy));
-    EXPECT_EQ(expected, encoded_value(moved));
+    EXPECT_EQ(expected, copy);
+    EXPECT_EQ(expected, moved);
 }
 
 TEST_F(TestBigFloatValue, copyAssignmentUsesTheCurrentArenaLayout)
 {
     init_bf_dec(80);
     const BigFloat original{"1.23456789012345678901234567890123456789"};
-    const auto expected = encoded_value(original);
-    BigFloat assigned{2.5L};
+    const BigFloat expected{original};
+    BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
+    BigFloat assigned{persistent, 2.5L};
+    const std::size_t high_water = persistent.high_water_mark();
 
     assigned = original;
 
-    std::vector<Byte> exported(g_bf_length + 2);
-    assigned.copy_to_legacy(exported.data(), exported.size());
-    EXPECT_EQ(expected, exported);
-    EXPECT_EQ(expected, encoded_value(original));
+    EXPECT_EQ(expected, assigned);
+    EXPECT_EQ(expected, original);
+    EXPECT_EQ(&persistent, &assigned.arena());
+    EXPECT_EQ(high_water, persistent.high_water_mark());
 }
 
 TEST_F(TestBigFloatValue, destructionAfterContextResetReleasesStorage)
@@ -871,22 +684,6 @@ TEST_F(TestBigFloatValue, destructionAfterContextResetReleasesStorage)
     EXPECT_EQ("2.5", value.to_string());
 }
 
-TEST_F(TestBigFloatValue, legacyBorrowsAccessOwnedStorage)
-{
-    static_assert(std::is_same_v<decltype(std::declval<BigFloat &>().data()), BigFloatPtr>);
-    static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().data()), BigFloatConstPtr>);
-    BigFloat value{-1.25L};
-    const auto *before = std::as_const(value).data();
-    EXPECT_EQ(before, value.data());
-    EXPECT_EQ(encoded_value(value), std::vector<Byte>(before, before + g_bf_length + 2));
-
-    float_to_bf(value, 2.5L);
-
-    EXPECT_EQ(before, std::as_const(value).data());
-    EXPECT_EQ(BigFloat{2.5L}, value);
-    EXPECT_EQ(encoded_value(value), std::vector<Byte>(value.data(), value.data() + g_bf_length + 2));
-}
-
 TEST_F(TestBigFloatValue, movedFromValueCanBeReassigned)
 {
     BigFloat original{"-1.25"};
@@ -895,19 +692,6 @@ TEST_F(TestBigFloatValue, movedFromValueCanBeReassigned)
     original = moved;
 
     EXPECT_EQ("-1.25", original.to_string());
-}
-
-TEST_F(TestBigFloatValue, adaptersRejectNullAndUndersizedBuffers)
-{
-    const BigFloat value{"-1.25"};
-    std::vector<Byte> buffer(static_cast<std::size_t>(g_bf_length + 2), Byte{0x5a});
-    const auto unchanged = buffer;
-
-    EXPECT_THROW(BigFloat::from_legacy(nullptr, buffer.size()), std::invalid_argument);
-    EXPECT_THROW(BigFloat::from_legacy(buffer.data(), buffer.size() - 1), std::invalid_argument);
-    EXPECT_THROW(value.copy_to_legacy(nullptr, buffer.size()), std::invalid_argument);
-    EXPECT_THROW(value.copy_to_legacy(buffer.data(), buffer.size() - 1), std::invalid_argument);
-    EXPECT_EQ(unchanged, buffer);
 }
 
 TEST_F(TestBigFloatValue, rejectsNonfiniteScalarInputWithoutChangingTheValue)
@@ -1806,53 +1590,33 @@ INSTANTIATE_TEST_SUITE_P(PrecisionsAndValues, TestBigFloatAbs,
             "-1.2345678901234567890123456789e-400", "1.2345678901234567890123456789e400",
             "-1.2345678901234567890123456789e400")));
 
-TEST_P(TestBigFloatArithmetic, constMachineConversionRetainsLegacyResultsAndInputBytes)
-{
-    for (const char *text :
-        {"0", "7.5", "-7.5", "1.2345678901234567890123456789e-400", "-1.2345678901234567890123456789e-400",
-            "1.2345678901234567890123456789e400", "-1.2345678901234567890123456789e400"})
-    {
-        SCOPED_TRACE(text);
-        const BigFloat source{bf_arena(BigLifetime::PERSISTENT), text};
-        const auto original = encoded_value(source);
-        BigFloat legacy = BigFloat::from_legacy(original.data(), original.size());
-        const LDouble expected{bf_to_float(legacy)};
-
-        const LDouble actual{source.to_float()};
-
-        EXPECT_EQ(expected, actual);
-        EXPECT_EQ(std::signbit(expected), std::signbit(actual));
-        EXPECT_EQ(original, encoded_value(source));
-    }
-}
-
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatArithmetic, testing::Values(4, 32, 708));
 
-TEST_F(TestBigFloatValue, comparisonsUseNumericalValuesWithoutChangingOperands)
+class TestBigFloatOrdering : public TestBigFloatValue, public testing::WithParamInterface<std::tuple<int, int>>
 {
-    const BigFloat values[]{BigFloat{"-1e400"}, BigFloat{"-2"}, BigFloat{"-1e-400"}, BigFloat{0}, BigFloat{"1e-400"},
-        BigFloat{"1"}, BigFloat{"1.000000000000000000000000000001"}, BigFloat{"1e400"}};
+};
 
-    for (std::size_t i = 0; i < std::size(values); ++i)
-    {
-        for (std::size_t j = 0; j < std::size(values); ++j)
-        {
-            const auto left = encoded_value(values[i]);
-            const auto right = encoded_value(values[j]);
-            const BigFloat copy = values[j];
+TEST_P(TestBigFloatOrdering, comparisonsUseNumericalValuesWithoutChangingOperands)
+{
+    constexpr std::array<const char *, 8> ORDERED{
+        "-1e400", "-2", "-1e-400", "0", "1e-400", "1", "1.000000000000000000000000000001", "1e400"};
+    const auto [i, j] = GetParam();
+    const BigFloat left{ORDERED[i]};
+    const BigFloat right{ORDERED[j]};
+    const BigFloat original_left{left};
+    const BigFloat original_right{right};
 
-            EXPECT_EQ(i == j, values[i] == copy);
-            EXPECT_EQ(i != j, values[i] != copy);
-            EXPECT_EQ(i < j, values[i] < copy);
-            EXPECT_EQ(i <= j, values[i] <= copy);
-            EXPECT_EQ(i > j, values[i] > copy);
-            EXPECT_EQ(i >= j, values[i] >= copy);
-            EXPECT_EQ(left, encoded_value(values[i]));
-            EXPECT_EQ(right, encoded_value(values[j]));
-            EXPECT_EQ(right, encoded_value(copy));
-        }
-    }
+    EXPECT_EQ(i == j, left == right);
+    EXPECT_EQ(i != j, left != right);
+    EXPECT_EQ(i < j, left < right);
+    EXPECT_EQ(i <= j, left <= right);
+    EXPECT_EQ(i > j, left > right);
+    EXPECT_EQ(i >= j, left >= right);
+    EXPECT_EQ(original_left, left);
+    EXPECT_EQ(original_right, right);
 }
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatOrdering, testing::Combine(testing::Range(0, 8), testing::Range(0, 8)));
 
 class TestBigFloatPairStorage : public TestBigFloatValue,
                                 public testing::WithParamInterface<std::tuple<int, BigLifetime>>
@@ -2445,11 +2209,8 @@ TEST_P(TestBigFloatParse, parsesTheSpecifiedText)
     const std::string_view text{GetParam().storage.data(), GetParam().length};
     const BigStackMark marker = save_stack();
     {
-        BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
-
-        str_to_bf(value, text);
-
-        EXPECT_EQ(GetParam().expected, bf_to_float(value));
+        const BigFloat value{bf_arena(BigLifetime::TEMPORARY), text};
+        EXPECT_EQ(GetParam().expected, value.to_float());
     }
     EXPECT_EQ(marker, save_stack());
 }
