@@ -935,14 +935,14 @@ void TestBigNumJulia::SetUp()
 
 TEST_F(TestBigNumJulia, affineSeedsKeepPreciseFixedParameterAndWideSquareCaches)
 {
-    float_to_bf(g_bf_x_min, -2);
-    float_to_bf(g_bf_x_max, 2);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_x_3rd, -1.5);
-    float_to_bf(g_bf_y_3rd, -0.75);
-    str_to_bf(g_bf_params[0], "0.25000000000000000001");
-    str_to_bf(g_bf_params[1], "-0.12500000000000000001");
+    g_bf_x_min = -2;
+    g_bf_x_max = 2;
+    g_bf_y_min = -1;
+    g_bf_y_max = 1;
+    g_bf_x_3rd = -1.5;
+    g_bf_y_3rd = -0.75;
+    g_bf_params[0] = BigFloat{"0.25000000000000000001"};
+    g_bf_params[1] = BigFloat{"-0.12500000000000000001"};
     const BigNum parameter_x{g_bf_params[0]};
     const BigNum parameter_y{g_bf_params[1]};
     g_magnitude_limit = 1024;
@@ -985,12 +985,12 @@ TEST_F(TestBigNumJulia, affineSeedsKeepPreciseFixedParameterAndWideSquareCaches)
 
 TEST_F(TestBigNumJulia, viewportTransitionRestoresJuliaParameterAndKeepsBailoutEquality)
 {
-    float_to_bf(g_bf_x_min, 1);
-    float_to_bf(g_bf_x_max, 3);
-    float_to_bf(g_bf_x_3rd, 1);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_y_3rd, -1);
+    g_bf_x_min = 1;
+    g_bf_x_max = 3;
+    g_bf_x_3rd = 1;
+    g_bf_y_min = -1;
+    g_bf_y_max = 1;
+    g_bf_y_3rd = -1;
     clear_bf(g_bf_params[0]);
     clear_bf(g_bf_params[1]);
     g_col = 128;

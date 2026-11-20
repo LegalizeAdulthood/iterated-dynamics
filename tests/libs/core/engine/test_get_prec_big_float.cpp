@@ -78,12 +78,12 @@ protected:
 
     void set_corners(const ImageRegion &region)
     {
-        float_to_bf(g_bf_x_min, region.m_min.x);
-        float_to_bf(g_bf_x_max, region.m_max.x);
-        float_to_bf(g_bf_y_min, region.m_min.y);
-        float_to_bf(g_bf_y_max, region.m_max.y);
-        float_to_bf(g_bf_x_3rd, region.m_3rd.x);
-        float_to_bf(g_bf_y_3rd, region.m_3rd.y);
+        g_bf_x_min = region.m_min.x;
+        g_bf_x_max = region.m_max.x;
+        g_bf_y_min = region.m_min.y;
+        g_bf_y_max = region.m_max.y;
+        g_bf_x_3rd = region.m_3rd.x;
+        g_bf_y_3rd = region.m_3rd.y;
     }
 
     ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::MANDEL};
@@ -104,12 +104,12 @@ TEST_F(TestBigFloatViewportPrecision, retainsResolutionAndMagnificationDigitSele
     EXPECT_EQ(4, get_prec_bf(ResolutionFlag::MAX));
     EXPECT_EQ(stack, save_stack());
 
-    str_to_bf(g_bf_x_min, "-2e-40");
-    str_to_bf(g_bf_x_max, "2e-40");
-    str_to_bf(g_bf_x_3rd, "-2e-40");
-    str_to_bf(g_bf_y_min, "-1.5e-40");
-    str_to_bf(g_bf_y_max, "1.5e-40");
-    str_to_bf(g_bf_y_3rd, "-1.5e-40");
+    g_bf_x_min = BigFloat{"-2e-40"};
+    g_bf_x_max = BigFloat{"2e-40"};
+    g_bf_x_3rd = BigFloat{"-2e-40"};
+    g_bf_y_min = BigFloat{"-1.5e-40"};
+    g_bf_y_max = BigFloat{"1.5e-40"};
+    g_bf_y_3rd = BigFloat{"-1.5e-40"};
 
     EXPECT_EQ(43, get_prec_bf_mag());
     EXPECT_EQ(43, get_prec_bf(ResolutionFlag::CURRENT));

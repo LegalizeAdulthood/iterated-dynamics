@@ -186,10 +186,10 @@ int main()
     init_bf_dec(40);
     init_big_pi();
     measure_values<BigFloat>("bf_scalar", "bf_complex_power");
-    float_to_bf(g_old_z_bf.x, 0.25);
-    float_to_bf(g_old_z_bf.y, 0.125);
-    float_to_bf(g_param_z_bf.x, -0.2);
-    float_to_bf(g_param_z_bf.y, 0.4);
+    g_old_z_bf.x = 0.25;
+    g_old_z_bf.y = 0.125;
+    g_param_z_bf.x = -0.2;
+    g_param_z_bf.y = 0.4;
     square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
     square_bf(g_tmp_sqr_y_bf, g_old_z_bf.y);
     measure("bf_julia_orbit", 10000, [] { s_result = julia_orbit_bf() != 0; });

@@ -108,18 +108,18 @@ static int get_prec_dbl(const ResolutionFlag flag)
 void fractal_float_to_bf()
 {
     init_bf_dec(get_prec_dbl(ResolutionFlag::CURRENT));
-    float_to_bf(g_bf_x_min, g_image_region.m_min.x);
-    float_to_bf(g_bf_x_max, g_image_region.m_max.x);
-    float_to_bf(g_bf_y_min, g_image_region.m_min.y);
-    float_to_bf(g_bf_y_max, g_image_region.m_max.y);
-    float_to_bf(g_bf_x_3rd, g_image_region.m_3rd.x);
-    float_to_bf(g_bf_y_3rd, g_image_region.m_3rd.y);
+    g_bf_x_min = g_image_region.m_min.x;
+    g_bf_x_max = g_image_region.m_max.x;
+    g_bf_y_min = g_image_region.m_min.y;
+    g_bf_y_max = g_image_region.m_max.y;
+    g_bf_x_3rd = g_image_region.m_3rd.x;
+    g_bf_y_3rd = g_image_region.m_3rd.y;
 
     for (int i = 0; i < MAX_PARAMS; i++)
     {
         if (type_has_param(g_fractal_type, i))
         {
-            float_to_bf(g_bf_params[i], g_params[i]);
+            g_bf_params[i] = g_params[i];
         }
     }
     g_calc_status = CalcStatus::PARAMS_CHANGED;

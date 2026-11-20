@@ -91,7 +91,7 @@ protected:
         const double values[]{-2.0, 2.0, -1.5, 1.5, -1.75, -1.25};
         for (std::size_t i = 0; i < std::size(corners); ++i)
         {
-            float_to_bf(*corners[i], values[i]);
+            *corners[i] = values[i];
         }
     }
 

@@ -317,7 +317,7 @@ void TestArenaPrecisionLimit::SetUp()
     init_bf_length(GetParam().length);
     ASSERT_EQ(GetParam().math, g_bf_math);
     ASSERT_EQ(GetParam().length, g_bn_length);
-    float_to_bf(g_bf_x_min, 1.25);
+    g_bf_x_min = 1.25;
 }
 
 TEST_P(TestArenaPrecisionLimit, rejectsRequestsPastTheBackendLimit)
@@ -456,7 +456,7 @@ protected:
 void TestFreedArena::SetUp()
 {
     TestBigFloat::SetUp();
-    float_to_bf(g_bf_x_min, 1.25);
+    g_bf_x_min = 1.25;
     bf_stack().allocate_single();
     free_bf_vars();
 }
@@ -499,7 +499,7 @@ TEST_F(TestFreedArena, initializesFreshStorageAfterRejectedOperations)
 TEST_F(TestBigFloat, loweringPrecisionPreservesCornersWithoutOverrunningArena)
 {
     init_bf_dec(1200);
-    float_to_bf(g_bf_x_min, 1.25);
+    g_bf_x_min = 1.25;
     init_bf_dec(20);
     EXPECT_EQ(1.25L, bf_to_float(g_bf_x_min));
     EXPECT_EQ(BigStackMark{}, save_stack());

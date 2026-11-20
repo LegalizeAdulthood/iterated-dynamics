@@ -772,7 +772,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     {
         for (int k = 0; k < MAX_PARAMS; k++)
         {
-            float_to_bf(g_bf_params[k], g_params[k]);
+            g_bf_params[k] = g_params[k];
         }
     }
     g_use_center_mag = true;
@@ -1069,7 +1069,7 @@ static CmdArgFlags cmd_corners(const Command &cmd)
         {
             for (int k = 0; k < MAX_PARAMS; k++)
             {
-                float_to_bf(g_bf_params[k], g_params[k]);
+                g_bf_params[k] = g_params[k];
             }
         }
 
@@ -1113,7 +1113,7 @@ static CmdArgFlags cmd_corners(const Command &cmd)
             // decimal setting
             for (int k = 0; k < MAX_PARAMS; k++)
             {
-                float_to_bf(g_bf_params[k], g_params[k]);
+                g_bf_params[k] = g_params[k];
             }
 
             // xx3rd = xxmin = floatval[0];
@@ -2120,7 +2120,7 @@ static CmdArgFlags cmd_params(const Command &cmd)
     {
         for (int k = 0; k < MAX_PARAMS; k++)
         {
-            float_to_bf(g_bf_params[k], g_params[k]);
+            g_bf_params[k] = g_params[k];
         }
     }
     return CmdArgFlags::FRACTAL_PARAM;
@@ -3271,14 +3271,9 @@ void set_3d_defaults()
 // copy a big number from a string, up to slash
 static int get_bf(BigFloat &bf, const char *cur_arg)
 {
-    if (const char *s = std::strchr(cur_arg, '/'); s)
-    {
-        str_to_bf(bf, std::string_view{cur_arg, static_cast<std::size_t>(s - cur_arg)});
-    }
-    else
-    {
-        str_to_bf(bf, cur_arg);
-    }
+    const std::string_view text{cur_arg};
+    const BigFloat parsed{text.substr(0, text.find('/'))};
+    bf = parsed;
     return 0;
 }
 

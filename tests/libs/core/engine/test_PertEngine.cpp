@@ -588,8 +588,7 @@ void record_deep_reference_bf(const BFComplex &center, BFComplex &z)
 {
     BigStackSaver saved;
     BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat scale{bf_arena(BigLifetime::TEMPORARY)};
-    str_to_bf(scale, "1e-400");
+    BigFloat scale{bf_arena(BigLifetime::TEMPORARY), "1e-400"};
     offset = -2;
     offset = center.x - offset;
     offset /= scale;
@@ -761,7 +760,7 @@ void TestPerturbationPixels::initialize_deep_frame()
     m_big_float = true;
     g_bf_math = BFMathType::BIG_FLT;
     BFComplex &center{m_engine.initialize_frame_bf({1e-40, 0.0}, {0.0, 1e-40})};
-    str_to_bf(center.x, "0.25");
+    center.x = BigFloat{"0.25"};
     clear_bf(center.y);
     m_engine.set_glitch_tolerance(2.0);
 }
@@ -861,7 +860,7 @@ TEST_F(TestPerturbationPixels, finishingReleasesReferenceWorkingStorageAndAllows
     for (int frame = 0; frame < 2; ++frame)
     {
         BFComplex &center{m_engine.initialize_frame_bf({1e-40, 0.0}, {0.0, 1e-40})};
-        float_to_bf(center.x, 0.25);
+        center.x = 0.25;
         clear_bf(center.y);
         EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
         EXPECT_EQ(1, m_engine.reference_count());
@@ -883,7 +882,7 @@ TEST_F(TestPerturbationPixels, failedInitializationReleasesStorageAndPreservesTh
     g_bf_math = BFMathType::BIG_FLT;
     const auto initial_stack{save_stack()};
     BFComplex &center{m_engine.initialize_frame_bf({1e-40, 0.0}, {0.0, 1e-40})};
-    float_to_bf(center.x, 0.25);
+    center.x = 0.25;
     clear_bf(center.y);
     m_specific.pert_ref_bf = fail_reference_bf;
 
@@ -896,7 +895,7 @@ TEST_F(TestPerturbationPixels, failedInitializationReleasesStorageAndPreservesTh
 
     m_specific.pert_ref_bf = mandel_ref_pt_bf;
     BFComplex &next_center{m_engine.initialize_frame_bf({1e-40, 0.0}, {0.0, 1e-40})};
-    float_to_bf(next_center.x, 0.25);
+    next_center.x = 0.25;
     clear_bf(next_center.y);
     EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
     EXPECT_EQ(1, m_engine.reference_count());
@@ -1038,8 +1037,8 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
     }
     else if (input.math == BFMathType::BIG_FLT)
     {
-        float_to_bf(g_param_z_bf.x, 2.0);
-        float_to_bf(g_param_z_bf.y, input.imag);
+        g_param_z_bf.x = 2.0;
+        g_param_z_bf.y = input.imag;
         clear_bf(g_old_z_bf.x);
         clear_bf(g_old_z_bf.y);
         square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
@@ -1198,12 +1197,12 @@ TEST_F(TestJuliaZPowerPeriodicity, nativeBigFloatDetectsAndHighlightsCycles)
     ASSERT_TRUE(select_alternate_math_dispatch());
     clear_bf(g_bf_params[0]);
     clear_bf(g_bf_params[1]);
-    float_to_bf(g_bf_x_min, 0);
-    float_to_bf(g_bf_x_max, 1);
-    float_to_bf(g_bf_x_3rd, 0);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 0);
-    float_to_bf(g_bf_y_3rd, -1);
+    g_bf_x_min = 0;
+    g_bf_x_max = 1;
+    g_bf_x_3rd = 0;
+    g_bf_y_min = -1;
+    g_bf_y_max = 0;
+    g_bf_y_3rd = -1;
     g_image_region = ImageRegion{{0, -1}, {1, 0}, {0, -1}};
     fill_pixel_grid();
     g_col = g_row = 0;
@@ -1262,12 +1261,12 @@ TEST_F(TestBigFloatMandelbrot, directAlternativePreservesAffineCoordinatesSeedsA
     g_logical_screen = LogicalScreen{257, 513, 0, 0, 256, 512};
     g_magnitude_limit = 1024;
     set_initial_offset({0.125, -0.25});
-    float_to_bf(g_bf_x_min, -2);
-    float_to_bf(g_bf_x_max, 2);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_x_3rd, -1.5);
-    float_to_bf(g_bf_y_3rd, -0.75);
+    g_bf_x_min = -2;
+    g_bf_x_max = 2;
+    g_bf_y_min = -1;
+    g_bf_y_max = 1;
+    g_bf_x_3rd = -1.5;
+    g_bf_y_3rd = -0.75;
 
     ASSERT_TRUE(mandel_per_image_bf());
     ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
@@ -1334,12 +1333,12 @@ void PerturbationIterationTest::initialize_reference(
             }
             else
             {
-                float_to_bf(g_close_enough_bf, g_close_enough);
+                g_close_enough_bf = g_close_enough;
             }
         }
         BFComplex &center_bf{m_engine.initialize_frame_bf({half_width, 0.0}, {0.0, half_height})};
-        float_to_bf(center_bf.x, center.real());
-        float_to_bf(center_bf.y, center.imag());
+        center_bf.x = center.real();
+        center_bf.y = center.imag();
     }
     else
     {
@@ -1858,8 +1857,8 @@ TEST_F(TestPerturbationPixels, finishingPartialReferenceReleasesPersistentBigFlo
     for (int frame = 0; frame < 2; ++frame)
     {
         BFComplex &center{m_engine.initialize_frame_bf({}, {})};
-        float_to_bf(center.x, 0.125);
-        float_to_bf(center.y, 0.125);
+        center.x = 0.125;
+        center.y = 0.125;
         ASSERT_FALSE(m_engine.initialize_pixel_strategy());
         EXPECT_EQ(save_stack(), stack);
 
@@ -8819,10 +8818,10 @@ void TestDeepPeriodicity::SetUp()
     }
     else
     {
-        float_to_bf(g_close_enough_bf, GetParam().tolerance);
+        g_close_enough_bf = GetParam().tolerance;
     }
     BFComplex &center{m_engine.initialize_frame_bf({1e-40, 0.0}, {})};
-    float_to_bf(center.x, -2.0);
+    center.x = -2.0;
     clear_bf(center.y);
     m_engine.set_glitch_tolerance(GetParam().replace_reference ? 2.0 : 0.0);
     g_old_color_iter = 0;
@@ -8950,7 +8949,7 @@ TEST_F(TestPerturbationPixels, subDoublePeriodicityToleranceStillDetectsExactCyc
     }
     m_big_float = true;
     ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
-    str_to_bf(g_close_enough_bf, "1e-350");
+    g_close_enough_bf = BigFloat{"1e-350"};
     g_periodicity_check = 1;
     g_first_saved_and = 1;
     g_periodicity_next_saved_incr = 1;
@@ -9715,12 +9714,12 @@ void TestPerturbationFrameCoordinates::SetUp()
     {
         init_bf_dec(60);
         m_big_float = true;
-        float_to_bf(g_bf_x_min, g_image_region.m_min.x);
-        float_to_bf(g_bf_x_max, g_image_region.m_max.x);
-        float_to_bf(g_bf_y_min, g_image_region.m_min.y);
-        float_to_bf(g_bf_y_max, g_image_region.m_max.y);
-        float_to_bf(g_bf_x_3rd, region.m_3rd.x);
-        float_to_bf(g_bf_y_3rd, region.m_3rd.y);
+        g_bf_x_min = g_image_region.m_min.x;
+        g_bf_x_max = g_image_region.m_max.x;
+        g_bf_y_min = g_image_region.m_min.y;
+        g_bf_y_max = g_image_region.m_max.y;
+        g_bf_x_3rd = region.m_3rd.x;
+        g_bf_y_3rd = region.m_3rd.y;
     }
     g_std_calc_mode = input.context.pass;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
@@ -9869,8 +9868,8 @@ void BurningShipPerturbationTest::compare_native_pixel(
     if (m_use_big_float)
     {
         g_dispatch.set_per_pixel(mandel_per_pixel_bf);
-        float_to_bf(g_bf_x_min, point.real());
-        float_to_bf(g_bf_y_max, point.imag());
+        g_bf_x_min = point.real();
+        g_bf_y_max = point.imag();
         clear_bf(g_delta_x_bf);
         clear_bf(g_delta_y_bf);
         clear_bf(g_delta2_x_bf);
@@ -10396,9 +10395,9 @@ void TestShipPassBailout::SetUp()
     {
         init_bf_dec(60);
         m_big_float = true;
-        float_to_bf(g_bf_x_min, 1.0);
-        float_to_bf(g_bf_x_max, 1.0);
-        float_to_bf(g_bf_x_3rd, 1.0);
+        g_bf_x_min = 1.0;
+        g_bf_x_max = 1.0;
+        g_bf_x_3rd = 1.0;
         clear_bf(g_bf_y_min);
         clear_bf(g_bf_y_max);
         clear_bf(g_bf_y_3rd);
@@ -11004,10 +11003,10 @@ void TestSignedIntegerOrbit::SetUp()
     m_native_parameter = {GetParam().parameter.real(), GetParam().parameter.imag()};
     if (GetParam().big_float)
     {
-        float_to_bf(g_param_z_bf.x, GetParam().parameter.real());
-        float_to_bf(g_param_z_bf.y, GetParam().parameter.imag());
-        float_to_bf(g_old_z_bf.x, GetParam().seed.real());
-        float_to_bf(g_old_z_bf.y, GetParam().seed.imag());
+        g_param_z_bf.x = GetParam().parameter.real();
+        g_param_z_bf.y = GetParam().parameter.imag();
+        g_old_z_bf.x = GetParam().seed.real();
+        g_old_z_bf.y = GetParam().seed.imag();
     }
 }
 
@@ -11096,9 +11095,9 @@ TEST_P(TestSignedSubDoublePower, resolvesNearZeroInputAfterReferenceReplacement)
 {
     BFComplex parameter{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    float_to_bf(parameter.x, 0.125);
+    parameter.x = 0.125;
     clear_bf(parameter.y);
-    int_to_bf(value.x, 1);
+    value.x = 1;
     clear_bf(value.y);
     m_engine.begin_orbit_bf(parameter, value, 0);
     for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
@@ -11108,7 +11107,7 @@ TEST_P(TestSignedSubDoublePower, resolvesNearZeroInputAfterReferenceReplacement)
     ASSERT_EQ(1, m_engine.orbit_iteration());
     m_engine.finish_orbit();
     const int references{m_engine.reference_count()};
-    str_to_bf(value.x, "1e-40");
+    value.x = BigFloat{"1e-40"};
     copy_bf(g_param_z_bf.x, parameter.x);
     copy_bf(g_param_z_bf.y, parameter.y);
     copy_bf(g_old_z_bf.x, value.x);
@@ -11180,7 +11179,7 @@ void TestZeroPowerSeed::SetUp()
     // Exact zero must retain the reference left by the underflowed seed.
     if (GetParam().underflowed_reference)
     {
-        str_to_bf(m_value.x, "1e-400");
+        m_value.x = BigFloat{"1e-400"};
         m_engine.begin_orbit_bf(*m_center, m_value, 0);
         for (int call = 0; call < 20 && m_engine.orbit_iteration() == 0; ++call)
         {
@@ -11205,7 +11204,7 @@ TEST_P(TestZeroPowerSeed, distinguishesExactZeroFromUnderflowedReference)
     }
     else
     {
-        str_to_bf(m_value.x, "1e-400");
+        m_value.x = BigFloat{"1e-400"};
     }
 
     m_engine.begin_orbit_bf(*m_center, m_value, 0);
@@ -11297,12 +11296,12 @@ void TestFrameIntegerPower::SetUp()
     {
         init_bf_dec(60);
         m_big_float = true;
-        float_to_bf(g_bf_x_min, 0.875);
-        float_to_bf(g_bf_x_max, 0.875);
-        float_to_bf(g_bf_x_3rd, 0.875);
-        float_to_bf(g_bf_y_min, 0.000125);
-        float_to_bf(g_bf_y_max, 0.000125);
-        float_to_bf(g_bf_y_3rd, 0.000125);
+        g_bf_x_min = 0.875;
+        g_bf_x_max = 0.875;
+        g_bf_x_3rd = 0.875;
+        g_bf_y_min = 0.000125;
+        g_bf_y_max = 0.000125;
+        g_bf_y_3rd = 0.000125;
     }
     g_c_exponent = GetParam().exponent;
     g_params[2] = GetParam().exponent;
@@ -11390,10 +11389,10 @@ void ComplexPerturbationContinuationTest::check_orbit(
     ValueSaver saved_parameter{g_float_param, &native_parameter};
     if (m_use_big_float)
     {
-        float_to_bf(g_param_z_bf.x, parameter.real());
-        float_to_bf(g_param_z_bf.y, parameter.imag());
-        float_to_bf(g_old_z_bf.x, seed.real());
-        float_to_bf(g_old_z_bf.y, seed.imag());
+        g_param_z_bf.x = parameter.real();
+        g_param_z_bf.y = parameter.imag();
+        g_old_z_bf.x = seed.real();
+        g_old_z_bf.y = seed.imag();
     }
     std::complex<double> expected{seed};
     m_engine.begin_orbit(parameter, seed, 0);
@@ -11595,12 +11594,12 @@ void TestComplexPowerFrame::SetUp()
     g_image_region = ImageRegion{{0.125, 0.0625}, {0.125, 0.0625}, {0.125, 0.0625}};
     if (GetParam().big_float)
     {
-        float_to_bf(g_bf_x_min, 0.125);
-        float_to_bf(g_bf_x_max, 0.125);
-        float_to_bf(g_bf_x_3rd, 0.125);
-        float_to_bf(g_bf_y_min, 0.0625);
-        float_to_bf(g_bf_y_max, 0.0625);
-        float_to_bf(g_bf_y_3rd, 0.0625);
+        g_bf_x_min = 0.125;
+        g_bf_x_max = 0.125;
+        g_bf_x_3rd = 0.125;
+        g_bf_y_min = 0.0625;
+        g_bf_y_max = 0.0625;
+        g_bf_y_3rd = 0.0625;
     }
     g_calc_status = CalcStatus::PARAMS_CHANGED;
 }
@@ -11718,9 +11717,9 @@ void TestSubDoublePowerBranch::SetUp()
         std::destroy_at(&m_exponent);
         ::new (&m_exponent) BFComplex{std::move(value)};
     }
-    float_to_bf(m_exponent.x, 0.5);
+    m_exponent.x = 0.5;
     clear_bf(m_exponent.y);
-    int_to_bf(m_value.x, -1);
+    m_value.x = BigFloat{"-1"};
     // Retain the positive branch's reference when crossing below the cut.
     ASSERT_NO_FATAL_FAILURE(compare_branch(1));
 }
@@ -11736,7 +11735,7 @@ void TestSubDoublePowerBranch::TearDown()
 
 void TestSubDoublePowerBranch::compare_branch(const int sign)
 {
-    str_to_bf(m_value.y, sign > 0 ? "1e-400" : "-1e-400");
+    m_value.y = BigFloat{sign > 0 ? "1e-400" : "-1e-400"};
     EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(bf_to_float(m_value.x)));
     EXPECT_EQ(sign, sign_bf(m_value.y));
     EXPECT_NEAR(std::acos(-1.0), static_cast<double>(bf_to_float(g_bf_pi)), 1e-12);
@@ -11872,7 +11871,7 @@ TEST_F(TestPrecisePerturbationContinuation, preciseReferenceReplacementYieldsWit
     BFComplex parameter{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
-    float_to_bf(parameter.x, 0.25);
+    parameter.x = 0.25;
     clear_bf(parameter.y);
     copy_bf(value.x, parameter.x);
     clear_bf(value.y);
@@ -11881,11 +11880,11 @@ TEST_F(TestPrecisePerturbationContinuation, preciseReferenceReplacementYieldsWit
     {
     }
     m_engine.finish_orbit();
-    float_to_bf(parameter.x, 0.125);
-    float_to_bf(parameter.y, 0.0625);
-    float_to_bf(value.x, 0.03125);
-    float_to_bf(value.y, -0.0625);
-    float_to_bf(offset, 1e-40);
+    parameter.x = 0.125;
+    parameter.y = 0.0625;
+    value.x = 0.03125;
+    value.y = -0.0625;
+    offset = 1e-40;
     add_a_bf(parameter.x, offset);
     add_a_bf(value.x, offset);
     s_perturbation_orbit.clear();
@@ -11932,14 +11931,14 @@ TEST_F(TestPerturbationPixels, preciseContinuationPreservesSubDoubleParameterAnd
     m_big_float = true;
     g_max_iterations = 4;
     BFComplex &center{m_engine.initialize_frame_bf({}, {})};
-    float_to_bf(center.x, 0.25);
+    center.x = 0.25;
     clear_bf(center.y);
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
     BigStackSaver saved;
     BFComplex parameter{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
-    float_to_bf(parameter.x, 0.25);
+    parameter.x = 0.25;
     clear_bf(parameter.y);
     copy_bf(value.x, parameter.x);
     clear_bf(value.y);
@@ -11948,7 +11947,7 @@ TEST_F(TestPerturbationPixels, preciseContinuationPreservesSubDoubleParameterAnd
     {
     }
     m_engine.finish_orbit();
-    float_to_bf(offset, 1e-40);
+    offset = 1e-40;
     const int references{m_engine.reference_count()};
     add_a_bf(parameter.x, offset);
     add_a_bf(value.x, offset);
@@ -12014,10 +12013,10 @@ void SynchronousPerturbationTest::prepare(
     initialize_reference({-0.5, 0.0}, 2.0, 1.5);
     if (m_use_big_float)
     {
-        float_to_bf(g_bf_x_min, region.m_min.x);
-        float_to_bf(g_bf_x_max, region.m_max.x);
-        float_to_bf(g_bf_y_min, region.m_min.y);
-        float_to_bf(g_bf_y_max, region.m_max.y);
+        g_bf_x_min = region.m_min.x;
+        g_bf_x_max = region.m_max.x;
+        g_bf_y_min = region.m_min.y;
+        g_bf_y_max = region.m_max.y;
         copy_bf(g_bf_x_3rd, g_bf_x_min);
         copy_bf(g_bf_y_3rd, g_bf_y_min);
     }
@@ -12588,8 +12587,8 @@ void TestShipOrbitOutput::SetUp()
     g_old_z = g_init;
     if (GetParam().big_float)
     {
-        float_to_bf(g_param_z_bf.x, point.real());
-        float_to_bf(g_param_z_bf.y, point.imag());
+        g_param_z_bf.x = point.real();
+        g_param_z_bf.y = point.imag();
         copy_bf(g_old_z_bf.x, g_param_z_bf.x);
         copy_bf(g_old_z_bf.y, g_param_z_bf.y);
     }
@@ -12636,12 +12635,11 @@ TEST_F(TestPerturbationPixels, highPrecisionInitialOffsetPreservesCancellation)
     m_big_float = true;
     g_bf_math = BFMathType::BIG_FLT;
     BFComplex &center{m_engine.initialize_frame_bf({}, {})};
-    float_to_bf(center.x, 0.5);
+    center.x = 0.5;
     clear_bf(center.y);
     {
         BigStackSaver saved;
-        BigFloat delta{bf_arena(BigLifetime::TEMPORARY)};
-        float_to_bf(delta, 1e-40);
+        BigFloat delta{bf_arena(BigLifetime::TEMPORARY), 1e-40};
         add_a_bf(center.x, delta);
     }
     m_specific.pert_pt = record_perturbation_orbit;
@@ -12738,13 +12736,13 @@ void TestPreciseBailoutBoundary::SetUp()
     const std::complex<double> half_horizontal{reference_mode != 0 && !boundary.imaginary ? offset : 0.0, 0.0};
     const std::complex<double> half_vertical{0.0, reference_mode != 0 && boundary.imaginary ? offset : 0.0};
     BFComplex &center{m_engine.initialize_frame_bf(half_horizontal, half_vertical)};
-    float_to_bf(center.x, boundary.point.x);
-    float_to_bf(center.y, boundary.point.y);
+    center.x = boundary.point.x;
+    center.y = boundary.point.y;
     if (reference_mode == 0)
     {
         BigStackSaver saved;
         BigFloat delta{bf_arena(BigLifetime::TEMPORARY)};
-        float_to_bf(delta, offset);
+        delta = offset;
         add_a_bf(boundary.imaginary ? center.y : center.x, delta);
     }
 
@@ -12752,9 +12750,9 @@ void TestPreciseBailoutBoundary::SetUp()
         BigStackSaver saved;
         BFComplex coordinate{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
         BigFloat delta{bf_arena(BigLifetime::TEMPORARY)};
-        float_to_bf(coordinate.x, boundary.point.x);
-        float_to_bf(coordinate.y, boundary.point.y);
-        float_to_bf(delta, offset);
+        coordinate.x = boundary.point.x;
+        coordinate.y = boundary.point.y;
+        delta = offset;
         add_a_bf(boundary.imaginary ? coordinate.y : coordinate.x, delta);
         m_expected = {static_cast<double>(bf_to_float(coordinate.x)), static_cast<double>(bf_to_float(coordinate.y))};
     }
@@ -12805,12 +12803,12 @@ void TestPreciseMandelBoundary::SetUp()
     m_big_float = true;
     g_bf_math = BFMathType::BIG_FLT;
     BFComplex &center{m_engine.initialize_frame_bf({}, {})};
-    float_to_bf(center.x, -2.0);
+    center.x = -2.0;
     clear_bf(center.y);
     {
         BigStackSaver saved;
         BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
-        float_to_bf(offset, sign * 1e-40);
+        offset = sign * 1e-40;
         add_a_bf(center.x, offset);
     }
 
@@ -12864,14 +12862,14 @@ TEST_F(TestPerturbationPixels, highPrecisionFixedOrbitPreservesSmallParameterOff
     m_big_float = true;
     g_bf_math = BFMathType::BIG_FLT;
     BFComplex &center{m_engine.initialize_frame_bf({}, {})};
-    float_to_bf(center.x, 0.5);
-    float_to_bf(center.y, -0.125);
+    center.x = 0.5;
+    center.y = -0.125;
     m_specific.pert_ref_bf = [](const BFComplex &parameter, BFComplex &z)
     {
         BigStackSaver saved;
         BFComplex displacement{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-        float_to_bf(displacement.x, 0.25);
-        float_to_bf(displacement.y, 0.125);
+        displacement.x = 0.25;
+        displacement.y = 0.125;
         sub_bf(displacement.x, z.x, displacement.x);
         sub_bf(displacement.y, z.y, displacement.y);
         s_reference_coordinates.emplace_back(bf_to_float(displacement.x), bf_to_float(displacement.y));
@@ -12900,8 +12898,8 @@ TEST_F(TestPerturbationPixels, deepAffineFramePreservesBothBasisVectors)
     {
         BigStackSaver saved;
         BigFloat delta{bf_arena(BigLifetime::TEMPORARY)};
-        float_to_bf(value, center);
-        float_to_bf(delta, offset);
+        value = center;
+        delta = offset;
         add_a_bf(value, delta);
     };
     set_offset(g_bf_x_min, 0.25, -3e-40);
@@ -13172,12 +13170,12 @@ void TestFixedPassColors::render(const PerturbationMode mode)
     {
         init_bf_dec(60);
         m_big_float = true;
-        float_to_bf(g_bf_x_min, -0.5);
-        float_to_bf(g_bf_x_max, 0.5);
-        float_to_bf(g_bf_x_3rd, -0.5);
-        float_to_bf(g_bf_y_min, 0.0);
-        float_to_bf(g_bf_y_max, 0.5);
-        float_to_bf(g_bf_y_3rd, 0.0);
+        g_bf_x_min = -0.5;
+        g_bf_x_max = 0.5;
+        g_bf_x_3rd = -0.5;
+        g_bf_y_min = 0.0;
+        g_bf_y_max = 0.5;
+        g_bf_y_3rd = 0.0;
     }
     StandardFractal calculation;
     calculation.resume();
@@ -13378,10 +13376,10 @@ void TestInvertedDeepZoom::SetUp()
     init_bf_dec(60);
     m_big_float = true;
     g_bf_math = BFMathType::BIG_FLT;
-    str_to_bf(g_bf_x_min, "1.4999999999999999999999999999999999999999");
-    str_to_bf(g_bf_x_max, "1.5000000000000000000000000000000000000001");
-    str_to_bf(g_bf_y_min, "-1e-40");
-    str_to_bf(g_bf_y_max, "1e-40");
+    g_bf_x_min = BigFloat{"1.4999999999999999999999999999999999999999"};
+    g_bf_x_max = BigFloat{"1.5000000000000000000000000000000000000001"};
+    g_bf_y_min = BigFloat{"-1e-40"};
+    g_bf_y_max = BigFloat{"1e-40"};
     copy_bf(g_bf_x_3rd, g_bf_x_min);
     copy_bf(g_bf_y_3rd, g_bf_y_min);
     g_inversion = {3, 1.0, {1.0, 0.0}, {1.0, 1.0, 0.0}};
@@ -13393,7 +13391,7 @@ void TestInvertedDeepZoom::SetUp()
 void TestInvertedDeepZoom::initialize_reference()
 {
     BFComplex &center{m_engine.initialize_frame_bf({1e-40, 0.0}, {0.0, 1e-40})};
-    float_to_bf(center.x, 1.5);
+    center.x = 1.5;
     clear_bf(center.y);
 }
 
@@ -13494,10 +13492,10 @@ void TestPerturbationPixels::check_pass_switch(const PerturbationMode mode)
         g_image_region, ImageRegion{{0.25 - 1e-10, -1e-10}, {0.25 + 1e-10, 1e-10}, {0.25 - 1e-10, -1e-10}}};
     init_bf_dec(60);
     m_big_float = true;
-    float_to_bf(g_bf_x_min, g_image_region.m_min.x);
-    float_to_bf(g_bf_x_max, g_image_region.m_max.x);
-    float_to_bf(g_bf_y_min, g_image_region.m_min.y);
-    float_to_bf(g_bf_y_max, g_image_region.m_max.y);
+    g_bf_x_min = g_image_region.m_min.x;
+    g_bf_x_max = g_image_region.m_max.x;
+    g_bf_y_min = g_image_region.m_min.y;
+    g_bf_y_max = g_image_region.m_max.y;
     copy_bf(g_bf_x_3rd, g_bf_x_min);
     copy_bf(g_bf_y_3rd, g_bf_y_min);
     g_user.perturbation = mode;
@@ -13669,8 +13667,8 @@ void TestSubnormalPerturbation::SetUp()
     g_max_iterations = 4;
     g_magnitude_limit = 16;
     set_bailout_formula(Bailout::MOD);
-    str_to_bf(g_bf_x_min, "-4e-324");
-    str_to_bf(g_bf_x_max, "4e-324");
+    g_bf_x_min = BigFloat{"-4e-324"};
+    g_bf_x_max = BigFloat{"4e-324"};
     copy_bf(g_bf_x_3rd, g_bf_x_min);
     clear_bf(g_bf_y_min);
     clear_bf(g_bf_y_max);
@@ -13686,7 +13684,7 @@ TEST_F(TestSubnormalPerturbation, continuationReplacesSubnormalParameterAndSeedD
     for (const char *coordinate : {"0", "4e-324"})
     {
         SCOPED_TRACE(coordinate);
-        str_to_bf(parameter.x, coordinate);
+        parameter.x = BigFloat{coordinate};
         clear_bf(parameter.y);
         copy_bf(g_param_z_bf.x, parameter.x);
         clear_bf(g_param_z_bf.y);
@@ -13797,11 +13795,10 @@ void TestDeepPerturbationGeometry::initialize_corners()
 {
     {
         BigStackSaver saved;
-        BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
-        str_to_bf(offset, "3e-400");
-        int_to_bf(g_bf_x_min, -2);
+        BigFloat offset{bf_arena(BigLifetime::TEMPORARY), "3e-400"};
+        g_bf_x_min = -2;
         sub_a_bf(g_bf_x_min, offset);
-        int_to_bf(g_bf_x_max, -2);
+        g_bf_x_max = -2;
         add_a_bf(g_bf_x_max, offset);
     }
     copy_bf(g_bf_x_3rd, g_bf_x_min);
@@ -13926,20 +13923,19 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestDeepViewportPass, Values(CalcMode::BOUNDARY
 
 TEST_F(TestDeepPerturbationGeometry, frameRetainsPreciseGeometryForReplacementReferences)
 {
-    str_to_bf(g_bf_y_min, "-3e-400");
-    str_to_bf(g_bf_y_max, "3e-400");
-    str_to_bf(g_bf_y_3rd, "-1e-400");
+    g_bf_y_min = BigFloat{"-3e-400"};
+    g_bf_y_max = BigFloat{"3e-400"};
+    g_bf_y_3rd = BigFloat{"-1e-400"};
     {
         BigStackSaver saved;
-        BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
-        str_to_bf(offset, "1e-400");
-        int_to_bf(g_bf_x_3rd, -2);
+        BigFloat offset{bf_arena(BigLifetime::TEMPORARY), "1e-400"};
+        g_bf_x_3rd = -2;
         sub_a_bf(g_bf_x_3rd, offset);
     }
     initialize_frame();
-    int_to_bf(g_bf_x_min, -2);
-    int_to_bf(g_bf_x_max, -2);
-    int_to_bf(g_bf_x_3rd, -2);
+    g_bf_x_min = -2;
+    g_bf_x_max = -2;
+    g_bf_x_3rd = -2;
     clear_bf(g_bf_y_min);
     clear_bf(g_bf_y_max);
     clear_bf(g_bf_y_3rd);
@@ -13969,7 +13965,7 @@ TEST_F(TestDeepPerturbationGeometry, continuationReplacesUnrepresentableParamete
     initialize_frame();
     BFComplex parameter{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    int_to_bf(parameter.x, -2);
+    parameter.x = -2;
     clear_bf(parameter.y);
     copy_bf(value.x, parameter.x);
     clear_bf(value.y);

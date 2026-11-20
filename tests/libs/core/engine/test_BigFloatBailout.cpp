@@ -193,10 +193,10 @@ TEST_P(TestBigFloatBailoutCases, preservesInclusiveThresholdCachesAndOldOrbit)
     const bool manr = input.test == Bailout::MANR;
     set_bailout_formula(input.test);
     g_magnitude_limit = input.limit;
-    float_to_bf(g_old_z_bf.x, -7);
-    float_to_bf(g_old_z_bf.y, 9);
-    float_to_bf(g_new_z_bf.x, input.point.x);
-    float_to_bf(g_new_z_bf.y, input.point.y);
+    g_old_z_bf.x = -7;
+    g_old_z_bf.y = 9;
+    g_new_z_bf.x = input.point.x;
+    g_new_z_bf.y = input.point.y;
     BigArena &working = bf_arena(BigLifetime::WORKING);
     BigFloat expected_x{working};
     BigFloat expected_y{working};
@@ -238,8 +238,8 @@ TEST_P(TestBigFloatBailoutPrecision, inclusiveComparisonRetainsDisplacementsBelo
     const int point = std::get<1>(GetParam());
     set_bailout_formula(mode);
     g_magnitude_limit = limits[static_cast<std::size_t>(mode)];
-    str_to_bf(g_new_z_bf.x, values[point]);
-    str_to_bf(g_new_z_bf.y, values[point]);
+    g_new_z_bf.x = BigFloat{values[point]};
+    g_new_z_bf.y = BigFloat{values[point]};
     const BFComplex original{g_new_z_bf};
 
     EXPECT_EQ(point != 0, g_bailout_bigfloat() != 0);
@@ -545,14 +545,14 @@ void TestBigFloatJulia::SetUp()
 
 TEST_F(TestBigFloatJulia, affineSeedsKeepPreciseFixedParameterAndSquareCaches)
 {
-    float_to_bf(g_bf_x_min, -2);
-    float_to_bf(g_bf_x_max, 2);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_x_3rd, -1.5);
-    float_to_bf(g_bf_y_3rd, -0.75);
-    str_to_bf(g_bf_params[0], "0.25000000000000000001");
-    str_to_bf(g_bf_params[1], "-0.12500000000000000001");
+    g_bf_x_min = -2;
+    g_bf_x_max = 2;
+    g_bf_y_min = -1;
+    g_bf_y_max = 1;
+    g_bf_x_3rd = -1.5;
+    g_bf_y_3rd = -0.75;
+    g_bf_params[0] = BigFloat{"0.25000000000000000001"};
+    g_bf_params[1] = BigFloat{"-0.12500000000000000001"};
     const BFComplex parameter{g_bf_params[0], g_bf_params[1]};
     // These bounded reference values use double, including scalar conversion.
     constexpr double tolerance = 64 * std::numeric_limits<double>::epsilon();
@@ -595,12 +595,12 @@ TEST_F(TestBigFloatJulia, affineSeedsKeepPreciseFixedParameterAndSquareCaches)
 
 TEST_F(TestBigFloatJulia, viewportTransitionRestoresJuliaParameterAndKeepsBailoutEquality)
 {
-    float_to_bf(g_bf_x_min, 1);
-    float_to_bf(g_bf_x_max, 3);
-    float_to_bf(g_bf_x_3rd, 1);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_y_3rd, -1);
+    g_bf_x_min = 1;
+    g_bf_x_max = 3;
+    g_bf_x_3rd = 1;
+    g_bf_y_min = -1;
+    g_bf_y_max = 1;
+    g_bf_y_3rd = -1;
     clear_bf(g_bf_params[0]);
     clear_bf(g_bf_params[1]);
     g_col = 128;
@@ -656,14 +656,14 @@ void TestBigFloatJuliaZPower::SetUp()
     g_params[3] = GetParam().exponent.imag();
     g_dispatch = FractalDispatch{*g_cur_fractal_specific};
     ASSERT_TRUE(select_alternate_math_dispatch());
-    float_to_bf(g_bf_x_min, 0);
-    float_to_bf(g_bf_x_max, 1);
-    float_to_bf(g_bf_x_3rd, 0);
-    float_to_bf(g_bf_y_min, 0);
-    float_to_bf(g_bf_y_max, 0.5);
-    float_to_bf(g_bf_y_3rd, 0);
-    str_to_bf(g_bf_params[0], "0.12500000000000000001");
-    str_to_bf(g_bf_params[1], "-0.06250000000000000001");
+    g_bf_x_min = 0;
+    g_bf_x_max = 1;
+    g_bf_x_3rd = 0;
+    g_bf_y_min = 0;
+    g_bf_y_max = 0.5;
+    g_bf_y_3rd = 0;
+    g_bf_params[0] = BigFloat{"0.12500000000000000001"};
+    g_bf_params[1] = BigFloat{"-0.06250000000000000001"};
     g_magnitude_limit = 1024;
 }
 

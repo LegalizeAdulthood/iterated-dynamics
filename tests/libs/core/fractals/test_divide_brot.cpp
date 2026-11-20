@@ -106,12 +106,12 @@ void TestDivideBrot5::SetUp()
 {
     init_bf_dec(60);
     set_bailout_formula(Bailout::MOD);
-    float_to_bf(g_bf_x_min, -2);
-    float_to_bf(g_bf_x_max, 2);
-    float_to_bf(g_bf_y_min, -1);
-    float_to_bf(g_bf_y_max, 1);
-    float_to_bf(g_bf_x_3rd, -1.5);
-    float_to_bf(g_bf_y_3rd, -0.75);
+    g_bf_x_min = -2;
+    g_bf_x_max = 2;
+    g_bf_y_min = -1;
+    g_bf_y_max = 1;
+    g_bf_x_3rd = -1.5;
+    g_bf_y_3rd = -0.75;
 }
 
 void TestDivideBrot5::TearDown()
@@ -200,12 +200,12 @@ TEST_F(TestDivideBrot5, affinePixelCoordinatesClearTheSeedWithoutCountingAnItera
 
 TEST_F(TestDivideBrot5, pixelCoordinatesRetainSubDoubleDisplacements)
 {
-    str_to_bf(g_bf_x_min, "0.75");
-    str_to_bf(g_bf_x_3rd, "0.75");
-    str_to_bf(g_bf_x_max, "0.7500000000000000000000000000000000000256");
-    float_to_bf(g_bf_y_min, 0.25);
-    float_to_bf(g_bf_y_max, 0.25);
-    float_to_bf(g_bf_y_3rd, 0.25);
+    g_bf_x_min = BigFloat{"0.75"};
+    g_bf_x_3rd = BigFloat{"0.75"};
+    g_bf_x_max = BigFloat{"0.7500000000000000000000000000000000000256"};
+    g_bf_y_min = 0.25;
+    g_bf_y_max = 0.25;
+    g_bf_y_3rd = 0.25;
     ASSERT_TRUE(mandel_per_image_bf());
     ASSERT_EQ(0, divide_brot5_bf_per_pixel());
     const BigFloat first = g_param_z_bf.x;
