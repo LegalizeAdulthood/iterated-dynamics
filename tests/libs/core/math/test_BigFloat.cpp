@@ -43,14 +43,11 @@ static_assert(std::is_same_v<decltype(std::declval<BigFloat &>() = LDouble{}), B
 static_assert(std::is_same_v<decltype(&div_bf), BigFloat &(*)(BigFloat &, const BigFloat &, const BigFloat &)>);
 static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>() / std::declval<const BigFloat &>()), BigFloat>);
 static_assert(std::is_same_v<decltype(std::declval<BigFloat &>() /= U16{}), BigFloat &>);
-static_assert(std::is_same_v<decltype(exp_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
-static_assert(std::is_same_v<decltype(ln_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>())), BigFloat &>);
-static_assert(std::is_same_v<decltype(sin_cos_bf(std::declval<BigFloat &>(), std::declval<BigFloat &>(),
-                                 std::declval<const BigFloat &>())),
-    BigFloat &>);
-static_assert(std::is_same_v<decltype(atan2_bf(std::declval<BigFloat &>(), std::declval<const BigFloat &>(),
-                                 std::declval<const BigFloat &>())),
-    BigFloat &>);
+static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().exp()), BigFloat>);
+static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().log()), BigFloat>);
+static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().sin_cos()), std::pair<BigFloat, BigFloat>>);
+static_assert(
+    std::is_same_v<decltype(std::declval<const BigFloat &>().atan2(std::declval<const BigFloat &>())), BigFloat>);
 static_assert(std::is_same_v<decltype(&bf_to_string), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_e), std::string (*)(const BigFloat &, int)>);
 static_assert(std::is_same_v<decltype(&bf_to_string_f), std::string (*)(const BigFloat &, int)>);
@@ -62,17 +59,6 @@ std::vector<Byte> encoded_value(const BigFloat &value)
     return result;
 }
 
-void expect_hex_dump(const BigFloat &value, const std::string &expected)
-{
-    const auto original = encoded_value(value);
-    testing::internal::CaptureStdout();
-
-    bf_hex_dump(value);
-
-    const std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(expected + '\n', output);
-    EXPECT_EQ(original, encoded_value(value));
-}
 
 } // namespace
 
@@ -435,76 +421,35 @@ TEST_F(TestBigFloatValue, supportsTheLargestLegacyLayout)
     EXPECT_EQ(static_cast<std::size_t>(g_bf_length + 2), encoded_value(value).size());
 }
 
-TEST_F(TestBigFloatValue, hexDumpPrintsZeroAndPreservesInput)
+class TestBigFloatHexDump : public TestBigFloatValue, public testing::WithParamInterface<std::tuple<int, bool>>
 {
-    for (const int length : {4, 708})
-    {
-        SCOPED_TRACE(length);
-        init_bf_length(length);
-        ASSERT_EQ(length + 4, g_bf_length);
-        std::vector<Byte> bytes(static_cast<std::size_t>(g_bf_length + 2));
-        std::string expected;
-        for (int i = 0; i < g_bf_length; ++i)
-        {
-            expected += "00 ";
-        }
+};
 
-        expect_hex_dump(BigFloat::from_legacy(bytes.data(), bytes.size()), expected + " e 0000");
+TEST_P(TestBigFloatHexDump, printsAnOwningValueAndPreservesIt)
+{
+    const int length = std::get<0>(GetParam());
+    init_bf_length(length);
+    ASSERT_EQ(length + 4, g_bf_length);
+    const bool negative = std::get<1>(GetParam());
+    const BigFloat value{negative ? -1.25L : 0.0L};
+    const BigFloat original{value};
+    std::string expected;
+    for (int i = 0; i < g_bf_length - 3; ++i)
+    {
+        expected += "00 ";
     }
+    expected += negative ? "C0 FE FF  e 0000\n" : "00 00 00  e 0000\n";
+
+    testing::internal::CaptureStdout();
+    bf_hex_dump(value);
+    const std::string output = testing::internal::GetCapturedStdout();
+
+    EXPECT_EQ(expected, output);
+    EXPECT_EQ(original, value);
 }
 
-TEST_F(TestBigFloatValue, hexDumpPrintsNegativeValueAndPreservesInput)
-{
-    for (const int length : {4, 708})
-    {
-        SCOPED_TRACE(length);
-        init_bf_length(length);
-        ASSERT_EQ(length + 4, g_bf_length);
-        std::vector<Byte> bytes(static_cast<std::size_t>(g_bf_length + 2));
-        bytes[bytes.size() - 4] = 0xc0;
-        bytes[bytes.size() - 3] = 0xfe;
-        std::string expected;
-        for (int i = 0; i < g_bf_length - 2; ++i)
-        {
-            expected += "00 ";
-        }
-
-        expect_hex_dump(BigFloat::from_legacy(bytes.data(), bytes.size()), expected + "C0 FE  e 0000");
-    }
-}
-
-TEST_F(TestBigFloatValue, hexDumpPrintsHighBitMantissaAndSignedExponents)
-{
-    const std::array<Byte, 4> pattern{0x00, 0x09, 0x8a, 0xff};
-
-    struct Case
-    {
-        std::array<Byte, 2> exponent;
-        const char *expected;
-    };
-
-    const Case cases[]{{{0x34, 0x12}, "1234"}, {{0xfe, 0xff}, "FFFE"}};
-    for (const int length : {4, 708})
-    {
-        SCOPED_TRACE(length);
-        init_bf_length(length);
-        ASSERT_EQ(length + 4, g_bf_length);
-        std::vector<Byte> bytes(static_cast<std::size_t>(g_bf_length + 2));
-        std::string expected;
-        for (int i = 0; i < g_bf_length; i += 4)
-        {
-            std::copy(pattern.begin(), pattern.end(), bytes.begin() + i);
-            expected += "00 09 8A FF ";
-        }
-        for (const Case &test : cases)
-        {
-            SCOPED_TRACE(test.expected);
-            std::copy(test.exponent.begin(), test.exponent.end(), bytes.end() - 2);
-
-            expect_hex_dump(BigFloat::from_legacy(bytes.data(), bytes.size()), expected + " e " + test.expected);
-        }
-    }
-}
+INSTANTIATE_TEST_SUITE_P(
+    PrecisionsAndSigns, TestBigFloatHexDump, testing::Combine(testing::Values(4, 708), testing::Bool()));
 
 TEST_F(TestBigFloatValue, copiesValuesBelowMachineRangeBetweenArenas)
 {
@@ -908,27 +853,19 @@ class TestBigFloatExponential : public TestBigFloatValue, public testing::WithPa
 {
 };
 
-TEST_P(TestBigFloatExponential, preservesSourceAndReturnsTheExistingDestination)
+TEST_P(TestBigFloatExponential, returnsAnOwningResultAndPreservesTheSource)
 {
     const BigFloatExponentialInput &test = GetParam();
     BigArena &arena = bf_arena(BigLifetime::WORKING);
     const BigFloat source{arena, test.input};
-    BigFloat result{arena};
-    const std::vector<Byte> original = encoded_value(source);
-    const std::size_t size = arena.value_size();
-    const std::size_t stride = arena.block_size();
-    std::fill(result.data() + size, result.data() + stride, Byte{0xa5});
-    const Byte *const address = result.data();
-    const std::size_t high_water = arena.high_water_mark();
+    const BigFloat original{source};
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(&result, &exp_bf(result, source));
+    const BigFloat result = source.exp();
 
     EXPECT_NEAR(test.expected, result.to_float(), test.tolerance);
-    EXPECT_EQ(original, encoded_value(source));
-    EXPECT_EQ(address, result.data());
-    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(result.data() + size, result.data() + stride));
-    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(&arena, &result.arena());
     EXPECT_EQ(mark, save_stack());
 }
 
@@ -941,37 +878,29 @@ class TestBigFloatLogarithm : public TestBigFloatValue, public testing::WithPara
 {
 };
 
-TEST_P(TestBigFloatLogarithm, preservesDestinationStorageAndHandlesAliasedSources)
+TEST_P(TestBigFloatLogarithm, supportsSeparateAndAliasedAssignment)
 {
     init_bf_length(64);
     const int input = std::get<0>(GetParam());
     const bool alias = std::get<1>(GetParam());
     BigArena &arena = bf_arena(BigLifetime::WORKING);
     BigFloat source{arena, static_cast<LDouble>(input)};
+    const BigFloat original{source};
     BigFloat result{arena};
     BigFloat &output = alias ? source : result;
-    const std::vector<Byte> original = encoded_value(source);
-    const std::size_t size = arena.value_size();
-    const std::size_t stride = arena.block_size();
-    std::vector<Byte> expected(size);
-    if (input <= 0)
-    {
-        constexpr int exponent = std::numeric_limits<LDouble>::max_exponent / 8 - 1;
-        expected[size - 3] = 0xff;
-        expected[size - 2] = static_cast<Byte>(exponent);
-        expected[size - 1] = static_cast<Byte>(exponent >> 8);
-    }
-    std::fill(output.data() + size, output.data() + stride, Byte{0xa5});
-    const Byte *const address = output.data();
+    const LDouble expected = input > 0 ? 0.0L : -std::numeric_limits<LDouble>::infinity();
+    arena.allocate_single().reset();
     const std::size_t high_water = arena.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(&output, &ln_bf(output, std::as_const(source)));
+    output = source.log();
 
-    EXPECT_EQ(expected, encoded_value(output));
-    EXPECT_EQ(alias ? expected : original, encoded_value(source));
-    EXPECT_EQ(address, output.data());
-    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(output.data() + size, output.data() + stride));
+    EXPECT_EQ(expected, output.to_float());
+    if (!alias)
+    {
+        EXPECT_EQ(original, source);
+    }
+    EXPECT_EQ(&arena, &output.arena());
     EXPECT_EQ(high_water, arena.high_water_mark());
     EXPECT_EQ(mark, save_stack());
 }
@@ -983,35 +912,22 @@ class TestBigFloatSineCosine : public TestBigFloatValue, public testing::WithPar
 {
 };
 
-TEST_P(TestBigFloatSineCosine, writesBothDestinationsAndPreservesSourceAndStorage)
+TEST_P(TestBigFloatSineCosine, returnsOwningValuesAndPreservesTheSource)
 {
     init_big_pi();
     const LDouble angle = GetParam();
     BigArena &arena = bf_arena(BigLifetime::WORKING);
     const BigFloat source{arena, angle};
-    BigFloat sine{arena};
-    BigFloat cosine{arena};
-    const std::vector<Byte> original = encoded_value(source);
-    const std::size_t size = arena.value_size();
-    const std::size_t stride = arena.block_size();
-    const std::vector<Byte> guard(stride - size, 0xa5);
-    std::fill(sine.data() + size, sine.data() + stride, Byte{0xa5});
-    std::fill(cosine.data() + size, cosine.data() + stride, Byte{0xa5});
-    const Byte *const sine_address = sine.data();
-    const Byte *const cosine_address = cosine.data();
-    const std::size_t high_water = arena.high_water_mark();
+    const BigFloat original{source};
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(&sine, &sin_cos_bf(sine, cosine, source));
+    const std::pair<BigFloat, BigFloat> result = source.sin_cos();
 
-    EXPECT_NEAR(std::sin(angle), sine.to_float(), 1e-12L);
-    EXPECT_NEAR(std::cos(angle), cosine.to_float(), 1e-12L);
-    EXPECT_EQ(original, encoded_value(source));
-    EXPECT_EQ(sine_address, sine.data());
-    EXPECT_EQ(cosine_address, cosine.data());
-    EXPECT_EQ(guard, std::vector<Byte>(sine.data() + size, sine.data() + stride));
-    EXPECT_EQ(guard, std::vector<Byte>(cosine.data() + size, cosine.data() + stride));
-    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_NEAR(std::sin(angle), result.first.to_float(), 1e-12L);
+    EXPECT_NEAR(std::cos(angle), result.second.to_float(), 1e-12L);
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(&arena, &result.first.arena());
+    EXPECT_EQ(&arena, &result.second.arena());
     EXPECT_EQ(mark, save_stack());
 }
 
@@ -1021,7 +937,7 @@ class TestBigFloatSineCosineAlias : public TestBigFloatValue, public testing::Wi
 {
 };
 
-TEST_P(TestBigFloatSineCosineAlias, copiesTheSourceBeforeWritingEitherDestination)
+TEST_P(TestBigFloatSineCosineAlias, supportsAssignmentToEitherOperand)
 {
     init_big_pi();
     constexpr LDouble angle = -0.625L;
@@ -1030,7 +946,7 @@ TEST_P(TestBigFloatSineCosineAlias, copiesTheSourceBeforeWritingEitherDestinatio
     BigFloat &sine = GetParam() ? source : other;
     BigFloat &cosine = GetParam() ? other : source;
 
-    EXPECT_EQ(&sine, &sin_cos_bf(sine, cosine, source));
+    std::tie(sine, cosine) = source.sin_cos();
 
     EXPECT_NEAR(std::sin(angle), sine.to_float(), 1e-12L);
     EXPECT_NEAR(std::cos(angle), cosine.to_float(), 1e-12L);
@@ -1044,7 +960,7 @@ class TestBigFloatArctangent2 : public TestBigFloatValue,
 {
 };
 
-TEST_P(TestBigFloatArctangent2, writesTheDestinationAndPreservesOperandsAndStorage)
+TEST_P(TestBigFloatArctangent2, returnsAnOwningResultAndPreservesOperands)
 {
     init_big_pi();
     const LDouble y = std::get<0>(GetParam());
@@ -1052,24 +968,16 @@ TEST_P(TestBigFloatArctangent2, writesTheDestinationAndPreservesOperandsAndStora
     BigArena &arena = bf_arena(BigLifetime::WORKING);
     const BigFloat ny{arena, y};
     const BigFloat nx{arena, x};
-    BigFloat result{arena};
-    const std::vector<Byte> original_y = encoded_value(ny);
-    const std::vector<Byte> original_x = encoded_value(nx);
-    const std::size_t size = arena.value_size();
-    const std::size_t stride = arena.block_size();
-    std::fill(result.data() + size, result.data() + stride, Byte{0xa5});
-    const Byte *const address = result.data();
-    const std::size_t high_water = arena.high_water_mark();
+    const BigFloat original_y{ny};
+    const BigFloat original_x{nx};
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(&result, &atan2_bf(result, ny, nx));
+    const BigFloat result = ny.atan2(nx);
 
     EXPECT_NEAR(std::atan2(y, x), result.to_float(), 1e-11L);
-    EXPECT_EQ(original_y, encoded_value(ny));
-    EXPECT_EQ(original_x, encoded_value(nx));
-    EXPECT_EQ(address, result.data());
-    EXPECT_EQ(std::vector<Byte>(stride - size, 0xa5), std::vector<Byte>(result.data() + size, result.data() + stride));
-    EXPECT_EQ(high_water, arena.high_water_mark());
+    EXPECT_EQ(original_y, ny);
+    EXPECT_EQ(original_x, nx);
+    EXPECT_EQ(&arena, &result.arena());
     EXPECT_EQ(mark, save_stack());
 }
 
@@ -1080,19 +988,19 @@ class TestBigFloatArctangent2Alias : public TestBigFloatValue, public testing::W
 {
 };
 
-TEST_P(TestBigFloatArctangent2Alias, copiesBothOperandsBeforeWritingAnAliasedDestination)
+TEST_P(TestBigFloatArctangent2Alias, supportsAssignmentToEitherOperand)
 {
     init_big_pi();
     BigFloat ny{-1.0L};
     BigFloat nx{-2.0L};
     BigFloat &result = GetParam() ? ny : nx;
     const BigFloat &other = GetParam() ? nx : ny;
-    const std::vector<Byte> original = encoded_value(other);
+    const BigFloat original{other};
 
-    EXPECT_EQ(&result, &atan2_bf(result, std::as_const(ny), std::as_const(nx)));
+    result = ny.atan2(nx);
 
     EXPECT_NEAR(std::atan2(-1.0L, -2.0L), result.to_float(), 1e-11L);
-    EXPECT_EQ(original, encoded_value(other));
+    EXPECT_EQ(original, other);
 }
 
 INSTANTIATE_TEST_SUITE_P(Destinations, TestBigFloatArctangent2Alias, testing::Bool(),
@@ -1893,44 +1801,32 @@ class TestBigFloatWorkspaceRamp : public TestBigFloat,
 {
 };
 
-TEST_P(TestBigFloatWorkspaceRamp, preservesOperandsAndRestoresBorrowedWorkspaceWindows)
+TEST_P(TestBigFloatWorkspaceRamp, preservesOperandsAndRestoresPrecision)
 {
     g_fractal_type = FractalType::JULIA_Z_POWER;
     init_bf_length(std::get<0>(GetParam()));
     init_big_pi();
-    const auto &test = std::get<1>(GetParam());
-    BigFloat input{test.input};
-    BigFloat result{0};
-    BigFloat one{1};
-    const std::vector<Byte> original(input.data(), input.data() + g_bf_length + 2);
-    auto *const tmp3 = g_bf_tmp3.data();
-    auto *const tmp5 = g_bf_tmp5.data();
-    auto *const pi = g_bf_pi.data();
-    const std::vector<Byte> original_pi(pi, pi + g_bf_length + 2);
+    const BigFloatRampInput &test = std::get<1>(GetParam());
+    const BigFloat input{test.input};
+    const BigFloat original{input};
+    const BigFloat one{1};
+    const BigFloat original_pi{g_bf_pi};
     const int length = g_bf_length;
     const int bn_length = g_bn_length;
-    const auto high_water = bf_arena(BigLifetime::WORKING).high_water_mark();
-    const auto stack = save_stack();
+    BigArena &arena = bf_arena(BigLifetime::WORKING);
+    arena.allocate_single().reset();
+    const std::size_t high_water = arena.high_water_mark();
+    const BigStackMark stack = save_stack();
 
-    if (test.logarithm)
-    {
-        ln_bf(result, input);
-    }
-    else
-    {
-        atan2_bf(result, input, one);
-    }
+    const BigFloat result = test.logarithm ? input.log() : input.atan2(one);
 
     EXPECT_EQ(length, g_bf_length);
     EXPECT_EQ(bn_length, g_bn_length);
-    EXPECT_EQ(tmp3, g_bf_tmp3.data());
-    EXPECT_EQ(tmp5, g_bf_tmp5.data());
-    EXPECT_EQ(pi, g_bf_pi.data());
-    EXPECT_EQ(original_pi, (std::vector<Byte>{g_bf_pi.data(), g_bf_pi.data() + g_bf_length + 2}));
-    EXPECT_EQ(high_water, bf_arena(BigLifetime::WORKING).high_water_mark());
+    EXPECT_EQ(original_pi, g_bf_pi);
+    EXPECT_EQ(high_water, arena.high_water_mark());
     EXPECT_EQ(stack, save_stack());
-    EXPECT_EQ(original, (std::vector<Byte>{input.data(), input.data() + g_bf_length + 2}));
-    EXPECT_EQ(test.expected, bf_to_string(result, 12));
+    EXPECT_EQ(original, input);
+    EXPECT_EQ(test.expected, result.to_string(12));
 }
 
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndOperations, TestBigFloatWorkspaceRamp,

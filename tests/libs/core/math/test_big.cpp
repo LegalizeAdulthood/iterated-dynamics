@@ -1411,40 +1411,72 @@ TEST_F(TestBigFloatByteExponential, truncatesTheFirstTinyTermWithinTheBorrowedWi
     EXPECT_EQ(mark, save_stack());
 }
 
-class TestBigFloatByteLogarithm : public TestBigNumConversionBase
+namespace
+{
+
+void expect_bf_window_guards(const std::vector<Byte> &buffer)
+{
+    EXPECT_EQ(0xa5, buffer.front());
+    EXPECT_EQ(0xa5, buffer[1]);
+    EXPECT_EQ(0xa5, buffer[buffer.size() - 2]);
+    EXPECT_EQ(0xa5, buffer.back());
+}
+
+} // namespace
+
+class TestBigFloatByteLogarithm : public TestBigFloatBytePrecision,
+                                  public testing::WithParamInterface<std::tuple<int, long>>
 {
 };
 
-TEST_F(TestBigFloatByteLogarithm, confinesThePrecisionRampToTheBorrowedWindows)
+TEST_P(TestBigFloatByteLogarithm, confinesThePrecisionRampToTheBorrowedWindows)
 {
-    init_bf_length(64);
+    init_bf_length(std::get<0>(GetParam()));
+    const long input = std::get<1>(GetParam());
     const int size = g_bf_length + 2;
+    constexpr int offset = 2;
     const std::array<int, 6> lengths{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
-    std::vector<Byte> source(size + 4, 0xa5);
-    std::fill_n(source.begin() + 2, size, Byte{0});
-    source[size - 2] = 1;
+    std::vector<Byte> window(size + 2 * offset, 0xa5);
+    std::fill_n(window.begin() + offset, size, Byte{0});
+    std::vector<Byte> source = window;
+    int_to_bf(source.data() + offset, input);
     const std::vector<Byte> original = source;
-    std::vector<Byte> result(size + 4, 0xa5);
-    std::fill_n(result.begin() + 2, size, Byte{0});
-    const std::vector<Byte> expected = result;
-    Byte *const output = result.data() + 2;
-    std::vector<Byte> expected_scratch(size + 2);
-    expected_scratch[size] = 0xa5;
-    expected_scratch[size + 1] = 0xa5;
-    std::vector<Byte> tmp5 = expected_scratch;
+    std::vector<Byte> result = window;
+    std::vector<Byte> expected = window;
+    if (input <= 0)
+    {
+        constexpr int exponent = std::numeric_limits<LDouble>::max_exponent / 8 - 1;
+        expected[size - 1] = 0xff;
+        expected[size] = static_cast<Byte>(exponent);
+        expected[size + 1] = static_cast<Byte>(exponent >> 8);
+    }
+    Byte *const output = result.data() + offset;
+    std::array<std::vector<Byte>, 6> scratch{window, window, window, window, window, window};
     const BigStackMark mark = save_stack();
 
     EXPECT_EQ(output,
-        unsafe_ln_bf(output, source.data() + 2, g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(), g_bf_tmp4.data(),
-            tmp5.data(), g_bf_tmp6.data()));
+        unsafe_ln_bf(output, source.data() + offset, scratch[0].data() + offset, scratch[1].data() + offset,
+            scratch[2].data() + offset, scratch[3].data() + offset, scratch[4].data() + offset,
+            scratch[5].data() + offset));
 
     EXPECT_EQ(expected, result);
     EXPECT_EQ(original, source);
-    EXPECT_EQ(expected_scratch, tmp5);
+    EXPECT_EQ(window, scratch[4]);
+    for (const std::vector<Byte> &buffer : scratch)
+    {
+        expect_bf_window_guards(buffer);
+        if (input <= 0)
+        {
+            EXPECT_EQ(window, buffer);
+        }
+    }
     EXPECT_EQ(
         lengths, (std::array<int, 6>{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
     EXPECT_EQ(mark, save_stack());
 }
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndInputs, TestBigFloatByteLogarithm,
+    testing::Combine(testing::Values(32, 64, 708), testing::Values(1L, 0L, -1L)));
 
 class TestBigFloatByteSineCosine : public TestBigNumConversionBase
 {
@@ -1467,7 +1499,6 @@ TEST_F(TestBigFloatByteSineCosine, reducesTheBorrowedHalfPiWindowAndPreservesGua
     alignas(U16) std::array<Byte, size + 2> cosine{};
     sine.fill(0xa5);
     cosine.fill(0xa5);
-    int_to_bf(g_bf_pi.data(), 4);
     alignas(U16) std::array<Byte, size + 2> tmp1{};
     alignas(U16) std::array<Byte, size + 2> tmp2{};
     tmp1.fill(0xa5);
@@ -1495,68 +1526,74 @@ TEST_F(TestBigFloatByteSineCosine, reducesTheBorrowedHalfPiWindowAndPreservesGua
     EXPECT_EQ(mark, save_stack());
 }
 
-class TestBigFloatByteArctangent : public TestBigNumConversionBase
+class TestBigFloatByteArctangent : public TestBigFloatBytePrecision, public testing::WithParamInterface<int>
 {
 };
 
-TEST_F(TestBigFloatByteArctangent, restoresPrecisionAndKeepsLargeArgumentScratchEffects)
+TEST_P(TestBigFloatByteArctangent, restoresPrecisionAndKeepsLargeArgumentScratchEffects)
 {
-    init_bf_length(64);
-    init_big_pi();
+    init_bf_length(GetParam());
     const int size = g_bf_length + 2;
+    constexpr int offset = 2;
     const std::array<int, 6> lengths{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
-    std::vector<Byte> source(size + 4, 0xa5);
-    Byte *const input = source.data() + 2;
-    std::fill_n(input, size, Byte{0});
+    std::vector<Byte> window(size + 2 * offset, 0xa5);
+    std::fill_n(window.begin() + offset, size, Byte{0});
+    std::vector<Byte> source = window;
+    Byte *const input = source.data() + offset;
     input[size - 4] = 2;
-    std::vector<Byte> result(size + 4, 0xa5);
-    Byte *const output = result.data() + 2;
-    std::fill_n(output, size, Byte{0});
-    std::vector<Byte> tmp3(size + 2);
-    std::fill(tmp3.begin() + size, tmp3.end(), Byte{0xa5});
-    std::vector<Byte> copy1(size + 2, 0xa5);
+    std::vector<Byte> result = window;
+    Byte *const output = result.data() + offset;
+    std::vector<Byte> pi = window;
+    copy_bf_pi(pi.data() + offset);
+    const std::vector<Byte> original_pi = pi;
+    std::array<std::vector<Byte>, 5> scratch{window, window, window, window, window};
+    std::vector<Byte> copy1(size + 2 * offset, 0xa5);
     const BigStackMark mark = save_stack();
 
     EXPECT_EQ(output,
-        arctangent(output, input, g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), tmp3.data(), g_bf_tmp4.data(),
-            g_bf_tmp5.data(), copy1.data()));
+        arctangent(output, input, pi.data() + offset, scratch[0].data() + offset, scratch[1].data() + offset,
+            scratch[2].data() + offset, scratch[3].data() + offset, scratch[4].data() + offset, copy1.data() + offset));
 
-    std::vector<Byte> reciprocal(size + 4, 0xa5);
-    std::fill_n(reciprocal.begin() + 2, size, Byte{0});
+    std::vector<Byte> reciprocal = window;
     reciprocal[size - 2] = 0x80;
     reciprocal[size] = 0xff;
     reciprocal[size + 1] = 0xff;
     EXPECT_EQ(reciprocal, source);
-    EXPECT_EQ(std::vector<Byte>(output, output + size + 2), tmp3);
-    EXPECT_EQ(0, BIG_ACCESS16(copy1.data() + g_bf_length));
-    EXPECT_EQ(0xa5, copy1[size]);
-    EXPECT_EQ(0xa5, copy1[size + 1]);
-    EXPECT_EQ(0xa5, result.front());
-    EXPECT_EQ(0xa5, result.back());
+    EXPECT_EQ(original_pi, pi);
+    EXPECT_EQ(result, scratch[2]);
+    EXPECT_EQ(0, BIG_ACCESS16(copy1.data() + offset + g_bf_length));
+    expect_bf_window_guards(copy1);
+    expect_bf_window_guards(result);
+    for (const std::vector<Byte> &buffer : scratch)
+    {
+        expect_bf_window_guards(buffer);
+    }
     EXPECT_EQ(
         lengths, (std::array<int, 6>{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
     EXPECT_EQ(mark, save_stack());
     EXPECT_NEAR(1.1071487177940905L, bf_to_float(output), 1e-11L);
 }
 
-class TestBigFloatByteArctangent2 : public TestBigNumConversionBase,
-                                    public testing::WithParamInterface<std::tuple<long, long>>
+INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatByteArctangent, testing::Values(32, 64, 708));
+
+class TestBigFloatByteArctangent2 : public TestBigFloatBytePrecision,
+                                    public testing::WithParamInterface<std::tuple<int, std::tuple<long, long>>>
 {
 };
 
 TEST_P(TestBigFloatByteArctangent2, preservesQuadrantReductionAndScratchWrites)
 {
-    init_bf_length(64);
-    init_big_pi();
-    const long y = std::get<0>(GetParam());
-    const long x = std::get<1>(GetParam());
+    init_bf_length(std::get<0>(GetParam()));
+    const std::tuple<long, long> &coordinates = std::get<1>(GetParam());
+    const long y = std::get<0>(coordinates);
+    const long x = std::get<1>(coordinates);
     const bool subtract_from_pi = x < 0 && y != 0;
     const int size = g_bf_length + 2;
     constexpr int offset = 2;
+    const std::array<int, 6> lengths{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
     std::vector<Byte> pi(size + 2 * offset, 0xa5);
-    std::copy_n(g_bf_pi.data(), size, pi.begin() + offset);
+    copy_bf_pi(pi.data() + offset);
     const std::vector<Byte> original_pi = pi;
-    int_to_bf(g_bf_pi.data(), 4);
     std::vector<Byte> y_storage(size + 2 * offset, 0xa5);
     std::vector<Byte> x_storage(size + 2 * offset, 0xa5);
     std::vector<Byte> result(size + 2 * offset, 0xa5);
@@ -1566,15 +1603,18 @@ TEST_P(TestBigFloatByteArctangent2, preservesQuadrantReductionAndScratchWrites)
     int_to_bf(ny, y);
     int_to_bf(nx, x);
     clear_bf(output);
-    std::vector<Byte> copy1(size + offset, 0xa5);
-    std::vector<Byte> copy2(size + offset, 0xa5);
+    std::array<std::vector<Byte>, 6> scratch{result, result, result, result, result, result};
+    std::vector<Byte> copy1(size + 2 * offset, 0xa5);
+    std::vector<Byte> copy2(size + 2 * offset, 0xa5);
     const BigStackMark mark = save_stack();
 
     EXPECT_EQ(output,
-        unsafe_atan2_bf(output, ny, nx, pi.data() + offset, g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(),
-            g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data(), copy1.data(), copy2.data()));
+        unsafe_atan2_bf(output, ny, nx, pi.data() + offset, scratch[0].data() + offset, scratch[1].data() + offset,
+            scratch[2].data() + offset, scratch[3].data() + offset, scratch[4].data() + offset,
+            scratch[5].data() + offset, copy1.data() + offset, copy2.data() + offset));
 
-    ASSERT_EQ(size, g_bf_length + 2);
+    EXPECT_EQ(
+        lengths, (std::array<int, 6>{g_bn_length, g_bf_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
     std::vector<Byte> expected_y(size + 2 * offset, 0xa5);
     std::vector<Byte> expected_x(size + 2 * offset, 0xa5);
     int_to_bf(expected_y.data() + offset, subtract_from_pi ? std::abs(y) : y);
@@ -1582,18 +1622,20 @@ TEST_P(TestBigFloatByteArctangent2, preservesQuadrantReductionAndScratchWrites)
     EXPECT_EQ(expected_y, y_storage);
     EXPECT_EQ(expected_x, x_storage);
     EXPECT_EQ(original_pi, pi);
-    EXPECT_EQ(0xa5, result.front());
-    EXPECT_EQ(0xa5, result.back());
+    expect_bf_window_guards(result);
+    for (const std::vector<Byte> &buffer : scratch)
+    {
+        expect_bf_window_guards(buffer);
+    }
     EXPECT_EQ(mark, save_stack());
     EXPECT_NEAR(std::atan2(static_cast<LDouble>(y), static_cast<LDouble>(x)), bf_to_float(output), 1e-11L);
-    std::vector<Byte> expected_copy1(size + offset, 0xa5);
+    std::vector<Byte> expected_copy1(size + 2 * offset, 0xa5);
     if (subtract_from_pi)
     {
-        std::copy_n(pi.begin() + offset, size, expected_copy1.begin());
-        EXPECT_EQ(0, BIG_ACCESS16(copy2.data() + g_bf_length));
-        EXPECT_NEAR(0.4636476090008061L, bf_to_float(copy2.data()), 1e-11L);
-        EXPECT_EQ(0xa5, copy2[size]);
-        EXPECT_EQ(0xa5, copy2[size + 1]);
+        std::copy_n(pi.begin() + offset, size, expected_copy1.begin() + offset);
+        EXPECT_EQ(0, BIG_ACCESS16(copy2.data() + offset + g_bf_length));
+        EXPECT_NEAR(0.4636476090008061L, bf_to_float(copy2.data() + offset), 1e-11L);
+        expect_bf_window_guards(copy2);
     }
     else
     {
@@ -1602,14 +1644,14 @@ TEST_P(TestBigFloatByteArctangent2, preservesQuadrantReductionAndScratchWrites)
     EXPECT_EQ(expected_copy1, copy1);
     if (y == 0)
     {
-        EXPECT_EQ(std::vector<Byte>(pi.begin() + offset, pi.begin() + offset + size),
-            std::vector<Byte>(output, output + size));
+        EXPECT_EQ(pi, result);
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(QuadrantsAndAxes, TestBigFloatByteArctangent2,
-    testing::Values(
-        std::make_tuple(1L, -2L), std::make_tuple(-1L, -2L), std::make_tuple(0L, -2L), std::make_tuple(-1L, 0L)));
+INSTANTIATE_TEST_SUITE_P(PrecisionsQuadrantsAndAxes, TestBigFloatByteArctangent2,
+    testing::Combine(testing::Values(32, 64, 708),
+        testing::Values(
+            std::make_tuple(1L, -2L), std::make_tuple(-1L, -2L), std::make_tuple(0L, -2L), std::make_tuple(-1L, 0L))));
 
 namespace
 {
@@ -3553,6 +3595,50 @@ INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatByteConversion,
         BigFloatConversionInput{"NarrowMantissa", {0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}},
         BigFloatConversionInput{"SameLength", {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}}),
     [](const testing::TestParamInfo<BigFloatConversionInput> &info) { return info.param.name; });
+
+struct BigFloatByteHexDumpInput
+{
+    std::array<Byte, 4> pattern;
+    const char *pattern_dump;
+    std::array<Byte, 6> tail;
+    const char *tail_dump;
+};
+
+class TestBigFloatByteHexDump : public testing::TestWithParam<std::tuple<int, BigFloatByteHexDumpInput>>
+{
+};
+
+TEST_P(TestBigFloatByteHexDump, printsMantissaAndExponentAsStored)
+{
+    const int length = std::get<0>(GetParam());
+    const BigFloatByteHexDumpInput &input = std::get<1>(GetParam());
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    std::vector<Byte> bytes(length + 2);
+    std::string expected;
+    for (int i = 0; i < length - 4; i += 4)
+    {
+        std::copy(input.pattern.begin(), input.pattern.end(), bytes.begin() + i);
+        expected += input.pattern_dump;
+    }
+    std::copy(input.tail.begin(), input.tail.end(), bytes.end() - input.tail.size());
+    expected += input.tail_dump;
+    const std::vector<Byte> original = bytes;
+
+    testing::internal::CaptureStdout();
+    bf_hex_dump_snapshot(bytes.data());
+    const std::string output = testing::internal::GetCapturedStdout();
+
+    EXPECT_EQ(expected, output);
+    EXPECT_EQ(original, bytes);
+}
+
+INSTANTIATE_TEST_SUITE_P(PrecisionsAndInputs, TestBigFloatByteHexDump,
+    testing::Combine(testing::Values(8, 712),
+        testing::Values(BigFloatByteHexDumpInput{{0x00, 0x09, 0x8a, 0xff}, "00 09 8A FF ",
+                            {0x00, 0x09, 0x8a, 0xff, 0x34, 0x12}, "00 09 8A FF  e 1234\n"},
+            BigFloatByteHexDumpInput{{0x00, 0x09, 0x8a, 0xff}, "00 09 8A FF ", {0x00, 0x09, 0x8a, 0xff, 0xfe, 0xff},
+                "00 09 8A FF  e FFFE\n"},
+            BigFloatByteHexDumpInput{{}, "00 00 00 00 ", {0, 0, 0xc0, 0xfe, 0, 0}, "00 00 C0 FE  e 0000\n"})));
 
 TEST(TestBigFloatDiagnosticBytes, hexDumpPrintsShiftedShortenedWorkspace)
 {
