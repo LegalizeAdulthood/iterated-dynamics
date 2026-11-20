@@ -28,7 +28,7 @@ void StandardFractal::start_perturbation_frame()
         const auto copy_corner = [](const BigFloat &source)
         {
             BigFloat result{bf_arena(BigLifetime::WORKING)};
-            copy_bf(result, source);
+            result = source;
             return result;
         };
         m_pert_engine.initialize_frame_bf({copy_corner(g_bf_x_min), copy_corner(g_bf_y_min)},

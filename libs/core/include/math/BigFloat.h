@@ -40,6 +40,7 @@ public:
     BigFloat &operator=(const BigFloat &value);
     BigFloat &operator=(BigFloat &&value);
     BigFloat &operator=(LDouble value);
+    void clear();
 
     // Tests for an allocated value, including numeric zero.
     explicit operator bool() const noexcept
@@ -110,8 +111,6 @@ private:
     BigArena::Allocation m_storage;
 };
 
-BigFloat &clear_bf(BigFloat &r);
-BigFloat &copy_bf(BigFloat &r, const BigFloat &n);
 BigFloat &max_bf(BigFloat &r);
 int sign_bf(const BigFloat &n);
 bool is_bf_zero(const BigFloat &n);

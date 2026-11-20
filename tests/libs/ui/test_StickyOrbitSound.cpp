@@ -99,8 +99,8 @@ int initialize_mandel_sticky_pixel()
         g_param_z_bf.x = g_init.x;
         add_a_bf(g_param_z_bf.x, offset);
         g_param_z_bf.y = g_init.y;
-        copy_bf(g_old_z_bf.x, g_param_z_bf.x);
-        copy_bf(g_old_z_bf.y, g_param_z_bf.y);
+        g_old_z_bf.x = g_param_z_bf.x;
+        g_old_z_bf.y = g_param_z_bf.y;
     }
     return 1;
 }

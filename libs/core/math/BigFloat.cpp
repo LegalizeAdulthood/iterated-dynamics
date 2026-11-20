@@ -252,6 +252,11 @@ BigFloat &BigFloat::operator=(const LDouble value)
     return *this;
 }
 
+void BigFloat::clear()
+{
+    std::memset(m_storage.data(), 0, m_storage.blocks() * arena().block_size());
+}
+
 BigFloat BigFloat::operator-() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING), *this};
@@ -374,18 +379,6 @@ BigFloat BigFloat::atan2(const BigFloat &x) const
     BigFloat result{bf_arena(BigLifetime::WORKING)};
     atan2_bf(result, *this, x);
     return result;
-}
-
-BigFloat &clear_bf(BigFloat &r)
-{
-    clear_bf(r.data());
-    return r;
-}
-
-BigFloat &copy_bf(BigFloat &r, const BigFloat &n)
-{
-    copy_bf(r.data(), n.data());
-    return r;
 }
 
 BigFloat &max_bf(BigFloat &r)

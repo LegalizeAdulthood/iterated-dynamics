@@ -334,7 +334,7 @@ void MathArenas::bind(const bool preserve_parameters)
             std::destroy_at(&target);
             ::new (&target) BigFloat{std::move(value)};
         }
-        std::memset(target.data(), 0, big_float.working.block_size());
+        target.clear();
     };
     init_big_float(g_bf_tmp1);
     init_big_float(g_bf_tmp2);

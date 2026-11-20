@@ -215,19 +215,19 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
     center.y = BigFloat{"0.000125"};
     actual.x = BigFloat{"0.99900000000000000000000000000000000000001"};
     actual.y = BigFloat{"-0.000125"};
-    copy_bf(expected.x, actual.x);
-    copy_bf(expected.y, actual.y);
+    expected.x = actual.x;
+    expected.y = actual.y;
 
     for (int step = 0; step < 8; ++step)
     {
         SCOPED_TRACE(step);
         powered.x = 1;
-        clear_bf(powered.y);
+        powered.y = 0;
         for (int factor = 0; factor < GetParam(); ++factor)
         {
             product = powered * expected;
-            copy_bf(powered.x, product.x);
-            copy_bf(powered.y, product.y);
+            powered.x = product.x;
+            powered.y = product.y;
         }
         add_bf(expected.x, powered.x, center.x);
         add_bf(expected.y, powered.y, center.y);
@@ -309,7 +309,7 @@ std::complex<double> TestSignedPowerState::precise_power(const std::complex<doub
     value.x = z.real();
     value.y = z.imag();
     exponent.x = g_c_exponent;
-    clear_bf(exponent.y);
+    exponent.y = 0;
     result = pow(value, exponent);
     return {static_cast<double>(bf_to_float(result.x)), static_cast<double>(bf_to_float(result.y))};
 }
@@ -470,20 +470,20 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
     exponent.x = GetParam().exponent;
-    clear_bf(exponent.y);
+    exponent.y = 0;
     center.x = 0.125;
     center.y = -0.0625;
     seed.x = BigFloat{GetParam().real};
     if (is_bf_zero(seed.x))
     {
-        clear_bf(seed.y);
+        seed.y = 0;
     }
     else
     {
         seed.y = 0.125;
     }
-    copy_bf(actual.x, seed.x);
-    copy_bf(actual.y, seed.y);
+    actual.x = seed.x;
+    actual.y = seed.y;
     expected = pow(seed, exponent);
     add_a_bf(expected.x, center.x);
     add_a_bf(expected.y, center.y);
@@ -811,8 +811,8 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
     center.y = -0.03125;
     seed.x = BigFloat{"-0.75000000000000000000000000000000000000001"};
     seed.y = BigFloat{GetParam().imaginary};
-    copy_bf(actual.x, seed.x);
-    copy_bf(actual.y, seed.y);
+    actual.x = seed.x;
+    actual.y = seed.y;
     expected = pow(seed, exponent);
     add_a_bf(expected.x, center.x);
     add_a_bf(expected.y, center.y);
@@ -847,8 +847,8 @@ TEST_P(TestPreciseComplexPowerZero, zeroReferenceProducesTheCenter)
     BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     center.x = 0.0625;
     center.y = -0.03125;
-    clear_bf(actual.x);
-    clear_bf(actual.y);
+    actual.x = 0;
+    actual.y = 0;
 
     mandel_z_power_ref_pt_bf(center, actual);
 

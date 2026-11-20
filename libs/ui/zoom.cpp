@@ -563,8 +563,8 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
     bf_plot_my2 = tmp3;
 
     // savxxmin = xxmin; savyymax = yymax;
-    copy_bf(save_bf_x_min, g_bf_x_min);
-    copy_bf(save_bf_y_max, g_bf_y_max);
+    save_bf_x_min = g_bf_x_min;
+    save_bf_y_max = g_bf_y_max;
 
     sub_bf(tmp1, g_bf_save_x_min, save_bf_x_min);
     sub_bf(tmp2, g_bf_save_y_max, save_bf_y_max);
@@ -1075,12 +1075,12 @@ void reset_zoom_corners()
     g_image_region = g_save_image_region;
     if (g_bf_math != BFMathType::NONE)
     {
-        copy_bf(g_bf_x_min, g_bf_save_x_min);
-        copy_bf(g_bf_x_max, g_bf_save_x_max);
-        copy_bf(g_bf_y_min, g_bf_save_y_min);
-        copy_bf(g_bf_y_max, g_bf_save_y_max);
-        copy_bf(g_bf_x_3rd, g_bf_save_x_3rd);
-        copy_bf(g_bf_y_3rd, g_bf_save_y_3rd);
+        g_bf_x_min = g_bf_save_x_min;
+        g_bf_x_max = g_bf_save_x_max;
+        g_bf_y_min = g_bf_save_y_min;
+        g_bf_y_max = g_bf_save_y_max;
+        g_bf_x_3rd = g_bf_save_x_3rd;
+        g_bf_y_3rd = g_bf_save_y_3rd;
     }
 }
 

@@ -452,8 +452,8 @@ bool mandel_per_image_bf()
         break;
 
     case FractalType::JULIA:
-        copy_bf(g_param_z_bf.x, g_bf_params[0]);
-        copy_bf(g_param_z_bf.y, g_bf_params[1]);
+        g_param_z_bf.x = g_bf_params[0];
+        g_param_z_bf.y = g_bf_params[1];
         break;
 
     case FractalType::MANDEL_Z_POWER:
@@ -474,8 +474,8 @@ bool mandel_per_image_bf()
 
     case FractalType::JULIA_Z_POWER:
         init_big_pi();
-        copy_bf(g_param_z_bf.x, g_bf_params[0]);
-        copy_bf(g_param_z_bf.y, g_bf_params[1]);
+        g_param_z_bf.x = g_bf_params[0];
+        g_param_z_bf.y = g_bf_params[1];
         if (g_c_exponent & 1 || g_params[3] != 0.0 || static_cast<double>(g_c_exponent) != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
