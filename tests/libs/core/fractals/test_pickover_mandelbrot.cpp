@@ -474,7 +474,7 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     center.x = 0.125;
     center.y = -0.0625;
     seed.x = BigFloat{GetParam().real};
-    if (is_bf_zero(seed.x))
+    if (seed.x.is_zero())
     {
         seed.y = 0;
     }
@@ -852,8 +852,8 @@ TEST_P(TestPreciseComplexPowerZero, zeroReferenceProducesTheCenter)
 
     mandel_z_power_ref_pt_bf(center, actual);
 
-    EXPECT_EQ(0, cmp_bf(center.x, actual.x));
-    EXPECT_EQ(0, cmp_bf(center.y, actual.y));
+    EXPECT_EQ(center.x, actual.x);
+    EXPECT_EQ(center.y, actual.y);
 }
 
 INSTANTIATE_TEST_SUITE_P(ComplexPowers, TestPreciseComplexPowerZero, ValuesIn(COMPLEX_POWER_EXPONENTS),

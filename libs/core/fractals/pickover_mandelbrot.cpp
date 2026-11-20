@@ -173,7 +173,7 @@ void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
     BFComplex tmp{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
     // The ordinary arbitrary-precision power kernel defines 0^n as 0,
     // including zero and negative exponents.
-    if (is_bf_zero(z.x) && is_bf_zero(z.y))
+    if (z.x.is_zero() && z.y.is_zero())
     {
         tmp.x = 0;
         tmp.y = 0;

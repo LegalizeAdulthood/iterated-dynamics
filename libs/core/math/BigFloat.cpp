@@ -390,31 +390,6 @@ BigFloat &max_bf(BigFloat &r)
     return r;
 }
 
-int sign_bf(const BigFloat &n)
-{
-    return sign_bf(n.data());
-}
-
-bool is_bf_zero(const BigFloat &n)
-{
-    return is_bf_zero(n.data());
-}
-
-bool is_bf_neg(const BigFloat &n)
-{
-    return is_bf_neg(n.data());
-}
-
-bool is_bf_not_zero(const BigFloat &n)
-{
-    return is_bf_not_zero(n.data());
-}
-
-int cmp_bf(const BigFloat &n1, const BigFloat &n2)
-{
-    return cmp_bf(n1.data(), n2.data());
-}
-
 BigFloat &mult_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
 {
     binary_operation(r.data(), n1.data(), n2.data(), multiply);
@@ -583,6 +558,16 @@ bool BigFloat::operator>(const BigFloat &right) const
 bool BigFloat::operator>=(const BigFloat &right) const
 {
     return cmp_bf(m_storage.data(), right.m_storage.data()) >= 0;
+}
+
+int BigFloat::sign() const
+{
+    return sign_bf(m_storage.data());
+}
+
+bool BigFloat::is_zero() const
+{
+    return is_bf_zero(m_storage.data());
 }
 
 LDouble BigFloat::to_float() const

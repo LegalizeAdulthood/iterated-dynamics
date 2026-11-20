@@ -434,7 +434,7 @@ void adjust_corner_bf()
     if (bf_temp < bf_temp2)
     {
         // if (ftemp*10000 < ftemp2 && yy3rd != yymax)
-        if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && cmp_bf(g_bf_y_3rd, g_bf_y_max) != 0)
+        if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && g_bf_y_3rd != g_bf_y_max)
         {
             // xx3rd = xxmin;
             g_bf_x_3rd = g_bf_x_min;
@@ -442,7 +442,7 @@ void adjust_corner_bf()
     }
 
     // else if (ftemp2*10000 < ftemp && yy3rd != yymin)
-    if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && cmp_bf(g_bf_y_3rd, g_bf_y_min) != 0)
+    if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && g_bf_y_3rd != g_bf_y_min)
     {
         // xx3rd = xxmax;
         g_bf_x_3rd = g_bf_x_max;
@@ -458,7 +458,7 @@ void adjust_corner_bf()
     if (bf_temp < bf_temp2)
     {
         // if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
-        if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && cmp_bf(g_bf_x_3rd, g_bf_x_max) != 0)
+        if (((b_tmp1 = bf_temp * 10000) < bf_temp2) && g_bf_x_3rd != g_bf_x_max)
         {
             // yy3rd = yymin;
             g_bf_y_3rd = g_bf_y_min;
@@ -466,7 +466,7 @@ void adjust_corner_bf()
     }
 
     // else if (ftemp2*10000 < ftemp && xx3rd != xxmin)
-    if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && cmp_bf(g_bf_x_3rd, g_bf_x_min) != 0)
+    if (((b_tmp1 = bf_temp2 * 10000) < bf_temp) && g_bf_x_3rd != g_bf_x_min)
     {
         // yy3rd = yymax;
         g_bf_y_3rd = g_bf_y_max;
@@ -565,7 +565,7 @@ static bool adjust_to_limits_bf(const double expand)
     b_center_y = b_center_y.half();
 
     // if (xxmin == center_x) {
-    if (cmp_bf(g_bf_x_min, b_center_x) == 0)
+    if (g_bf_x_min == b_center_x)
     {
         // ohoh, infinitely thin, fix it
         smallest_add_bf(g_bf_x_max);
@@ -575,7 +575,7 @@ static bool adjust_to_limits_bf(const double expand)
     }
 
     // if (bfymin == center_y)
-    if (cmp_bf(g_bf_y_min, b_center_y) == 0)
+    if (g_bf_y_min == b_center_y)
     {
         smallest_add_bf(g_bf_y_max);
         // bfymin -= bfymax-center_y;
@@ -584,13 +584,13 @@ static bool adjust_to_limits_bf(const double expand)
     }
 
     // if (bfx3rd == center_x)
-    if (cmp_bf(g_bf_x_3rd, b_center_x) == 0)
+    if (g_bf_x_3rd == b_center_x)
     {
         smallest_add_bf(g_bf_x_3rd);
     }
 
     // if (bfy3rd == center_y)
-    if (cmp_bf(g_bf_y_3rd, b_center_y) == 0)
+    if (g_bf_y_3rd == b_center_y)
     {
         smallest_add_bf(g_bf_y_3rd);
     }

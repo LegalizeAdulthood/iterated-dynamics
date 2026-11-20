@@ -11737,7 +11737,7 @@ void TestSubDoublePowerBranch::compare_branch(const int sign)
 {
     m_value.y = BigFloat{sign > 0 ? "1e-400" : "-1e-400"};
     EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(bf_to_float(m_value.x)));
-    EXPECT_EQ(sign, sign_bf(m_value.y));
+    EXPECT_EQ(sign, m_value.y.sign());
     EXPECT_NEAR(std::acos(-1.0), static_cast<double>(bf_to_float(g_bf_pi)), 1e-12);
     m_native = pow(m_value, m_exponent);
     // Preserve the native kernel's behavior beyond its initial floating-

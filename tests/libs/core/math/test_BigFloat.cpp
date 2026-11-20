@@ -185,6 +185,8 @@ TEST_P(TestBigFloatSign, comparesWithZeroWithoutChangingValueOrStorage)
     const std::size_t high_water = arena.high_water_mark();
     const BigStackMark mark = save_stack();
 
+    EXPECT_EQ(sign, value.sign());
+    EXPECT_EQ(sign == 0, value.is_zero());
     EXPECT_EQ(sign < 0, value < zero);
     EXPECT_EQ(sign == 0, value == zero);
     EXPECT_EQ(sign > 0, value > zero);

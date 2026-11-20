@@ -126,7 +126,7 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
 
     // simple normal case first
     // if (g_image_region.m_3rd.x == g_image_region.m_min.x && g_image_region.m_3rd.y == g_image_region.m_min.y)
-    if (!cmp_bf(g_bf_x_3rd, g_bf_x_min) && !cmp_bf(g_bf_y_3rd, g_bf_y_min))
+    if (g_bf_x_3rd == g_bf_x_min && g_bf_y_3rd == g_bf_y_min)
     {
         // no rotation or skewing, but stretching is allowed
         BigFloat width_bf{bf_arena(BigLifetime::TEMPORARY)};

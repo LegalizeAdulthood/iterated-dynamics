@@ -164,8 +164,8 @@ TEST_F(TestCalcFracInit, arbitraryPrecisionCornerAdjustmentSnapsNearlyAxisAligne
 
     adjust_corner_bf();
 
-    EXPECT_EQ(0, cmp_bf(g_bf_x_min, g_bf_x_3rd));
-    EXPECT_EQ(0, cmp_bf(g_bf_y_min, g_bf_y_3rd));
+    EXPECT_EQ(g_bf_x_min, g_bf_x_3rd);
+    EXPECT_EQ(g_bf_y_min, g_bf_y_3rd);
 }
 
 TEST_F(TestCalcFracInit, enteringArbitraryPrecisionStillInvalidatesResume)

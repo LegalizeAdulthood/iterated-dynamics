@@ -168,8 +168,8 @@ bool relative_delta(const BFComplex &value, const BFComplex &reference, std::com
     difference.y = value.y - reference.y;
     delta = {static_cast<double>(bf_to_float(difference.x)), static_cast<double>(bf_to_float(difference.y))};
     // Subnormal displacements do not retain full relative precision.
-    return (std::isnormal(delta.real()) || is_bf_zero(difference.x)) &&
-        (std::isnormal(delta.imag()) || is_bf_zero(difference.y));
+    return (std::isnormal(delta.real()) || difference.x.is_zero()) &&
+        (std::isnormal(delta.imag()) || difference.y.is_zero());
 }
 
 bool ambiguous_bailout(const std::complex<double> &reference, const std::complex<double> &delta)
@@ -211,11 +211,6 @@ bool precise_bailout_reached(const BFComplex &z)
     BigFloat metric{bf_arena(BigLifetime::TEMPORARY)};
     BigFloat limit{bf_arena(BigLifetime::TEMPORARY)};
     limit = bailout_limit();
-    const auto reached = [&limit](const BigFloat &value)
-    {
-        const int comparison{cmp_bf(value, limit)};
-        return comparison >= 0;
-    };
     x = sqr(z.x);
     y = sqr(z.y);
     switch (g_bailout_test)
@@ -224,13 +219,13 @@ bool precise_bailout_reached(const BFComplex &z)
         metric = x + y;
         break;
     case Bailout::REAL:
-        return reached(x);
+        return x >= limit;
     case Bailout::IMAG:
-        return reached(y);
+        return y >= limit;
     case Bailout::OR:
-        return reached(x) || reached(y);
+        return x >= limit || y >= limit;
     case Bailout::AND:
-        return reached(x) && reached(y);
+        return x >= limit && y >= limit;
     case Bailout::MANH:
         x = abs(z.x);
         y = abs(z.y);
@@ -251,7 +246,7 @@ bool precise_bailout_reached(const BFComplex &z)
     default:
         throw std::logic_error("Unknown bailout test");
     }
-    return reached(metric);
+    return metric >= limit;
 }
 
 } // namespace

@@ -413,13 +413,13 @@ bool mandel_per_image_bf()
 
     g_close_enough_bf = g_delta_x_bf.abs();
     bf_temp1 = g_delta2_x_bf.abs();
-    if (cmp_bf(bf_temp1, g_close_enough_bf) > 0)
+    if (bf_temp1 > g_close_enough_bf)
     {
         g_close_enough_bf = bf_temp1;
     }
     bf_temp1 = g_delta_y_bf.abs();
     bf_temp2 = g_delta2_y_bf.abs();
-    if (cmp_bf(bf_temp1, bf_temp2) > 0)
+    if (bf_temp1 > bf_temp2)
     {
         if (bf_temp1 > g_close_enough_bf)
         {

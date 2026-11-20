@@ -1474,10 +1474,10 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                 else if (g_bf_math == BFMathType::BIG_FLT)
                 {
                     g_bf_tmp = (g_saved_z_bf.x - g_new_z_bf.x).abs();
-                    if (cmp_bf(g_bf_tmp, g_close_enough_bf) < 0)
+                    if (g_bf_tmp < g_close_enough_bf)
                     {
                         g_bf_tmp = (g_saved_z_bf.y - g_new_z_bf.y).abs();
-                        if (cmp_bf(g_bf_tmp, g_close_enough_bf) < 0)
+                        if (g_bf_tmp < g_close_enough_bf)
                         {
                             m_caught_a_cycle = true;
                         }
@@ -2065,7 +2065,7 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     // also any rotation other than 180deg and any off-axis stretch
     if (g_bf_math != BFMathType::NONE)
     {
-        if (cmp_bf(g_bf_x_min, g_bf_x_3rd) || cmp_bf(g_bf_y_min, g_bf_y_3rd))
+        if (g_bf_x_min != g_bf_x_3rd || g_bf_y_min != g_bf_y_3rd)
         {
             return;
         }
@@ -2137,8 +2137,8 @@ void set_symmetry(SymmetryType sym, const bool use_list)
         BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
         std::destroy_at(&bft1);
         ::new (&bft1) BigFloat{std::move(value)};
-        x_axis_on_screen = sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max);
-        y_axis_on_screen = sign_bf(g_bf_x_min) != sign_bf(g_bf_x_max);
+        x_axis_on_screen = g_bf_y_min.sign() != g_bf_y_max.sign();
+        y_axis_on_screen = g_bf_x_min.sign() != g_bf_x_max.sign();
     }
     else
     {

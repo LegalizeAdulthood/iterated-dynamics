@@ -80,6 +80,9 @@ public:
     bool operator>(const BigFloat &right) const;
     bool operator>=(const BigFloat &right) const;
 
+    int sign() const;
+    bool is_zero() const;
+
     LDouble to_float() const;
     std::string to_string(int digits = 0) const;
 
@@ -112,11 +115,6 @@ private:
 };
 
 BigFloat &max_bf(BigFloat &r);
-int sign_bf(const BigFloat &n);
-bool is_bf_zero(const BigFloat &n);
-bool is_bf_neg(const BigFloat &n);
-bool is_bf_not_zero(const BigFloat &n);
-int cmp_bf(const BigFloat &n1, const BigFloat &n2);
 BigFloat &mult_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2);
 BigFloat &square_bf(BigFloat &r, const BigFloat &n);
 BigFloat &double_bf(BigFloat &r, const BigFloat &n);
