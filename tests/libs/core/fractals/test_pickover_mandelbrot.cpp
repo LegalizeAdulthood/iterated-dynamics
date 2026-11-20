@@ -229,12 +229,12 @@ TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMult
             powered.x = product.x;
             powered.y = product.y;
         }
-        add_bf(expected.x, powered.x, center.x);
-        add_bf(expected.y, powered.y, center.y);
+        expected.x = powered.x + center.x;
+        expected.y = powered.y + center.y;
         mandel_z_power_ref_pt_bf(center, actual);
-        sub_bf(difference, actual.x, expected.x);
+        difference = actual.x - expected.x;
         EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
-        sub_bf(difference, actual.y, expected.y);
+        difference = actual.y - expected.y;
         EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-50);
         if (std::norm(std::complex<double>{
                 static_cast<double>(bf_to_float(expected.x)), static_cast<double>(bf_to_float(expected.y))}) >= 4.0)
@@ -485,14 +485,14 @@ TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
     actual.x = seed.x;
     actual.y = seed.y;
     expected = pow(seed, exponent);
-    add_a_bf(expected.x, center.x);
-    add_a_bf(expected.y, center.y);
+    expected.x += center.x;
+    expected.y += center.y;
 
     mandel_z_power_ref_pt_bf(center, actual);
 
-    sub_bf(difference, actual.x, expected.x);
+    difference = actual.x - expected.x;
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
-    sub_bf(difference, actual.y, expected.y);
+    difference = actual.y - expected.y;
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
 }
 
@@ -814,14 +814,14 @@ TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
     actual.x = seed.x;
     actual.y = seed.y;
     expected = pow(seed, exponent);
-    add_a_bf(expected.x, center.x);
-    add_a_bf(expected.y, center.y);
+    expected.x += center.x;
+    expected.y += center.y;
 
     mandel_z_power_ref_pt_bf(center, actual);
 
-    sub_bf(difference, actual.x, expected.x);
+    difference = actual.x - expected.x;
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
-    sub_bf(difference, actual.y, expected.y);
+    difference = actual.y - expected.y;
     EXPECT_NEAR(0.0, static_cast<double>(bf_to_float(difference)), 1e-48);
 }
 

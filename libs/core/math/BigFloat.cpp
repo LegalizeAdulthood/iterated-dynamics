@@ -260,18 +260,20 @@ void BigFloat::clear()
 BigFloat BigFloat::operator-() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING), *this};
-    neg_a_bf(result);
+    neg_a_bf(result.m_storage.data());
     return result;
 }
 
 BigFloat &BigFloat::operator+=(const BigFloat &right)
 {
-    return add_a_bf(*this, right);
+    compound_operation(m_storage.data(), right.m_storage.data(), unsafe_add_a_bf);
+    return *this;
 }
 
 BigFloat &BigFloat::operator-=(const BigFloat &right)
 {
-    return sub_a_bf(*this, right);
+    compound_operation(m_storage.data(), right.m_storage.data(), unsafe_sub_a_bf);
+    return *this;
 }
 
 BigFloat &BigFloat::operator*=(const BigFloat &right)
@@ -294,14 +296,14 @@ BigFloat &BigFloat::operator/=(const U16 right)
 BigFloat BigFloat::operator+(const BigFloat &right) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    add_bf(result, *this, right);
+    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), unsafe_add_bf);
     return result;
 }
 
 BigFloat BigFloat::operator-(const BigFloat &right) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    sub_bf(result, *this, right);
+    binary_operation(result.m_storage.data(), m_storage.data(), right.m_storage.data(), unsafe_sub_bf);
     return result;
 }
 
@@ -317,7 +319,8 @@ BigFloat BigFloat::operator*(const BigFloat &right) const
 BigFloat BigFloat::operator*(const U16 right) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    mult_bf_int(result, *this, right);
+    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
+    unsafe_mult_bf_int(result.m_storage.data(), g_bf_tmp_copy1.data(), right);
     return result;
 }
 
@@ -331,7 +334,7 @@ BigFloat BigFloat::operator/(const BigFloat &right) const
 BigFloat BigFloat::abs() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING), *this};
-    abs_a_bf(result);
+    abs_a_bf(result.m_storage.data());
     return result;
 }
 
@@ -348,7 +351,7 @@ BigFloat BigFloat::sqr() const
 BigFloat BigFloat::half() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING), *this};
-    half_a_bf(result);
+    half_a_bf(result.m_storage.data());
     return result;
 }
 
@@ -412,54 +415,6 @@ int cmp_bf(const BigFloat &n1, const BigFloat &n2)
     return cmp_bf(n1.data(), n2.data());
 }
 
-BigFloat &neg_bf(BigFloat &r, const BigFloat &n)
-{
-    neg_bf(r.data(), n.data());
-    return r;
-}
-
-BigFloat &neg_a_bf(BigFloat &r)
-{
-    neg_a_bf(r.data());
-    return r;
-}
-
-BigFloat &abs_bf(BigFloat &r, const BigFloat &n)
-{
-    abs_bf(r.data(), n.data());
-    return r;
-}
-
-BigFloat &abs_a_bf(BigFloat &r)
-{
-    abs_a_bf(r.data());
-    return r;
-}
-
-BigFloat &add_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
-{
-    binary_operation(r.data(), n1.data(), n2.data(), unsafe_add_bf);
-    return r;
-}
-
-BigFloat &add_a_bf(BigFloat &r, const BigFloat &n)
-{
-    compound_operation(r.data(), n.data(), unsafe_add_a_bf);
-    return r;
-}
-
-BigFloat &sub_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
-{
-    binary_operation(r.data(), n1.data(), n2.data(), unsafe_sub_bf);
-    return r;
-}
-
-BigFloat &sub_a_bf(BigFloat &r, const BigFloat &n)
-{
-    compound_operation(r.data(), n.data(), unsafe_sub_a_bf);
-    return r;
-}
-
 BigFloat &mult_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
 {
     binary_operation(r.data(), n1.data(), n2.data(), multiply);
@@ -473,19 +428,6 @@ BigFloat &square_bf(BigFloat &r, const BigFloat &n)
     return r;
 }
 
-BigFloat &mult_bf_int(BigFloat &r, const BigFloat &n, const U16 u)
-{
-    copy_bf(g_bf_tmp_copy1.data(), n.data());
-    unsafe_mult_bf_int(r.data(), g_bf_tmp_copy1.data(), u);
-    return r;
-}
-
-BigFloat &mult_a_bf_int(BigFloat &r, const U16 u)
-{
-    mult_a_bf_int(r.data(), u);
-    return r;
-}
-
 BigFloat &double_bf(BigFloat &r, const BigFloat &n)
 {
     double_bf(r.data(), n.data());
@@ -495,18 +437,6 @@ BigFloat &double_bf(BigFloat &r, const BigFloat &n)
 BigFloat &double_a_bf(BigFloat &r)
 {
     double_a_bf(r.data());
-    return r;
-}
-
-BigFloat &half_bf(BigFloat &r, const BigFloat &n)
-{
-    half_bf(r.data(), n.data());
-    return r;
-}
-
-BigFloat &half_a_bf(BigFloat &r)
-{
-    half_a_bf(r.data());
     return r;
 }
 
