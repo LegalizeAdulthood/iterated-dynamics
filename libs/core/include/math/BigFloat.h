@@ -4,6 +4,7 @@
 #pragma once
 
 #include <math/BigArena.h>
+#include <math/BigNum.h>
 #include <math/cmplx.h>
 #include <misc/sized_types.h>
 
@@ -19,8 +20,6 @@ namespace id::math
 
 using BigFloatPtr = Byte *;
 using BigFloatConstPtr = const Byte *;
-
-class BigNum;
 
 class BigFloat
 {
@@ -112,6 +111,9 @@ public:
     void copy_to_legacy_num(Byte *destination, std::size_t size) const;
 
 private:
+    friend BigFloat BigNum::to_big_float(BigArena &arena) const;
+    friend BigNum &BigNum::operator=(const BigFloat &value);
+
     explicit BigFloat(BigArena::Allocation storage);
 
     std::size_t encoded_size() const noexcept

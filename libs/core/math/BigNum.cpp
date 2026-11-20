@@ -156,7 +156,7 @@ BigNum::BigNum(BigArena &arena, const std::string_view text) :
 BigNum::BigNum(BigArena &arena, const BigFloat &value) :
     BigNum(arena)
 {
-    value.copy_to_legacy_num(data(), encoded_size());
+    *this = value;
 }
 
 BigNum::BigNum(const BigNum &value) :
@@ -232,7 +232,12 @@ BigNum &BigNum::operator=(const BigFloat &value)
 {
     if (m_storage)
     {
-        value.copy_to_legacy_num(data(), encoded_size());
+        Byte *const buffer = data();
+        if (buffer == nullptr || encoded_size() < static_cast<std::size_t>(g_bn_length))
+        {
+            throw std::invalid_argument("BigFloat requires a complete legacy value buffer");
+        }
+        bf_to_bn(buffer, value.m_storage.data());
     }
     else
     {
@@ -417,7 +422,7 @@ BigFloat BigNum::to_big_float(BigArena &arena) const
     {
         throw std::invalid_argument("BigNum requires a complete legacy value buffer");
     }
-    bn_to_bf(result.data(), data());
+    bn_to_bf(result.m_storage.data(), data());
     return result;
 }
 
