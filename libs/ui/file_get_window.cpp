@@ -598,12 +598,12 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         const int di_bf_length = two_di_len - 2;
 
         const Byte *cursor = blk_5_info->apm_data.data();
-        cursor = unpack_bf(bt_x_min, cursor, di_bf_length);
-        cursor = unpack_bf(bt_x_max, cursor, di_bf_length);
-        cursor = unpack_bf(bt_y_min, cursor, di_bf_length);
-        cursor = unpack_bf(bt_y_max, cursor, di_bf_length);
-        cursor = unpack_bf(bt_x_3rd, cursor, di_bf_length);
-        cursor = unpack_bf(bt_y_3rd, cursor, di_bf_length);
+        cursor = BigFloat::unpack_bf(bt_x_min, cursor, di_bf_length);
+        cursor = BigFloat::unpack_bf(bt_x_max, cursor, di_bf_length);
+        cursor = BigFloat::unpack_bf(bt_y_min, cursor, di_bf_length);
+        cursor = BigFloat::unpack_bf(bt_y_max, cursor, di_bf_length);
+        cursor = BigFloat::unpack_bf(bt_x_3rd, cursor, di_bf_length);
+        cursor = BigFloat::unpack_bf(bt_y_3rd, cursor, di_bf_length);
     }
 
     /* transform maps real plane co-ords onto the current screen view see above */

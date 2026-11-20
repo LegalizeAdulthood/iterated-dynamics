@@ -640,9 +640,9 @@ std::vector<Byte> pack_bf_parameters()
     const std::size_t length = static_cast<std::size_t>(g_bf_length) + 2;
     std::vector<Byte> result(22 * length);
     std::size_t offset = 0;
-    for (BigFloat *value : parameter_bindings())
+    for (const BigFloat *value : parameter_bindings())
     {
-        std::memcpy(result.data() + offset, value->data(), length);
+        value->pack_bf(result.data() + offset, length);
         offset += length;
     }
     return result;
@@ -665,7 +665,7 @@ void unpack_bf_parameters(const std::vector<Byte> &parameters)
     const Byte *cursor = parameters.data();
     for (BigFloat *value : parameter_bindings())
     {
-        cursor = unpack_bf(*value, cursor, g_bf_length);
+        cursor = BigFloat::unpack_bf(*value, cursor, g_bf_length);
     }
 }
 

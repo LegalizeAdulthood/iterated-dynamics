@@ -491,7 +491,7 @@ TEST_P(TestBigFloatUnpack, preservesDestinationStorageSourceCursorAndPrecision)
     const std::size_t high_water = arena.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    const Byte *const cursor = unpack_bf(destination, source.data() + 1, input.stored_length);
+    const Byte *const cursor = BigFloat::unpack_bf(destination, source.data() + 1, input.stored_length);
 
     EXPECT_EQ(source.data() + source.size() - 1, cursor);
     EXPECT_EQ(input.expected, encoded_value(destination));

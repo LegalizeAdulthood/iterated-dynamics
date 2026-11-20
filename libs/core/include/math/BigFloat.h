@@ -91,6 +91,9 @@ public:
 
     BigFloat convert_precision(BigArena &arena, int new_length, int old_length) const;
 
+    void pack_bf(Byte *record, std::size_t length) const;
+    static const Byte *unpack_bf(BigFloat &destination, const Byte *source, int stored_length);
+
     // Borrowed buffers require a numeric value and expire on arena relocation.
     BigFloatPtr data() noexcept
     {
@@ -120,8 +123,6 @@ private:
 };
 
 BigFloat &max_bf(BigFloat &r);
-// r and n are distinct. The input is made positive and its exponent cleared.
-const Byte *unpack_bf(BigFloat &destination, const Byte *source, int stored_length);
 BigFloat abs(const BigFloat &value);
 BigFloat sqr(const BigFloat &value);
 BigFloat log(const BigFloat &value);

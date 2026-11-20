@@ -399,11 +399,6 @@ BigFloat &max_bf(BigFloat &r)
     return r;
 }
 
-const Byte *unpack_bf(BigFloat &destination, const Byte *source, const int stored_length)
-{
-    return unpack_bf(destination.data(), source, stored_length);
-}
-
 BigFloat abs(const BigFloat &value)
 {
     return value.abs();
@@ -506,6 +501,16 @@ BigFloat BigFloat::convert_precision(BigArena &arena, const int new_length, cons
     BigFloat result{arena};
     convert_bf(result.m_storage.data(), m_storage.data(), new_length, old_length);
     return result;
+}
+
+void BigFloat::pack_bf(Byte *record, const std::size_t length) const
+{
+    copy_to_legacy(record, length);
+}
+
+const Byte *BigFloat::unpack_bf(BigFloat &destination, const Byte *source, const int stored_length)
+{
+    return id::math::unpack_bf(destination.m_storage.data(), source, stored_length);
 }
 
 BigFloat BigFloat::from_legacy(BigFloatConstPtr source, const std::size_t size)
