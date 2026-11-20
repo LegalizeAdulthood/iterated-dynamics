@@ -181,7 +181,7 @@ TEST_F(TestBigFloatBailout, canonicalGlobalsOwnWorkingStorageThroughBindingAndCl
     for (const auto *value : values)
     {
         ASSERT_TRUE(*value);
-        EXPECT_EQ(&working, &value->arena());
+        EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &value->arena());
         EXPECT_EQ(BigFloat{0}, *value);
     }
     free_bf_vars();
@@ -193,7 +193,7 @@ TEST_F(TestBigFloatBailout, canonicalGlobalsOwnWorkingStorageThroughBindingAndCl
     for (const auto *value : values)
     {
         ASSERT_TRUE(*value);
-        EXPECT_EQ(&working, &value->arena());
+        EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &value->arena());
         EXPECT_EQ(BigFloat{0}, *value);
     }
 }

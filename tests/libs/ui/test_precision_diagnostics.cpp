@@ -187,18 +187,18 @@ class TestBigNumPrecisionDiagnostics : public TestPrecisionDiagnostics,
 {
 };
 
-TEST_P(TestBigNumPrecisionDiagnostics, preservesExactOutputAndInputBytes)
+TEST_P(TestBigNumPrecisionDiagnostics, preservesExactOutputAndInputValue)
 {
     const auto &input = GetParam();
     init_bf_length(input.length);
     const BigNum value{input.text};
-    const std::vector<Byte> original(value.data(), value.data() + g_bn_length);
+    const BigNum original{value};
 
     EXPECT_EQ(std::string{"value "} + input.number, format_var_bn("value", value));
     EXPECT_EQ(std::string{"bn\nbignum="} + input.number + "\ndouble=-1.50000000000000000000\n\n",
         format_compare_values("bn", -1.5L, value));
 
-    EXPECT_EQ(original, (std::vector<Byte>{value.data(), value.data() + g_bn_length}));
+    EXPECT_EQ(original, value);
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBigNumPrecisionDiagnostics,

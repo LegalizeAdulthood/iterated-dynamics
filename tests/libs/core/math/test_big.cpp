@@ -2825,21 +2825,22 @@ TEST_P(TestBigNumByteProducts, arenaReducesProductsThroughItsConfiguredFunction)
 
 class TestBigNumByteProductRelocation
     : public TestBigNumByteKernel,
-      public testing::WithParamInterface<std::tuple<int, std::pair<int, int>, bool, BigLifetime>>
+      public testing::WithParamInterface<std::tuple<int, std::pair<int, int>, bool, std::size_t>>
 {
 };
 
 TEST_P(TestBigNumByteProductRelocation, relocatesRetainedBytesRatherThanTreatingTheirBaseAsCanonical)
 {
-    const int old_length = std::get<0>(GetParam());
-    const std::pair<int, int> integers = std::get<1>(GetParam());
-    const bool negative = std::get<2>(GetParam());
+    const auto [old_length, integers, negative, capacity] = GetParam();
     init_layout(old_length, integers.first);
-    BigArena &arena = bn_arena(std::get<3>(GetParam()));
+    // Precision changes rebuild the application arenas. Exercise relocation
+    // in an arena whose lifetime is independent of the precision context.
+    BigArena arena{static_cast<std::size_t>(g_bn_length), capacity, reduce_bn_product};
     EXPECT_EQ(static_cast<std::size_t>((old_length + 63) / 64 * 64), arena.block_size());
-    const std::size_t capacity = arena.capacity();
     BigArena::Allocation product = arena.allocate_double();
-    const int old_fraction = g_r_length - 2 * g_int_length;
+    const int old_product_length = g_r_length;
+    const int old_integer_length = 2 * g_int_length;
+    const int old_fraction = old_product_length - old_integer_length;
     const int guard = g_shift_factor - 1;
     std::fill_n(product.data(), 2 * arena.block_size(), Byte{0});
     std::fill(product.data() + old_fraction, product.data() + g_r_length, negative ? Byte{0xff} : Byte{0});
@@ -2848,13 +2849,23 @@ TEST_P(TestBigNumByteProductRelocation, relocatesRetainedBytesRatherThanTreating
     {
         product.data()[guard] = 0x5a;
     }
-    const Byte *const address = product.data();
+    const std::uintptr_t address = reinterpret_cast<std::uintptr_t>(product.data());
     const BigArena::Index index = product.index();
 
     init_layout(old_length <= 12 ? 64 : 12, integers.second);
 
     ASSERT_EQ(integers.second, g_int_length);
-    EXPECT_EQ(static_cast<std::size_t>((g_bn_length + 63) / 64 * 64), arena.block_size());
+    constexpr Byte PADDING{0xa5};
+    const std::size_t stride = (g_bn_length + 63) / 64 * 64;
+    arena.relocate(static_cast<std::size_t>(g_bn_length),
+        [&](Byte *destination, const Byte *source, const std::size_t blocks)
+        {
+            EXPECT_EQ(2U, blocks);
+            std::fill_n(destination, blocks * stride, PADDING);
+            convert_bn_signed(
+                destination, source, g_r_length, 2 * g_int_length, old_product_length, old_integer_length);
+        });
+    EXPECT_EQ(stride, arena.block_size());
     EXPECT_EQ(capacity, arena.capacity());
     const int fraction = g_r_length - 2 * g_int_length;
     std::vector<Byte> expected(g_r_length);
@@ -2865,13 +2876,13 @@ TEST_P(TestBigNumByteProductRelocation, relocatesRetainedBytesRatherThanTreating
     {
         expected[relocated_guard] = 0x5a;
     }
-    EXPECT_NE(address, product.data());
+    EXPECT_NE(address, reinterpret_cast<std::uintptr_t>(product.data()));
     EXPECT_EQ(&arena, &product.arena());
     EXPECT_EQ(index, product.index());
     EXPECT_EQ(2U, product.blocks());
     EXPECT_EQ(expected, std::vector<Byte>(product.data(), product.data() + g_r_length));
-    EXPECT_EQ(std::vector<Byte>(2 * arena.block_size() - g_r_length),
-        std::vector<Byte>(product.data() + g_r_length, product.data() + 2 * arena.block_size()));
+    EXPECT_EQ(std::vector<Byte>(2 * stride - g_r_length, PADDING),
+        std::vector<Byte>(product.data() + g_r_length, product.data() + 2 * stride));
     const Byte *const relocated = product.data();
 
     product.reduce();
@@ -2884,11 +2895,11 @@ TEST_P(TestBigNumByteProductRelocation, relocatesRetainedBytesRatherThanTreating
     EXPECT_EQ(relocated + arena.block_size(), companion.data());
 }
 
-INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndLifetimes, TestBigNumByteProductRelocation,
+INSTANTIATE_TEST_SUITE_P(LayoutsSignsAndCapacities, TestBigNumByteProductRelocation,
     testing::Combine(testing::Values(4, 12, 64, 672),
         testing::Values(
             std::pair<int, int>{1, 1}, std::pair<int, int>{1, 2}, std::pair<int, int>{2, 4}, std::pair<int, int>{4, 1}),
-        testing::Bool(), testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
+        testing::Bool(), testing::Values<std::size_t>(2, 4, 8)));
 
 class TestBigNumByteProductWindows : public TestBigNumByteKernel,
                                      public testing::WithParamInterface<std::tuple<int, int>>
