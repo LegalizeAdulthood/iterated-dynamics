@@ -290,7 +290,8 @@ BigFloat &BigFloat::operator/=(const BigFloat &right)
 
 BigFloat &BigFloat::operator/=(const U16 right)
 {
-    return div_a_bf_int(*this, right);
+    div_a_bf_int(m_storage.data(), right);
+    return *this;
 }
 
 BigFloat BigFloat::operator+(const BigFloat &right) const
@@ -327,7 +328,10 @@ BigFloat BigFloat::operator*(const U16 right) const
 BigFloat BigFloat::operator/(const BigFloat &right) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    div_bf(result, *this, right);
+    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
+    copy_bf(g_bf_tmp_copy2.data(), right.m_storage.data());
+    unsafe_div_bf(
+        result.m_storage.data(), g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
     return result;
 }
 
@@ -387,32 +391,6 @@ BigFloat BigFloat::atan2(const BigFloat &x) const
 BigFloat &max_bf(BigFloat &r)
 {
     max_bf(r.data());
-    return r;
-}
-
-BigFloat &unsafe_inv_bf(BigFloat &r, BigFloat &n)
-{
-    unsafe_inv_bf(r.data(), n.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
-    return r;
-}
-
-BigFloat &div_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
-{
-    copy_bf(g_bf_tmp_copy1.data(), n1.data());
-    copy_bf(g_bf_tmp_copy2.data(), n2.data());
-    unsafe_div_bf(r.data(), g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
-    return r;
-}
-
-BigFloat &unsafe_div_bf_int(BigFloat &r, BigFloat &n, const U16 u)
-{
-    unsafe_div_bf_int(r.data(), n.data(), u);
-    return r;
-}
-
-BigFloat &div_a_bf_int(BigFloat &r, const U16 u)
-{
-    div_a_bf_int(r.data(), u);
     return r;
 }
 

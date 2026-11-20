@@ -116,10 +116,6 @@ private:
 
 BigFloat &max_bf(BigFloat &r);
 // r and n are distinct. The input is made positive and its exponent cleared.
-BigFloat &unsafe_inv_bf(BigFloat &r, BigFloat &n);
-BigFloat &div_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2);
-BigFloat &unsafe_div_bf_int(BigFloat &r, BigFloat &n, misc::U16 u);
-BigFloat &div_a_bf_int(BigFloat &r, misc::U16 u);
 BigFloat &exp_bf(BigFloat &r, const BigFloat &n);
 BigFloat &ln_bf(BigFloat &r, const BigFloat &n);
 BigFloat &sin_cos_bf(BigFloat &s, BigFloat &c, const BigFloat &n);

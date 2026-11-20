@@ -37,7 +37,6 @@ static_assert(std::is_same_v<decltype(&bf_hex_dump), void (*)(const BigFloat &)>
 static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().to_float()), LDouble>);
 static_assert(std::is_same_v<decltype(std::declval<BigFloat &>() = std::declval<const BigFloat &>()), BigFloat &>);
 static_assert(std::is_same_v<decltype(std::declval<BigFloat &>() = LDouble{}), BigFloat &>);
-static_assert(std::is_same_v<decltype(&div_bf), BigFloat &(*)(BigFloat &, const BigFloat &, const BigFloat &)>);
 static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>() / std::declval<const BigFloat &>()), BigFloat>);
 static_assert(std::is_same_v<decltype(std::declval<BigFloat &>() /= U16{}), BigFloat &>);
 static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().exp()), BigFloat>);
@@ -804,7 +803,7 @@ class TestBigFloatDivision : public TestBigFloatValue, public testing::WithParam
 {
 };
 
-TEST_P(TestBigFloatDivision, writesAndReturnsTheDestinationWithAliasedInputs)
+TEST_P(TestBigFloatDivision, supportsAliasedAssignmentAndPreservesOtherOperands)
 {
     BigArena &arena = bf_arena(BigLifetime::WORKING);
     BigFloat numerator{arena, -8.0L};
@@ -818,10 +817,11 @@ TEST_P(TestBigFloatDivision, writesAndReturnsTheDestinationWithAliasedInputs)
     const BigFloat expected{arena, shared_input ? 1.0L : 2.0L};
     const BigFloat original_numerator{arena, -8.0L};
     const BigFloat original_denominator{arena, -4.0L};
+    arena.allocate_single().reset();
     const std::size_t high_water = arena.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(&output, &div_bf(output, numerator, divisor));
+    output = numerator / divisor;
 
     EXPECT_EQ(expected, output);
     EXPECT_EQ(&arena, &output.arena());
@@ -1019,7 +1019,7 @@ TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
     EXPECT_EQ("-10.0", bf_to_string(result, 8));
     result = left * right;
     EXPECT_EQ("-18.75", bf_to_string(result, 8));
-    div_bf(result, left, right);
+    result = left / right;
     EXPECT_EQ("-3.0", bf_to_string(result, 8));
 
     EXPECT_EQ(original_left, left);
@@ -1142,7 +1142,7 @@ TEST_P(TestBigFloatArithmetic, expressionsMatchLegacySequencesAndOutliveTheirTem
     const BigFloat original_divisor{divisor};
     BigFloat expected{left};
     expected += right;
-    div_bf(expected, expected, divisor);
+    expected /= divisor;
     expected *= left;
     expected -= right;
     const BigStackMark marker = save_stack();
