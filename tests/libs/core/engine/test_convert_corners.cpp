@@ -14,7 +14,6 @@
 #include <array>
 #include <string>
 #include <tuple>
-#include <vector>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -40,7 +39,7 @@ void TestBigFloatCornerConversion::TearDown()
     free_bf_vars();
 }
 
-TEST_F(TestBigFloatCornerConversion, simplePathProducesExactCornerBytes)
+TEST_F(TestBigFloatCornerConversion, simplePathProducesExactCornerValues)
 {
     init_bf_dec(50);
     const BigFloat x{"1.25"};
@@ -55,8 +54,7 @@ TEST_F(TestBigFloatCornerConversion, simplePathProducesExactCornerBytes)
     {
         SCOPED_TRACE(i);
         const BigFloat expected{texts[i]};
-        EXPECT_EQ(std::vector<Byte>(expected.data(), expected.data() + g_bf_length + 2),
-            std::vector<Byte>(corners[i]->data(), corners[i]->data() + g_bf_length + 2));
+        EXPECT_EQ(expected, *corners[i]);
     }
 }
 
@@ -79,8 +77,8 @@ TEST_P(TestBigFloatCornerPaths, preservesCentersCornerBytesAndTemporaryLifetime)
     const CornerTransform &transform = std::get<1>(GetParam());
     const BigFloat x{"1.25"};
     const BigFloat y{"-2.5"};
-    const std::vector<Byte> x_bytes(x.data(), x.data() + g_bf_length + 2);
-    const std::vector<Byte> y_bytes(y.data(), y.data() + g_bf_length + 2);
+    const BigFloat original_x{x};
+    const BigFloat original_y{y};
     const auto saved = save_stack();
     cvt_corners(1.25, -2.5, 2, transform.factor, transform.rotation, transform.skew);
     const std::array<double, 6> expected{g_image_region.m_min.x, g_image_region.m_max.x, g_image_region.m_min.y,
@@ -96,16 +94,16 @@ TEST_P(TestBigFloatCornerPaths, preservesCentersCornerBytesAndTemporaryLifetime)
         SCOPED_TRACE(i);
         EXPECT_NEAR(expected[i], static_cast<double>(corners[i]->to_float()), 1e-12);
     }
-    EXPECT_EQ(x_bytes, std::vector<Byte>(x.data(), x.data() + g_bf_length + 2));
-    EXPECT_EQ(y_bytes, std::vector<Byte>(y.data(), y.data() + g_bf_length + 2));
+    EXPECT_EQ(original_x, x);
+    EXPECT_EQ(original_y, y);
     EXPECT_EQ(saved, save_stack());
     const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
 
     cvt_corners_bf(x, y, 2, transform.factor, transform.rotation, transform.skew);
 
     EXPECT_EQ(corner_bytes, pack_bf_parameters());
-    EXPECT_EQ(x_bytes, std::vector<Byte>(x.data(), x.data() + g_bf_length + 2));
-    EXPECT_EQ(y_bytes, std::vector<Byte>(y.data(), y.data() + g_bf_length + 2));
+    EXPECT_EQ(original_x, x);
+    EXPECT_EQ(original_y, y);
     EXPECT_EQ(saved, save_stack());
     EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
 }

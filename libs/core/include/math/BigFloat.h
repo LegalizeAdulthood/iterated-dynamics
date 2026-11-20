@@ -18,9 +18,6 @@
 namespace id::math
 {
 
-using BigFloatPtr = Byte *;
-using BigFloatConstPtr = const Byte *;
-
 class BigFloat
 {
 public:
@@ -93,28 +90,21 @@ public:
     void pack_bf(Byte *record, std::size_t length) const;
     static const Byte *unpack_bf(BigFloat &destination, const Byte *source, int stored_length);
 
-    // Borrowed buffers require a numeric value and expire on arena relocation.
-    BigFloatPtr data() noexcept
-    {
-        return m_storage.data();
-    }
-
-    BigFloatConstPtr data() const noexcept
-    {
-        return m_storage.data();
-    }
-
-    // Adapters copy canonical mantissa/exponent bytes, without scalar conversion.
-    static BigFloat from_legacy(BigFloatConstPtr source, std::size_t size);
-    static BigFloat from_legacy(BigArena &arena, BigFloatConstPtr source, std::size_t size);
-    void copy_to_legacy(BigFloatPtr destination, std::size_t size) const;
-    void copy_to_legacy_num(Byte *destination, std::size_t size) const;
-
 private:
     friend BigFloat BigNum::to_big_float(BigArena &arena) const;
     friend BigNum &BigNum::operator=(const BigFloat &value);
 
     explicit BigFloat(BigArena::Allocation storage);
+
+    Byte *data() noexcept
+    {
+        return m_storage.data();
+    }
+
+    const Byte *data() const noexcept
+    {
+        return m_storage.data();
+    }
 
     std::size_t encoded_size() const noexcept
     {
@@ -124,7 +114,6 @@ private:
     BigArena::Allocation m_storage;
 };
 
-BigFloat &max_bf(BigFloat &r);
 BigFloat abs(const BigFloat &value);
 BigFloat sqr(const BigFloat &value);
 BigFloat log(const BigFloat &value);

@@ -27,6 +27,7 @@
 #include <ostream>
 #include <string>
 #include <tuple>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -226,11 +227,12 @@ TEST_P(TestBigFloatMinimumIncrement, preservesExactCoordinateBytesAtActivePrecis
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
     EXPECT_EQ(saved, save_stack());
     EXPECT_EQ(&bf_arena(BigLifetime::PERSISTENT), &coordinate.target->arena());
+    std::vector<Byte> packed(static_cast<std::size_t>(g_bf_length + 2));
+    coordinate.target->pack_bf(packed.data(), packed.size());
     std::string encoded;
     constexpr char hex_digits[]{"0123456789abcdef"};
-    for (int i = 0; i < g_bf_length + 2; ++i)
+    for (const Byte value : packed)
     {
-        const Byte value = coordinate.target->data()[i];
         encoded.push_back(hex_digits[value >> 4]);
         encoded.push_back(hex_digits[value & 15]);
     }

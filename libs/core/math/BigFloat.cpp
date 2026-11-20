@@ -28,7 +28,7 @@ class BigFloatProduct
 public:
     explicit BigFloatProduct(BigArena &arena);
 
-    BigFloatPtr data() noexcept
+    Byte *data() noexcept
     {
         return m_storage.data();
     }
@@ -52,24 +52,14 @@ BigArena::Allocation BigFloatProduct::release_reduced_storage() &&
     return std::move(m_storage);
 }
 
-void validate_buffer(BigFloatConstPtr buffer, const std::size_t size, const std::size_t required)
-{
-    if (buffer == nullptr || size < required)
-    {
-        throw std::invalid_argument("BigFloat requires a complete legacy value buffer");
-    }
-}
-
-BigFloatPtr binary_operation(BigFloatPtr result, BigFloatConstPtr left, BigFloatConstPtr right,
-    BigFloatPtr (*operation)(BigFloatPtr, BigFloatPtr, BigFloatPtr))
+Byte *binary_operation(Byte *result, const Byte *left, const Byte *right, Byte *(*operation)(Byte *, Byte *, Byte *) )
 {
     copy_bf(g_bf_tmp_copy1.data(), left);
     copy_bf(g_bf_tmp_copy2.data(), right);
     return operation(result, g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data());
 }
 
-BigFloatPtr compound_operation(
-    BigFloatPtr result, BigFloatConstPtr right, BigFloatPtr (*operation)(BigFloatPtr, BigFloatPtr))
+Byte *compound_operation(Byte *result, const Byte *right, Byte *(*operation)(Byte *, Byte *))
 {
     copy_bf(g_bf_tmp_copy1.data(), right);
     return operation(result, g_bf_tmp_copy1.data());
@@ -88,7 +78,7 @@ Byte *multiply(Byte *r, Byte *n1, Byte *n2)
     return r;
 }
 
-BigFloatPtr square_value(BigFloatPtr r, BigFloatPtr n)
+Byte *square_value(Byte *r, Byte *n)
 {
     if (is_bf_zero(n))
     {
@@ -119,10 +109,10 @@ BigArena::Allocation native_storage(BigArena &arena, const LDouble value)
 }
 
 std::string format_bf(
-    const BigFloat &value, const int dec, std::string (*format)(Byte *source, int digits, Byte *decimal))
+    const Byte *value, const int dec, std::string (*format)(Byte *source, int digits, Byte *decimal))
 {
     Byte *const scratch = g_bf_tmp_copy1.data();
-    copy_bf(scratch, value.data());
+    copy_bf(scratch, value);
     if (bf_to_float(scratch) == 0.0)
     {
         return "0.0";
@@ -393,12 +383,6 @@ BigFloat BigFloat::atan2(const BigFloat &x) const
     return result;
 }
 
-BigFloat &max_bf(BigFloat &r)
-{
-    max_bf(r.data());
-    return r;
-}
-
 BigFloat abs(const BigFloat &value)
 {
     return value.abs();
@@ -482,12 +466,12 @@ std::string BigFloat::to_string(const int digits) const
         throw std::invalid_argument("BigFloat formatting requires a nonnegative digit count");
     }
     const int default_digits = g_decimals > 0 ? g_decimals : static_cast<int>((g_bf_length - 2) * LOG10_256);
-    return format_bf(*this, digits == 0 ? default_digits : digits, unsafe_bf_to_string);
+    return format_bf(data(), digits == 0 ? default_digits : digits, unsafe_bf_to_string);
 }
 
 std::string BigFloat::to_scientific_string(const int digits) const
 {
-    return format_bf(*this, digits, unsafe_bf_to_string_e);
+    return format_bf(data(), digits, unsafe_bf_to_string_e);
 }
 
 // Debugging aid that dumps the mantissa and exponent to stdout.
@@ -505,37 +489,17 @@ BigFloat BigFloat::convert_precision(BigArena &arena, const int new_length, cons
 
 void BigFloat::pack_bf(Byte *record, const std::size_t length) const
 {
-    copy_to_legacy(record, length);
+    const std::size_t size = encoded_size();
+    if (record == nullptr || length < size)
+    {
+        throw std::invalid_argument("BigFloat requires a complete legacy value buffer");
+    }
+    std::copy_n(data(), size, record);
 }
 
 const Byte *BigFloat::unpack_bf(BigFloat &destination, const Byte *source, const int stored_length)
 {
-    return id::math::unpack_bf(destination.m_storage.data(), source, stored_length);
-}
-
-BigFloat BigFloat::from_legacy(BigFloatConstPtr source, const std::size_t size)
-{
-    return from_legacy(bf_arena(BigLifetime::WORKING), source, size);
-}
-
-BigFloat BigFloat::from_legacy(BigArena &arena, BigFloatConstPtr source, const std::size_t size)
-{
-    BigFloat result{arena};
-    validate_buffer(source, size, result.encoded_size());
-    std::copy_n(source, result.encoded_size(), result.m_storage.data());
-    return result;
-}
-
-void BigFloat::copy_to_legacy(BigFloatPtr destination, const std::size_t size) const
-{
-    validate_buffer(destination, size, encoded_size());
-    std::copy_n(m_storage.data(), encoded_size(), destination);
-}
-
-void BigFloat::copy_to_legacy_num(Byte *destination, const std::size_t size) const
-{
-    validate_buffer(destination, size, static_cast<std::size_t>(g_bn_length));
-    bf_to_bn(destination, m_storage.data());
+    return id::math::unpack_bf(destination.data(), source, stored_length);
 }
 
 Byte *unsafe_square_bf(Byte *r, Byte *n)

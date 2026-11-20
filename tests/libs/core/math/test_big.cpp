@@ -33,7 +33,7 @@ namespace id::test
 namespace
 {
 
-static_assert(std::is_same_v<BFConstPtrComplex, Complex<BigFloatConstPtr>>);
+static_assert(std::is_same_v<BFConstPtrComplex, Complex<const Byte *>>);
 static_assert(!std::is_convertible_v<BFPtrComplex, BFComplex>);
 static_assert(!std::is_convertible_v<BNPtrComplex, BNComplex>);
 

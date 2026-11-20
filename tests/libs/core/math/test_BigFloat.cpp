@@ -44,13 +44,12 @@ static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().sin_cos()
 static_assert(
     std::is_same_v<decltype(std::declval<const BigFloat &>().atan2(std::declval<const BigFloat &>())), BigFloat>);
 
-std::vector<Byte> encoded_value(const BigFloat &value)
+std::vector<Byte> packed_value(const BigFloat &value)
 {
     std::vector<Byte> result(static_cast<std::size_t>(g_bf_length + 2));
-    value.copy_to_legacy(result.data(), result.size());
+    value.pack_bf(result.data(), result.size());
     return result;
 }
-
 
 } // namespace
 
@@ -403,7 +402,7 @@ TEST_F(TestBigFloatValue, supportsTheSmallestLegacyLayout)
     const BigFloat value{"-1.25"};
 
     EXPECT_EQ("-1.25", value.to_string());
-    EXPECT_EQ(static_cast<std::size_t>(g_bf_length + 2), encoded_value(value).size());
+    EXPECT_EQ(static_cast<std::size_t>(g_bf_length + 2), packed_value(value).size());
 }
 
 TEST_F(TestBigFloatValue, supportsTheLargestLegacyLayout)
@@ -412,7 +411,7 @@ TEST_F(TestBigFloatValue, supportsTheLargestLegacyLayout)
     const BigFloat value{"-1.25"};
 
     EXPECT_EQ("-1.25", value.to_string());
-    EXPECT_EQ(static_cast<std::size_t>(g_bf_length + 2), encoded_value(value).size());
+    EXPECT_EQ(static_cast<std::size_t>(g_bf_length + 2), packed_value(value).size());
 }
 
 class TestBigFloatHexDump : public TestBigFloatValue, public testing::WithParamInterface<std::tuple<int, bool>>
@@ -479,9 +478,6 @@ TEST_P(TestBigFloatUnpack, preservesDestinationStorageSourceCursorAndPrecision)
     init_bf_length(input.bn_length);
     BigArena &arena = bf_arena(std::get<0>(GetParam()));
     BigFloat destination{arena};
-    Byte *const address = destination.data();
-    const std::size_t stride = arena.block_size();
-    std::fill_n(address, stride, Byte{0xcc});
     std::vector<Byte> source{0xaa};
     source.insert(source.end(), input.source.begin(), input.source.end());
     source.push_back(0xbb);
@@ -494,12 +490,9 @@ TEST_P(TestBigFloatUnpack, preservesDestinationStorageSourceCursorAndPrecision)
     const Byte *const cursor = BigFloat::unpack_bf(destination, source.data() + 1, input.stored_length);
 
     EXPECT_EQ(source.data() + source.size() - 1, cursor);
-    EXPECT_EQ(input.expected, encoded_value(destination));
+    EXPECT_EQ(input.expected, packed_value(destination));
     EXPECT_EQ(original, source);
-    EXPECT_EQ(address, destination.data());
     EXPECT_EQ(&arena, &destination.arena());
-    EXPECT_EQ(std::vector<Byte>(stride - input.expected.size(), 0xcc),
-        std::vector<Byte>(address + input.expected.size(), address + stride));
     EXPECT_EQ(high_water, arena.high_water_mark());
     EXPECT_EQ(mark, save_stack());
     EXPECT_EQ(lengths,

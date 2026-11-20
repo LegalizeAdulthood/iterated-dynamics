@@ -59,11 +59,6 @@ std::vector<ShipPointInput> point_inputs()
     return inputs;
 }
 
-std::vector<Byte> encoded(const BigFloat &value)
-{
-    return {value.data(), value.data() + g_bf_length + 2};
-}
-
 } // namespace
 
 class TestBurningShipValues : public testing::Test
@@ -113,8 +108,7 @@ TEST_P(TestBurningShipPoint, nativeOrbitRetainsAbsoluteValuesAndParameterSigns)
     g_old_z_bf.y = input.point.imag();
     g_param_z_bf.x = parameter.real();
     g_param_z_bf.y = parameter.imag();
-    const auto original_x = encoded(g_old_z_bf.x);
-    const auto original_y = encoded(g_old_z_bf.y);
+    const BFComplex original{g_old_z_bf};
     g_bailout_bigfloat = +[] { return 17; };
     std::complex<double> expected;
     if (input.degree == 2)
@@ -136,8 +130,7 @@ TEST_P(TestBurningShipPoint, nativeOrbitRetainsAbsoluteValuesAndParameterSigns)
 
     EXPECT_NEAR(expected.real(), static_cast<double>(g_new_z_bf.x.to_float()), tolerance);
     EXPECT_NEAR(expected.imag(), static_cast<double>(g_new_z_bf.y.to_float()), tolerance);
-    EXPECT_EQ(original_x, encoded(g_old_z_bf.x));
-    EXPECT_EQ(original_y, encoded(g_old_z_bf.y));
+    EXPECT_EQ(original, g_old_z_bf);
     EXPECT_EQ(stack, save_stack());
 }
 
@@ -152,8 +145,7 @@ TEST_P(TestBurningShipPoint, referenceOrbitKeepsItsOrientationAndScratchRoles)
     point.y = input.point.imag();
     center.x = 0.125;
     center.y = -0.0625;
-    const auto center_x = encoded(center.x);
-    const auto center_y = encoded(center.y);
+    const BFComplex original_center{center};
     g_new_z_bf.x = 7;
     g_new_z_bf.y = 9;
     std::complex<double> expected;
@@ -175,8 +167,7 @@ TEST_P(TestBurningShipPoint, referenceOrbitKeepsItsOrientationAndScratchRoles)
 
     EXPECT_NEAR(expected.real(), static_cast<double>(point.x.to_float()), tolerance);
     EXPECT_NEAR(expected.imag(), static_cast<double>(point.y.to_float()), tolerance);
-    EXPECT_EQ(center_x, encoded(center.x));
-    EXPECT_EQ(center_y, encoded(center.y));
+    EXPECT_EQ(original_center, center);
     EXPECT_EQ(stack, save_stack());
     if (input.degree == 2)
     {

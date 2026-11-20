@@ -2599,8 +2599,7 @@ TEST_P(TestBigFloatCornersInput, parsesEachSlashDelimitedCoordinateExactly)
     {
         SCOPED_TRACE(i);
         const BigFloat expected{GetParam().expected[i]};
-        EXPECT_EQ(std::vector<Byte>(expected.data(), expected.data() + g_bf_length + 2),
-            std::vector<Byte>(values[i]->data(), values[i]->data() + g_bf_length + 2));
+        EXPECT_EQ(expected, *values[i]);
     }
 }
 
