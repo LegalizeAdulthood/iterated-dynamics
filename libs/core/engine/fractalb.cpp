@@ -206,8 +206,8 @@ std::string format_aspect(const char *s)
     BigFloat bt1{bf_arena(BigLifetime::TEMPORARY)};
     BigFloat bt2{bf_arena(BigLifetime::TEMPORARY)};
     BigFloat aspect{bf_arena(BigLifetime::TEMPORARY)};
-    sub_bf(bt1, g_bf_x_max, g_bf_x_min);
-    sub_bf(bt2, g_bf_y_max, g_bf_y_min);
+    bt1 = g_bf_x_max - g_bf_x_min;
+    bt2 = g_bf_y_max - g_bf_y_min;
     div_bf(aspect, bt2, bt1);
     return fmt::format("aspect {:s}\n"
                        "float  {:13.10f}\n"

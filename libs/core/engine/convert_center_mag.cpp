@@ -132,16 +132,16 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
         BigFloat width_bf{bf_arena(BigLifetime::TEMPORARY)};
         BigFloat height_bf{bf_arena(BigLifetime::TEMPORARY)};
         // width  = x_max - x_min;
-        sub_bf(width_bf, g_bf_x_max, g_bf_x_min);
+        width_bf = g_bf_x_max - g_bf_x_min;
         const LDouble width = width_bf.to_float();
         // height = y_max - y_min;
-        sub_bf(height_bf, g_bf_y_max, g_bf_y_min);
+        height_bf = g_bf_y_max - g_bf_y_min;
         const LDouble height = height_bf.to_float();
         // *ctr_x = (x_min + x_max)/2;
-        add_bf(ctr_x, g_bf_x_min, g_bf_x_max);
+        ctr_x = g_bf_x_min + g_bf_x_max;
         ctr_x = ctr_x.half();
         // *ctr_y = (y_min + y_max)/2;
-        add_bf(ctr_y, g_bf_y_min, g_bf_y_max);
+        ctr_y = g_bf_y_min + g_bf_y_max;
         ctr_y = ctr_y.half();
         mag  = 2/height;
         x_mag_factor = static_cast<double>(height / (DEFAULT_ASPECT * width));
@@ -158,19 +158,19 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
         // IMPORTANT: convert from bf AFTER subtracting
 
         // tmpx = x_max - x_min;
-        sub_bf(tmp_x_bf, g_bf_x_max, g_bf_x_min);
+        tmp_x_bf = g_bf_x_max - g_bf_x_min;
         LDouble tmp_x1 = tmp_x_bf.to_float();
         // tmpy = y_max - y_min;
-        sub_bf(tmp_y_bf, g_bf_y_max, g_bf_y_min);
+        tmp_y_bf = g_bf_y_max - g_bf_y_min;
         LDouble tmp_y1 = tmp_y_bf.to_float();
         const LDouble c2 = tmp_x1*tmp_x1 + tmp_y1*tmp_y1;
 
         // tmpx = x_max - x_3rd;
-        sub_bf(tmp_x_bf, g_bf_x_max, g_bf_x_3rd);
+        tmp_x_bf = g_bf_x_max - g_bf_x_3rd;
         tmp_x1 = tmp_x_bf.to_float();
 
         // tmpy = y_min - y_3rd;
-        sub_bf(tmp_y_bf, g_bf_y_min, g_bf_y_3rd);
+        tmp_y_bf = g_bf_y_min - g_bf_y_3rd;
         tmp_y1 = tmp_y_bf.to_float();
         const LDouble a2 = tmp_x1 * tmp_x1 + tmp_y1 * tmp_y1;
         const LDouble a = std::sqrt(a2);
@@ -186,10 +186,10 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
         rot = -rad_to_deg(std::atan2(static_cast<double>(tmp_y), sign_x));   // negative for image rotation
 
         // tmpx = x_min - x_3rd;
-        sub_bf(tmp_x_bf, g_bf_x_min, g_bf_x_3rd);
+        tmp_x_bf = g_bf_x_min - g_bf_x_3rd;
         const LDouble tmp_x2 = tmp_x_bf.to_float();
         // tmpy = y_max - y_3rd;
-        sub_bf(tmp_y_bf, g_bf_y_max, g_bf_y_3rd);
+        tmp_y_bf = g_bf_y_max - g_bf_y_3rd;
         const LDouble tmp_y2 = tmp_y_bf.to_float();
         const LDouble b2 = tmp_x2 * tmp_x2 + tmp_y2 * tmp_y2;
         const LDouble b = std::sqrt(b2);
@@ -199,10 +199,10 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
 
         // these are the only two variables that must use big precision
         // *ctr_x = (x_min + x_max)/2;
-        add_bf(ctr_x, g_bf_x_min, g_bf_x_max);
+        ctr_x = g_bf_x_min + g_bf_x_max;
         ctr_x = ctr_x.half();
         // *ctr_y = (y_min + y_max)/2;
-        add_bf(ctr_y, g_bf_y_min, g_bf_y_max);
+        ctr_y = g_bf_y_min + g_bf_y_max;
         ctr_y = ctr_y.half();
 
         const LDouble height = b * std::sin(tmp_a);

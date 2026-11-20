@@ -65,11 +65,11 @@ int get_prec_bf(const ResolutionFlag flag)
     }
 
     // bfxxdel = (bfxmax - bfx3rd)/(xdots-1)
-    sub_bf(bf_x_delta, g_bf_x_max, g_bf_x_3rd);
+    bf_x_delta = g_bf_x_max - g_bf_x_3rd;
     bf_x_delta /= static_cast<U16>(res);
 
     // bfyydel2 = (bfy3rd - bfymin)/(xdots-1)
-    sub_bf(bf_y_delta2, g_bf_y_3rd, g_bf_y_min);
+    bf_y_delta2 = g_bf_y_3rd - g_bf_y_min;
     bf_y_delta2 /= static_cast<U16>(res);
 
     if (flag == ResolutionFlag::CURRENT)
@@ -78,11 +78,11 @@ int get_prec_bf(const ResolutionFlag flag)
     }
 
     // bfyydel = (bfymax - bfy3rd)/(ydots-1)
-    sub_bf(bf_y_delta, g_bf_y_max, g_bf_y_3rd);
+    bf_y_delta = g_bf_y_max - g_bf_y_3rd;
     bf_y_delta /= static_cast<U16>(res);
 
     // bfxxdel2 = (bfx3rd - bfxmin)/(ydots-1)
-    sub_bf(bf_x_delta2, g_bf_x_3rd, g_bf_x_min);
+    bf_x_delta2 = g_bf_x_3rd - g_bf_x_min;
     bf_x_delta2 /= static_cast<U16>(res);
 
     del1 = abs(del1 = bf_x_delta + bf_x_delta2);
