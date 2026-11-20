@@ -275,10 +275,8 @@ void bf_corners_to_float()
 bool mandel_per_image_bn()
 {
     BigStackSaver saved;
-    // this should be set up dynamically based on corners
-    BigNum bn_temp1{bn_arena(BigLifetime::TEMPORARY)};
-    BigNum bn_temp2{bn_arena(BigLifetime::TEMPORARY)};
 
+    // this should be set up dynamically based on corners
     g_x_min_bn = g_bf_x_min;
     g_x_max_bn = g_bf_x_max;
     g_y_min_bn = g_bf_y_min;
@@ -304,12 +302,15 @@ bool mandel_per_image_bn()
     g_delta2_y_bn = g_y_3rd_bn - g_y_min_bn;
     g_delta2_y_bn /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
-    abs_bn(g_close_enough_bn, g_delta_x_bn);
-    if (cmp_bn(abs_bn(bn_temp1, g_delta2_x_bn), g_close_enough_bn) > 0)
+    g_close_enough_bn = g_delta_x_bn.abs();
+    BigNum bn_temp1 = g_delta2_x_bn.abs();
+    if (bn_temp1 > g_close_enough_bn)
     {
         g_close_enough_bn = bn_temp1;
     }
-    if (cmp_bn(abs_bn(bn_temp1, g_delta_y_bn), abs_bn(bn_temp2, g_delta2_y_bn)) > 0)
+    bn_temp1 = g_delta_y_bn.abs();
+    const BigNum bn_temp2 = g_delta2_y_bn.abs();
+    if (bn_temp1 > bn_temp2)
     {
         if (bn_temp1 > g_close_enough_bn)
         {
@@ -324,7 +325,7 @@ bool mandel_per_image_bn()
         int t = std::abs(g_periodicity_check);
         while (t--)
         {
-            half_a_bn(g_close_enough_bn);
+            g_close_enough_bn = g_close_enough_bn.half();
         }
     }
 

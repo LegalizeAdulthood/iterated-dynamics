@@ -169,11 +169,11 @@ static bool bn_bailout_reached(const BigNum &metric)
     }
     BigStackSaver saved;
     const BigNum limit{bn_arena(BigLifetime::TEMPORARY), threshold};
-    if (!signed_metric && is_bn_neg(metric) != is_bn_neg(limit))
+    if (!signed_metric && metric.is_negative() != limit.is_negative())
     {
-        return is_bn_neg(metric);
+        return metric.is_negative();
     }
-    return cmp_bn(metric, limit) >= 0;
+    return metric >= limit;
 }
 
 static int bn_mod_bailout()
@@ -246,14 +246,12 @@ static int bn_and_bailout()
 static int bn_manh_bailout()
 {
     BigStackSaver saved;
-    BigNum abs_x{bn_arena(BigLifetime::TEMPORARY)};
-    BigNum abs_y{bn_arena(BigLifetime::TEMPORARY)};
     BigNum metric{bn_arena(BigLifetime::TEMPORARY)};
 
     g_tmp_sqr_x_bn = g_new_z_bn.x.sqr();
     g_tmp_sqr_y_bn = g_new_z_bn.y.sqr();
-    abs_bn(abs_x, g_new_z_bn.x);
-    abs_bn(abs_y, g_new_z_bn.y);
+    const BigNum abs_x = g_new_z_bn.x.abs();
+    const BigNum abs_y = g_new_z_bn.y.abs();
     g_bn_tmp = abs_x + abs_y;
     metric = g_bn_tmp.sqr();
     if (bn_bailout_reached(metric))

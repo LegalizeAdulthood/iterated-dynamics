@@ -503,12 +503,6 @@ TEST_P(TestBigNumBailoutProductStorage, reusesTemporaryMetricStorageWithoutTouch
 
     BigArena::Allocation pair = temporary.allocate_double();
     const BigArena::Index pair_index = pair.index();
-    BigArena::Allocation second_pair;
-    if (mode == Bailout::MANH)
-    {
-        second_pair = temporary.allocate_double();
-    }
-    second_pair.reset();
     pair.reset();
     slot.reset();
     const std::size_t high_water = temporary.high_water_mark();
@@ -519,14 +513,12 @@ TEST_P(TestBigNumBailoutProductStorage, reusesTemporaryMetricStorageWithoutTouch
 
     EXPECT_EQ(escape ? 1 : 0, g_bailout_bignum());
 
-    // The isolated half holds abs_x (MANH) or the metric (MANR).
-    // MANH uses a pair for abs_y and the metric, and another slot for the limit.
+    // The isolated slot holds the metric, and the limit uses half of the pair.
     EXPECT_EQ(high_water, temporary.high_water_mark());
     EXPECT_EQ(mark, save_stack());
     EXPECT_EQ(BigNum{-11}, neighbor);
-    const std::size_t warmed_high_water = temporary.high_water_mark();
     EXPECT_EQ(escape ? 1 : 0, g_bailout_bignum());
-    EXPECT_EQ(warmed_high_water, temporary.high_water_mark());
+    EXPECT_EQ(high_water, temporary.high_water_mark());
     EXPECT_EQ(mark, save_stack());
     EXPECT_EQ(BigNum{-7}, survivor);
     EXPECT_EQ(std::vector<Byte>(stride, 0x3c), std::vector<Byte>(borrowed, borrowed + stride));
@@ -541,17 +533,9 @@ TEST_P(TestBigNumBailoutProductStorage, reusesTemporaryMetricStorageWithoutTouch
 
     BigArena::Allocation reused_slot = temporary.allocate_single();
     EXPECT_EQ(slot_index, reused_slot.index());
-    BigArena::Allocation first = temporary.allocate_double();
-    EXPECT_EQ(pair_index, first.index());
-    if (mode == Bailout::MANH)
-    {
-        BigArena::Allocation second = temporary.allocate_double();
-        EXPECT_EQ(warmed_high_water, temporary.high_water_mark());
-    }
-    else
-    {
-        EXPECT_EQ(warmed_high_water, temporary.high_water_mark());
-    }
+    BigArena::Allocation reused_pair = temporary.allocate_double();
+    EXPECT_EQ(pair_index, reused_pair.index());
+    EXPECT_EQ(high_water, temporary.high_water_mark());
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsModesAndOutcomes, TestBigNumBailoutProductStorage,

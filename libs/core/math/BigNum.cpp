@@ -340,6 +340,20 @@ BigNum BigNum::sqr() const
     return result;
 }
 
+BigNum BigNum::abs() const
+{
+    BigNum result{bn_arena(BigLifetime::WORKING)};
+    abs_bn(result.data(), data());
+    return result;
+}
+
+BigNum BigNum::half() const
+{
+    BigNum result{bn_arena(BigLifetime::WORKING)};
+    half_bn(result.data(), data());
+    return result;
+}
+
 bool BigNum::operator==(const BigNum &right) const
 {
     return cmp_bn(data(), right.data()) == 0;
@@ -368,6 +382,11 @@ bool BigNum::operator>(const BigNum &right) const
 bool BigNum::operator>=(const BigNum &right) const
 {
     return cmp_bn(data(), right.data()) >= 0;
+}
+
+bool BigNum::is_negative() const
+{
+    return is_bn_neg(data());
 }
 
 LDouble BigNum::to_float() const
@@ -445,43 +464,6 @@ long bn_to_int(const BigNum &n)
     return bn_to_int(n.data());
 }
 
-int cmp_bn(const BigNum &n1, const BigNum &n2)
-{
-    return cmp_bn(n1.data(), n2.data());
-}
-
-BigNum &sub_bn(BigNum &r, const BigNum &n1, const BigNum &n2)
-{
-    sub_bn(r.data(), n1.data(), n2.data());
-    return r;
-}
-
-BigNum abs_bn(const BigNum &source)
-{
-    BigNum result{bn_arena(BigLifetime::WORKING)};
-    copy_bn(result.data(), source.data());
-    if (is_bn_neg(result.data()))
-    {
-        neg_a_bn(result.data());
-    }
-    return result;
-}
-
-BigNum &abs_bn(BigNum &r, const BigNum &source)
-{
-    abs_bn(r.data(), source.data());
-    return r;
-}
-
-BigNum &abs_a_bn(BigNum &r)
-{
-    if (is_bn_neg(r.data()))
-    {
-        neg_a_bn(r.data());
-    }
-    return r;
-}
-
 BigNum &clear_bn(BigNum &r)
 {
     clear_bn(r.data());
@@ -492,11 +474,6 @@ BigNum &max_bn(BigNum &r)
 {
     max_bn(r.data());
     return r;
-}
-
-bool is_bn_neg(const BigNum &n)
-{
-    return is_bn_neg(n.data());
 }
 
 bool is_bn_zero(const BigNum &n)
@@ -512,18 +489,6 @@ bool is_bn_not_zero(const BigNum &n)
 BigNum &double_bn(BigNum &r, const BigNum &n)
 {
     double_bn(r.data(), n.data());
-    return r;
-}
-
-BigNum &half_bn(BigNum &r, const BigNum &n)
-{
-    half_bn(r.data(), n.data());
-    return r;
-}
-
-BigNum &half_a_bn(BigNum &r)
-{
-    half_a_bn(r.data());
     return r;
 }
 

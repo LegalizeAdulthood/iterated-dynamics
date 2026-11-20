@@ -64,6 +64,8 @@ public:
     BigNum operator*(misc::U16 right) const;
     BigNum operator/(const BigNum &right) const;
     BigNum sqr() const;
+    BigNum abs() const;
+    BigNum half() const;
 
     bool operator==(const BigNum &right) const;
     bool operator!=(const BigNum &right) const;
@@ -71,6 +73,7 @@ public:
     bool operator<=(const BigNum &right) const;
     bool operator>(const BigNum &right) const;
     bool operator>=(const BigNum &right) const;
+    bool is_negative() const;
 
     LDouble to_float() const;
     BigFloat to_big_float(BigArena &arena) const;
@@ -111,20 +114,12 @@ BigNum &str_to_bn(BigNum &r, std::string_view text);
 BigNum &int_to_bn(BigNum &r, long value);
 LDouble bn_to_float(BigNum &value);
 std::string bn_to_string(const BigNum &value, int digits);
-int cmp_bn(const BigNum &n1, const BigNum &n2);
 BigNum &clear_bn(BigNum &r);
 BigNum &max_bn(BigNum &r);
-bool is_bn_neg(const BigNum &n);
 bool is_bn_zero(const BigNum &n);
 bool is_bn_not_zero(const BigNum &n);
 BigNum &double_bn(BigNum &r, const BigNum &n);
-BigNum &half_bn(BigNum &r, const BigNum &n);
-BigNum &half_a_bn(BigNum &r);
 BigNum &mult_a_bn_int(BigNum &r, misc::U16 u);
-BigNum &sub_bn(BigNum &r, const BigNum &n1, const BigNum &n2);
-BigNum &abs_bn(BigNum &r, const BigNum &source);
-BigNum abs_bn(const BigNum &source);
-BigNum &abs_a_bn(BigNum &r);
 
 using BNComplex = Complex<BigNum>;
 

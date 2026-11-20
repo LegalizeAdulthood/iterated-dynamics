@@ -46,9 +46,9 @@ static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() - std::decl
 static_assert(std::is_same_v<decltype(-std::declval<const BigNum &>()), BigNum>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() * U16{}), BigNum>);
 static_assert(std::is_same_v<decltype(std::declval<const BigNum &>() / std::declval<const BigNum &>()), BigNum>);
-static_assert(std::is_same_v<decltype(abs_bn(std::declval<const BigNum &>())), BigNum>);
-static_assert(std::is_same_v<decltype(abs_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
-static_assert(!std::is_void_v<decltype(abs_a_bn(std::declval<BigNum &>()))>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().abs()), BigNum>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().half()), BigNum>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().is_negative()), bool>);
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() = std::declval<const BigNum &>()), BigNum &>);
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() += std::declval<const BigNum &>()), BigNum &>);
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() -= std::declval<const BigNum &>()), BigNum &>);
@@ -57,11 +57,8 @@ static_assert(std::is_same_v<decltype(std::declval<BigNum &>() /= U16{}), BigNum
 
 static_assert(std::is_same_v<decltype(clear_bn(std::declval<BigNum &>())), BigNum &>);
 static_assert(std::is_same_v<decltype(max_bn(std::declval<BigNum &>())), BigNum &>);
-static_assert(std::is_same_v<decltype(half_a_bn(std::declval<BigNum &>())), BigNum &>);
 static_assert(std::is_same_v<decltype(double_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
-static_assert(std::is_same_v<decltype(half_bn(std::declval<BigNum &>(), std::declval<const BigNum &>())), BigNum &>);
 static_assert(std::is_same_v<decltype(mult_a_bn_int(std::declval<BigNum &>(), U16{})), BigNum &>);
-static_assert(std::is_same_v<decltype(is_bn_neg(std::declval<const BigNum &>())), bool>);
 static_assert(std::is_same_v<decltype(is_bn_zero(std::declval<const BigNum &>())), bool>);
 static_assert(std::is_same_v<decltype(is_bn_not_zero(std::declval<const BigNum &>())), bool>);
 static_assert(std::is_same_v<decltype(bn_to_int(std::declval<const BigNum &>())), long>);
@@ -701,11 +698,11 @@ TEST_P(TestBigNumLayout, expressionsMatchDestinationProceduresAndOutliveTheirTem
     const BigNum original_divisor{divisor};
     BigArena &working = bn_arena(BigLifetime::WORKING);
     BigNum numerator{working, left};
-    BigNum expected{working};
     numerator += right;
     const BigNum quotient = numerator / divisor;
     const BigNum product = quotient * left;
-    sub_bn(expected, product, right);
+    BigNum expected{working, product};
+    expected -= right;
     const BigStackMark marker = save_stack();
 
     const BigNum result = ((left + right) / divisor) * left - right;
@@ -779,6 +776,7 @@ TEST_P(TestBigNumComparisons, ordersConstructedValuesWithoutChangingOperandsOrAl
     EXPECT_EQ(left_index <= right_index, left <= right);
     EXPECT_EQ(left_index > right_index, left > right);
     EXPECT_EQ(left_index >= right_index, left >= right);
+    EXPECT_EQ(left_index < 3, left.is_negative());
     EXPECT_EQ(original_left, left);
     EXPECT_EQ(original_right, right);
     EXPECT_EQ(high_water, working.high_water_mark());
@@ -946,8 +944,6 @@ enum class CanonicalProcedure
     ADD_SELF,
     SUB,
     SUB_SELF,
-    ABS_NEGATIVE,
-    ABS_POSITIVE,
     ADD_TO,
     ADD_TO_SELF,
     SUB_TO,
@@ -1005,7 +1001,7 @@ TEST_P(TestBigNumCanonicalValues, returnsIndependentCanonicalStorageAndPreserves
     case CanonicalValue::ABS_NEGATIVE:
     case CanonicalValue::ABS_POSITIVE:
         expected_integer = 7;
-        result = abs_bn(left);
+        result = left.abs();
         break;
     }
 
@@ -1045,20 +1041,23 @@ TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityAliasesAndUnch
 {
     const CanonicalProcedure operation = std::get<2>(GetParam());
     BigArena &arena = bn_arena(BigLifetime::WORKING);
+    constexpr long SEPARATE_INTEGER = 2;
     const long source_integer = operation == CanonicalProcedure::ABS_TO_POSITIVE ? 7 : -7;
-    const long separate_integer = operation == CanonicalProcedure::ABS_NEGATIVE ? -2 : 2;
     BigNum source{static_cast<LDouble>(source_integer)};
-    BigNum separate{static_cast<LDouble>(separate_integer)};
+    BigNum separate{SEPARATE_INTEGER};
     const bool self = operation == CanonicalProcedure::COPY_SELF || operation == CanonicalProcedure::ADD_SELF ||
         operation == CanonicalProcedure::SUB_SELF || operation == CanonicalProcedure::ADD_TO_SELF ||
         operation == CanonicalProcedure::SUB_TO_SELF || operation == CanonicalProcedure::MULT_TO_SELF ||
         operation == CanonicalProcedure::ABS_TO_SELF;
     BigNum &destination = self ? source : separate;
     const BigNum original_source{source};
-    const long initial = self ? source_integer : separate_integer;
+    const long initial = self ? source_integer : SEPARATE_INTEGER;
     long expected_integer{};
     if (operation == CanonicalProcedure::ADD_TO || operation == CanonicalProcedure::ADD_TO_SELF ||
-        operation == CanonicalProcedure::MULT_TO || operation == CanonicalProcedure::MULT_TO_SELF)
+        operation == CanonicalProcedure::SUB_TO || operation == CanonicalProcedure::SUB_TO_SELF ||
+        operation == CanonicalProcedure::MULT_TO || operation == CanonicalProcedure::MULT_TO_SELF ||
+        operation == CanonicalProcedure::ABS_TO || operation == CanonicalProcedure::ABS_TO_SELF ||
+        operation == CanonicalProcedure::ABS_TO_POSITIVE)
     {
         // Leave one reusable slot for the binary operator's result.
         arena.allocate_single().reset();
@@ -1082,11 +1081,6 @@ TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityAliasesAndUnch
         expected_integer = initial - source_integer;
         EXPECT_EQ(&destination, &(destination -= source));
         break;
-    case CanonicalProcedure::ABS_NEGATIVE:
-    case CanonicalProcedure::ABS_POSITIVE:
-        expected_integer = std::abs(initial);
-        abs_a_bn(destination);
-        break;
     case CanonicalProcedure::ADD_TO:
     case CanonicalProcedure::ADD_TO_SELF:
         expected_integer = initial + source_integer;
@@ -1095,7 +1089,7 @@ TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityAliasesAndUnch
     case CanonicalProcedure::SUB_TO:
     case CanonicalProcedure::SUB_TO_SELF:
         expected_integer = initial - source_integer;
-        EXPECT_EQ(&destination, &sub_bn(destination, destination, source));
+        EXPECT_EQ(&destination, &(destination = destination - source));
         break;
     case CanonicalProcedure::MULT_TO:
     case CanonicalProcedure::MULT_TO_SELF:
@@ -1106,7 +1100,7 @@ TEST_P(TestBigNumCanonicalProcedures, preservesDestinationIdentityAliasesAndUnch
     case CanonicalProcedure::ABS_TO_SELF:
     case CanonicalProcedure::ABS_TO_POSITIVE:
         expected_integer = std::abs(source_integer);
-        EXPECT_EQ(&destination, &abs_bn(destination, source));
+        EXPECT_EQ(&destination, &(destination = source.abs()));
         break;
     }
 
@@ -1124,7 +1118,7 @@ INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumCanonicalProcedu
     testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
         testing::Values(CanonicalProcedure::COPY, CanonicalProcedure::COPY_SELF, CanonicalProcedure::ADD,
             CanonicalProcedure::ADD_SELF, CanonicalProcedure::SUB, CanonicalProcedure::SUB_SELF,
-            CanonicalProcedure::ABS_NEGATIVE, CanonicalProcedure::ABS_POSITIVE, CanonicalProcedure::ADD_TO,
+            CanonicalProcedure::ADD_TO,
             CanonicalProcedure::ADD_TO_SELF, CanonicalProcedure::SUB_TO, CanonicalProcedure::SUB_TO_SELF,
             CanonicalProcedure::MULT_TO, CanonicalProcedure::MULT_TO_SELF, CanonicalProcedure::ABS_TO,
             CanonicalProcedure::ABS_TO_SELF, CanonicalProcedure::ABS_TO_POSITIVE)));
@@ -1179,7 +1173,8 @@ TEST_P(TestBigNumUnary, preservesDestinationIdentityAliasesAndAllocation)
     BigArena &arena = destination.arena();
     const BigNum original_source{source};
     const BigNum expected{input.expected};
-    if (input.operation == UnaryOperation::NEGATE)
+    if (input.operation == UnaryOperation::NEGATE || input.operation == UnaryOperation::HALF ||
+        input.operation == UnaryOperation::HALF_ASSIGN)
     {
         arena.allocate_single().reset();
     }
@@ -1200,10 +1195,10 @@ TEST_P(TestBigNumUnary, preservesDestinationIdentityAliasesAndAllocation)
         EXPECT_EQ(&destination, &(destination += destination));
         break;
     case UnaryOperation::HALF:
-        EXPECT_EQ(&destination, &half_bn(destination, std::as_const(source)));
+        EXPECT_EQ(&destination, &(destination = source.half()));
         break;
     case UnaryOperation::HALF_ASSIGN:
-        EXPECT_EQ(&destination, &half_a_bn(destination));
+        EXPECT_EQ(&destination, &(destination = destination.half()));
         break;
     case UnaryOperation::MULT_ASSIGN:
         EXPECT_EQ(&destination, &mult_a_bn_int(destination, input.factor));
