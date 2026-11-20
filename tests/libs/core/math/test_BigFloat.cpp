@@ -1403,10 +1403,11 @@ TEST_P(TestBigFloatProductLifetime, temporaryRewindsPreservePairedAllocationsAnd
     {
         BigStackSaver saved;
         const std::vector<Byte> fixed_sentinel(2 * bn_arena(BigLifetime::TEMPORARY).block_size(), 0xa5);
+        const std::vector<Byte> float_sentinel(2 * temporary.block_size(), 0x6c);
         Byte *const fixed = bn_stack().allocate_double();
         Byte *const floating = bf_stack().allocate_double();
         std::copy(fixed_sentinel.begin(), fixed_sentinel.end(), fixed);
-        BigFloat{6.25L}.copy_to_legacy(floating, static_cast<std::size_t>(g_bf_length + 2));
+        std::copy(float_sentinel.begin(), float_sentinel.end(), floating);
         const BigArena::Allocation local = product.clone(temporary);
         const BigStackMark middle = save_stack();
         {
@@ -1418,8 +1419,8 @@ TEST_P(TestBigFloatProductLifetime, temporaryRewindsPreservePairedAllocationsAnd
         }
         EXPECT_EQ(middle, save_stack());
         EXPECT_TRUE(std::equal(fixed_sentinel.begin(), fixed_sentinel.end(), fixed));
-        BigFloat observed_float = BigFloat::from_legacy(floating, static_cast<std::size_t>(g_bf_length + 2));
-        EXPECT_EQ(6.25L, bf_to_float(observed_float));
+        ASSERT_TRUE(bf_stack().contains(floating));
+        EXPECT_TRUE(std::equal(float_sentinel.begin(), float_sentinel.end(), floating));
         EXPECT_EQ(bytes, paired_bytes(local));
         EXPECT_EQ(bytes, paired_bytes(product));
         EXPECT_EQ(-2.5L, persistent.to_float());

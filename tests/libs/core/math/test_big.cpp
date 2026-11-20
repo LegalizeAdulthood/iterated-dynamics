@@ -891,6 +891,29 @@ TEST_P(TestBigFloatByteReduction, copiesOnlyTheCanonicalWindowIncludingTheExpone
     EXPECT_EQ(expected, guarded);
 }
 
+TEST_P(TestBigFloatByteReduction, arenaReductionUsesTheCanonicalWindowAndReleasesTheCompanion)
+{
+    BigArena &arena = bf_arena(BigLifetime::TEMPORARY);
+    BigArena::Allocation product = arena.allocate_double();
+    std::fill_n(product.data(), 2 * arena.block_size(), Byte{0xa5});
+    std::vector<Byte> expected(g_bf_length + 2);
+    expected.front() = 0x59;
+    expected[expected.size() - 2] = 0x34;
+    expected.back() = 0xfe;
+    std::copy(expected.begin(), expected.end(), product.data() + g_padding);
+    const BigArena::Index index = product.index();
+    const std::size_t high_water = arena.high_water_mark();
+
+    product.reduce();
+
+    EXPECT_EQ(expected, (std::vector<Byte>{product.data(), product.data() + expected.size()}));
+    EXPECT_EQ(index, product.index());
+    ASSERT_EQ(1U, product.blocks());
+    const BigArena::Allocation companion = arena.allocate_single();
+    EXPECT_EQ(index + 1, companion.index());
+    EXPECT_EQ(high_water, arena.high_water_mark());
+}
+
 INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatByteReduction, testing::Values(4, 12, 52, 56, 64, 708));
 
 namespace
