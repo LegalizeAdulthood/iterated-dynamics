@@ -1363,6 +1363,58 @@ TEST(TestBigFloatByteScalarDivisionZero, distinguishesAliasedAndInPlaceSaturatio
     EXPECT_EQ(length, g_bf_length);
 }
 
+struct BigFloatByteFormatInput
+{
+    std::string (*format)(Byte *source, int digits, Byte *decimal);
+    const char *suffix;
+};
+
+class TestBigFloatByteFormatting : public TestBigFloatBytePrecision,
+                                   public testing::WithParamInterface<std::tuple<int, BigFloatByteFormatInput, bool>>
+{
+};
+
+TEST_P(TestBigFloatByteFormatting, writesExactDecimalBytesWithinBorrowedWindows)
+{
+    init_bf_length(std::get<0>(GetParam()));
+    const BigFloatByteFormatInput &input = std::get<1>(GetParam());
+    const bool negative = std::get<2>(GetParam());
+    constexpr int offset = 2;
+    constexpr int digits = 12;
+    constexpr int decimal_size = digits + 4;
+    const int size = g_bf_length + 2;
+    const std::array<int, 3> lengths{g_bn_length, g_bf_length, g_int_length};
+    std::vector<Byte> value = integer_bf_bytes(g_bf_length, negative ? -2 : 1, 0);
+    value[g_bf_length - 3] = negative ? 0xc0 : 0x40;
+    std::vector<Byte> source(2 * bf_arena(BigLifetime::WORKING).block_size() + 2 * offset, 0x5a);
+    std::copy(value.begin(), value.end(), source.begin() + offset);
+    std::vector<Byte> expected_source = source;
+    std::fill_n(expected_source.begin() + offset, size, Byte{0});
+    alignas(U16) std::array<Byte, decimal_size + 2 * offset> decimal{};
+    decimal.fill(0xa5);
+    std::array<Byte, decimal_size + 2 * offset> expected_decimal = decimal;
+    std::fill_n(expected_decimal.begin() + offset, decimal_size, Byte{0});
+    expected_decimal[offset] = negative ? 1 : 0;
+    expected_decimal[offset + 1] = 1;
+    expected_decimal[offset + 2] = 2;
+    expected_decimal[offset + 3] = 5;
+    const std::string expected = std::string{negative ? "-1.25" : "1.25"} + input.suffix;
+    const BigStackMark mark = save_stack();
+
+    EXPECT_EQ(expected, input.format(source.data() + offset, digits, decimal.data() + offset));
+
+    EXPECT_EQ(expected_source, source);
+    EXPECT_EQ(expected_decimal, decimal);
+    EXPECT_EQ(lengths, (std::array<int, 3>{g_bn_length, g_bf_length, g_int_length}));
+    EXPECT_EQ(mark, save_stack());
+}
+
+INSTANTIATE_TEST_SUITE_P(LayoutsModesAndSigns, TestBigFloatByteFormatting,
+    testing::Combine(testing::Values(4, 12, 64, 708),
+        testing::Values(BigFloatByteFormatInput{unsafe_bf_to_string, ""},
+            BigFloatByteFormatInput{unsafe_bf_to_string_e, "e0"}, BigFloatByteFormatInput{unsafe_bf_to_string_f, ""}),
+        testing::Bool()));
+
 class TestBigFloatByteExponential : public TestBigNumConversionBase
 {
 };

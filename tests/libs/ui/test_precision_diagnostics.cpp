@@ -222,14 +222,14 @@ class TestBigFloatPrecisionDiagnostics : public TestPrecisionDiagnostics,
 {
 };
 
-TEST_P(TestBigFloatPrecisionDiagnostics, preservesExactOutputAndInputBytes)
+TEST_P(TestBigFloatPrecisionDiagnostics, preservesExactOutputAndInputValue)
 {
-    const auto &input = GetParam();
+    const PrecisionDiagnosticInput &input = GetParam();
     g_fractal_type = FractalType::MANDEL_Z_POWER;
     init_bf_length(input.length);
     const BigFloat value{input.text};
-    const std::vector<Byte> original(value.data(), value.data() + g_bf_length + 2);
-    const auto stack = save_stack();
+    const BigFloat original{value};
+    const BigStackMark stack = save_stack();
     const std::string number{input.number};
 
     EXPECT_EQ(number, format_var_bf("ignored label", value));
@@ -239,7 +239,7 @@ TEST_P(TestBigFloatPrecisionDiagnostics, preservesExactOutputAndInputBytes)
     EXPECT_EQ(
         "bf\nbignum=" + number + "\ndouble=-1.50000000000000000000\n\n", format_compare_values_bf("bf", -1.5L, value));
 
-    EXPECT_EQ(original, (std::vector<Byte>{value.data(), value.data() + g_bf_length + 2}));
+    EXPECT_EQ(original, value);
     EXPECT_EQ(stack, save_stack());
 }
 

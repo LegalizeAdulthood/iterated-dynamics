@@ -14,7 +14,9 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <array>
+#include <iterator>
 #include <ostream>
 #include <string>
 #include <tuple>
@@ -100,24 +102,23 @@ protected:
 
     void expect_current_region(const ImageRegion &expected)
     {
-        BigFloat *const corners[]{&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd};
+        const BigFloat *const corners[]{&g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd};
         const double values[]{
             expected.m_min.x, expected.m_max.x, expected.m_min.y, expected.m_max.y, expected.m_3rd.x, expected.m_3rd.y};
         for (std::size_t i = 0; i < std::size(corners); ++i)
         {
-            EXPECT_NEAR(values[i], static_cast<double>(bf_to_float(*corners[i])), 1e-12);
+            EXPECT_NEAR(values[i], static_cast<double>(corners[i]->to_float()), 1e-12);
         }
     }
 
-    std::vector<Byte> saved_corners() const
+    std::array<BigFloat, 6> current_corners() const
     {
-        std::vector<Byte> result;
-        for (const BigFloat *corner : {&g_bf_save_x_min, &g_bf_save_x_max, &g_bf_save_y_min, &g_bf_save_y_max,
-                 &g_bf_save_x_3rd, &g_bf_save_y_3rd})
-        {
-            result.insert(result.end(), corner->data(), corner->data() + g_bf_length + 2);
-        }
-        return result;
+        return {g_bf_x_min, g_bf_x_max, g_bf_y_min, g_bf_y_max, g_bf_x_3rd, g_bf_y_3rd};
+    }
+
+    std::array<BigFloat, 6> saved_corners() const
+    {
+        return {g_bf_save_x_min, g_bf_save_x_max, g_bf_save_y_min, g_bf_save_y_max, g_bf_save_x_3rd, g_bf_save_y_3rd};
     }
 
     ValueSaver<FractalType> m_saved_type{g_fractal_type, FractalType::MANDEL};
@@ -137,10 +138,10 @@ protected:
     ValueSaver<double> m_saved_skew{g_zoom_box_skew};
 };
 
-TEST_F(TestBigFloatZoomBase, unrotatedBoxPreservesExactCornerBytes)
+TEST_F(TestBigFloatZoomBase, unrotatedBoxPreservesExactCornerValues)
 {
-    const auto original = saved_corners();
-    const auto stack = save_stack();
+    const std::array<BigFloat, 6> original = saved_corners();
+    const BigStackMark stack = save_stack();
 
     draw_box(false);
 
@@ -151,8 +152,7 @@ TEST_F(TestBigFloatZoomBase, unrotatedBoxPreservesExactCornerBytes)
     {
         SCOPED_TRACE(i);
         const BigFloat expected{texts[i]};
-        EXPECT_EQ(std::vector<Byte>(expected.data(), expected.data() + g_bf_length + 2),
-            std::vector<Byte>(corners[i]->data(), corners[i]->data() + g_bf_length + 2));
+        EXPECT_EQ(expected, *corners[i]);
     }
     EXPECT_EQ(original, saved_corners());
     EXPECT_EQ(stack, save_stack());
@@ -175,10 +175,10 @@ void TestBigFloatZoom::SetUp()
     }
 }
 
-TEST_P(TestBigFloatZoom, preservesZoomCoordinatesSavedBytesAndStackLifetime)
+TEST_P(TestBigFloatZoom, preservesZoomCoordinatesSavedValuesAndStackLifetime)
 {
-    const auto original{saved_corners()};
-    const auto stack{save_stack()};
+    const std::array<BigFloat, 6> original = saved_corners();
+    const BigStackMark stack = save_stack();
     g_bf_math = BFMathType::BIG_FLT;
 
     draw_box(false);
@@ -186,12 +186,15 @@ TEST_P(TestBigFloatZoom, preservesZoomCoordinatesSavedBytesAndStackLifetime)
     expect_current_region(g_image_region);
     EXPECT_EQ(original, saved_corners());
     EXPECT_EQ(stack, save_stack());
-    const auto first_draw = pack_bf_parameters();
-    const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
+    const std::array<BigFloat, 6> first_draw = current_corners();
+    const std::vector<BigFloat> first_parameters(std::begin(g_bf_params), std::end(g_bf_params));
+    const std::size_t high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
 
     draw_box(false);
 
-    EXPECT_EQ(first_draw, pack_bf_parameters());
+    EXPECT_EQ(first_draw, current_corners());
+    EXPECT_EQ(original, saved_corners());
+    EXPECT_TRUE(std::equal(first_parameters.begin(), first_parameters.end(), std::begin(g_bf_params)));
     EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
     EXPECT_EQ(stack, save_stack());
     const ImageRegion zoomed{g_image_region};
