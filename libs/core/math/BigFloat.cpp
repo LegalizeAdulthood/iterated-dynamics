@@ -249,6 +249,11 @@ void BigFloat::clear()
     std::memset(m_storage.data(), 0, m_storage.blocks() * arena().block_size());
 }
 
+void BigFloat::load_pi()
+{
+    copy_bf_pi(m_storage.data());
+}
+
 BigFloat BigFloat::operator-() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING), *this};

@@ -742,7 +742,7 @@ void init_bf_length(const int bnl)
 
 void init_big_pi()
 {
-    copy_bf_pi(g_bf_pi.data());
+    g_bf_pi.load_pi();
 }
 
 } // namespace id::math

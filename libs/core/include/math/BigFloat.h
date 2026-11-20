@@ -41,6 +41,7 @@ public:
     BigFloat &operator=(BigFloat &&value);
     BigFloat &operator=(LDouble value);
     void clear();
+    void load_pi();
 
     // Tests for an allocated value, including numeric zero.
     explicit operator bool() const noexcept
