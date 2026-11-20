@@ -186,9 +186,9 @@ TEST_P(TestBigNumBailoutCases, comparesFractionalThresholdsAndPreservesCachesAnd
     EXPECT_EQ(expected_x, g_tmp_sqr_x_bn);
     EXPECT_EQ(expected_y, g_tmp_sqr_y_bn);
     EXPECT_EQ(expected_old, g_old_z_bn.x);
-    EXPECT_EQ(escaped ? 9 : input.point.y, bn_to_float(g_old_z_bn.y));
-    EXPECT_EQ(input.point.x, bn_to_float(g_new_z_bn.x));
-    EXPECT_EQ(input.point.y, bn_to_float(g_new_z_bn.y));
+    EXPECT_EQ(escaped ? 9 : input.point.y, g_old_z_bn.y.to_float());
+    EXPECT_EQ(input.point.x, g_new_z_bn.x.to_float());
+    EXPECT_EQ(input.point.y, g_new_z_bn.y.to_float());
     EXPECT_EQ(-17, g_magnitude);
 }
 
@@ -443,8 +443,6 @@ TEST_P(TestBigNumProductBailout, preservesScratchValuesAndFixedWidthOverflow)
     EXPECT_EQ(expected_tmp, g_bn_tmp);
     EXPECT_EQ(BigNum{static_cast<LDouble>(input.real)}, g_new_z_bn.x);
     EXPECT_EQ(BigNum{static_cast<LDouble>(input.imaginary)}, g_new_z_bn.y);
-    EXPECT_EQ(rx, bn_to_int(g_tmp_sqr_x_bn));
-    EXPECT_EQ(ry, bn_to_int(g_tmp_sqr_y_bn));
     EXPECT_EQ(overflow, g_overflow);
     EXPECT_EQ(-17, g_magnitude);
     EXPECT_EQ(length, g_bn_length);
@@ -894,8 +892,8 @@ TEST_P(TestBigNumMandelbrotInitialization, dispatchMatchesRegularSeedParameterCa
     EXPECT_EQ(BigNum{pixel.x}, g_param_z_bn.x);
     EXPECT_EQ(BigNum{pixel.y}, g_param_z_bn.y);
     EXPECT_EQ(iteration, g_color_iter);
-    EXPECT_EQ(sqr(seed.x), bn_to_float(g_tmp_sqr_x_bn));
-    EXPECT_EQ(sqr(seed.y), bn_to_float(g_tmp_sqr_y_bn));
+    EXPECT_EQ(sqr(seed.x), g_tmp_sqr_x_bn.to_float());
+    EXPECT_EQ(sqr(seed.y), g_tmp_sqr_y_bn.to_float());
 
     ASSERT_EQ(0, g_dispatch.orbit_calc()());
 
@@ -966,12 +964,12 @@ TEST_F(TestBigNumJulia, affineSeedsKeepPreciseFixedParameterAndWideSquareCaches)
             EXPECT_EQ(1, julia_per_pixel_bn());
 
             EXPECT_EQ(37, g_color_iter);
-            EXPECT_DOUBLE_EQ(real, static_cast<double>(bn_to_float(g_old_z_bn.x)));
-            EXPECT_DOUBLE_EQ(imag, static_cast<double>(bn_to_float(g_old_z_bn.y)));
-            EXPECT_DOUBLE_EQ(real, static_cast<double>(bn_to_float(g_new_z_bn.x)));
-            EXPECT_DOUBLE_EQ(imag, static_cast<double>(bn_to_float(g_new_z_bn.y)));
-            EXPECT_DOUBLE_EQ(real * real, static_cast<double>(bn_to_float(g_tmp_sqr_x_bn)));
-            EXPECT_DOUBLE_EQ(imag * imag, static_cast<double>(bn_to_float(g_tmp_sqr_y_bn)));
+            EXPECT_DOUBLE_EQ(real, static_cast<double>(g_old_z_bn.x.to_float()));
+            EXPECT_DOUBLE_EQ(imag, static_cast<double>(g_old_z_bn.y.to_float()));
+            EXPECT_DOUBLE_EQ(real, static_cast<double>(g_new_z_bn.x.to_float()));
+            EXPECT_DOUBLE_EQ(imag, static_cast<double>(g_new_z_bn.y.to_float()));
+            EXPECT_DOUBLE_EQ(real * real, static_cast<double>(g_tmp_sqr_x_bn.to_float()));
+            EXPECT_DOUBLE_EQ(imag * imag, static_cast<double>(g_tmp_sqr_y_bn.to_float()));
             EXPECT_EQ(parameter_x, g_param_z_bn.x);
             EXPECT_EQ(parameter_y, g_param_z_bn.y);
 
@@ -1010,15 +1008,15 @@ TEST_F(TestBigNumJulia, viewportTransitionRestoresJuliaParameterAndKeepsBailoutE
     ASSERT_EQ(BigNum{0}, g_param_z_bn.y);
     ASSERT_EQ(1, julia_per_pixel_bn());
     EXPECT_EQ(37, g_color_iter);
-    EXPECT_EQ(2, bn_to_float(g_old_z_bn.x));
-    EXPECT_EQ(0, bn_to_float(g_old_z_bn.y));
+    EXPECT_EQ(2, g_old_z_bn.x.to_float());
+    EXPECT_EQ(0, g_old_z_bn.y.to_float());
 
     EXPECT_EQ(1, julia_orbit_bn());
 
     EXPECT_EQ(BigNum{4}, g_new_z_bn.x);
     EXPECT_EQ(BigNum{0}, g_new_z_bn.y);
-    EXPECT_EQ(2, bn_to_float(g_old_z_bn.x));
-    EXPECT_EQ(0, bn_to_float(g_old_z_bn.y));
+    EXPECT_EQ(2, g_old_z_bn.x.to_float());
+    EXPECT_EQ(0, g_old_z_bn.y.to_float());
 }
 
 class TestBigNumSqrStorage : public TestBigNumBailout, public testing::WithParamInterface<std::tuple<int, bool>>
@@ -1079,9 +1077,7 @@ TEST_P(TestBigNumSqrStorage, subtractionAndDoublingPreserveTheOtherCache)
 
     value -= other;
     EXPECT_EQ(BigNum{5}, value);
-    EXPECT_EQ(5, bn_to_int(value));
     value += value;
-    EXPECT_EQ(10, bn_to_int(value));
     EXPECT_EQ(BigNum{10}, value);
     EXPECT_EQ(original_other, other);
 }

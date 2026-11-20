@@ -14,7 +14,6 @@
 
 #include <array>
 #include <cmath>
-#include <cstdint>
 #include <limits>
 #include <ostream>
 #include <stdexcept>
@@ -61,12 +60,11 @@ static_assert(std::is_same_v<decltype(double_bn(std::declval<BigNum &>(), std::d
 static_assert(std::is_same_v<decltype(mult_a_bn_int(std::declval<BigNum &>(), U16{})), BigNum &>);
 static_assert(std::is_same_v<decltype(is_bn_zero(std::declval<const BigNum &>())), bool>);
 static_assert(std::is_same_v<decltype(is_bn_not_zero(std::declval<const BigNum &>())), bool>);
-static_assert(std::is_same_v<decltype(bn_to_int(std::declval<const BigNum &>())), long>);
 static_assert(std::is_same_v<decltype(str_to_bn(std::declval<BigNum &>(), std::string_view{})), BigNum &>);
 static_assert(std::is_same_v<decltype(int_to_bn(std::declval<BigNum &>(), long{})), BigNum &>);
 static_assert(std::is_same_v<decltype(std::declval<BigNum &>() = LDouble{}), BigNum &>);
-static_assert(std::is_same_v<decltype(bn_to_float(std::declval<BigNum &>())), LDouble>);
-static_assert(std::is_same_v<decltype(bn_to_string(std::declval<const BigNum &>(), int{})), std::string>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().to_float()), LDouble>);
+static_assert(std::is_same_v<decltype(std::declval<const BigNum &>().to_string(int{})), std::string>);
 
 } // namespace
 
@@ -100,67 +98,6 @@ void TestBigNumValue::TearDown()
 {
     free_bf_vars();
 }
-
-namespace
-{
-
-struct BigNumIntegerInput
-{
-    LDouble value;
-    std::array<long, 3> expected;
-};
-
-} // namespace
-
-class TestBigNumIntegerObservation : public TestBigNumValue,
-                                     public testing::WithParamInterface<std::tuple<int, int, BigNumIntegerInput>>
-{
-protected:
-    void SetUp() override;
-};
-
-void TestBigNumIntegerObservation::SetUp()
-{
-    const int integer_length = std::get<1>(GetParam());
-    g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
-    g_user.bailout_value = integer_length == 4 ? 100 : 0;
-    init_bf_length(std::get<0>(GetParam()));
-    ASSERT_EQ(integer_length, g_int_length);
-}
-
-TEST_P(TestBigNumIntegerObservation, extractsIntegerBitsWithoutChangingTheValueOrAllocating)
-{
-    const BigNumIntegerInput &input = std::get<2>(GetParam());
-    const BigStackMark mark = save_stack();
-    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
-    BigArena::Allocation reservation = temporary.allocate_single();
-    const BigArena::Index index = reservation.index();
-    reservation.reset();
-    const BigNum original{input.value};
-    const std::size_t working_high_water = bn_arena(BigLifetime::WORKING).high_water_mark();
-    {
-        const BigNum value{temporary, input.value};
-        const std::size_t high_water = temporary.high_water_mark();
-
-        const long result = bn_to_int(value);
-
-        const int expected_index = g_int_length == 1 ? 0 : g_int_length == 2 ? 1 : 2;
-        EXPECT_EQ(input.expected[expected_index], result);
-        EXPECT_EQ(original, value);
-        EXPECT_EQ(working_high_water, bn_arena(BigLifetime::WORKING).high_water_mark());
-        EXPECT_EQ(high_water, temporary.high_water_mark());
-        EXPECT_EQ(mark, save_stack());
-    }
-    const BigArena::Allocation reused = temporary.allocate_single();
-    EXPECT_EQ(index, reused.index());
-    EXPECT_EQ(mark, save_stack());
-}
-
-INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigNumIntegerObservation,
-    testing::Combine(testing::Values(4, 8, 12, 60, 64, 672), testing::Values(1, 2, 4),
-        testing::Values(BigNumIntegerInput{0, {0, 0, 0}}, BigNumIntegerInput{1, {1, 1, 1}},
-            BigNumIntegerInput{1.5L, {1, 1, 1}},
-            BigNumIntegerInput{-2, {254, 65534, static_cast<long>(std::uint32_t{0xfffffffe})}})));
 
 namespace
 {
@@ -214,11 +151,7 @@ TEST_P(TestBigNumScalarInterfaces, observesConstructedValuesWithoutChangingTheSo
     const bool half = call != BigNumScalarCall::INTEGER && input.half;
     const bool has_fraction = half && g_bn_length > g_int_length;
     const LDouble native = (input.negative ? -1 : 1) * (input.magnitude + (half ? 0.5L : 0.0L));
-    LDouble expected = (input.negative ? -1 : 1) * (input.magnitude + (has_fraction ? 0.5L : 0.0L));
-    if (expected == 0)
-    {
-        expected = 0;
-    }
+    const LDouble expected = (input.negative ? -1 : 1) * (input.magnitude + (has_fraction ? 0.5L : 0.0L));
     const BigNum value = call == BigNumScalarCall::PARSE ? BigNum{std::string_view{input.text}} : BigNum{native};
     const BigNum original{value};
     const std::size_t high_water = value.arena().high_water_mark();
@@ -227,7 +160,6 @@ TEST_P(TestBigNumScalarInterfaces, observesConstructedValuesWithoutChangingTheSo
     const LDouble observed = value.to_float();
 
     EXPECT_EQ(expected, observed);
-    EXPECT_EQ(std::signbit(expected), std::signbit(observed));
     EXPECT_EQ(has_fraction ? input.fractional_text : input.integer_text, value.to_string(8));
     EXPECT_EQ(original, value);
     EXPECT_EQ(high_water, value.arena().high_water_mark());

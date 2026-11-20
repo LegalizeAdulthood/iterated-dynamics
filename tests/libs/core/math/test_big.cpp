@@ -1383,6 +1383,8 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigNumByteIntegerObservation,
                 "AllOnes", 0xffffffff, false, {255, 65535, static_cast<long>(std::uint32_t{0xffffffff})}},
             BigNumIntegerInput{"PositiveFraction", 1, true, {1, 1, 1}},
             BigNumIntegerInput{
+                "NegativeInteger", 0xfffffffe, false, {254, 65534, static_cast<long>(std::uint32_t{0xfffffffe})}},
+            BigNumIntegerInput{
                 "NegativeFraction", 0xfffffffe, true, {254, 65534, static_cast<long>(std::uint32_t{0xfffffffe})}})));
 
 namespace
@@ -1454,24 +1456,35 @@ TEST_P(TestBigNumByteScalarInterfaces, preservesExactEncodingReturnAddressAndGua
     const bool has_fraction = half && g_bn_length > g_int_length;
     const LDouble native = (input.negative ? -1 : 1) * (input.magnitude + (input.half ? 0.5L : 0.0L));
     std::vector<Byte> expected = scalar_bytes(input.magnitude, half, input.negative);
+    expected.insert(expected.begin(), 0x5a);
     expected.push_back(0xa5);
-    std::vector<Byte> value(g_bn_length + 1, 0xa5);
+    std::vector<Byte> value(g_bn_length + 2, 0xa5);
+    value.front() = 0x5a;
+    Byte *const bytes = value.data() + 1;
 
     if (call == BigNumScalarCall::PARSE)
     {
-        EXPECT_EQ(value.data(), str_to_bn(value.data(), input.text));
+        EXPECT_EQ(bytes, str_to_bn(bytes, input.text));
     }
     else if (call == BigNumScalarCall::INTEGER)
     {
-        EXPECT_EQ(value.data(), int_to_bn(value.data(), input.negative ? -input.magnitude : input.magnitude));
+        EXPECT_EQ(bytes, int_to_bn(bytes, input.negative ? -input.magnitude : input.magnitude));
     }
     else
     {
-        EXPECT_EQ(value.data(), float_to_bn(value.data(), native));
+        EXPECT_EQ(bytes, float_to_bn(bytes, native));
     }
     EXPECT_EQ(expected, value);
 
-    EXPECT_EQ(has_fraction ? input.fractional_text : input.integer_text, unsafe_bn_to_string(value.data(), 8));
+    const LDouble magnitude = input.magnitude + (has_fraction ? 0.5L : 0.0L);
+    const LDouble expected_native = input.negative && magnitude != 0 ? -magnitude : magnitude;
+    const LDouble observed = bn_to_float(bytes);
+    EXPECT_EQ(expected_native, observed);
+    EXPECT_EQ(std::signbit(expected_native), std::signbit(observed));
+    EXPECT_EQ(expected, value);
+
+    EXPECT_EQ(has_fraction ? input.fractional_text : input.integer_text, unsafe_bn_to_string(bytes, 8));
+    EXPECT_EQ(0x5a, value.front());
     EXPECT_EQ(0xa5, value.back());
 }
 

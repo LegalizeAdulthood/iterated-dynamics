@@ -1462,7 +1462,7 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                 if (m_pixel.high_precision)
                 {
                     const double tolerance{
-                        static_cast<double>(g_bf_math == BFMathType::BIG_NUM ? bn_to_float(g_close_enough_bn)
+                        static_cast<double>(g_bf_math == BFMathType::BIG_NUM ? g_close_enough_bn.to_float()
                                                                              : bf_to_float(g_close_enough_bf))};
                     const double candidate_tolerance{tolerance + m_pixel.saved_error + error};
                     caught = difference_x <= candidate_tolerance && difference_y <= candidate_tolerance;

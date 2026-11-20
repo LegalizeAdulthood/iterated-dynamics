@@ -93,13 +93,13 @@ std::string format_corners_bn(const char *s)
                        "y_3rd_bn={:s}\n"
                        "y_3rd   ={:.20f}\n"
                        "\n",
-        s,                                                           //
-        math::bn_to_string(g_x_min_bn, dec), g_image_region.m_min.x, //
-        math::bn_to_string(g_x_max_bn, dec), g_image_region.m_max.x, //
-        math::bn_to_string(g_y_min_bn, dec), g_image_region.m_min.y, //
-        math::bn_to_string(g_y_max_bn, dec), g_image_region.m_max.y, //
-        math::bn_to_string(g_x_3rd_bn, dec), g_image_region.m_3rd.x, //
-        math::bn_to_string(g_y_3rd_bn, dec), g_image_region.m_3rd.y);
+        s,                                                 //
+        g_x_min_bn.to_string(dec), g_image_region.m_min.x, //
+        g_x_max_bn.to_string(dec), g_image_region.m_max.x, //
+        g_y_min_bn.to_string(dec), g_image_region.m_min.y, //
+        g_y_max_bn.to_string(dec), g_image_region.m_max.y, //
+        g_x_3rd_bn.to_string(dec), g_image_region.m_3rd.x, //
+        g_y_3rd_bn.to_string(dec), g_image_region.m_3rd.y);
 }
 
 // show globals

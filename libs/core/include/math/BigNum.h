@@ -109,11 +109,8 @@ private:
 };
 
 BigNum sqr(const BigNum &value);
-long bn_to_int(const BigNum &n);
 BigNum &str_to_bn(BigNum &r, std::string_view text);
 BigNum &int_to_bn(BigNum &r, long value);
-LDouble bn_to_float(BigNum &value);
-std::string bn_to_string(const BigNum &value, int digits);
 BigNum &clear_bn(BigNum &r);
 BigNum &max_bn(BigNum &r);
 bool is_bn_zero(const BigNum &n);
