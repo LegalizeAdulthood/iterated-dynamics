@@ -116,10 +116,6 @@ private:
 
 BigFloat &max_bf(BigFloat &r);
 // r and n are distinct. The input is made positive and its exponent cleared.
-BigFloat &exp_bf(BigFloat &r, const BigFloat &n);
-BigFloat &ln_bf(BigFloat &r, const BigFloat &n);
-BigFloat &sin_cos_bf(BigFloat &s, BigFloat &c, const BigFloat &n);
-BigFloat &atan2_bf(BigFloat &r, const BigFloat &ny, const BigFloat &nx);
 LDouble bf_to_float(BigFloat &value);
 const Byte *unpack_bf(BigFloat &destination, const Byte *source, int stored_length);
 std::string bf_to_string(const BigFloat &r, int dec);

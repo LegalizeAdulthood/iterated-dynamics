@@ -362,14 +362,16 @@ BigFloat BigFloat::half() const
 BigFloat BigFloat::log() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    ln_bf(result, *this);
+    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
+    unsafe_ln_bf(result.m_storage.data(), g_bf_tmp_copy1.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(),
+        g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data());
     return result;
 }
 
 BigFloat BigFloat::exp() const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    exp_bf(result, *this);
+    exp_bf(result.m_storage.data(), m_storage.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data());
     return result;
 }
 
@@ -377,51 +379,26 @@ std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
 {
     std::pair<BigFloat, BigFloat> result{
         BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-    sin_cos_bf(result.first, result.second, *this);
+    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
+    unsafe_sin_cos_bf(result.first.m_storage.data(), result.second.m_storage.data(), g_bf_tmp_copy1.data(),
+        g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
     return result;
 }
 
 BigFloat BigFloat::atan2(const BigFloat &x) const
 {
     BigFloat result{bf_arena(BigLifetime::WORKING)};
-    atan2_bf(result, *this, x);
+    copy_bf(g_bf_tmp_copy1.data(), m_storage.data());
+    copy_bf(g_bf_tmp_copy2.data(), x.m_storage.data());
+    unsafe_atan2_bf(result.m_storage.data(), g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data(), g_bf_pi.data(),
+        g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(), g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data(),
+        g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data());
     return result;
 }
 
 BigFloat &max_bf(BigFloat &r)
 {
     max_bf(r.data());
-    return r;
-}
-
-BigFloat &exp_bf(BigFloat &r, const BigFloat &n)
-{
-    exp_bf(r.data(), n.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data());
-    return r;
-}
-
-BigFloat &ln_bf(BigFloat &r, const BigFloat &n)
-{
-    copy_bf(g_bf_tmp_copy1.data(), n.data());
-    unsafe_ln_bf(r.data(), g_bf_tmp_copy1.data(), g_bf_tmp1.data(), g_bf_tmp2.data(), g_bf_tmp3.data(),
-        g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data());
-    return r;
-}
-
-BigFloat &sin_cos_bf(BigFloat &s, BigFloat &c, const BigFloat &n)
-{
-    copy_bf(g_bf_tmp_copy1.data(), n.data());
-    unsafe_sin_cos_bf(s.data(), c.data(), g_bf_tmp_copy1.data(), g_bf_pi.data(), g_bf_tmp1.data(), g_bf_tmp2.data());
-    return s;
-}
-
-BigFloat &atan2_bf(BigFloat &r, const BigFloat &ny, const BigFloat &nx)
-{
-    copy_bf(g_bf_tmp_copy1.data(), ny.data());
-    copy_bf(g_bf_tmp_copy2.data(), nx.data());
-    unsafe_atan2_bf(r.data(), g_bf_tmp_copy1.data(), g_bf_tmp_copy2.data(), g_bf_pi.data(), g_bf_tmp1.data(),
-        g_bf_tmp2.data(), g_bf_tmp3.data(), g_bf_tmp4.data(), g_bf_tmp5.data(), g_bf_tmp6.data(), g_bf_tmp_copy1.data(),
-        g_bf_tmp_copy2.data());
     return r;
 }
 

@@ -335,18 +335,12 @@ TEST_P(TestBigComplex, owningBigNumArithmeticPreservesOperandsAndHandlesSelfAssi
 TEST_P(TestBigComplex, realValueFunctionsPreserveTheirOperands)
 {
     BFComplex raw = value(0.375L, -0.625L);
-    BFComplex result = value(0, 0);
     const BFComplex input = raw;
     EXPECT_EQ(BigFloat{0.140625L}, raw.x.sqr());
-    exp_bf(result.x, raw.y);
-    EXPECT_EQ(result.x, exp(input.y));
-    ln_bf(result.x, raw.x);
-    expect_precision(result.x, log(input.x));
-    atan2_bf(result.x, raw.y, raw.x);
-    expect_precision(result.x, atan2(input.y, input.x));
-    sin_cos_bf(result.x, result.y, raw.y);
-    const auto [sine, cosine] = sin_cos(input.y);
-    EXPECT_EQ(result, (BFComplex{sine, cosine}));
+    EXPECT_EQ(raw.y.exp(), exp(input.y));
+    expect_precision(raw.x.log(), log(input.x));
+    expect_precision(raw.y.atan2(raw.x), atan2(input.y, input.x));
+    EXPECT_EQ(raw.y.sin_cos(), sin_cos(input.y));
     EXPECT_EQ(input, raw);
 }
 
