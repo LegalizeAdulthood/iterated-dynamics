@@ -33,7 +33,6 @@ namespace id::test
 namespace
 {
 
-static_assert(std::is_same_v<decltype(&bf_hex_dump), void (*)(const BigFloat &)>);
 static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().to_float()), LDouble>);
 static_assert(std::is_same_v<decltype(std::declval<BigFloat &>() = std::declval<const BigFloat &>()), BigFloat &>);
 static_assert(std::is_same_v<decltype(std::declval<BigFloat &>() = LDouble{}), BigFloat &>);
@@ -44,9 +43,6 @@ static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().log()), B
 static_assert(std::is_same_v<decltype(std::declval<const BigFloat &>().sin_cos()), std::pair<BigFloat, BigFloat>>);
 static_assert(
     std::is_same_v<decltype(std::declval<const BigFloat &>().atan2(std::declval<const BigFloat &>())), BigFloat>);
-static_assert(std::is_same_v<decltype(&bf_to_string), std::string (*)(const BigFloat &, int)>);
-static_assert(std::is_same_v<decltype(&bf_to_string_e), std::string (*)(const BigFloat &, int)>);
-static_assert(std::is_same_v<decltype(&bf_to_string_f), std::string (*)(const BigFloat &, int)>);
 
 std::vector<Byte> encoded_value(const BigFloat &value)
 {
@@ -439,7 +435,7 @@ TEST_P(TestBigFloatHexDump, printsAnOwningValueAndPreservesIt)
     expected += negative ? "C0 FE FF  e 0000\n" : "00 00 00  e 0000\n";
 
     testing::internal::CaptureStdout();
-    bf_hex_dump(value);
+    value.hex_dump();
     const std::string output = testing::internal::GetCapturedStdout();
 
     EXPECT_EQ(expected, output);
@@ -1014,13 +1010,13 @@ TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
     BigFloat result{bf_arena(BigLifetime::WORKING)};
 
     result = left + right;
-    EXPECT_EQ("-5.0", bf_to_string(result, 8));
+    EXPECT_EQ("-5.0", result.to_string(8));
     result = left - right;
-    EXPECT_EQ("-10.0", bf_to_string(result, 8));
+    EXPECT_EQ("-10.0", result.to_string(8));
     result = left * right;
-    EXPECT_EQ("-18.75", bf_to_string(result, 8));
+    EXPECT_EQ("-18.75", result.to_string(8));
     result = left / right;
-    EXPECT_EQ("-3.0", bf_to_string(result, 8));
+    EXPECT_EQ("-3.0", result.to_string(8));
 
     EXPECT_EQ(original_left, left);
     EXPECT_EQ(original_right, right);
@@ -1928,32 +1924,6 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatGeneralFormat,
         BigFloatFormatInput{"DefaultPrecision", "1.0000123456789012345", 0, "1.0000123456789012345"}),
     [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
 
-class TestBigFloatFixedFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
-{
-};
-
-TEST_P(TestBigFloatFixedFormat, formatsFixedDecimal)
-{
-    const BigFloatFormatInput &input = GetParam();
-    const BigFloat value = make_value(input.input);
-    const BigFloat original{value};
-
-    EXPECT_EQ(input.expected, bf_to_string_f(value, input.decimals));
-    EXPECT_EQ(original, value);
-}
-
-INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatFixedFormat,
-    testing::Values(BigFloatFormatInput{"Zero", "0", 5, "0.0"},
-        BigFloatFormatInput{"PositiveDecimal", "1.25", 5, "1.25"}, BigFloatFormatInput{"Negative", "-1.25", 5, "-1.25"},
-        BigFloatFormatInput{"RoundDown", "1.2344", 4, "1.234"}, BigFloatFormatInput{"RoundUp", "1.2346", 4, "1.235"},
-        BigFloatFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999"},
-        BigFloatFormatInput{"SmallExponent", "0.000125", 8, "0.000125"},
-        BigFloatFormatInput{"LargeExponent", "1250000", 8, "1250000.0"},
-        BigFloatFormatInput{"FewDigitsLargeExponent", "1250000", 3, "1250000.0"},
-        BigFloatFormatInput{"SingleDigit", "1.25", 1, "1.0"},
-        BigFloatFormatInput{"DefaultPrecision", "1.234567890123456789", 0, "1.234567890123456789"}),
-    [](const testing::TestParamInfo<BigFloatFormatInput> &info) { return info.param.name; });
-
 class TestBigFloatScientificFormat : public TestBigFloatFormat, public testing::WithParamInterface<BigFloatFormatInput>
 {
 };
@@ -1964,7 +1934,7 @@ TEST_P(TestBigFloatScientificFormat, formatsScientificDecimal)
     const BigFloat value = make_value(input.input);
     const BigFloat original{value};
 
-    EXPECT_EQ(input.expected, bf_to_string_e(value, input.decimals));
+    EXPECT_EQ(input.expected, value.to_scientific_string(input.decimals));
     EXPECT_EQ(original, value);
 }
 
@@ -1984,8 +1954,7 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatScientificFormat,
 enum class BigFloatFormatMode
 {
     GENERAL,
-    SCIENTIFIC,
-    FIXED
+    SCIENTIFIC
 };
 
 class TestBigFloatFormatterStorage : public TestBigFloatFormat,
@@ -2018,10 +1987,7 @@ TEST_P(TestBigFloatFormatterStorage, preservesValuePrecisionAndExistingReservati
         break;
     case BigFloatFormatMode::SCIENTIFIC:
         expected += "e0";
-        actual = bf_to_string_e(value, 12);
-        break;
-    case BigFloatFormatMode::FIXED:
-        actual = bf_to_string_f(value, 12);
+        actual = value.to_scientific_string(12);
         break;
     }
 
@@ -2037,11 +2003,11 @@ TEST_P(TestBigFloatFormatterStorage, preservesValuePrecisionAndExistingReservati
 
 INSTANTIATE_TEST_SUITE_P(LayoutsModesAndSigns, TestBigFloatFormatterStorage,
     testing::Combine(testing::Values(4, 12, 64, 708),
-        testing::Values(BigFloatFormatMode::GENERAL, BigFloatFormatMode::SCIENTIFIC, BigFloatFormatMode::FIXED),
+        testing::Values(BigFloatFormatMode::GENERAL, BigFloatFormatMode::SCIENTIFIC),
         testing::Bool()));
 
 class TestBigFloatFormatterUnderflow : public TestBigFloatFormat,
-                                       public testing::WithParamInterface<decltype(&bf_to_string)>
+                                       public testing::WithParamInterface<decltype(&BigFloat::to_string)>
 {
 };
 
@@ -2051,12 +2017,12 @@ TEST_P(TestBigFloatFormatterUnderflow, formatsNonzeroValueBelowNativeRangeAsZero
     const BigFloat original{value};
 
     ASSERT_NE(BigFloat{0}, value);
-    EXPECT_EQ("0.0", GetParam()(value, 5));
+    EXPECT_EQ("0.0", (value.*GetParam())(5));
     EXPECT_EQ(original, value);
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    Formatters, TestBigFloatFormatterUnderflow, testing::Values(bf_to_string, bf_to_string_e, bf_to_string_f));
+    Formatters, TestBigFloatFormatterUnderflow, testing::Values(&BigFloat::to_string, &BigFloat::to_scientific_string));
 
 TEST_F(TestBigFloatFormat, formatsAtMaximumSupportedPrecision)
 {
@@ -2066,8 +2032,7 @@ TEST_F(TestBigFloatFormat, formatsAtMaximumSupportedPrecision)
     const BigFloat original{value};
 
     EXPECT_EQ("-1.25", value.to_string(g_bf_decimals));
-    EXPECT_EQ("-1.25", bf_to_string_f(value, g_bf_decimals));
-    EXPECT_EQ("-1.25e0", bf_to_string_e(value, g_bf_decimals));
+    EXPECT_EQ("-1.25e0", value.to_scientific_string(g_bf_decimals));
     EXPECT_EQ(original, value);
 }
 
@@ -2077,8 +2042,7 @@ TEST_F(TestBigFloatFormat, repeatedFormattingPreservesTheValue)
     const BigFloat original{value};
 
     EXPECT_EQ("-1.23", value.to_string(3));
-    EXPECT_EQ("-1.234567890123456789e0", bf_to_string_e(value, 0));
-    EXPECT_EQ("-1.2346", bf_to_string_f(value, 5));
+    EXPECT_EQ("-1.234567890123456789e0", value.to_scientific_string(0));
     EXPECT_EQ(original, value);
 }
 

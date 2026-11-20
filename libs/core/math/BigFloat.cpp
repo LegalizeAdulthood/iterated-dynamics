@@ -134,14 +134,6 @@ std::string format_bf(
 
 } // namespace
 
-/********************************************************************/
-// bf_hexdump() - for debugging, dumps to stdout
-
-void bf_hex_dump(const BigFloat &r)
-{
-    bf_hex_dump_snapshot(r.data());
-}
-
 BigFloat::BigFloat() noexcept = default;
 
 BigFloat::BigFloat(const LDouble value) :
@@ -407,24 +399,6 @@ const Byte *unpack_bf(BigFloat &destination, const Byte *source, const int store
     return unpack_bf(destination.data(), source, stored_length);
 }
 
-/**********************************************************************/
-std::string bf_to_string(const BigFloat &r, const int dec)
-{
-    return format_bf(r, dec, unsafe_bf_to_string);
-}
-
-/**********************************************************************/
-std::string bf_to_string_e(const BigFloat &r, const int dec)
-{
-    return format_bf(r, dec, unsafe_bf_to_string_e);
-}
-
-/**********************************************************************/
-std::string bf_to_string_f(const BigFloat &r, const int dec)
-{
-    return format_bf(r, dec, unsafe_bf_to_string_f);
-}
-
 BigFloat abs(const BigFloat &value)
 {
     return value.abs();
@@ -508,7 +482,18 @@ std::string BigFloat::to_string(const int digits) const
         throw std::invalid_argument("BigFloat formatting requires a nonnegative digit count");
     }
     const int default_digits = g_decimals > 0 ? g_decimals : static_cast<int>((g_bf_length - 2) * LOG10_256);
-    return bf_to_string(*this, digits == 0 ? default_digits : digits);
+    return format_bf(*this, digits == 0 ? default_digits : digits, unsafe_bf_to_string);
+}
+
+std::string BigFloat::to_scientific_string(const int digits) const
+{
+    return format_bf(*this, digits, unsafe_bf_to_string_e);
+}
+
+// Debugging aid that dumps the mantissa and exponent to stdout.
+void BigFloat::hex_dump() const
+{
+    bf_hex_dump_snapshot(m_storage.data());
 }
 
 BigFloat BigFloat::from_legacy(BigFloatConstPtr source, const std::size_t size)

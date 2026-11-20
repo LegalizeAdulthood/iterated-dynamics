@@ -85,6 +85,8 @@ public:
 
     LDouble to_float() const;
     std::string to_string(int digits = 0) const;
+    std::string to_scientific_string(int digits = 0) const;
+    void hex_dump() const;
 
     // Borrowed buffers require a numeric value and expire on arena relocation.
     BigFloatPtr data() noexcept
@@ -117,9 +119,6 @@ private:
 BigFloat &max_bf(BigFloat &r);
 // r and n are distinct. The input is made positive and its exponent cleared.
 const Byte *unpack_bf(BigFloat &destination, const Byte *source, int stored_length);
-std::string bf_to_string(const BigFloat &r, int dec);
-std::string bf_to_string_e(const BigFloat &r, int dec);
-std::string bf_to_string_f(const BigFloat &r, int dec);
 BigFloat abs(const BigFloat &value);
 BigFloat sqr(const BigFloat &value);
 BigFloat log(const BigFloat &value);
@@ -165,7 +164,5 @@ extern BigFloat g_bf_save_y_max;
 extern BigFloat g_bf_save_x_3rd;
 extern BigFloat g_bf_save_y_3rd;
 extern BigFloat g_bf_params[10]; // (g_bf_length+2)*10
-
-void bf_hex_dump(const BigFloat &r);
 
 } // namespace id::math

@@ -1438,6 +1438,52 @@ INSTANTIATE_TEST_SUITE_P(LayoutsModesAndSigns, TestBigFloatByteFormatting,
             BigFloatByteFormatInput{unsafe_bf_to_string_e, "e0"}, BigFloatByteFormatInput{unsafe_bf_to_string_f, ""}),
         testing::Bool()));
 
+struct BigFloatByteFixedFormatInput
+{
+    const char *name;
+    const char *text;
+    int digits;
+    const char *expected;
+    bool maximum_precision{};
+};
+
+class TestBigFloatByteFixedFormat : public TestBigFloatBytePrecision,
+                                    public testing::WithParamInterface<BigFloatByteFixedFormatInput>
+{
+};
+
+TEST_P(TestBigFloatByteFixedFormat, formatsFixedDecimal)
+{
+    const BigFloatByteFixedFormatInput &input = GetParam();
+    if (input.maximum_precision)
+    {
+        init_bf_length(708);
+    }
+    const int digits = input.maximum_precision ? g_bf_decimals : input.digits;
+    std::vector<Byte> source(g_bf_length + 2);
+    std::vector<Byte> scratch(g_bf_length + 2);
+    std::vector<Byte> decimal((digits == 0 ? g_decimals : digits) + 4);
+    str_to_bf(source.data(), input.text, scratch.data());
+
+    EXPECT_EQ(input.expected, unsafe_bf_to_string_f(source.data(), digits, decimal.data()));
+}
+
+INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatByteFixedFormat,
+    testing::Values(BigFloatByteFixedFormatInput{"Zero", "0", 5, "0.0"},
+        BigFloatByteFixedFormatInput{"PositiveDecimal", "1.25", 5, "1.25"},
+        BigFloatByteFixedFormatInput{"Negative", "-1.25", 5, "-1.25"},
+        BigFloatByteFixedFormatInput{"RoundDown", "1.2344", 4, "1.234"},
+        BigFloatByteFixedFormatInput{"RoundUp", "1.2346", 4, "1.235"},
+        BigFloatByteFixedFormatInput{"LegacyCarryTruncation", "9.9996", 4, "9.999"},
+        BigFloatByteFixedFormatInput{"SmallExponent", "0.000125", 8, "0.000125"},
+        BigFloatByteFixedFormatInput{"LargeExponent", "1250000", 8, "1250000.0"},
+        BigFloatByteFixedFormatInput{"FewDigitsLargeExponent", "1250000", 3, "1250000.0"},
+        BigFloatByteFixedFormatInput{"SingleDigit", "1.25", 1, "1.0"},
+        BigFloatByteFixedFormatInput{"DefaultPrecision", "1.234567890123456789", 0, "1.234567890123456789"},
+        BigFloatByteFixedFormatInput{"NegativeRounded", "-1.234567890123456789", 5, "-1.2346"},
+        BigFloatByteFixedFormatInput{"MaximumPrecision", "-1.25", 0, "-1.25", true}),
+    [](const testing::TestParamInfo<BigFloatByteFixedFormatInput> &info) { return info.param.name; });
+
 class TestBigFloatByteExponential : public TestBigNumConversionBase
 {
 };
