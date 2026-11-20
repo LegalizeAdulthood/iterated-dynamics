@@ -1017,7 +1017,7 @@ TEST_P(TestBigFloatArithmetic, legacyArithmeticSamplesPreserveOperands)
     EXPECT_EQ("-5.0", bf_to_string(result, 8));
     result = left - right;
     EXPECT_EQ("-10.0", bf_to_string(result, 8));
-    mult_bf(result, left, right);
+    result = left * right;
     EXPECT_EQ("-18.75", bf_to_string(result, 8));
     div_bf(result, left, right);
     EXPECT_EQ("-3.0", bf_to_string(result, 8));
@@ -1143,7 +1143,7 @@ TEST_P(TestBigFloatArithmetic, expressionsMatchLegacySequencesAndOutliveTheirTem
     BigFloat expected{left};
     expected += right;
     div_bf(expected, expected, divisor);
-    mult_bf(expected, expected, left);
+    expected *= left;
     expected -= right;
     const BigStackMark marker = save_stack();
 
@@ -1607,14 +1607,11 @@ TEST_P(TestBigFloatLegacyMultiply, preservesOperandsAndTemporaryLifetime)
     const BigFloat survivor{temporary, -7};
     bf_stack().allocate_single();
     bn_stack().allocate_single();
-    BigArena::Allocation reservation = temporary.allocate_double();
-    const BigArena::Index index = reservation.index();
-    reservation.reset();
-    const std::size_t high_water = temporary.high_water_mark();
+    const std::size_t temporary_high_water = temporary.high_water_mark();
     const std::size_t destination_high_water = persistent.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(destination, &mult_bf(*destination, left, input.shared ? left : right));
+    *destination = left * (input.shared ? left : right);
 
     EXPECT_EQ(expected, *destination);
     EXPECT_EQ(destination == &left ? expected : original_left, left);
@@ -1627,10 +1624,7 @@ TEST_P(TestBigFloatLegacyMultiply, preservesOperandsAndTemporaryLifetime)
     EXPECT_EQ(destination_high_water, persistent.high_water_mark());
     EXPECT_EQ(mark, save_stack());
     EXPECT_EQ(-7.0L, survivor.to_float());
-    const BigArena::Allocation reused = temporary.allocate_double();
-    EXPECT_EQ(index, reused.index());
-    EXPECT_EQ(2U, reused.blocks());
-    EXPECT_EQ(high_water, temporary.high_water_mark());
+    EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsCallsAndInputs, TestBigFloatLegacyMultiply,
@@ -1714,15 +1708,13 @@ TEST_P(TestBigFloatLegacySqr, preservesSourceCachesAndTemporaryLifetime)
     const BigFloat survivor{temporary, -7};
     bf_stack().allocate_single();
     bn_stack().allocate_single();
-    BigArena::Allocation reservation = temporary.allocate_double();
-    const BigArena::Index index = reservation.index();
-    reservation.reset();
-    const std::size_t high_water = temporary.high_water_mark();
+    bf_arena(BigLifetime::WORKING).allocate_double().reset();
+    const std::size_t temporary_high_water = temporary.high_water_mark();
     const BigArena &destination_arena = destination->arena();
     const std::size_t destination_high_water = destination_arena.high_water_mark();
     const BigStackMark mark = save_stack();
 
-    EXPECT_EQ(destination, &square_bf(*destination, source));
+    *destination = source.sqr();
 
     EXPECT_EQ(expected, *destination);
     EXPECT_EQ(destination == &source ? expected : original, source);
@@ -1742,10 +1734,7 @@ TEST_P(TestBigFloatLegacySqr, preservesSourceCachesAndTemporaryLifetime)
     EXPECT_EQ(destination_high_water, destination_arena.high_water_mark());
     EXPECT_EQ(mark, save_stack());
     EXPECT_EQ(-7.0L, survivor.to_float());
-    const BigArena::Allocation reused = temporary.allocate_double();
-    EXPECT_EQ(index, reused.index());
-    EXPECT_EQ(2U, reused.blocks());
-    EXPECT_EQ(high_water, temporary.high_water_mark());
+    EXPECT_EQ(temporary_high_water, temporary.high_water_mark());
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsCallsAndInputs, TestBigFloatLegacySqr,

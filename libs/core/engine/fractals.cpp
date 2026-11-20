@@ -227,8 +227,8 @@ void mandel_ref_pt_bf(const BFComplex &center, BFComplex &z)
     BigFloat imag_sqr{bf_arena(BigLifetime::TEMPORARY)};
     BigFloat real_imag{bf_arena(BigLifetime::TEMPORARY)};
     BFComplex z2{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    double_bf(z2.x, z.x);
-    double_bf(z2.y, z.y);
+    z2.x = z.x + z.x;
+    z2.y = z.y + z.y;
 
     real_sqr = sqr(z.x);
     imag_sqr = sqr(z.y);

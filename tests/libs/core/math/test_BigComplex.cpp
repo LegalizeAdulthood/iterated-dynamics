@@ -337,8 +337,7 @@ TEST_P(TestBigComplex, realValueFunctionsPreserveTheirOperands)
     BFComplex raw = value(0.375L, -0.625L);
     BFComplex result = value(0, 0);
     const BFComplex input = raw;
-    square_bf(result.x, raw.x);
-    EXPECT_EQ(result.x, sqr(input.x));
+    EXPECT_EQ(BigFloat{0.140625L}, raw.x.sqr());
     exp_bf(result.x, raw.y);
     EXPECT_EQ(result.x, exp(input.y));
     ln_bf(result.x, raw.x);

@@ -115,10 +115,6 @@ private:
 };
 
 BigFloat &max_bf(BigFloat &r);
-BigFloat &mult_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2);
-BigFloat &square_bf(BigFloat &r, const BigFloat &n);
-BigFloat &double_bf(BigFloat &r, const BigFloat &n);
-BigFloat &double_a_bf(BigFloat &r);
 // r and n are distinct. The input is made positive and its exponent cleared.
 BigFloat &unsafe_inv_bf(BigFloat &r, BigFloat &n);
 BigFloat &div_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2);

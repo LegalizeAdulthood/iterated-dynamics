@@ -390,31 +390,6 @@ BigFloat &max_bf(BigFloat &r)
     return r;
 }
 
-BigFloat &mult_bf(BigFloat &r, const BigFloat &n1, const BigFloat &n2)
-{
-    binary_operation(r.data(), n1.data(), n2.data(), multiply);
-    return r;
-}
-
-BigFloat &square_bf(BigFloat &r, const BigFloat &n)
-{
-    copy_bf(g_bf_tmp_copy1.data(), n.data());
-    square_value(r.data(), g_bf_tmp_copy1.data());
-    return r;
-}
-
-BigFloat &double_bf(BigFloat &r, const BigFloat &n)
-{
-    double_bf(r.data(), n.data());
-    return r;
-}
-
-BigFloat &double_a_bf(BigFloat &r)
-{
-    double_a_bf(r.data());
-    return r;
-}
-
 BigFloat &unsafe_inv_bf(BigFloat &r, BigFloat &n)
 {
     unsafe_inv_bf(r.data(), n.data(), g_bf_tmp1.data(), g_bf_tmp2.data());

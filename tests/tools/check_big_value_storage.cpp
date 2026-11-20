@@ -190,8 +190,8 @@ int main()
     g_old_z_bf.y = 0.125;
     g_param_z_bf.x = -0.2;
     g_param_z_bf.y = 0.4;
-    square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_old_z_bf.y);
+    g_tmp_sqr_x_bf = g_old_z_bf.x.sqr();
+    g_tmp_sqr_y_bf = g_old_z_bf.y.sqr();
     measure("bf_julia_orbit", 10000, [] { s_result = julia_orbit_bf() != 0; });
     g_params[2] = 2.5;
     g_params[3] = 0;

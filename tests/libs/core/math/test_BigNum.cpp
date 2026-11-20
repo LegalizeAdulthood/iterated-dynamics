@@ -1251,14 +1251,14 @@ TEST_P(TestBigNumKernelWindows, bigFloatMantissaProductsRestoreTheBigNumContext)
     const auto stack = save_stack();
 
     BigFloat product{bf_arena(BigLifetime::WORKING)};
-    EXPECT_EQ(&product, &mult_bf(product, left, right));
+    product = left * right;
 
     EXPECT_EQ(expected_product, product);
     EXPECT_EQ(original_left, left);
     EXPECT_EQ(original_right, right);
     EXPECT_EQ(lengths, kernel_lengths());
 
-    EXPECT_EQ(&product, &square_bf(product, left));
+    product = left.sqr();
 
     EXPECT_EQ(expected_sqr, product);
     EXPECT_EQ(original_left, left);

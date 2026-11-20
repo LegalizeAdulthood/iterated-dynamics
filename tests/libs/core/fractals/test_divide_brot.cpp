@@ -139,8 +139,8 @@ TEST_P(TestDivideBrot5Orbit, retainsSetupFormulaAndSelectedBailout)
     g_old_z_bf.y = seed.imag();
     g_param_z_bf.x = parameter.real();
     g_param_z_bf.y = parameter.imag();
-    square_bf(g_tmp_sqr_x_bf, g_old_z_bf.x);
-    square_bf(g_tmp_sqr_y_bf, g_old_z_bf.y);
+    g_tmp_sqr_x_bf = g_old_z_bf.x.sqr();
+    g_tmp_sqr_y_bf = g_old_z_bf.y.sqr();
     const std::complex<double> expected =
         seed * seed / (std::pow(seed, g_c_exponent) + static_cast<double>(g_b_const)) + parameter;
     const double tolerance = 1e-11 * std::max(1.0, std::abs(expected));

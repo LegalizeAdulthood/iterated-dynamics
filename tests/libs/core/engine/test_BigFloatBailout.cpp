@@ -200,8 +200,8 @@ TEST_P(TestBigFloatBailoutCases, preservesInclusiveThresholdCachesAndOldOrbit)
     BigArena &working = bf_arena(BigLifetime::WORKING);
     BigFloat expected_x{working};
     BigFloat expected_y{working};
-    square_bf(expected_x, g_new_z_bf.x);
-    square_bf(expected_y, g_new_z_bf.y);
+    expected_x = g_new_z_bf.x.sqr();
+    expected_y = g_new_z_bf.y.sqr();
     const auto marker = save_stack();
 
     EXPECT_EQ(escaped, g_bailout_bigfloat() != 0);
