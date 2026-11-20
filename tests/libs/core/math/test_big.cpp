@@ -115,7 +115,7 @@ TEST_P(TestBigFloatByteProcedures, preservesExactExtentSourceReturnAddressAndGua
 }
 
 INSTANTIATE_TEST_SUITE_P(LengthsAndOperations, TestBigFloatByteProcedures,
-    testing::Combine(testing::Values(8, 12, 64, 712),
+    testing::Combine(testing::Values(8, 12, 16, 64, 68, 712),
         testing::Values(BigFloatByteProcedure::COPY, BigFloatByteProcedure::CLEAR, BigFloatByteProcedure::MAXIMUM)));
 
 struct BigFloatByteSignInput
@@ -388,6 +388,44 @@ INSTANTIATE_TEST_SUITE_P(Operations, TestBigFloatByteSubtraction,
                         {0x80, 0xff, 0xff, 0, 0}, {0xc0, 1, 0, 0, 0}},
         BigFloatByteSubtractionInput{{}, {0, 1, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 0, 0xff, 0xff, 0xff}},
         BigFloatByteSubtractionInput{{0x40, 1, 0, 0, 0}, {}, {}, {0x40, 1, 0, 0, 0}}));
+
+class TestBigFloatByteSelfAddSubtract : public testing::TestWithParam<std::tuple<int, bool>>
+{
+};
+
+TEST_P(TestBigFloatByteSelfAddSubtract, preservesExactExtentWithSameOperand)
+{
+    const int length = std::get<0>(GetParam());
+    const bool subtract = std::get<1>(GetParam());
+    const ValueSaver<int> bf_length{g_bf_length, length};
+    const ValueSaver<int> bn_length{g_bn_length, 4};
+    const std::size_t size = static_cast<std::size_t>(length + 2);
+    std::vector<Byte> guarded(size + 4);
+    guarded.front() = 0x5a;
+    guarded.back() = 0xa5;
+    std::vector<Byte> expected = guarded;
+    Byte *const value = guarded.data() + 2;
+    value[length - 3] = 0x40;
+    value[length - 2] = 1;
+
+    if (subtract)
+    {
+        EXPECT_EQ(value, unsafe_sub_a_bf(value, value));
+    }
+    else
+    {
+        expected[2 + length - 3] = 0x80;
+        expected[2 + length - 2] = 2;
+        EXPECT_EQ(value, unsafe_add_a_bf(value, value));
+    }
+
+    EXPECT_EQ(expected, guarded);
+    EXPECT_EQ(4, g_bn_length);
+    EXPECT_EQ(length, g_bf_length);
+}
+
+INSTANTIATE_TEST_SUITE_P(LengthsAndOperations, TestBigFloatByteSelfAddSubtract,
+    testing::Combine(testing::Values(8, 68, 712), testing::Bool()));
 
 struct BigFloatByteMultiplyInput
 {
