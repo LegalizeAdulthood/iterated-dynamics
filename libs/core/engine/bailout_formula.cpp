@@ -382,8 +382,8 @@ static int bf_manh_bailout()
 
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
-    abs_bf(abs_x, g_new_z_bf.x);
-    abs_bf(abs_y, g_new_z_bf.y);
+    abs_x = g_new_z_bf.x.abs();
+    abs_y = g_new_z_bf.y.abs();
     g_bf_tmp = abs_x + abs_y;
     metric = sqr(g_bf_tmp);
     tmp1 = g_magnitude_limit;

@@ -31,14 +31,14 @@ int divide_brot5_bf_per_pixel()
     g_bf_tmp = g_delta2_x_bf * static_cast<U16>(g_row);
 
     g_param_z_bf.x += g_bf_tmp;
-    add_a_bf(g_param_z_bf.x, g_bf_x_min);
+    g_param_z_bf.x += g_bf_x_min;
 
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
     /* note: in next four lines, g_old_z_bf is just used as a temporary variable */
     g_old_z_bf.x = g_delta_y_bf * static_cast<U16>(g_row);
     g_old_z_bf.y = g_delta2_y_bf * static_cast<U16>(g_col);
     g_old_z_bf.x += g_old_z_bf.y;
-    sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x);
+    g_param_z_bf.y = g_bf_y_max - g_old_z_bf.x;
 
     g_tmp_sqr_x_bf = 0;
     g_tmp_sqr_y_bf = 0;

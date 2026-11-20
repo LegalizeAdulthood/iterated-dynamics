@@ -396,27 +396,30 @@ bool mandel_per_image_bf()
     g_bf_math = BFMathType::BIG_FLT;
 
     // g_delta_x_bf = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
-    sub_bf(g_delta_x_bf, g_bf_x_max, g_bf_x_3rd);
+    g_delta_x_bf = g_bf_x_max - g_bf_x_3rd;
     g_delta_x_bf /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
     // g_delta_y_bf = (g_bf_y_max - g_bf_y_3rd)/(ydots-1)
-    sub_bf(g_delta_y_bf, g_bf_y_max, g_bf_y_3rd);
+    g_delta_y_bf = g_bf_y_max - g_bf_y_3rd;
     g_delta_y_bf /= static_cast<U16>(g_logical_screen.y_dots - 1);
 
     // g_delta2_x_bf = (g_bf_x_3rd - g_bf_x_min)/(ydots-1)
-    sub_bf(g_delta2_x_bf, g_bf_x_3rd, g_bf_x_min);
+    g_delta2_x_bf = g_bf_x_3rd - g_bf_x_min;
     g_delta2_x_bf /= static_cast<U16>(g_logical_screen.y_dots - 1);
 
     // g_delta2_y_bf = (g_bf_y_3rd - g_bf_y_min)/(xdots-1)
-    sub_bf(g_delta2_y_bf, g_bf_y_3rd, g_bf_y_min);
+    g_delta2_y_bf = g_bf_y_3rd - g_bf_y_min;
     g_delta2_y_bf /= static_cast<U16>(g_logical_screen.x_dots - 1);
 
-    abs_bf(g_close_enough_bf, g_delta_x_bf);
-    if (cmp_bf(abs_bf(bf_temp1, g_delta2_x_bf), g_close_enough_bf) > 0)
+    g_close_enough_bf = g_delta_x_bf.abs();
+    bf_temp1 = g_delta2_x_bf.abs();
+    if (cmp_bf(bf_temp1, g_close_enough_bf) > 0)
     {
         g_close_enough_bf = bf_temp1;
     }
-    if (cmp_bf(abs_bf(bf_temp1, g_delta_y_bf), abs_bf(bf_temp2, g_delta2_y_bf)) > 0)
+    bf_temp1 = g_delta_y_bf.abs();
+    bf_temp2 = g_delta2_y_bf.abs();
+    if (cmp_bf(bf_temp1, bf_temp2) > 0)
     {
         if (bf_temp1 > g_close_enough_bf)
         {
@@ -567,14 +570,14 @@ int mandel_per_pixel_bf()
     g_bf_tmp = g_delta2_x_bf * static_cast<U16>(g_row);
 
     g_param_z_bf.x += g_bf_tmp;
-    add_a_bf(g_param_z_bf.x, g_bf_x_min);
+    g_param_z_bf.x += g_bf_x_min;
 
     // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bf is just used as a temporary variable
     g_old_z_bf.x = g_delta_y_bf * static_cast<U16>(g_row);
     g_old_z_bf.y = g_delta2_y_bf * static_cast<U16>(g_col);
     g_old_z_bf.x += g_old_z_bf.y;
-    sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x);
+    g_param_z_bf.y = g_bf_y_max - g_old_z_bf.x;
 
     if ((g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::MANDEL_Z_POWER) &&
         g_use_init_orbit == InitOrbitMode::VALUE)
@@ -648,14 +651,14 @@ int julia_per_pixel_bf()
     g_bf_tmp = g_delta2_x_bf * static_cast<U16>(g_row);
 
     g_old_z_bf.x += g_bf_tmp;
-    add_a_bf(g_old_z_bf.x, g_bf_x_min);
+    g_old_z_bf.x += g_bf_x_min;
 
     // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bf is just used as a temporary variable
     g_new_z_bf.x = g_delta_y_bf * static_cast<U16>(g_row);
     g_new_z_bf.y = g_delta2_y_bf * static_cast<U16>(g_col);
     g_new_z_bf.x += g_new_z_bf.y;
-    sub_bf(g_old_z_bf.y, g_bf_y_max, g_new_z_bf.x);
+    g_old_z_bf.y = g_bf_y_max - g_new_z_bf.x;
 
     // square has side effect - must copy first
     g_new_z_bf.x = g_old_z_bf.x;
