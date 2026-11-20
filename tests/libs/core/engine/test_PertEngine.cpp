@@ -809,19 +809,16 @@ TEST_F(TestPerturbationPixels, finishingOwnedFramePreservesBorrowedCallerStorage
     center.x = 0.125;
     center.y = 0;
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
-    const BigFloatPtr borrowed{bf_stack().allocate_single()};
-    BigFloat{0.375}.copy_to_legacy(borrowed, static_cast<std::size_t>(g_bf_length + 2));
+    Byte *const borrowed = bf_stack().allocate_single();
+    constexpr Byte sentinel{0x5a};
+    *borrowed = sentinel;
 
     m_engine.finish();
 
-    EXPECT_TRUE(bf_stack().contains(borrowed));
-    if (bf_stack().contains(borrowed))
-    {
-        BigFloat observed_float = BigFloat::from_legacy(borrowed, static_cast<std::size_t>(g_bf_length + 2));
-        EXPECT_DOUBLE_EQ(0.375, static_cast<double>(bf_to_float(observed_float)));
-    }
     EXPECT_FALSE(center.x);
     EXPECT_FALSE(center.y);
+    ASSERT_TRUE(bf_stack().contains(borrowed));
+    EXPECT_EQ(sentinel, *borrowed);
 }
 
 TEST_F(TestPerturbationPixels, referenceCallbacksPreserveTheCenterAndDestinationArena)
@@ -834,8 +831,7 @@ TEST_F(TestPerturbationPixels, referenceCallbacksPreserveTheCenterAndDestination
     m_big_float = true;
     const BFComplex center{
         BigFloat{bf_arena(BigLifetime::PERSISTENT), 0.125}, BigFloat{bf_arena(BigLifetime::PERSISTENT), 0.0625}};
-    const std::vector<Byte> original_x{center.x.data(), center.x.data() + g_bf_length + 2};
-    const std::vector<Byte> original_y{center.y.data(), center.y.data() + g_bf_length + 2};
+    const BFComplex original{center};
     const std::array<PerturbationReferenceBF, 3> callbacks{
         mandel_ref_pt_bf, mandel_z_power_ref_pt_bf, burning_ship_ref_pt_bf};
     const std::array<std::complex<double>, 3> expected{{{0.3125, -0.1875}, {0.3125, -0.1875}, {0.3125, 0.3125}}};
@@ -849,8 +845,7 @@ TEST_F(TestPerturbationPixels, referenceCallbacksPreserveTheCenterAndDestination
 
         EXPECT_NEAR(expected[i].real(), static_cast<double>(bf_to_float(orbit.x)), 1e-14);
         EXPECT_NEAR(expected[i].imag(), static_cast<double>(bf_to_float(orbit.y)), 1e-14);
-        EXPECT_EQ(original_x, (std::vector<Byte>{center.x.data(), center.x.data() + g_bf_length + 2}));
-        EXPECT_EQ(original_y, (std::vector<Byte>{center.y.data(), center.y.data() + g_bf_length + 2}));
+        EXPECT_EQ(original, center);
         EXPECT_EQ(&bf_arena(BigLifetime::TEMPORARY), &orbit.x.arena());
         EXPECT_EQ(&bf_arena(BigLifetime::TEMPORARY), &orbit.y.arena());
     }
@@ -4313,12 +4308,6 @@ struct StarTrailJuliaStep
     BNComplex fixed_output;
     BNComplex fixed_cache_before;
     BNComplex fixed_cache_after;
-    std::vector<Byte> input_bytes;
-    std::vector<Byte> output_bytes;
-    std::vector<Byte> cache_x_before;
-    std::vector<Byte> cache_y_before;
-    std::vector<Byte> cache_x_after;
-    std::vector<Byte> cache_y_after;
 };
 
 std::vector<StarTrailJuliaStep> s_star_trail_julia_steps;
@@ -4548,19 +4537,17 @@ void PrintTo(const StarTrailFloatInput &input, std::ostream *out)
 struct StarTrailFloatStep
 {
     StarTrailJuliaStep actual;
-    std::vector<Byte> expected_input;
-    std::vector<Byte> expected_cache_x;
-    std::vector<Byte> expected_cache_y;
+    BFComplex input;
+    BFComplex output;
+    BFComplex cache_before;
+    BFComplex cache_after;
+    BFComplex expected_input;
+    BFComplex expected_cache;
     int clamp_x;
     int clamp_y;
 };
 
 std::vector<StarTrailFloatStep> s_star_trail_float_steps;
-
-std::vector<Byte> star_trail_float_bytes(const BigFloat &value)
-{
-    return {value.data(), value.data() + g_bf_length + 2};
-}
 
 int record_star_trail_julia_bf()
 {
@@ -4571,18 +4558,12 @@ int record_star_trail_julia_bf()
     step.actual.square_x = g_temp_sqr_x;
     step.actual.square_y = g_temp_sqr_y;
     step.actual.magnitude = g_magnitude;
-    step.actual.input_bytes = star_trail_float_bytes(g_old_z_bf.x);
-    const std::vector<Byte> input_y = star_trail_float_bytes(g_old_z_bf.y);
-    step.actual.input_bytes.insert(step.actual.input_bytes.end(), input_y.begin(), input_y.end());
-    step.actual.cache_x_before = star_trail_float_bytes(g_tmp_sqr_x_bf);
-    step.actual.cache_y_before = star_trail_float_bytes(g_tmp_sqr_y_bf);
+    step.input = g_old_z_bf;
+    step.cache_before = {g_tmp_sqr_x_bf, g_tmp_sqr_y_bf};
     const int escaped = julia_orbit_bf();
     step.actual.output = {static_cast<double>(g_new_z_bf.x.to_float()), static_cast<double>(g_new_z_bf.y.to_float())};
-    step.actual.output_bytes = star_trail_float_bytes(g_new_z_bf.x);
-    const std::vector<Byte> output_y = star_trail_float_bytes(g_new_z_bf.y);
-    step.actual.output_bytes.insert(step.actual.output_bytes.end(), output_y.begin(), output_y.end());
-    step.actual.cache_x_after = star_trail_float_bytes(g_tmp_sqr_x_bf);
-    step.actual.cache_y_after = star_trail_float_bytes(g_tmp_sqr_y_bf);
+    step.output = g_new_z_bf;
+    step.cache_after = {g_tmp_sqr_x_bf, g_tmp_sqr_y_bf};
 
     const BigFloat maximum{std::numeric_limits<float>::max()};
     const BigFloat minimum{-std::numeric_limits<float>::max()};
@@ -4593,11 +4574,9 @@ int record_star_trail_julia_bf()
     }
     const BigFloat &next_x = step.clamp_x > 0 ? maximum : step.clamp_x < 0 ? minimum : g_new_z_bf.x;
     const BigFloat &next_y = step.clamp_y > 0 ? maximum : step.clamp_y < 0 ? minimum : g_new_z_bf.y;
-    step.expected_input = star_trail_float_bytes(next_x);
-    const std::vector<Byte> expected_y = star_trail_float_bytes(next_y);
-    step.expected_input.insert(step.expected_input.end(), expected_y.begin(), expected_y.end());
-    step.expected_cache_x = step.clamp_x ? star_trail_float_bytes(sqr(next_x)) : step.actual.cache_x_after;
-    step.expected_cache_y = step.clamp_y ? star_trail_float_bytes(sqr(next_y)) : step.actual.cache_y_after;
+    step.expected_input = {next_x, next_y};
+    step.expected_cache = {
+        step.clamp_x ? sqr(next_x) : step.cache_after.x, step.clamp_y ? sqr(next_y) : step.cache_after.y};
     s_star_trail_float_steps.push_back(std::move(step));
     return escaped;
 }
@@ -4704,13 +4683,10 @@ TEST_P(TestBigFloatStarTrailContinuation, preservesBoundedValuesCachesSamplesAnd
         {
             ++yields;
             ASSERT_EQ(before + 1, s_star_trail_float_steps.size());
-            const StarTrailJuliaStep &pending = s_star_trail_float_steps.back().actual;
-            std::vector<Byte> output = star_trail_float_bytes(g_new_z_bf.x);
-            const std::vector<Byte> output_y = star_trail_float_bytes(g_new_z_bf.y);
-            output.insert(output.end(), output_y.begin(), output_y.end());
-            EXPECT_EQ(pending.output_bytes, output);
-            EXPECT_EQ(pending.cache_x_after, star_trail_float_bytes(g_tmp_sqr_x_bf));
-            EXPECT_EQ(pending.cache_y_after, star_trail_float_bytes(g_tmp_sqr_y_bf));
+            const StarTrailFloatStep &pending = s_star_trail_float_steps.back();
+            EXPECT_EQ(pending.output, g_new_z_bf);
+            EXPECT_EQ(pending.cache_after.x, g_tmp_sqr_x_bf);
+            EXPECT_EQ(pending.cache_after.y, g_tmp_sqr_y_bf);
             EXPECT_EQ(16, g_max_iterations);
         }
     }
@@ -4735,26 +4711,23 @@ TEST_P(TestBigFloatStarTrailContinuation, preservesBoundedValuesCachesSamplesAnd
     {
         SCOPED_TRACE(i);
         const StarTrailFloatStep &previous = s_star_trail_float_steps[i - 1];
-        const StarTrailJuliaStep &current = s_star_trail_float_steps[i].actual;
-        EXPECT_EQ(previous.expected_input, current.input_bytes);
-        EXPECT_EQ(previous.expected_cache_x, current.cache_x_before);
-        EXPECT_EQ(previous.expected_cache_y, current.cache_y_before);
+        const StarTrailFloatStep &current = s_star_trail_float_steps[i];
+        EXPECT_EQ(previous.expected_input, current.input);
+        EXPECT_EQ(previous.expected_cache, current.cache_before);
         if (i > 1)
         {
-            EXPECT_EQ(current.observation, current.observed_old);
-            EXPECT_DOUBLE_EQ(current.observation.x * current.observation.x, current.square_x);
-            EXPECT_DOUBLE_EQ(current.observation.y * current.observation.y, current.square_y);
-            EXPECT_DOUBLE_EQ(current.square_x + current.square_y, current.magnitude);
-            samples[i - 2] = current.observation.y / (current.observation.x + 0.000001);
+            const StarTrailJuliaStep &actual = current.actual;
+            EXPECT_EQ(actual.observation, actual.observed_old);
+            EXPECT_DOUBLE_EQ(actual.observation.x * actual.observation.x, actual.square_x);
+            EXPECT_DOUBLE_EQ(actual.observation.y * actual.observation.y, actual.square_y);
+            EXPECT_DOUBLE_EQ(actual.square_x + actual.square_y, actual.magnitude);
+            samples[i - 2] = actual.observation.y / (actual.observation.x + 0.000001);
         }
     }
     const StarTrailFloatStep &last = s_star_trail_float_steps.back();
-    std::vector<Byte> final_value = star_trail_float_bytes(g_old_z_bf.x);
-    const std::vector<Byte> final_y = star_trail_float_bytes(g_old_z_bf.y);
-    final_value.insert(final_value.end(), final_y.begin(), final_y.end());
-    EXPECT_EQ(last.expected_input, final_value);
-    EXPECT_EQ(last.expected_cache_x, star_trail_float_bytes(g_tmp_sqr_x_bf));
-    EXPECT_EQ(last.expected_cache_y, star_trail_float_bytes(g_tmp_sqr_y_bf));
+    EXPECT_EQ(last.expected_input, g_old_z_bf);
+    EXPECT_EQ(last.expected_cache.x, g_tmp_sqr_x_bf);
+    EXPECT_EQ(last.expected_cache.y, g_tmp_sqr_y_bf);
     samples.back() = g_new_z.y / (g_new_z.x + 0.000001);
     int expected_color = 0;
     for (std::size_t i = 1; i < 16; ++i)
@@ -6455,15 +6428,8 @@ void PrintTo(const NativeBigFloatDistanceInput &input, std::ostream *out)
     *out << input.name;
 }
 
-std::vector<std::vector<Byte>> s_distance_float_inputs;
-std::vector<std::vector<Byte>> s_distance_float_outputs;
-
-std::vector<Byte> distance_float_bytes(const BFComplex &value)
-{
-    std::vector<Byte> result(value.x.data(), value.x.data() + g_bf_length + 2);
-    result.insert(result.end(), value.y.data(), value.y.data() + g_bf_length + 2);
-    return result;
-}
+std::vector<BFComplex> s_distance_float_inputs;
+std::vector<BFComplex> s_distance_float_outputs;
 
 int record_native_bigfloat_distance()
 {
@@ -6471,11 +6437,11 @@ int record_native_bigfloat_distance()
     s_standard_derivatives.push_back(s_standard_distance->derivative());
     s_native_distance_inputs.push_back(
         {static_cast<double>(g_old_z_bf.x.to_float()), static_cast<double>(g_old_z_bf.y.to_float())});
-    s_distance_float_inputs.push_back(distance_float_bytes(g_old_z_bf));
+    s_distance_float_inputs.push_back(g_old_z_bf);
     const int escaped = julia_z_power_orbit_bf();
     s_native_distance_outputs.push_back(
         {static_cast<double>(g_new_z_bf.x.to_float()), static_cast<double>(g_new_z_bf.y.to_float())});
-    s_distance_float_outputs.push_back(distance_float_bytes(g_new_z_bf));
+    s_distance_float_outputs.push_back(g_new_z_bf);
     return escaped;
 }
 
@@ -6487,6 +6453,7 @@ public:
 
 protected:
     void SetUp() override;
+    void TearDown() override;
 
     ValueSaver<UserData> m_user{g_user, UserData{}};
     ValueSaver<CalcStatus> m_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
@@ -6548,8 +6515,13 @@ void TestNativeBigFloatDistanceInputs::SetUp()
     s_standard_derivatives.clear();
     s_native_distance_inputs.clear();
     s_native_distance_outputs.clear();
+}
+
+void TestNativeBigFloatDistanceInputs::TearDown()
+{
     s_distance_float_inputs.clear();
     s_distance_float_outputs.clear();
+    PerturbationIterationTest::TearDown();
 }
 
 TEST_P(TestNativeBigFloatDistanceInputs, nativeSetupSuppliesCurrentObservationsAndRetainsOwningPrecision)
@@ -6604,7 +6576,7 @@ TEST_P(TestNativeBigFloatDistanceInputs, nativeSetupSuppliesCurrentObservationsA
     ASSERT_EQ(input.outputs.size(), s_distance_float_inputs.size());
     ASSERT_EQ(input.outputs.size(), s_distance_float_outputs.size());
     const BFComplex initial{expected_x, BigFloat{input.point.y}};
-    EXPECT_EQ(distance_float_bytes(initial), s_distance_float_inputs.front());
+    EXPECT_EQ(initial, s_distance_float_inputs.front());
     if (input.tail != 0)
     {
         EXPECT_NE(BigFloat{input.point.x}, expected_x);
@@ -13703,11 +13675,8 @@ void TestSubnormalPerturbation::SetUp()
     clear_bf(g_bf_y_min);
     clear_bf(g_bf_y_max);
     clear_bf(g_bf_y_3rd);
-    const auto size = static_cast<std::size_t>(g_bf_length + 2);
     m_engine.initialize_frame_bf(
-        {BigFloat::from_legacy(g_bf_x_min.data(), size), BigFloat::from_legacy(g_bf_y_min.data(), size)},
-        {BigFloat::from_legacy(g_bf_x_max.data(), size), BigFloat::from_legacy(g_bf_y_max.data(), size)},
-        {BigFloat::from_legacy(g_bf_x_3rd.data(), size), BigFloat::from_legacy(g_bf_y_3rd.data(), size)});
+        {g_bf_x_min, g_bf_y_min}, {g_bf_x_max, g_bf_y_max}, {g_bf_x_3rd, g_bf_y_3rd});
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
 }
 
@@ -13850,11 +13819,8 @@ void TestDeepPerturbationGeometry::TearDown()
 
 void TestDeepPerturbationGeometry::initialize_frame()
 {
-    const auto size = static_cast<std::size_t>(g_bf_length + 2);
     m_engine.initialize_frame_bf(
-        {BigFloat::from_legacy(g_bf_x_min.data(), size), BigFloat::from_legacy(g_bf_y_min.data(), size)},
-        {BigFloat::from_legacy(g_bf_x_max.data(), size), BigFloat::from_legacy(g_bf_y_max.data(), size)},
-        {BigFloat::from_legacy(g_bf_x_3rd.data(), size), BigFloat::from_legacy(g_bf_y_3rd.data(), size)});
+        {g_bf_x_min, g_bf_y_min}, {g_bf_x_max, g_bf_y_max}, {g_bf_x_3rd, g_bf_y_3rd});
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
 }
 

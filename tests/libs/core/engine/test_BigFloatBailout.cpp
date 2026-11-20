@@ -81,17 +81,6 @@ std::vector<BigFloatBailoutInput> inputs()
     return result;
 }
 
-std::vector<Byte> encoded(const BigFloat &value)
-{
-    return {value.data(), value.data() + g_bf_length + 2};
-}
-
-std::vector<Byte> encoded(const LDouble value)
-{
-    std::vector<Byte> result(g_bf_length + 2);
-    BigFloat{value}.copy_to_legacy(result.data(), result.size());
-    return result;
-}
 
 struct JuliaZPowerInput
 {
@@ -157,40 +146,38 @@ TEST_F(TestBigFloatBailout, canonicalGlobalsOwnWorkingStorageThroughBindingAndCl
     const std::array<BigFloat *, 16> values{&g_old_z_bf.x, &g_old_z_bf.y, &g_new_z_bf.x, &g_new_z_bf.y, &g_saved_z_bf.x,
         &g_saved_z_bf.y, &g_close_enough_bf, &g_tmp_sqr_x_bf, &g_tmp_sqr_y_bf, &g_bf_tmp, &g_delta_x_bf, &g_delta_y_bf,
         &g_delta2_x_bf, &g_delta2_y_bf, &g_param_z_bf.x, &g_param_z_bf.y};
-    std::array<BigFloatConstPtr, 16> buffers;
-    auto &working = bf_arena(BigLifetime::WORKING);
-    for (std::size_t i = 0; i < values.size(); ++i)
+    BigArena &working = bf_arena(BigLifetime::WORKING);
+    for (BigFloat *value : values)
     {
-        auto &value = *values[i];
-        ASSERT_TRUE(value);
-        EXPECT_EQ(&working, &value.arena());
-        EXPECT_EQ(BigFloat{0}, value);
-        value = -1.25L;
-        buffers[i] = value.data();
+        ASSERT_TRUE(*value);
+        EXPECT_EQ(&working, &value->arena());
+        EXPECT_EQ(BigFloat{0}, *value);
+        *value = -1.25L;
     }
 
-    const auto high_water = working.high_water_mark();
+    const std::size_t high_water = working.high_water_mark();
     init_bf_dec(40);
     EXPECT_EQ(high_water, working.high_water_mark());
-    for (std::size_t i = 0; i < values.size(); ++i)
+    for (const BigFloat *value : values)
     {
-        EXPECT_EQ(buffers[i], values[i]->data());
-        EXPECT_EQ(BigFloat{0}, *values[i]);
+        ASSERT_TRUE(*value);
+        EXPECT_EQ(&working, &value->arena());
+        EXPECT_EQ(BigFloat{0}, *value);
     }
     init_bf_dec(80);
-    for (const auto *value : values)
+    for (const BigFloat *value : values)
     {
         ASSERT_TRUE(*value);
         EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &value->arena());
         EXPECT_EQ(BigFloat{0}, *value);
     }
     free_bf_vars();
-    for (const auto *value : values)
+    for (const BigFloat *value : values)
     {
         EXPECT_FALSE(*value);
     }
     init_bf_dec(40);
-    for (const auto *value : values)
+    for (const BigFloat *value : values)
     {
         ASSERT_TRUE(*value);
         EXPECT_EQ(&bf_arena(BigLifetime::WORKING), &value->arena());
@@ -220,16 +207,16 @@ TEST_P(TestBigFloatBailoutCases, preservesInclusiveThresholdCachesAndOldOrbit)
     EXPECT_EQ(escaped, g_bailout_bigfloat() != 0);
 
     EXPECT_EQ(marker, save_stack());
-    EXPECT_EQ(encoded(expected_x), encoded(g_tmp_sqr_x_bf));
-    EXPECT_EQ(encoded(expected_y), encoded(g_tmp_sqr_y_bf));
-    EXPECT_EQ(encoded(escaped ? -7 : input.point.x), encoded(g_old_z_bf.x));
-    EXPECT_EQ(encoded(escaped ? 9 : input.point.y), encoded(g_old_z_bf.y));
-    EXPECT_EQ(encoded(input.point.x), encoded(g_new_z_bf.x));
-    EXPECT_EQ(encoded(input.point.y), encoded(g_new_z_bf.y));
+    EXPECT_EQ(expected_x, g_tmp_sqr_x_bf);
+    EXPECT_EQ(expected_y, g_tmp_sqr_y_bf);
+    EXPECT_EQ(BigFloat{escaped ? -7 : input.point.x}, g_old_z_bf.x);
+    EXPECT_EQ(BigFloat{escaped ? 9 : input.point.y}, g_old_z_bf.y);
+    EXPECT_EQ(BigFloat{input.point.x}, g_new_z_bf.x);
+    EXPECT_EQ(BigFloat{input.point.y}, g_new_z_bf.y);
     if (manh || manr || input.test == Bailout::MOD)
     {
         const double sum = manh ? std::abs(input.point.x) + std::abs(input.point.y) : input.point.x + input.point.y;
-        EXPECT_EQ(encoded(input.test == Bailout::MOD ? input.metric : sum), encoded(g_bf_tmp));
+        EXPECT_EQ(BigFloat{input.test == Bailout::MOD ? input.metric : sum}, g_bf_tmp);
     }
     EXPECT_EQ(-17, g_magnitude);
 }
@@ -253,13 +240,11 @@ TEST_P(TestBigFloatBailoutPrecision, inclusiveComparisonRetainsDisplacementsBelo
     g_magnitude_limit = limits[static_cast<std::size_t>(mode)];
     str_to_bf(g_new_z_bf.x, values[point]);
     str_to_bf(g_new_z_bf.y, values[point]);
-    const std::vector<Byte> original_x = encoded(g_new_z_bf.x);
-    const std::vector<Byte> original_y = encoded(g_new_z_bf.y);
+    const BFComplex original{g_new_z_bf};
 
     EXPECT_EQ(point != 0, g_bailout_bigfloat() != 0);
 
-    EXPECT_EQ(original_x, encoded(g_new_z_bf.x));
-    EXPECT_EQ(original_y, encoded(g_new_z_bf.y));
+    EXPECT_EQ(original, g_new_z_bf);
 }
 
 INSTANTIATE_TEST_SUITE_P(ModesAndDisplacements, TestBigFloatBailoutPrecision,
@@ -309,8 +294,8 @@ TEST_P(TestBigFloatBailoutContinuation, repeatedOrbitCallsMatchTheOrdinaryBailou
         EXPECT_EQ(expected[iteration].y, g_new_z_bf.y.to_float());
         EXPECT_EQ(g_old_z.x, g_old_z_bf.x.to_float());
         EXPECT_EQ(g_old_z.y, g_old_z_bf.y.to_float());
-        EXPECT_EQ(encoded(sqr(expected[iteration].x)), encoded(g_tmp_sqr_x_bf));
-        EXPECT_EQ(encoded(sqr(expected[iteration].y)), encoded(g_tmp_sqr_y_bf));
+        EXPECT_EQ(BigFloat{sqr(expected[iteration].x)}, g_tmp_sqr_x_bf);
+        EXPECT_EQ(BigFloat{sqr(expected[iteration].y)}, g_tmp_sqr_y_bf);
     }
 }
 
@@ -568,16 +553,15 @@ TEST_F(TestBigFloatJulia, affineSeedsKeepPreciseFixedParameterAndSquareCaches)
     float_to_bf(g_bf_y_3rd, -0.75);
     str_to_bf(g_bf_params[0], "0.25000000000000000001");
     str_to_bf(g_bf_params[1], "-0.12500000000000000001");
-    const auto parameter_x = encoded(g_bf_params[0]);
-    const auto parameter_y = encoded(g_bf_params[1]);
+    const BFComplex parameter{g_bf_params[0], g_bf_params[1]};
     // These bounded reference values use double, including scalar conversion.
     constexpr double tolerance = 64 * std::numeric_limits<double>::epsilon();
     g_magnitude_limit = 1024;
 
     ASSERT_TRUE(mandel_per_image_bf());
     ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
-    EXPECT_NE(encoded(0.25), encoded(g_param_z_bf.x));
-    EXPECT_NE(encoded(-0.125), encoded(g_param_z_bf.y));
+    EXPECT_NE(BigFloat{0.25}, g_param_z_bf.x);
+    EXPECT_NE(BigFloat{-0.125}, g_param_z_bf.y);
     for (const int col : {0, 128, 256})
     {
         for (const int row : {0, 256, 512})
@@ -598,15 +582,13 @@ TEST_F(TestBigFloatJulia, affineSeedsKeepPreciseFixedParameterAndSquareCaches)
             EXPECT_NEAR(imag, static_cast<double>(bf_to_float(g_new_z_bf.y)), tolerance);
             EXPECT_NEAR(real * real, static_cast<double>(bf_to_float(g_tmp_sqr_x_bf)), tolerance);
             EXPECT_NEAR(imag * imag, static_cast<double>(bf_to_float(g_tmp_sqr_y_bf)), tolerance);
-            EXPECT_EQ(parameter_x, encoded(g_param_z_bf.x));
-            EXPECT_EQ(parameter_y, encoded(g_param_z_bf.y));
+            EXPECT_EQ(parameter, g_param_z_bf);
 
             EXPECT_EQ(0, julia_orbit_bf());
 
             EXPECT_NEAR(real * real - imag * imag + 0.25, static_cast<double>(bf_to_float(g_new_z_bf.x)), tolerance);
             EXPECT_NEAR(2 * real * imag - 0.125, static_cast<double>(bf_to_float(g_new_z_bf.y)), tolerance);
-            EXPECT_EQ(parameter_x, encoded(g_param_z_bf.x));
-            EXPECT_EQ(parameter_y, encoded(g_param_z_bf.y));
+            EXPECT_EQ(parameter, g_param_z_bf);
         }
     }
 }
@@ -687,8 +669,7 @@ void TestBigFloatJuliaZPower::SetUp()
 
 TEST_P(TestBigFloatJuliaZPower, setupSeedsAndOrbitKeepTheFixedParameterAndExponentRules)
 {
-    const auto parameter_x = encoded(g_bf_params[0]);
-    const auto parameter_y = encoded(g_bf_params[1]);
+    const BFComplex parameter{g_bf_params[0], g_bf_params[1]};
     EXPECT_EQ(mandel_per_image_bf, g_dispatch.per_image());
     EXPECT_EQ(julia_per_pixel_bf, g_dispatch.per_pixel());
     EXPECT_EQ(julia_z_power_orbit_bf, g_dispatch.orbit_calc());
@@ -700,8 +681,7 @@ TEST_P(TestBigFloatJuliaZPower, setupSeedsAndOrbitKeepTheFixedParameterAndExpone
 
     EXPECT_EQ(static_cast<int>(GetParam().exponent.real()), g_c_exponent);
     EXPECT_EQ(GetParam().symmetry, g_symmetry);
-    EXPECT_EQ(parameter_x, encoded(g_param_z_bf.x));
-    EXPECT_EQ(parameter_y, encoded(g_param_z_bf.y));
+    EXPECT_EQ(parameter, g_param_z_bf);
     g_col = 128;
     g_row = 256;
     ASSERT_EQ(1, g_dispatch.per_pixel()());
@@ -716,8 +696,7 @@ TEST_P(TestBigFloatJuliaZPower, setupSeedsAndOrbitKeepTheFixedParameterAndExpone
 
     EXPECT_NEAR(expected.real(), static_cast<double>(bf_to_float(g_new_z_bf.x)), tolerance);
     EXPECT_NEAR(expected.imag(), static_cast<double>(bf_to_float(g_new_z_bf.y)), tolerance);
-    EXPECT_EQ(parameter_x, encoded(g_param_z_bf.x));
-    EXPECT_EQ(parameter_y, encoded(g_param_z_bf.y));
+    EXPECT_EQ(parameter, g_param_z_bf);
 }
 
 TEST_P(TestBigFloatJuliaZPower, zeroSeedRetainsTheLegacyPowerConvention)
