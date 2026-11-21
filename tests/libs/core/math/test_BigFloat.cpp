@@ -1443,9 +1443,8 @@ struct BigFloatOperatorProductInput
     int right_exponent;
     int product;
     int product_exponent;
-    int squared;
-    int squared_exponent;
-    bool shared;
+    bool shared{};
+    bool squared{};
 };
 
 void PrintTo(const BigFloatOperatorProductInput &input, std::ostream *out)
@@ -1460,9 +1459,8 @@ BigFloat scaled_product_sample(BigArena &arena, const int value, const int expon
 
 } // namespace
 
-class TestBigFloatOperatorProducts
-    : public TestBigFloatValue,
-      public testing::WithParamInterface<std::tuple<int, bool, BigFloatOperatorProductInput>>
+class TestBigFloatOperatorProducts : public TestBigFloatValue,
+                                     public testing::WithParamInterface<std::tuple<int, BigFloatOperatorProductInput>>
 {
 protected:
     void SetUp() override;
@@ -1475,8 +1473,7 @@ void TestBigFloatOperatorProducts::SetUp()
 
 TEST_P(TestBigFloatOperatorProducts, preservesOperandsAndReleasesBothProductSlots)
 {
-    const bool squared = std::get<1>(GetParam());
-    const BigFloatOperatorProductInput &input = std::get<2>(GetParam());
+    const BigFloatOperatorProductInput &input = std::get<1>(GetParam());
     BigArena &working = bf_arena(BigLifetime::WORKING);
     BigArena &persistent = bf_arena(BigLifetime::PERSISTENT);
     const BigFloat left = scaled_product_sample(persistent, input.left, input.left_exponent);
@@ -1485,15 +1482,14 @@ TEST_P(TestBigFloatOperatorProducts, preservesOperandsAndReleasesBothProductSlot
     const BigFloat original_left{left};
     const BigFloat original_right{distinct_right};
     const BigFloat guard{working, -7};
-    const BigFloat expected = squared ? scaled_product_sample(persistent, input.squared, input.squared_exponent)
-                                      : scaled_product_sample(persistent, input.product, input.product_exponent);
+    const BigFloat expected = scaled_product_sample(persistent, input.product, input.product_exponent);
     BigArena::Allocation reservation = working.allocate_double();
     const BigArena::Index index = reservation.index();
     reservation.reset();
     const std::size_t high_water = working.high_water_mark();
     const BigStackMark mark = save_stack();
     {
-        const BigFloat result = squared ? left.sqr() : left * right;
+        const BigFloat result = input.squared ? left.sqr() : left * right;
 
         EXPECT_EQ(expected, result);
         EXPECT_EQ(original_left, left);
@@ -1518,16 +1514,22 @@ TEST_P(TestBigFloatOperatorProducts, preservesOperandsAndReleasesBothProductSlot
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndInputs, TestBigFloatOperatorProducts,
-    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708), testing::Bool(),
-        testing::Values(BigFloatOperatorProductInput{"Positive", 2, 3, 0, 0, 6, 0, 4, 0, false},
-            BigFloatOperatorProductInput{"NegativeLeft", -2, 3, 0, 0, -6, 0, 4, 0, false},
-            BigFloatOperatorProductInput{"NegativeRight", 2, -3, 0, 0, -6, 0, 4, 0, false},
-            BigFloatOperatorProductInput{"NegativeBoth", -2, -3, 0, 0, 6, 0, 4, 0, false},
-            BigFloatOperatorProductInput{"LargeExponents", 2, 3, 40, 60, 6, 100, 4, 80, false},
-            BigFloatOperatorProductInput{"SmallExponents", -2, 3, -40, -60, -6, -100, 4, -80, false},
-            BigFloatOperatorProductInput{"ZeroLeft", 0, 3, 0, 60, 0, 0, 0, 0, false},
-            BigFloatOperatorProductInput{"ZeroRight", -2, 0, -40, 0, 0, 0, 4, -80, false},
-            BigFloatOperatorProductInput{"Shared", -3, -3, 60, 60, 9, 120, 9, 120, true})));
+    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708),
+        testing::Values(BigFloatOperatorProductInput{"Positive", 2, 3, 0, 0, 6, 0},
+            BigFloatOperatorProductInput{"NegativeLeft", -2, 3, 0, 0, -6, 0},
+            BigFloatOperatorProductInput{"NegativeRight", 2, -3, 0, 0, -6, 0},
+            BigFloatOperatorProductInput{"NegativeBoth", -2, -3, 0, 0, 6, 0},
+            BigFloatOperatorProductInput{"LargeExponents", 2, 3, 40, 60, 6, 100},
+            BigFloatOperatorProductInput{"SmallExponents", -2, 3, -40, -60, -6, -100},
+            BigFloatOperatorProductInput{"ZeroLeft", 0, 3, 0, 60, 0, 0},
+            BigFloatOperatorProductInput{"ZeroRight", -2, 0, -40, 0, 0, 0},
+            BigFloatOperatorProductInput{"Shared", -3, -3, 60, 60, 9, 120, true},
+            BigFloatOperatorProductInput{"SquarePositive", 2, 0, 0, 0, 4, 0, false, true},
+            BigFloatOperatorProductInput{"SquareNegative", -2, 0, 0, 0, 4, 0, false, true},
+            BigFloatOperatorProductInput{"SquareLargeExponent", 2, 0, 40, 0, 4, 80, false, true},
+            BigFloatOperatorProductInput{"SquareSmallExponent", -2, 0, -40, 0, 4, -80, false, true},
+            BigFloatOperatorProductInput{"SquareZero", 0, 0, 0, 0, 0, 0, false, true},
+            BigFloatOperatorProductInput{"SquareSharedSample", -3, 0, 60, 0, 9, 120, false, true})));
 
 namespace
 {
@@ -1626,8 +1628,12 @@ INSTANTIATE_TEST_SUITE_P(LayoutsCallsAndInputs, TestBigFloatLegacyMultiply,
             LegacyMultiplyInput{"LargeExponents", 2, 3, 40, 60, 6, 100, false},
             LegacyMultiplyInput{"SmallExponents", -2, 3, -40, -60, -6, -100, false},
             LegacyMultiplyInput{"ZeroLeft", 0, 3, 0, 60, 0, 0, false},
-            LegacyMultiplyInput{"ZeroRight", -2, 0, -40, 0, 0, 0, false},
-            LegacyMultiplyInput{"Shared", -3, -3, 60, 60, 9, 120, true})));
+            LegacyMultiplyInput{"ZeroRight", -2, 0, -40, 0, 0, 0, false})));
+
+INSTANTIATE_TEST_SUITE_P(LayoutsAndSharedCalls, TestBigFloatLegacyMultiply,
+    testing::Combine(testing::Values(4, 12, 52, 56, 64, 708),
+        testing::Values(LegacyMultiplyCall::SAFE, LegacyMultiplyCall::SAFE_LEFT),
+        testing::Values(LegacyMultiplyInput{"Shared", -3, -3, 60, 60, 9, 120, true})));
 
 namespace
 {

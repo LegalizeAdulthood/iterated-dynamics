@@ -2091,7 +2091,7 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestInitialOffsetReplacement, ValuesIn(initial_
 
 class TestBigNumMandelbrotPerturbationInitialization
     : public PerturbationIterationTest,
-      public WithParamInterface<std::tuple<InitOrbitMode, ColorMethod, bool, bool>>
+      public WithParamInterface<std::tuple<std::pair<InitOrbitMode, bool>, std::pair<ColorMethod, bool>>>
 {
 public:
     TestBigNumMandelbrotPerturbationInitialization();
@@ -2104,10 +2104,12 @@ TestBigNumMandelbrotPerturbationInitialization::TestBigNumMandelbrotPerturbation
 
 TEST_P(TestBigNumMandelbrotPerturbationInitialization, matchesRegularSeedAndFirstIterateWithBofPrecedence)
 {
-    g_use_init_orbit = std::get<0>(GetParam());
-    g_inside_method = std::get<1>(GetParam());
-    g_bof_match_book_images = std::get<2>(GetParam());
-    g_init_orbit = std::get<3>(GetParam()) ? DComplex{} : DComplex{0.5, -0.25};
+    const auto [mode, zero] = std::get<0>(GetParam());
+    const auto [inside, book] = std::get<1>(GetParam());
+    g_use_init_orbit = mode;
+    g_inside_method = inside;
+    g_bof_match_book_images = book;
+    g_init_orbit = zero ? DComplex{} : DComplex{0.5, -0.25};
     set_initial_offset({0.125, -0.0625});
     const bool bof =
         g_bof_match_book_images && (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61);
@@ -2128,11 +2130,14 @@ TEST_P(TestBigNumMandelbrotPerturbationInitialization, matchesRegularSeedAndFirs
 }
 
 INSTANTIATE_TEST_SUITE_P(ModesAndBof, TestBigNumMandelbrotPerturbationInitialization,
-    Combine(Values(InitOrbitMode::NORMAL, InitOrbitMode::VALUE, InitOrbitMode::PIXEL),
-        Values(ColorMethod::COLOR, ColorMethod::BOF60, ColorMethod::BOF61), Bool(), Bool()));
+    Combine(Values(std::pair{InitOrbitMode::NORMAL, false}, std::pair{InitOrbitMode::PIXEL, false},
+                std::pair{InitOrbitMode::VALUE, false}, std::pair{InitOrbitMode::VALUE, true}),
+        Values(std::pair{ColorMethod::COLOR, false}, std::pair{ColorMethod::BOF60, false},
+            std::pair{ColorMethod::BOF60, true}, std::pair{ColorMethod::BOF61, false},
+            std::pair{ColorMethod::BOF61, true})));
 
 class TestBigFloatMandelbrotPerturbationInitialization : public PerturbationIterationTest,
-                                                         public WithParamInterface<std::tuple<InitOrbitMode, bool>>
+                                                         public WithParamInterface<std::pair<InitOrbitMode, bool>>
 {
 public:
     TestBigFloatMandelbrotPerturbationInitialization();
@@ -2192,7 +2197,8 @@ TEST_P(TestBigFloatMandelbrotPerturbationInitialization, usesSelectedSeedAndFirs
 }
 
 INSTANTIATE_TEST_SUITE_P(ModesAndSeeds, TestBigFloatMandelbrotPerturbationInitialization,
-    Combine(Values(InitOrbitMode::NORMAL, InitOrbitMode::VALUE, InitOrbitMode::PIXEL), Bool()));
+    Values(std::pair{InitOrbitMode::NORMAL, false}, std::pair{InitOrbitMode::PIXEL, false},
+        std::pair{InitOrbitMode::VALUE, false}, std::pair{InitOrbitMode::VALUE, true}));
 
 TEST_P(TestPerturbationIterations, fixedZeroInitialOrbitMatchesStandardOrbit)
 {

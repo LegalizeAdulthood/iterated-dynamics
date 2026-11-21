@@ -180,6 +180,7 @@ TEST_P(TestBigNumBailoutCases, comparesFractionalThresholdsAndPreservesCachesAnd
     const BigNum expected_x{sqr(input.point.x)};
     const BigNum expected_y{sqr(input.point.y)};
     const BigNum expected_old{escaped ? -7 : input.point.x};
+    g_overflow = false;
 
     EXPECT_EQ(escaped, g_bailout_bignum() != 0);
 
@@ -190,6 +191,7 @@ TEST_P(TestBigNumBailoutCases, comparesFractionalThresholdsAndPreservesCachesAnd
     EXPECT_EQ(input.point.x, g_new_z_bn.x.to_float());
     EXPECT_EQ(input.point.y, g_new_z_bn.y.to_float());
     EXPECT_EQ(-17, g_magnitude);
+    EXPECT_FALSE(g_overflow);
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBigNumBailoutCases, testing::ValuesIn(inputs()),
@@ -385,9 +387,8 @@ INSTANTIATE_TEST_SUITE_P(LengthsAndLifetimes, TestBigNumSlotSizing,
     testing::Combine(testing::Values(4, 56, 60, 64, 68, 672),
         testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
 
-class TestBigNumProductBailout
-    : public TestBigNumBailout,
-      public testing::WithParamInterface<std::tuple<int, int, Bailout, ProductBailoutInput, bool>>
+class TestBigNumProductBailout : public TestBigNumBailout,
+                                 public testing::WithParamInterface<std::tuple<int, int, Bailout, ProductBailoutInput>>
 {
 protected:
     void SetUp() override;
@@ -396,19 +397,19 @@ protected:
 void TestBigNumProductBailout::SetUp()
 {
     TestBigNumBailout::SetUp();
-    const auto [length, integer_length, mode, input, overflow] = GetParam();
+    const auto [length, integer_length, mode, input] = GetParam();
     g_user.bailout_value = integer_length == 4 ? 11 : 0;
     g_bailout_test = integer_length == 2 ? Bailout::REAL : Bailout::MOD;
     init_bf_length(length);
     ASSERT_EQ(integer_length, g_int_length);
     set_bailout_formula(mode);
     g_magnitude_limit = input.limit;
-    g_overflow = overflow;
+    g_overflow = true;
 }
 
 TEST_P(TestBigNumProductBailout, preservesScratchValuesAndFixedWidthOverflow)
 {
-    const auto [length, integer_length, mode, input, overflow] = GetParam();
+    const auto [length, integer_length, mode, input] = GetParam();
     const auto x2 = static_cast<std::int64_t>(input.real) * input.real;
     const auto y2 = static_cast<std::int64_t>(input.imaginary) * input.imaginary;
     const auto sum = wrapped_integer(
@@ -443,7 +444,7 @@ TEST_P(TestBigNumProductBailout, preservesScratchValuesAndFixedWidthOverflow)
     EXPECT_EQ(expected_tmp, g_bn_tmp);
     EXPECT_EQ(BigNum{static_cast<LDouble>(input.real)}, g_new_z_bn.x);
     EXPECT_EQ(BigNum{static_cast<LDouble>(input.imaginary)}, g_new_z_bn.y);
-    EXPECT_EQ(overflow, g_overflow);
+    EXPECT_TRUE(g_overflow);
     EXPECT_EQ(-17, g_magnitude);
     EXPECT_EQ(length, g_bn_length);
     EXPECT_EQ(integer_length, g_int_length);
@@ -457,8 +458,7 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndModes, TestBigNumProductBailout,
             ProductBailoutInput{"Wrap", 100, 100, 1}, ProductBailoutInput{"FractionAbove", 1, 0, 1.25},
             ProductBailoutInput{"UnsignedHighAbove", 12, 0, 144.25},
             ProductBailoutInput{"UnsignedCrossSign", 12, 0, 127.75},
-            ProductBailoutInput{"WideUnsignedAbove", 100, 100, 40000.25}),
-        testing::Bool()));
+            ProductBailoutInput{"WideUnsignedAbove", 100, 100, 40000.25})));
 
 class TestBigNumBailoutProductStorage : public TestBigNumBailout,
                                         public testing::WithParamInterface<std::tuple<int, int, Bailout, bool>>
@@ -793,7 +793,7 @@ INSTANTIATE_TEST_SUITE_P(LayoutsAndSigns, TestBigNumJuliaCanonicalProduct,
 
 class TestBigNumMandelbrotInitialization
     : public TestBigNumBailout,
-      public testing::WithParamInterface<std::tuple<InitOrbitMode, ColorMethod, bool, bool>>
+      public testing::WithParamInterface<std::tuple<std::pair<InitOrbitMode, bool>, std::pair<ColorMethod, bool>>>
 {
 protected:
     void TearDown() override;
@@ -839,10 +839,8 @@ void TestBigNumMandelbrotInitialization::TearDown()
 
 TEST_P(TestBigNumMandelbrotInitialization, dispatchMatchesRegularSeedParameterCachesAndFirstIterate)
 {
-    const InitOrbitMode mode = std::get<0>(GetParam());
-    const ColorMethod inside = std::get<1>(GetParam());
-    const bool book = std::get<2>(GetParam());
-    const bool zero = std::get<3>(GetParam());
+    const auto [mode, zero] = std::get<0>(GetParam());
+    const auto [inside, book] = std::get<1>(GetParam());
     g_use_init_orbit = mode;
     g_init_orbit = zero ? DComplex{} : DComplex{0.5, -0.25};
     g_inside_method = inside;
@@ -905,8 +903,11 @@ TEST_P(TestBigNumMandelbrotInitialization, dispatchMatchesRegularSeedParameterCa
 }
 
 INSTANTIATE_TEST_SUITE_P(ModesAndBof, TestBigNumMandelbrotInitialization,
-    testing::Combine(testing::Values(InitOrbitMode::NORMAL, InitOrbitMode::VALUE, InitOrbitMode::PIXEL),
-        testing::Values(ColorMethod::COLOR, ColorMethod::BOF60, ColorMethod::BOF61), testing::Bool(), testing::Bool()));
+    testing::Combine(testing::Values(std::pair{InitOrbitMode::NORMAL, false}, std::pair{InitOrbitMode::PIXEL, false},
+                         std::pair{InitOrbitMode::VALUE, false}, std::pair{InitOrbitMode::VALUE, true}),
+        testing::Values(std::pair{ColorMethod::COLOR, false}, std::pair{ColorMethod::BOF60, false},
+            std::pair{ColorMethod::BOF60, true}, std::pair{ColorMethod::BOF61, false},
+            std::pair{ColorMethod::BOF61, true})));
 
 class TestBigNumJulia : public TestBigNumBailout
 {

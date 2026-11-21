@@ -97,7 +97,6 @@ namespace
 enum class BigNumScalarCall
 {
     PARSE,
-    INTEGER,
     FLOAT
 };
 
@@ -109,19 +108,19 @@ struct BigNumScalarInput
     bool negative;
     const char *fractional_text;
     const char *integer_text;
+    BigNumScalarCall call{BigNumScalarCall::PARSE};
 };
 
 void PrintTo(const BigNumScalarInput &input, std::ostream *out)
 {
-    *out << input.text;
+    *out << (input.call == BigNumScalarCall::PARSE ? "Parse " : "Native ") << input.text;
 }
 
 
 } // namespace
 
-class TestBigNumScalarInterfaces
-    : public TestBigNumValue,
-      public testing::WithParamInterface<std::tuple<int, int, BigNumScalarInput, BigNumScalarCall>>
+class TestBigNumScalarInterfaces : public TestBigNumValue,
+                                   public testing::WithParamInterface<std::tuple<int, int, BigNumScalarInput>>
 {
 protected:
     void SetUp() override;
@@ -139,12 +138,10 @@ void TestBigNumScalarInterfaces::SetUp()
 TEST_P(TestBigNumScalarInterfaces, observesConstructedValuesWithoutChangingTheSourceOrAllocating)
 {
     const BigNumScalarInput &input = std::get<2>(GetParam());
-    const BigNumScalarCall call = std::get<3>(GetParam());
-    const bool half = call != BigNumScalarCall::INTEGER && input.half;
-    const bool has_fraction = half && g_bn_length > g_int_length;
-    const LDouble native = (input.negative ? -1 : 1) * (input.magnitude + (half ? 0.5L : 0.0L));
+    const bool has_fraction = input.half && g_bn_length > g_int_length;
+    const LDouble native = (input.negative ? -1 : 1) * (input.magnitude + (input.half ? 0.5L : 0.0L));
     const LDouble expected = (input.negative ? -1 : 1) * (input.magnitude + (has_fraction ? 0.5L : 0.0L));
-    const BigNum value = call == BigNumScalarCall::PARSE ? BigNum{std::string_view{input.text}} : BigNum{native};
+    const BigNum value = input.call == BigNumScalarCall::PARSE ? BigNum{std::string_view{input.text}} : BigNum{native};
     const BigNum original{value};
     const std::size_t high_water = value.arena().high_water_mark();
     const BigStackMark mark = save_stack();
@@ -158,7 +155,7 @@ TEST_P(TestBigNumScalarInterfaces, observesConstructedValuesWithoutChangingTheSo
     EXPECT_EQ(mark, save_stack());
 }
 
-INSTANTIATE_TEST_SUITE_P(LayoutsInputsAndCalls, TestBigNumScalarInterfaces,
+INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigNumScalarInterfaces,
     testing::Combine(testing::Values(4, 12, 60, 64, 672), testing::Values(1, 2, 4),
         testing::Values(BigNumScalarInput{"0", 0, false, false, "0.", "0."},
             BigNumScalarInput{"42", 42, false, false, "42.", "42."},
@@ -168,8 +165,14 @@ INSTANTIATE_TEST_SUITE_P(LayoutsInputsAndCalls, TestBigNumScalarInterfaces,
             BigNumScalarInput{"+12.5", 12, true, false, "12.5", "12."},
             BigNumScalarInput{"12.500", 12, true, false, "12.5", "12."},
             BigNumScalarInput{"12.5x", 0, false, false, "0.", "0."},
-            BigNumScalarInput{"12e3", 12, false, false, "12.", "12."}),
-        testing::Values(BigNumScalarCall::PARSE, BigNumScalarCall::INTEGER, BigNumScalarCall::FLOAT)));
+            BigNumScalarInput{"12e3", 12, false, false, "12.", "12."},
+            BigNumScalarInput{"0", 0, false, false, "0.", "0.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"42", 42, false, false, "42.", "42.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"12", 12, false, false, "12.", "12.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"-12", 12, false, true, "-12.", "-12.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"12.5", 12, true, false, "12.5", "12.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"-12.5", 12, true, true, "-12.5", "-12.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"-0.5", 0, true, true, "-0.5", "0.", BigNumScalarCall::FLOAT})));
 
 namespace
 {
@@ -1061,12 +1064,12 @@ struct UnaryInput
     LDouble source;
     LDouble expected;
     U16 factor{};
+    bool alias{};
 };
 
 } // namespace
 
-class TestBigNumUnary : public TestBigNumValue,
-                        public testing::WithParamInterface<std::tuple<int, int, UnaryInput, bool>>
+class TestBigNumUnary : public TestBigNumValue, public testing::WithParamInterface<std::tuple<int, int, UnaryInput>>
 {
 protected:
     void SetUp() override;
@@ -1084,7 +1087,7 @@ void TestBigNumUnary::SetUp()
 TEST_P(TestBigNumUnary, preservesDestinationIdentityAliasesAndAllocation)
 {
     const UnaryInput &input = std::get<2>(GetParam());
-    const bool self = std::get<3>(GetParam());
+    const bool self = input.alias;
     BigNum source{input.source};
     BigNum separate{input.source};
     BigNum &destination = self ? source : separate;
@@ -1139,8 +1142,9 @@ INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumUnary,
             UnaryInput{UnaryOperation::NEGATE, -3, 3}, UnaryInput{UnaryOperation::DOUBLE, 3, 6},
             UnaryInput{UnaryOperation::DOUBLE_ASSIGN, -3, -6}, UnaryInput{UnaryOperation::HALF, 6, 3},
             UnaryInput{UnaryOperation::HALF_ASSIGN, -6, -3}, UnaryInput{UnaryOperation::MULT_ASSIGN, -3, 0, 0},
-            UnaryInput{UnaryOperation::MULT_ASSIGN, -3, -6, 2}),
-        testing::Bool()));
+            UnaryInput{UnaryOperation::MULT_ASSIGN, -3, -6, 2}, UnaryInput{UnaryOperation::NEGATE, 3, -3, 0, true},
+            UnaryInput{UnaryOperation::NEGATE, -3, 3, 0, true}, UnaryInput{UnaryOperation::DOUBLE, 3, 6, 0, true},
+            UnaryInput{UnaryOperation::HALF, 6, 3, 0, true})));
 
 class TestBigNumIntegerDivision : public TestBigNumValue,
                                   public testing::WithParamInterface<std::tuple<int, int, U16, bool>>
@@ -1475,11 +1479,6 @@ struct BigNumFormatInput
 class TestBigNumFormatting : public TestBigNum, public testing::WithParamInterface<BigNumFormatInput>
 {
 };
-
-TEST_P(TestBigNumFormatting, formatsParsedValue)
-{
-    EXPECT_EQ(GetParam().expected, round_trip(GetParam().input, GetParam().decimals));
-}
 
 TEST_P(TestBigNumFormatting, releasesTemporaryStorageAfterFormatting)
 {

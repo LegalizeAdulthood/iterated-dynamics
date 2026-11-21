@@ -31,6 +31,7 @@
 #include <string>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 using namespace id::engine;
@@ -372,17 +373,15 @@ void BigFloatMandelbrotInitializationTest::select_bigfloat_dispatch(const Fracta
 
 class TestBigFloatMandelbrotInitialization
     : public BigFloatMandelbrotInitializationTest,
-      public testing::WithParamInterface<std::tuple<InitOrbitMode, ColorMethod, bool, bool, bool>>
+      public testing::WithParamInterface<std::tuple<std::pair<InitOrbitMode, bool>, std::pair<ColorMethod, bool>, bool>>
 {
 };
 
 TEST_P(TestBigFloatMandelbrotInitialization, dispatchMatchesRegularSeedParameterCachesAndFirstIterate)
 {
-    const InitOrbitMode mode = std::get<0>(GetParam());
-    const ColorMethod inside = std::get<1>(GetParam());
-    const bool book = std::get<2>(GetParam());
-    const bool zero = std::get<3>(GetParam());
-    const FractalType type = std::get<4>(GetParam()) ? FractalType::MANDEL_Z_POWER : FractalType::MANDEL;
+    const auto [mode, zero] = std::get<0>(GetParam());
+    const auto [inside, book] = std::get<1>(GetParam());
+    const FractalType type = std::get<2>(GetParam()) ? FractalType::MANDEL_Z_POWER : FractalType::MANDEL;
     g_fractal_type = FractalType::MANDEL;
     g_use_init_orbit = mode;
     g_init_orbit = zero ? DComplex{} : DComplex{0.5, -0.25};
@@ -443,8 +442,11 @@ TEST_P(TestBigFloatMandelbrotInitialization, dispatchMatchesRegularSeedParameter
 }
 
 INSTANTIATE_TEST_SUITE_P(ModesAndBof, TestBigFloatMandelbrotInitialization,
-    testing::Combine(testing::Values(InitOrbitMode::NORMAL, InitOrbitMode::VALUE, InitOrbitMode::PIXEL),
-        testing::Values(ColorMethod::COLOR, ColorMethod::BOF60, ColorMethod::BOF61), testing::Bool(), testing::Bool(),
+    testing::Combine(testing::Values(std::pair{InitOrbitMode::NORMAL, false}, std::pair{InitOrbitMode::PIXEL, false},
+                         std::pair{InitOrbitMode::VALUE, false}, std::pair{InitOrbitMode::VALUE, true}),
+        testing::Values(std::pair{ColorMethod::COLOR, false}, std::pair{ColorMethod::BOF60, false},
+            std::pair{ColorMethod::BOF60, true}, std::pair{ColorMethod::BOF61, false},
+            std::pair{ColorMethod::BOF61, true}),
         testing::Bool()));
 
 class TestBigFloatMandelbrotPreciseInitialization : public BigFloatMandelbrotInitializationTest,

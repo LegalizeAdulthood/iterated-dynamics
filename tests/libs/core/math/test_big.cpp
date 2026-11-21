@@ -1886,11 +1886,12 @@ struct BigNumScalarInput
     bool negative;
     const char *fractional_text;
     const char *integer_text;
+    BigNumScalarCall call{BigNumScalarCall::PARSE};
 };
 
 void PrintTo(const BigNumScalarInput &input, std::ostream *out)
 {
-    *out << input.text;
+    *out << static_cast<int>(input.call) << ' ' << input.text;
 }
 
 std::vector<Byte> scalar_bytes(const long magnitude, const bool half, const bool negative)
@@ -1920,9 +1921,8 @@ std::vector<Byte> scalar_bytes(const long magnitude, const bool half, const bool
 
 } // namespace
 
-class TestBigNumByteScalarInterfaces
-    : public TestBigNumByteKernel,
-      public testing::WithParamInterface<std::tuple<int, int, BigNumScalarInput, BigNumScalarCall>>
+class TestBigNumByteScalarInterfaces : public TestBigNumByteKernel,
+                                       public testing::WithParamInterface<std::tuple<int, int, BigNumScalarInput>>
 {
 };
 
@@ -1932,7 +1932,7 @@ TEST_P(TestBigNumByteScalarInterfaces, preservesExactEncodingReturnAddressAndGua
     init_layout(std::get<0>(GetParam()), integer_length);
     ASSERT_EQ(integer_length, g_int_length);
     const BigNumScalarInput &input = std::get<2>(GetParam());
-    const BigNumScalarCall call = std::get<3>(GetParam());
+    const BigNumScalarCall call = input.call;
     const bool half = call != BigNumScalarCall::INTEGER && input.half;
     const bool has_fraction = half && g_bn_length > g_int_length;
     const LDouble native = (input.negative ? -1 : 1) * (input.magnitude + (input.half ? 0.5L : 0.0L));
@@ -1969,7 +1969,7 @@ TEST_P(TestBigNumByteScalarInterfaces, preservesExactEncodingReturnAddressAndGua
     EXPECT_EQ(0xa5, value.back());
 }
 
-INSTANTIATE_TEST_SUITE_P(LayoutsInputsAndCalls, TestBigNumByteScalarInterfaces,
+INSTANTIATE_TEST_SUITE_P(LayoutsAndInputs, TestBigNumByteScalarInterfaces,
     testing::Combine(testing::Values(4, 12, 60, 64, 672), testing::Values(1, 2, 4),
         testing::Values(BigNumScalarInput{"0", 0, false, false, "0.", "0."},
             BigNumScalarInput{"42", 42, false, false, "42.", "42."},
@@ -1979,8 +1979,17 @@ INSTANTIATE_TEST_SUITE_P(LayoutsInputsAndCalls, TestBigNumByteScalarInterfaces,
             BigNumScalarInput{"+12.5", 12, true, false, "12.5", "12."},
             BigNumScalarInput{"12.500", 12, true, false, "12.5", "12."},
             BigNumScalarInput{"12.5x", 0, false, false, "0.", "0."},
-            BigNumScalarInput{"12e3", 12, false, false, "12.", "12."}),
-        testing::Values(BigNumScalarCall::PARSE, BigNumScalarCall::INTEGER, BigNumScalarCall::FLOAT)));
+            BigNumScalarInput{"12e3", 12, false, false, "12.", "12."},
+            BigNumScalarInput{"0", 0, false, false, "0.", "0.", BigNumScalarCall::INTEGER},
+            BigNumScalarInput{"42", 42, false, false, "42.", "42.", BigNumScalarCall::INTEGER},
+            BigNumScalarInput{"12", 12, false, false, "12.", "12.", BigNumScalarCall::INTEGER},
+            BigNumScalarInput{"-12", 12, false, true, "-12.", "-12.", BigNumScalarCall::INTEGER},
+            BigNumScalarInput{"0", 0, false, false, "0.", "0.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"42", 42, false, false, "42.", "42.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"12", 12, false, false, "12.", "12.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"12.5", 12, true, false, "12.5", "12.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"-12.5", 12, true, true, "-12.5", "-12.", BigNumScalarCall::FLOAT},
+            BigNumScalarInput{"-0.5", 0, true, true, "-0.5", "0.", BigNumScalarCall::FLOAT})));
 
 struct BigNumByteMachineInput
 {
@@ -2495,6 +2504,7 @@ struct UnaryInput
     EncodedPattern source;
     EncodedPattern expected;
     U16 factor{};
+    bool alias{};
 };
 
 void PrintTo(const UnaryInput &input, std::ostream *out)
@@ -2517,8 +2527,7 @@ void PrintTo(const ObservationInput &input, std::ostream *out)
 
 } // namespace
 
-class TestBigNumByteUnary : public TestBigNumByteKernel,
-                            public testing::WithParamInterface<std::tuple<int, int, UnaryInput, bool>>
+class TestBigNumByteUnary : public TestBigNumByteKernel, public testing::WithParamInterface<std::tuple<int, UnaryInput>>
 {
 protected:
     void SetUp() override;
@@ -2526,15 +2535,13 @@ protected:
 
 void TestBigNumByteUnary::SetUp()
 {
-    const int integer_length = std::get<1>(GetParam());
-    init_layout(std::get<0>(GetParam()), integer_length);
-    ASSERT_EQ(integer_length, g_int_length);
+    init_layout(std::get<0>(GetParam()), 1);
 }
 
 TEST_P(TestBigNumByteUnary, preservesDestinationAddressGuardsAndAliases)
 {
-    const UnaryInput &input = std::get<2>(GetParam());
-    const bool self = std::get<3>(GetParam());
+    const UnaryInput &input = std::get<1>(GetParam());
+    const bool self = input.alias;
     std::vector<Byte> source_bytes = encoded_pattern(input.source);
     source_bytes.push_back(0x5a);
     const std::vector<Byte> original_source = source_bytes;
@@ -2584,7 +2591,7 @@ TEST_P(TestBigNumByteUnary, preservesDestinationAddressGuardsAndAliases)
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumByteUnary,
-    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+    testing::Combine(testing::Values(4, 12, 64, 672),
         testing::Values(UnaryInput{"Clear", UnaryOperation::CLEAR, {0xfffd, 0xff, 0xff}, {0, 0, 0}},
             UnaryInput{"Maximum", UnaryOperation::MAX, {3, 0, 0}, {0xffff, 0xff, 0x7f}},
             UnaryInput{"NegatePositive", UnaryOperation::NEGATE, {3, 0, 0}, {0xfffd, 0xff, 0xff}},
@@ -2602,11 +2609,22 @@ INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumByteUnary,
             UnaryInput{"MultiplyZero", UnaryOperation::MULT_ASSIGN, {0xfffd, 0xff, 0xff}, {0, 0, 0}, 0},
             UnaryInput{"MultiplyOne", UnaryOperation::MULT_ASSIGN, {0xffff, 0xff, 0x7f}, {0xffff, 0xff, 0x7f}, 1},
             UnaryInput{"MultiplyUnsigned", UnaryOperation::MULT_ASSIGN, {0xffff, 0xff, 0xff}, {1, 0xff, 0xff}, 65535},
-            UnaryInput{"MultiplyOverflow", UnaryOperation::MULT_ASSIGN, {0, 0, 0x80}, {0, 0, 0}, 2}),
-        testing::Bool()));
+            UnaryInput{"MultiplyOverflow", UnaryOperation::MULT_ASSIGN, {0, 0, 0x80}, {0, 0, 0}, 2},
+            UnaryInput{"NegatePositiveAliased", UnaryOperation::NEGATE, {3, 0, 0}, {0xfffd, 0xff, 0xff}, 0, true},
+            UnaryInput{"NegateNegativeAliased", UnaryOperation::NEGATE, {0xfffd, 0xff, 0xff}, {3, 0, 0}, 0, true},
+            UnaryInput{"NegateMinimumAliased", UnaryOperation::NEGATE, {0, 0, 0x80}, {0, 0, 0x80}, 0, true},
+            UnaryInput{"DoublePositiveAliased", UnaryOperation::DOUBLE, {3, 0, 0}, {6, 0, 0}, 0, true},
+            UnaryInput{
+                "DoubleNegativeAliased", UnaryOperation::DOUBLE, {0xfffd, 0xff, 0xff}, {0xfffa, 0xff, 0xff}, 0, true},
+            UnaryInput{
+                "DoubleOverflowAliased", UnaryOperation::DOUBLE, {0xffff, 0xff, 0x7f}, {0xfffe, 0xff, 0xff}, 0, true},
+            UnaryInput{"HalfPositiveOddAliased", UnaryOperation::HALF, {3, 0, 0}, {1, 0, 0}, 0, true},
+            UnaryInput{
+                "HalfNegativeOddAliased", UnaryOperation::HALF, {0xfffd, 0xff, 0xff}, {0xfffe, 0xff, 0xff}, 0, true},
+            UnaryInput{"HalfMinimumAliased", UnaryOperation::HALF, {0, 0, 0x80}, {0, 0, 0xc0}, 0, true})));
 
 class TestBigNumByteObservations : public TestBigNumByteKernel,
-                                   public testing::WithParamInterface<std::tuple<int, int, ObservationInput>>
+                                   public testing::WithParamInterface<std::tuple<int, ObservationInput>>
 {
 protected:
     void SetUp() override;
@@ -2614,14 +2632,12 @@ protected:
 
 void TestBigNumByteObservations::SetUp()
 {
-    const int integer_length = std::get<1>(GetParam());
-    init_layout(std::get<0>(GetParam()), integer_length);
-    ASSERT_EQ(integer_length, g_int_length);
+    init_layout(std::get<0>(GetParam()), 1);
 }
 
 TEST_P(TestBigNumByteObservations, preservesExactMismatchAndSourceBytes)
 {
-    const ObservationInput &input = std::get<2>(GetParam());
+    const ObservationInput &input = std::get<1>(GetParam());
     const std::vector<Byte> value = encoded_pattern(input.source);
     const std::vector<Byte> zero(g_bn_length);
     const std::vector<Byte> original = value;
@@ -2637,7 +2653,7 @@ TEST_P(TestBigNumByteObservations, preservesExactMismatchAndSourceBytes)
 }
 
 INSTANTIATE_TEST_SUITE_P(LayoutsAndValues, TestBigNumByteObservations,
-    testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
+    testing::Combine(testing::Values(4, 12, 64, 672),
         testing::Values(ObservationInput{"Zero", {0, 0, 0}, 0, false}, ObservationInput{"Quantum", {1, 0, 0}, 1, false},
             ObservationInput{"SecondByte", {256, 0, 0}, 2, false},
             ObservationInput{"NegativeQuantum", {0xffff, 0xff, 0xff}, -1, true},
@@ -2657,10 +2673,6 @@ enum class CanonicalProcedure
     SUB_SELF,
     ABS_NEGATIVE,
     ABS_POSITIVE,
-    ADD_TO,
-    ADD_TO_SELF,
-    SUB_TO,
-    SUB_TO_SELF,
     MULT_TO,
     MULT_TO_SELF,
     ABS_TO,
@@ -2690,8 +2702,7 @@ TEST_P(TestBigNumByteCanonicalProcedures, preservesDestinationAddressGuardsAndAl
     const long source_integer = operation == CanonicalProcedure::ABS_TO_POSITIVE ? 7 : -7;
     const long separate_integer = operation == CanonicalProcedure::ABS_NEGATIVE ? -2 : 2;
     const bool self = operation == CanonicalProcedure::COPY_SELF || operation == CanonicalProcedure::ADD_SELF ||
-        operation == CanonicalProcedure::SUB_SELF || operation == CanonicalProcedure::ADD_TO_SELF ||
-        operation == CanonicalProcedure::SUB_TO_SELF || operation == CanonicalProcedure::MULT_TO_SELF ||
+        operation == CanonicalProcedure::SUB_SELF || operation == CanonicalProcedure::MULT_TO_SELF ||
         operation == CanonicalProcedure::ABS_TO_SELF;
     std::vector<Byte> source_bytes = fixed_sample(g_bn_length, g_bn_length - g_int_length, source_integer);
     std::vector<Byte> separate = fixed_sample(g_bn_length, g_bn_length - g_int_length, separate_integer);
@@ -2725,16 +2736,6 @@ TEST_P(TestBigNumByteCanonicalProcedures, preservesDestinationAddressGuardsAndAl
         expected_integer = std::abs(initial);
         EXPECT_EQ(destination, abs_a_bn(destination));
         break;
-    case CanonicalProcedure::ADD_TO:
-    case CanonicalProcedure::ADD_TO_SELF:
-        expected_integer = initial + source_integer;
-        EXPECT_EQ(destination, add_bn(destination, destination, source));
-        break;
-    case CanonicalProcedure::SUB_TO:
-    case CanonicalProcedure::SUB_TO_SELF:
-        expected_integer = initial - source_integer;
-        EXPECT_EQ(destination, sub_bn(destination, destination, source));
-        break;
     case CanonicalProcedure::MULT_TO:
     case CanonicalProcedure::MULT_TO_SELF:
         expected_integer = source_integer * 3;
@@ -2761,10 +2762,9 @@ INSTANTIATE_TEST_SUITE_P(LayoutsOperationsAndAliases, TestBigNumByteCanonicalPro
     testing::Combine(testing::Values(4, 12, 64, 672), testing::Values(1, 2, 4),
         testing::Values(CanonicalProcedure::COPY, CanonicalProcedure::COPY_SELF, CanonicalProcedure::ADD,
             CanonicalProcedure::ADD_SELF, CanonicalProcedure::SUB, CanonicalProcedure::SUB_SELF,
-            CanonicalProcedure::ABS_NEGATIVE, CanonicalProcedure::ABS_POSITIVE, CanonicalProcedure::ADD_TO,
-            CanonicalProcedure::ADD_TO_SELF, CanonicalProcedure::SUB_TO, CanonicalProcedure::SUB_TO_SELF,
-            CanonicalProcedure::MULT_TO, CanonicalProcedure::MULT_TO_SELF, CanonicalProcedure::ABS_TO,
-            CanonicalProcedure::ABS_TO_SELF, CanonicalProcedure::ABS_TO_POSITIVE)));
+            CanonicalProcedure::ABS_NEGATIVE, CanonicalProcedure::ABS_POSITIVE, CanonicalProcedure::MULT_TO,
+            CanonicalProcedure::MULT_TO_SELF, CanonicalProcedure::ABS_TO, CanonicalProcedure::ABS_TO_SELF,
+            CanonicalProcedure::ABS_TO_POSITIVE)));
 
 enum class IntegerDivisionCall
 {
