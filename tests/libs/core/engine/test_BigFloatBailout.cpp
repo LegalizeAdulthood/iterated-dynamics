@@ -16,6 +16,7 @@
 #include <fractals/fractype.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
+#include <math/MPConversions.h>
 #include <math/sqr.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
@@ -116,7 +117,6 @@ protected:
     ValueSaver<double> m_limit{g_magnitude_limit};
     ValueSaver<double> m_magnitude{g_magnitude, -17};
     ValueSaver<decltype(g_bailout_float)> m_fp{g_bailout_float};
-    ValueSaver<decltype(g_bailout_bignum)> m_bn{g_bailout_bignum};
     ValueSaver<decltype(g_bailout_bigfloat)> m_bf{g_bailout_bigfloat};
 };
 
@@ -303,6 +303,43 @@ TEST_P(TestBigFloatBailoutContinuation, repeatedOrbitCallsMatchTheOrdinaryBailou
 INSTANTIATE_TEST_SUITE_P(ModesAndOutcomes, TestBigFloatBailoutContinuation,
     testing::Combine(testing::Values(Bailout::MANH, Bailout::MANR), testing::Bool()));
 
+TEST_F(TestBigFloatBailout, quadraticOrbitMatchesHigherPrecisionReference)
+{
+    const MPPrecision precision{400};
+    for (const int length : {32, 64})
+    {
+        SCOPED_TRACE(length);
+        g_fractal_type = FractalType::MANDEL;
+        init_bf_length(length);
+        set_bailout_formula(Bailout::MOD);
+        g_magnitude_limit = 16;
+        g_old_z_bf.x = BigFloat{-0.5L} + BigFloat{std::ldexp(1.0L, -80)};
+        g_old_z_bf.y = BigFloat{0.25L} - BigFloat{std::ldexp(1.0L, -90)};
+        g_param_z_bf.x = BigFloat{-0.125L} + BigFloat{std::ldexp(1.0L, -100)};
+        g_param_z_bf.y = 0.0625L;
+        g_tmp_sqr_x_bf = g_old_z_bf.x.sqr();
+        g_tmp_sqr_y_bf = g_old_z_bf.y.sqr();
+        auto x = MPConversions::from_big_float(g_old_z_bf.x, precision);
+        auto y = MPConversions::from_big_float(g_old_z_bf.y, precision);
+        const auto cx = MPConversions::from_big_float(g_param_z_bf.x, precision);
+        const auto cy = MPConversions::from_big_float(g_param_z_bf.y, precision);
+        ASSERT_NE(precision.real("-0.5"), x);
+        auto tolerance = precision.real("1");
+        mpfr_mul_2si(tolerance.backend().data(), tolerance.backend().data(), -8 * (g_bf_length - 2) + 24, MPFR_RNDN);
+        for (int iteration = 0; iteration < 20; ++iteration)
+        {
+            SCOPED_TRACE(iteration);
+            const MPReal next_x = x * x - y * y + cx;
+            const MPReal next_y = 2 * x * y + cy;
+            x = next_x;
+            y = next_y;
+            ASSERT_EQ(0, julia_orbit_bf());
+            EXPECT_LE(abs(MPConversions::from_big_float(g_new_z_bf.x, precision) - x), tolerance);
+            EXPECT_LE(abs(MPConversions::from_big_float(g_new_z_bf.y, precision) - y), tolerance);
+        }
+    }
+}
+
 class BigFloatMandelbrotInitializationTest : public TestBigFloatBailout
 {
 protected:
@@ -353,22 +390,11 @@ void BigFloatMandelbrotInitializationTest::TearDown()
 
 void BigFloatMandelbrotInitializationTest::select_bigfloat_dispatch(const FractalType type)
 {
-    g_fractal_type = FractalType::MANDEL_Z_POWER;
-    init_bf_dec(80);
     g_fractal_type = type;
+    init_bf_dec(80);
     g_cur_fractal_specific = get_fractal_specific(type);
     g_dispatch = FractalDispatch{type};
-    if (type == FractalType::MANDEL)
-    {
-        // Mirror the disabled BigFloat Mandelbrot entry in g_alternate_math.
-        const AlternateMath alternate{
-            FractalType::MANDEL, BFMathType::BIG_FLT, julia_orbit_bf, mandel_per_pixel_bf, mandel_per_image_bf};
-        g_dispatch.set_current_alternate_math(alternate);
-    }
-    else
-    {
-        ASSERT_TRUE(select_alternate_math_dispatch());
-    }
+    ASSERT_TRUE(select_alternate_math_dispatch());
 }
 
 class TestBigFloatMandelbrotInitialization

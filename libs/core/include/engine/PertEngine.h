@@ -8,7 +8,6 @@
 #include <engine/UserData.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 
 #include <array>
 #include <complex>
@@ -37,7 +36,6 @@ public:
 
     void begin_orbit(const std::complex<double> &parameter, const std::complex<double> &value, long iteration);
     void begin_orbit_bf(const math::BFComplex &parameter, const math::BFComplex &value, long iteration);
-    void begin_orbit_bn(const math::BNComplex &parameter, const math::BNComplex &value, long iteration);
     // Advance at most one recurrence update; true at bailout or the iteration limit.
     // Reference preparation can return false without advancing orbit_iteration().
     // continue_bailout retains Mandel's cached-square updates after a bailout.

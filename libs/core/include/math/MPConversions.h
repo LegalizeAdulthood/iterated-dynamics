@@ -9,7 +9,6 @@ namespace id::math
 {
 
 class BigArena;
-class BigNum;
 class BigFloat;
 
 // Bridge the active legacy layout without native floating-point intermediates.
@@ -19,9 +18,7 @@ class BigFloat;
 class MPConversions
 {
 public:
-    static MPReal from_big_num(const BigNum &value, const MPPrecision &precision);
     static MPReal from_big_float(const BigFloat &value, const MPPrecision &precision);
-    static BigNum to_big_num(const MPReal &value, BigArena &arena);
     static BigFloat to_big_float(const MPReal &value, BigArena &arena);
 };
 

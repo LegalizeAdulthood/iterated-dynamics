@@ -7,7 +7,6 @@
 #include <math/big_init.h>
 #include <math/BigComplex.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 #include <math/complex_fn.h>
 #include <misc/ValueSaver.h>
 
@@ -254,11 +253,13 @@ TEST_P(TestRejectedDecimalPrecision, preservesActiveArenaAndAllowsCorrection)
     EXPECT_EQ(BigFloat{1.25L}, g_bf_x_min);
 }
 
-INSTANTIATE_TEST_SUITE_P(Requests, TestRejectedDecimalPrecision,
-    testing::Values(RejectedDecimalPrecisionInput{"BigNumUnsupported", FractalType::MANDEL, BFMathType::BIG_NUM, 2000},
-        RejectedDecimalPrecisionInput{
-            "BigNumMaximumInteger", FractalType::MANDEL, BFMathType::BIG_NUM, std::numeric_limits<int>::max()},
-        RejectedDecimalPrecisionInput{"BigFloatUnsupported", FractalType::DIVIDE_BROT5, BFMathType::BIG_FLT, 2000}),
+INSTANTIATE_TEST_SUITE_P(
+    Requests, TestRejectedDecimalPrecision,
+    testing::Values(RejectedDecimalPrecisionInput{"BigFloatUnsupported", FractalType::MANDEL, BFMathType::BIG_FLT,
+                                                  2000},
+                    RejectedDecimalPrecisionInput{"BigFloatMaximumInteger", FractalType::MANDEL, BFMathType::BIG_FLT,
+                                                  std::numeric_limits<int>::max()},
+                    RejectedDecimalPrecisionInput{"Negative", FractalType::MANDEL, BFMathType::BIG_FLT, -100}),
     [](const testing::TestParamInfo<RejectedDecimalPrecisionInput> &info) { return info.param.name; });
 
 class TestRejectedBytePrecision : public TestActivePrecisionArena, public testing::WithParamInterface<int>
@@ -332,9 +333,9 @@ TEST_P(TestArenaPrecisionLimit, rejectsRequestsPastTheBackendLimit)
 }
 
 INSTANTIATE_TEST_SUITE_P(Backends, TestArenaPrecisionLimit,
-    testing::Values(ArenaPrecisionLimit{"BigNum", FractalType::MANDEL, BFMathType::BIG_NUM, 672},
-        ArenaPrecisionLimit{"BigFloat", FractalType::DIVIDE_BROT5, BFMathType::BIG_FLT, 708}),
-    [](const testing::TestParamInfo<ArenaPrecisionLimit> &info) { return info.param.name; });
+                         testing::Values(ArenaPrecisionLimit{"BigFloat", FractalType::MANDEL, BFMathType::BIG_FLT,
+                                                             708}),
+                         [](const testing::TestParamInfo<ArenaPrecisionLimit> &info) { return info.param.name; });
 
 TEST_F(TestBigFloat, stackStorageCrossesSixtyFourKilobytes)
 {
@@ -412,7 +413,6 @@ TEST_F(TestExhaustedArenaStack, rejectionPreservesAllocationStateForBothWidths)
 
     EXPECT_EQ(before, save_stack());
     EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
-    EXPECT_NO_THROW(bn_stack().allocate_double());
 }
 
 TEST_F(TestExhaustedArenaStack, restoringStackAfterRejectionAllowsReuse)
@@ -466,7 +466,6 @@ TEST_F(TestFreedArena, releasesActiveArenaBindings)
     EXPECT_EQ(BFMathType::NONE, g_bf_math);
     EXPECT_EQ(BigStackMark{}, save_stack());
     EXPECT_FALSE(g_bf_x_min);
-    EXPECT_FALSE(g_bn_tmp2);
     EXPECT_FALSE(g_bf_tmp1);
 }
 
@@ -475,14 +474,12 @@ TEST_F(TestFreedArena, changingMathFlagDoesNotReactivateFreedBindings)
     g_bf_math = BFMathType::BIG_FLT;
 
     EXPECT_THROW(bf_stack().allocate_single(), std::logic_error);
-    EXPECT_THROW(bn_stack().allocate_double(), std::logic_error);
     EXPECT_EQ(BigStackMark{}, save_stack());
 }
 
 TEST_F(TestFreedArena, initializesFreshStorageAfterRejectedOperations)
 {
     EXPECT_THROW(bf_stack().allocate_single(), std::logic_error);
-    EXPECT_THROW(bn_stack().allocate_double(), std::logic_error);
     EXPECT_THROW(init_bf_dec(2000), PrecisionError);
     EXPECT_EQ(BFMathType::NONE, g_bf_math);
 
@@ -514,7 +511,7 @@ TEST_F(TestBigFloat, changingPrecisionRebuildsJuliaParametersAndTemporaryStorage
     const ValueSaver imag{g_params[1], 0.125};
     g_bf_params[0] = 1.5L;
     g_bf_params[1] = -2.0L;
-    bn_stack().allocate_single();
+    bf_stack().allocate_single();
     bf_stack().allocate_double();
 
     init_bf_length(64);
@@ -522,7 +519,6 @@ TEST_F(TestBigFloat, changingPrecisionRebuildsJuliaParametersAndTemporaryStorage
     EXPECT_EQ(-0.75L, g_bf_params[0].to_float());
     EXPECT_EQ(0.125L, g_bf_params[1].to_float());
     EXPECT_EQ(BigStackMark{}, save_stack());
-    EXPECT_EQ(0U, bn_arena(BigLifetime::TEMPORARY).high_water_mark());
     EXPECT_EQ(0U, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
 }
 
@@ -564,18 +560,18 @@ TEST_F(TestBigFloat, nestedStackRewindsPreserveOuterValuesAndPersistentCorners)
     g_bf_x_min = corner;
     {
         BigStackSaver outer;
-        const std::size_t fixed_block_size = bn_arena(BigLifetime::TEMPORARY).block_size();
+        const std::size_t fixed_block_size = bf_arena(BigLifetime::TEMPORARY).block_size();
         const std::size_t float_block_size = bf_arena(BigLifetime::TEMPORARY).block_size();
         const std::vector<Byte> fixed_sentinel(fixed_block_size, 0x5a);
         const std::vector<Byte> float_sentinel(float_block_size, 0x6c);
-        Byte *const fixed = bn_stack().allocate_single();
+        Byte *const fixed = bf_stack().allocate_single();
         Byte *const floating = bf_stack().allocate_single();
         std::copy(fixed_sentinel.begin(), fixed_sentinel.end(), fixed);
         std::copy(float_sentinel.begin(), float_sentinel.end(), floating);
         const BigStackMark middle = save_stack();
         {
             BigStackSaver inner;
-            std::fill_n(bn_stack().allocate_double(), 2 * fixed_block_size, Byte{0xa5});
+            std::fill_n(bf_stack().allocate_double(), 2 * fixed_block_size, Byte{0xa5});
             std::fill_n(bf_stack().allocate_double(), 2 * float_block_size, Byte{0xa5});
             EXPECT_GT(save_stack(), middle);
         }
@@ -589,13 +585,13 @@ TEST_F(TestBigFloat, nestedStackRewindsPreserveOuterValuesAndPersistentCorners)
     EXPECT_EQ(corner, g_bf_x_min);
 }
 
-TEST_F(TestBigFloat, eachRepresentationAndLifetimeHasItsOwnAlignedArena)
+TEST_F(TestBigFloat, eachLifetimeHasItsOwnAlignedArena)
 {
     std::vector<BigArena::Allocation> values;
     std::vector<const BigArena *> arenas;
     for (BigLifetime lifetime : {BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY})
     {
-        for (BigArena *arena : {&bn_arena(lifetime), &bf_arena(lifetime)})
+        for (BigArena *arena : {&bf_arena(lifetime)})
         {
             EXPECT_EQ(arenas.end(), std::find(arenas.begin(), arenas.end(), arena));
             arenas.push_back(arena);
@@ -606,28 +602,27 @@ TEST_F(TestBigFloat, eachRepresentationAndLifetimeHasItsOwnAlignedArena)
     }
 }
 
-TEST_F(TestBigFloat, bothStackAdaptersRewindWhileOwnedPersistentAndWorkingValuesSurvive)
+TEST_F(TestBigFloat, stackRewindsWhileOwnedPersistentAndWorkingValuesSurvive)
 {
     const BigFloat persistent{bf_arena(BigLifetime::PERSISTENT), -2.5L};
-    const BigNum working{bn_arena(BigLifetime::WORKING), 3.75L};
+    const BigFloat working{bf_arena(BigLifetime::WORKING), 3.75L};
     const BigStackMark before = save_stack();
     {
         BigStackSaver scope;
-        bn_stack().allocate_single();
+        bf_stack().allocate_single();
         bf_stack().allocate_double();
         const BigStackMark middle = save_stack();
-        EXPECT_GT(middle.big_num, before.big_num);
         EXPECT_GT(middle.big_float, before.big_float);
         {
             BigStackSaver inner;
-            bn_stack().allocate_double();
+            bf_stack().allocate_double();
             bf_stack().allocate_single();
         }
         EXPECT_EQ(middle, save_stack());
     }
     EXPECT_EQ(before, save_stack());
     EXPECT_EQ(BigFloat{-2.5L}, persistent);
-    EXPECT_EQ(BigNum{3.75L}, working);
+    EXPECT_EQ(BigFloat{3.75L}, working);
 }
 
 TEST_F(TestBigFloat, stackRewindCoalescesAReleasedNarrowedAllocationWithItsBorrowedHalf)
@@ -650,7 +645,7 @@ TEST_F(TestBigFloat, stackRewindCoalescesAReleasedNarrowedAllocationWithItsBorro
             Byte *const half = bf_stack().allocate_single();
             EXPECT_EQ(companion, half);
             *half = 0x3c;
-            bn_stack().allocate_double();
+            bf_stack().allocate_double();
         }
         EXPECT_EQ(middle, save_stack());
         EXPECT_EQ(sentinel, *wide.data());
@@ -668,8 +663,8 @@ TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAtTheSamePrecision)
     init_bf_length(LENGTH);
     BigArena &float_arena = bf_arena(BigLifetime::WORKING);
     const BigFloat floating{float_arena, -2.5L};
-    BigArena &fixed_arena = bn_arena(BigLifetime::PERSISTENT);
-    const BigNum fixed{fixed_arena, 3.75L};
+    BigArena &fixed_arena = bf_arena(BigLifetime::PERSISTENT);
+    const BigFloat fixed{fixed_arena, 3.75L};
 
     free_bf_vars();
     EXPECT_TRUE(floating);
@@ -680,7 +675,7 @@ TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAtTheSamePrecision)
     EXPECT_EQ(&float_arena, &floating.arena());
     EXPECT_EQ(&fixed_arena, &fixed.arena());
     EXPECT_EQ(BigFloat{-2.5L}, floating);
-    EXPECT_EQ(BigNum{3.75L}, fixed);
+    EXPECT_EQ(BigFloat{3.75L}, fixed);
     EXPECT_EQ(BigFloat{0}, g_bf_x_min);
 }
 
@@ -1099,47 +1094,13 @@ TEST_P(TestBigFloatPairedCopyStorage, temporaryRewindsLeaveWorkingScratchUntouch
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndSlots, TestBigFloatPairedCopyStorage,
     testing::Combine(testing::Values(4, 12, 56, 64, 708), testing::Values(KernelSlot::COPY1, KernelSlot::COPY2)));
 
-class TestBigNumProductLifetime : public TestBigFloat, public testing::WithParamInterface<std::tuple<int, BigLifetime>>
-{
-};
-
-TEST_P(TestBigNumProductLifetime, temporaryRewindsPreserveLivePairedAllocations)
-{
-    init_bf_length(std::get<0>(GetParam()));
-    BigArena &arena = bn_arena(std::get<1>(GetParam()));
-    BigArena::Allocation product = arena.allocate_double();
-    const std::vector<Byte> bytes(2 * arena.block_size(), 0x5a);
-    std::copy(bytes.begin(), bytes.end(), product.data());
-    const BigStackMark mark = save_stack();
-    {
-        BigStackSaver saved;
-        bn_stack().allocate_double();
-        const BigArena::Allocation local = product.clone(bn_arena(BigLifetime::TEMPORARY));
-        EXPECT_EQ(bytes, std::vector<Byte>(local.data(), local.data() + bytes.size()));
-    }
-
-    EXPECT_EQ(mark, save_stack());
-    EXPECT_EQ(bytes, std::vector<Byte>(product.data(), product.data() + bytes.size()));
-}
-
-INSTANTIATE_TEST_SUITE_P(PrecisionsAndLifetimes, TestBigNumProductLifetime,
-    testing::Combine(testing::Values(4, 12, 64, 672),
-        testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY)));
-
 namespace
 {
 
 template <typename Value>
 BigArena &value_arena(const BigLifetime lifetime)
 {
-    if constexpr (std::is_same_v<Value, BigNum>)
-    {
-        return bn_arena(lifetime);
-    }
-    else
-    {
-        return bf_arena(lifetime);
-    }
+    return bf_arena(lifetime);
 }
 
 void unused_reducer(Byte *)
@@ -1158,8 +1119,7 @@ protected:
     ValueSaver<long> m_bailout{g_user.bailout_value, 0};
     ValueSaver<Bailout> m_test{g_bailout_test, Bailout::MOD};
     ValueSaver<int> m_digits{g_bf_digits, 0};
-    ValueSaver<FractalType> m_type{
-        g_fractal_type, std::is_same_v<Value, BigNum> ? FractalType::MANDEL : FractalType::JULIA_Z_POWER};
+    ValueSaver<FractalType> m_type{g_fractal_type, FractalType::MANDEL};
 };
 
 template <typename Value>
@@ -1175,7 +1135,7 @@ void TestBigValueStorage<Value>::TearDown()
     free_bf_vars();
 }
 
-using ValueTypes = testing::Types<BigNum, BigFloat>;
+using ValueTypes = testing::Types<BigFloat>;
 TYPED_TEST_SUITE(TestBigValueStorage, ValueTypes);
 
 template <typename Value>
@@ -1294,16 +1254,6 @@ TYPED_TEST(TestBigValueStorage, constructionAndCopiesUseTheSelectedAllocator)
     EXPECT_EQ("-1.25", copy.to_string());
     EXPECT_EQ("-1.25", selected_copy.to_string());
     EXPECT_EQ(TypeParam{0}, zero);
-}
-
-TYPED_TEST(TestBigValueStorage, conversionsUseDestinationRepresentationAndAllocator)
-{
-    using Other = std::conditional_t<std::is_same_v<TypeParam, BigNum>, BigFloat, BigNum>;
-    auto &persistent = value_arena<TypeParam>(BigLifetime::PERSISTENT);
-    const Other source{-1.25L};
-    const TypeParam converted{persistent, source};
-    EXPECT_EQ(&persistent, &converted.arena());
-    EXPECT_EQ(TypeParam{-1.25L}, converted);
 }
 
 TYPED_TEST(TestBigValueStorage, assignmentRetainsTheDestinationAllocator)
@@ -1436,7 +1386,7 @@ TYPED_TEST(TestBigValueStorage, temporaryRewindsLeavePersistentAndWorkingValuesI
         BigStackSaver scope;
         TypeParam temporary{value_arena<TypeParam>(BigLifetime::TEMPORARY), 1.25L};
         bf_stack().allocate_double();
-        bn_stack().allocate_single();
+        bf_stack().allocate_single();
         destination = temporary + working;
     }
     EXPECT_EQ(before, save_stack());

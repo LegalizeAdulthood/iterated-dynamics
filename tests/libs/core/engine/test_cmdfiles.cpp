@@ -2541,7 +2541,7 @@ TEST_F(TestParameterCommand, cornersLongValueSelectsBigFloatPrecision)
     exec_cmd_arg("corners=" + std::string{x_min} + "/2/3/4");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    EXPECT_EQ(BFMathType::BIG_FLT, g_bf_math);
     EXPECT_EQ(expected_decimals, g_decimals);
     EXPECT_FALSE(g_use_center_mag);
 }

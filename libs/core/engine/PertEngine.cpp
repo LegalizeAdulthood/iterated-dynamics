@@ -27,7 +27,6 @@
 #include <fractals/pickover_mandelbrot.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 #include <math/complex_fn.h>
 #include <misc/id.h>
 #include <misc/run_cleanup.h>
@@ -465,36 +464,6 @@ void PertEngine::begin_orbit_bf(const BFComplex &parameter, const BFComplex &val
         m_orbit_parameter_bf.y = parameter.y;
         m_orbit_initial_bf.x = value.x;
         m_orbit_initial_bf.y = value.y;
-        m_orbit_input.precise = true;
-        if (replace_reference)
-        {
-            set_reference_orbit();
-        }
-    }
-    catch (...)
-    {
-        run_cleanup(std::current_exception(), [this] { cleanup(); });
-        throw;
-    }
-}
-
-void PertEngine::begin_orbit_bn(const BNComplex &parameter, const BNComplex &value, const long iteration)
-{
-    if (g_bf_math != BFMathType::BIG_NUM)
-    {
-        throw std::logic_error("Fixed-point orbit continuation requires fixed-point math");
-    }
-    const bool replace_reference{!m_reference.explicit_orbit || iteration != m_reference.iteration};
-    begin_orbit(
-        std::complex<double>{static_cast<double>(parameter.x.to_float()), static_cast<double>(parameter.y.to_float())},
-        std::complex<double>{static_cast<double>(value.x.to_float()), static_cast<double>(value.y.to_float())},
-        iteration);
-    try
-    {
-        m_orbit_parameter_bf.x = BigFloat{parameter.x};
-        m_orbit_parameter_bf.y = BigFloat{parameter.y};
-        m_orbit_initial_bf.x = BigFloat{value.x};
-        m_orbit_initial_bf.y = BigFloat{value.y};
         m_orbit_input.precise = true;
         if (replace_reference)
         {
@@ -1147,15 +1116,8 @@ bool PertEngine::save_precise_value(std::size_t &remaining)
     if (!m_pixel.precise_saved.x)
     {
         m_pixel.precise_saved = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-        if (g_bf_math == BFMathType::BIG_NUM)
-        {
-            m_pixel.precise_tolerance = BigFloat{bf_arena(BigLifetime::WORKING), g_close_enough_bn};
-        }
-        else
-        {
-            m_pixel.precise_tolerance = BigFloat{bf_arena(BigLifetime::WORKING)};
-            m_pixel.precise_tolerance = g_close_enough_bf;
-        }
+        m_pixel.precise_tolerance = BigFloat{bf_arena(BigLifetime::WORKING)};
+        m_pixel.precise_tolerance = g_close_enough_bf;
     }
     if (m_pixel.have_saved_sample)
     {
@@ -1456,9 +1418,7 @@ int PertEngine::calculate_point(const Point &pt, std::size_t &remaining)
                 bool caught{difference_x < g_close_enough && difference_y < g_close_enough};
                 if (m_pixel.high_precision)
                 {
-                    const double tolerance{
-                        static_cast<double>(g_bf_math == BFMathType::BIG_NUM ? g_close_enough_bn.to_float()
-                                                                             : g_close_enough_bf.to_float())};
+                    const double tolerance{static_cast<double>(g_close_enough_bf.to_float())};
                     const double candidate_tolerance{tolerance + m_pixel.saved_error + error};
                     caught = difference_x <= candidate_tolerance && difference_y <= candidate_tolerance;
                     if (caught)

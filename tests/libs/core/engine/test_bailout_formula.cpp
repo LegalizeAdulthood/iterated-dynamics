@@ -63,7 +63,6 @@ class TestBailoutFormula : public Test
 {
 protected:
     ValueSaver<decltype(g_bailout_float)> m_float{g_bailout_float};
-    ValueSaver<decltype(g_bailout_bignum)> m_bignum{g_bailout_bignum};
     ValueSaver<decltype(g_bailout_bigfloat)> m_bigfloat{g_bailout_bigfloat};
     ValueSaver<DComplex> m_old{g_old_z, DComplex{-7.0, 9.0}};
     ValueSaver<DComplex> m_new{g_new_z, DComplex{11.0, -13.0}};

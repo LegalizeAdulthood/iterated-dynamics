@@ -9,7 +9,6 @@
 #include <math/big.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
@@ -82,19 +81,14 @@ std::vector<Byte> TestMPConversions::pack(const BigFloat &value) const
 TEST_F(TestMPConversions, importsLegacyValuesAndExportsToSelectedArenas)
 {
     const MPPrecision low{1};
-    BigArena bn{static_cast<std::size_t>(g_bn_length), 4, reduce_bn_product};
     BigArena bf{static_cast<std::size_t>(g_bf_length + 2), 4, reduce_bf_product};
     for (const char *text : {"0", "1.25", "-1.25"})
     {
         SCOPED_TRACE(text);
         const auto expected = low.real(text);
-        EXPECT_EQ(expected, MPConversions::from_big_num(BigNum{text}, m_precision));
         EXPECT_EQ(expected, MPConversions::from_big_float(BigFloat{text}, m_precision));
-        const auto fixed = MPConversions::to_big_num(expected, bn);
         const auto floating = MPConversions::to_big_float(expected, bf);
-        EXPECT_EQ(&bn, &fixed.arena());
         EXPECT_EQ(&bf, &floating.arena());
-        EXPECT_EQ(BigNum{text}, fixed);
         EXPECT_EQ(pack(BigFloat{text}), pack(floating));
     }
 }
@@ -107,9 +101,7 @@ TEST_F(TestMPConversions, decodesSignedMantissaAndSubDoubleCoordinateBits)
     const auto positive = unpack(bytes, 0);
     const auto expected = m_precision.real("1") + power(-80);
     EXPECT_EQ(expected, MPConversions::from_big_float(positive, m_precision));
-    EXPECT_EQ(expected, MPConversions::from_big_num(BigNum{positive}, m_precision));
     EXPECT_EQ(pack(positive), pack(MPConversions::to_big_float(expected, positive.arena())));
-    EXPECT_EQ(BigNum{positive}, MPConversions::to_big_num(expected, bn_arena(BigLifetime::WORKING)));
     // Two's complement of the independently assembled positive mantissa.
     unsigned carry = 1;
     for (Byte &byte : bytes)
@@ -159,54 +151,12 @@ TEST_F(TestMPConversions, roundsImportsToNearestEvenAtRequestedPrecision)
     auto lower = MPConversions::to_big_float(m_precision.real("1") + half, bf_arena(BigLifetime::WORKING));
     auto upper = MPConversions::to_big_float(m_precision.real("1") + 3 * half, lower.arena());
     EXPECT_EQ(one, MPConversions::from_big_float(lower, low));
-    EXPECT_EQ(one, MPConversions::from_big_num(BigNum{lower}, low));
     mpfr_nextabove(one.backend().data());
     mpfr_nextabove(one.backend().data());
     EXPECT_EQ(one, MPConversions::from_big_float(upper, low));
-    EXPECT_EQ(one, MPConversions::from_big_num(BigNum{upper}, low));
     const auto sticky = MPConversions::to_big_float(m_precision.real("1") + half + power(-bits - 8), lower.arena());
     mpfr_nextbelow(one.backend().data());
     EXPECT_EQ(one, MPConversions::from_big_float(sticky, low));
-}
-
-TEST_F(TestMPConversions, roundsFixedPointTiesStickyBitsAndUnderflow)
-{
-    const auto quantum = power(-8 * (g_bn_length - g_int_length));
-    BigArena &arena = bn_arena(BigLifetime::WORKING);
-    for (const int sign : {-1, 1})
-    {
-        SCOPED_TRACE(sign);
-        EXPECT_EQ(BigNum{"0"}, MPConversions::to_big_num(sign * quantum / 2, arena));
-        EXPECT_EQ(sign * 2 * quantum,
-            MPConversions::from_big_num(MPConversions::to_big_num(sign * 3 * quantum / 2, arena), m_precision));
-        EXPECT_EQ(sign * quantum,
-            MPConversions::from_big_num(
-                MPConversions::to_big_num(sign * (quantum / 2 + quantum / 256), arena), m_precision));
-        EXPECT_EQ(BigNum{"0"}, MPConversions::to_big_num(sign * quantum / 1024, arena));
-    }
-}
-
-TEST_F(TestMPConversions, preservesFixedPointLimitsForEveryIntegerLayout)
-{
-    for (const int length : {1, 2, 4})
-    {
-        g_bailout_test = length == 2 ? Bailout::REAL : Bailout::MOD;
-        g_user.bailout_value = length == 4 ? 100 : 0;
-        init_bf_length(32);
-        ASSERT_EQ(length, g_int_length);
-        SCOPED_TRACE(length);
-        const auto bound = power(8 * length - 1);
-        const auto quantum = power(-8 * (g_bn_length - length));
-        BigArena &arena = bn_arena(BigLifetime::WORKING);
-        EXPECT_EQ(-bound, MPConversions::from_big_num(MPConversions::to_big_num(-bound, arena), m_precision));
-        EXPECT_EQ(bound - quantum,
-            MPConversions::from_big_num(MPConversions::to_big_num(bound - quantum, arena), m_precision));
-        EXPECT_THROW(MPConversions::to_big_num(bound, arena), PrecisionError);
-        EXPECT_THROW(MPConversions::to_big_num(bound - quantum / 2, arena), PrecisionError);
-        EXPECT_THROW(MPConversions::to_big_num(-bound - quantum, arena), PrecisionError);
-        EXPECT_EQ(
-            -bound, MPConversions::from_big_num(MPConversions::to_big_num(-bound - quantum / 2, arena), m_precision));
-    }
 }
 
 TEST_F(TestMPConversions, roundsFloatingPointTiesAndCarry)
@@ -252,15 +202,11 @@ TEST_F(TestMPConversions, rejectsNonFiniteNullAndMismatchedLayouts)
     {
         SCOPED_TRACE(text);
         const auto value = m_precision.real(text);
-        EXPECT_THROW(MPConversions::to_big_num(value, bn_arena(BigLifetime::WORKING)), std::invalid_argument);
         EXPECT_THROW(MPConversions::to_big_float(value, bf_arena(BigLifetime::WORKING)), std::invalid_argument);
     }
-    EXPECT_THROW(MPConversions::from_big_num(BigNum{}, m_precision), std::invalid_argument);
     EXPECT_THROW(MPConversions::from_big_float(BigFloat{}, m_precision), std::invalid_argument);
-    BigArena wrong{8, 4, reduce_bn_product};
-    EXPECT_THROW(MPConversions::to_big_num(m_precision.real(), wrong), std::invalid_argument);
+    BigArena wrong{8, 4, reduce_bf_product};
     EXPECT_THROW(MPConversions::to_big_float(m_precision.real(), wrong), std::invalid_argument);
-    EXPECT_THROW(MPConversions::from_big_num(BigNum{wrong}, m_precision), std::invalid_argument);
     EXPECT_THROW(MPConversions::from_big_float(BigFloat{wrong}, m_precision), std::invalid_argument);
 }
 
@@ -275,7 +221,6 @@ TEST_F(TestMPConversions, canonicalizesSignedZeroWithoutChangingDefaultsOrLegacy
     const auto before = pack(source);
     const auto scratch = pack(g_bf_tmp1);
     const auto value = MPConversions::from_big_float(source, m_precision);
-    EXPECT_THROW(MPConversions::to_big_num(power(100), bn_arena(BigLifetime::WORKING)), PrecisionError);
     EXPECT_EQ(zero, pack(MPConversions::to_big_float(m_precision.real("-0"), source.arena())));
     EXPECT_EQ(before, pack(source));
     EXPECT_EQ(scratch, pack(g_bf_tmp1));

@@ -4,7 +4,6 @@
 #pragma once
 
 #include <math/BigArena.h>
-#include <math/BigNum.h>
 #include <math/cmplx.h>
 #include <misc/sized_types.h>
 
@@ -18,6 +17,8 @@
 namespace id::math
 {
 
+class MPConversions;
+
 class BigFloat
 {
 public:
@@ -25,11 +26,9 @@ public:
     BigFloat() noexcept;
     explicit BigFloat(LDouble value);
     explicit BigFloat(std::string_view text);
-    explicit BigFloat(const BigNum &value);
     explicit BigFloat(BigArena &arena);
     BigFloat(BigArena &arena, LDouble value);
     BigFloat(BigArena &arena, std::string_view text);
-    BigFloat(BigArena &arena, const BigNum &value);
     BigFloat(const BigFloat &value);
     BigFloat(BigArena &arena, const BigFloat &value);
     BigFloat(BigFloat &&value) noexcept;
@@ -92,9 +91,6 @@ public:
 
 private:
     friend class MPConversions;
-
-    friend BigFloat BigNum::to_big_float(BigArena &arena) const;
-    friend BigNum &BigNum::operator=(const BigFloat &value);
 
     explicit BigFloat(BigArena::Allocation storage);
 

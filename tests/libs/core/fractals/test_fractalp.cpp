@@ -27,6 +27,7 @@
 #include <math/big_init.h>
 #include <misc/debug_flags.h>
 #include <misc/version.h>
+#include <engine/fractalb.h>
 
 #include <algorithm>
 #include <array>
@@ -441,8 +442,8 @@ TEST(TestFractalDispatch, alternateMathOnlyUpdatesDispatch)
     FractalDispatch dispatch{};
     specific.calc_type = standard_fractal_type;
     dispatch.set_calc_type(test_calc_type);
-    AlternateMath alternate{
-        FractalType::MANDEL, math::BFMathType::BIG_NUM, test_orbit_calc, test_per_pixel, test_per_image};
+    AlternateMath alternate{FractalType::MANDEL, math::BFMathType::BIG_FLT, test_orbit_calc, test_per_pixel,
+                            test_per_image};
 
     ValueSaver saved_specific{g_cur_fractal_specific, &specific};
     ValueSaver saved_dispatch{g_dispatch, dispatch};
@@ -484,15 +485,29 @@ TEST(TestFractalDispatch, alternateMathDispatchUsesMatchingBfEntry)
     expect_table_functions(FractalType::MANDEL_Z_POWER, table_funcs);
 }
 
+TEST(TestFractalDispatch, quadraticFractalsUseBigFloat)
+{
+    for (const FractalType type : {FractalType::MANDEL, FractalType::JULIA})
+    {
+        SCOPED_TRACE(static_cast<int>(type));
+        const int index = find_alternate_math(type, math::BFMathType::BIG_FLT);
+        ASSERT_GE(index, 0);
+        const AlternateMath &alternate = g_alternate_math[index];
+        EXPECT_EQ(julia_orbit_bf, alternate.orbit_calc);
+        EXPECT_EQ(type == FractalType::MANDEL ? mandel_per_pixel_bf : julia_per_pixel_bf, alternate.per_pixel);
+        EXPECT_EQ(mandel_per_image_bf, alternate.per_image);
+    }
+}
+
 TEST(TestFractalDispatch, alternateMathFallbackLeavesDispatchUnchanged)
 {
-    DispatchSelectionState state{FractalType::JULIA_Z_POWER};
+    DispatchSelectionState state{FractalType::NEWTON};
     FractalDispatch dispatch{test_orbit_calc, test_per_pixel, test_per_image, test_calc_type};
     ValueSaver saved_dispatch{g_dispatch, dispatch};
 
-    g_bf_math = BFMathType::BIG_NUM;
+    g_bf_math = BFMathType::BIG_FLT;
 
-    ASSERT_EQ(-1, find_alternate_math(FractalType::JULIA_Z_POWER, BFMathType::BIG_NUM));
+    ASSERT_EQ(-1, find_alternate_math(FractalType::NEWTON, BFMathType::BIG_FLT));
     EXPECT_FALSE(select_alternate_math_dispatch());
 
     EXPECT_EQ(BFMathType::NONE, g_bf_math);

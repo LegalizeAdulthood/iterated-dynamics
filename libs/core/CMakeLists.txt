@@ -189,7 +189,6 @@ add_library(id-core
     include/math/BigArena.h math/BigArena.cpp
     include/math/BigComplex.h math/BigComplex.cpp
     include/math/BigFloat.h math/BigFloat.cpp
-    include/math/BigNum.h math/BigNum.cpp
     include/math/big_init.h math/big_init.cpp
     include/math/cmplx.h math/cmplx.cpp
     include/math/complex_fn.h

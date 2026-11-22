@@ -57,7 +57,6 @@
 #include <io/update_save_name.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 #include <math/fixed_pt.h>
 #include <math/sign.h>
 #include <misc/debug_flags.h>
@@ -931,11 +930,7 @@ int StandardFractal::calculate_mandelbrot_pixel()
 
 static void set_new_z_from_bignum()
 {
-    if (g_bf_math == BFMathType::BIG_NUM)
-    {
-        g_new_z = cmplx_bn_to_float(g_new_z_bn);
-    }
-    else if (g_bf_math == BFMathType::BIG_FLT)
+    if (g_bf_math == BFMathType::BIG_FLT)
     {
         g_new_z = cmplx_bf_to_float(g_new_z_bf);
     }
@@ -1109,12 +1104,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             {
                 g_keyboard_check_interval = -1;
             }
-            if (g_bf_math == BFMathType::BIG_NUM)
-            {
-                g_saved_z_bn.x = 0;
-                g_saved_z_bn.y = 0;
-            }
-            else if (g_bf_math == BFMathType::BIG_FLT)
+            if (g_bf_math == BFMathType::BIG_FLT)
             {
                 g_saved_z_bf.x = 0;
                 g_saved_z_bf.y = 0;
@@ -1158,11 +1148,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
         if (g_outside_method == ColorMethod::TDIS)
         {
-            if (g_bf_math == BFMathType::BIG_NUM)
-            {
-                g_old_z = cmplx_bn_to_float(g_old_z_bn);
-            }
-            else if (g_bf_math == BFMathType::BIG_FLT)
+            if (g_bf_math == BFMathType::BIG_FLT)
             {
                 g_old_z = cmplx_bf_to_float(g_old_z_bf);
             }
@@ -1220,11 +1206,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
         if (g_distance_estimator && !m_standard_pixel_orbit_calc_completed)
         {
-            if (g_bf_math == BFMathType::BIG_NUM)
-            {
-                g_old_z = cmplx_bn_to_float(g_old_z_bn);
-            }
-            else if (g_bf_math == BFMathType::BIG_FLT)
+            if (g_bf_math == BFMathType::BIG_FLT)
             {
                 g_old_z = cmplx_bf_to_float(g_old_z_bf);
             }
@@ -1250,12 +1232,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
         if (g_distance_estimator)
         {
-            if (g_bf_math == BFMathType::BIG_NUM)
-            {
-                g_new_z = cmplx_bn_to_float(g_new_z_bn);
-                g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
-            }
-            else if (g_bf_math == BFMathType::BIG_FLT)
+            if (g_bf_math == BFMathType::BIG_FLT)
             {
                 g_new_z = cmplx_bf_to_float(g_new_z_bf);
                 g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
@@ -1310,12 +1287,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                     g_temp_sqr_y = g_new_z.y * g_new_z.y;
                     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
                     g_old_z = g_new_z;
-                    if (g_bf_math == BFMathType::BIG_NUM)
-                    {
-                        g_old_z_bn.x = g_new_z_bn.x;
-                        g_old_z_bn.y = g_new_z_bn.y;
-                    }
-                    else if (g_bf_math == BFMathType::BIG_FLT)
+                    if (g_bf_math == BFMathType::BIG_FLT)
                     {
                         BigStackSaver saved;
                         const BigFloat maximum{bf_arena(BigLifetime::TEMPORARY), STAR_TRAIL_MAX};
@@ -1438,12 +1410,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             if ((g_color_iter & m_saved_and) == 0) // time to save a new value
             {
                 m_saved_color_iter = g_color_iter;
-                if (g_bf_math == BFMathType::BIG_NUM)
-                {
-                    g_saved_z_bn.x = g_new_z_bn.x;
-                    g_saved_z_bn.y = g_new_z_bn.y;
-                }
-                else if (g_bf_math == BFMathType::BIG_FLT)
+                if (g_bf_math == BFMathType::BIG_FLT)
                 {
                     g_saved_z_bf.x = g_new_z_bf.x;
                     g_saved_z_bf.y = g_new_z_bf.y;
@@ -1461,17 +1428,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
             else                // check against an old save
             {
                 // floating-pt periodicity chk
-                if (g_bf_math == BFMathType::BIG_NUM)
-                {
-                    if ((g_saved_z_bn.x - g_new_z_bn.x).abs() < g_close_enough_bn)
-                    {
-                        if ((g_saved_z_bn.y - g_new_z_bn.y).abs() < g_close_enough_bn)
-                        {
-                            m_caught_a_cycle = true;
-                        }
-                    }
-                }
-                else if (g_bf_math == BFMathType::BIG_FLT)
+                if (g_bf_math == BFMathType::BIG_FLT)
                 {
                     g_bf_tmp = (g_saved_z_bf.x - g_new_z_bf.x).abs();
                     if (g_bf_tmp < g_close_enough_bf)
@@ -1529,12 +1486,7 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
 
     if (g_potential.flag)
     {
-        if (g_bf_math == BFMathType::BIG_NUM)
-        {
-            g_new_z.x = static_cast<double>(g_new_z_bn.x.to_float());
-            g_new_z.y = static_cast<double>(g_new_z_bn.y.to_float());
-        }
-        else if (g_bf_math == BFMathType::BIG_FLT)
+        if (g_bf_math == BFMathType::BIG_FLT)
         {
             g_new_z.x = static_cast<double>(g_new_z_bf.x.to_float());
             g_new_z.y = static_cast<double>(g_new_z_bf.y.to_float());

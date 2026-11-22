@@ -33,11 +33,6 @@ void PrintTo(const BigFloat &value, std::ostream *out)
     *out << value.to_string(g_bf_decimals);
 }
 
-void PrintTo(const BigNum &value, std::ostream *out)
-{
-    *out << value.to_string(g_decimals);
-}
-
 template <typename T>
 void PrintTo(const Complex<T> &value, std::ostream *out)
 {
@@ -313,11 +308,6 @@ TEST_P(TestBigComplexIntegerPower, integerPower)
 TEST_P(TestBigComplex, owningBigFloatArithmeticPreservesOperandsAndHandlesSelfAssignment)
 {
     check_owning_arithmetic<BigFloat>();
-}
-
-TEST_P(TestBigComplex, owningBigNumArithmeticPreservesOperandsAndHandlesSelfAssignment)
-{
-    check_owning_arithmetic<BigNum>();
 }
 
 TEST_P(TestBigComplex, realValueFunctionsPreserveTheirOperands)

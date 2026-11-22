@@ -30,7 +30,6 @@
 #include <misc/ValueSaver.h>
 #include <math/big_init.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 #include <ui/KeyboardHandler.h>
 #include <ui/SoundSession.h>
 #include <ui/video.h>
@@ -80,18 +79,7 @@ int initialize_mandel_sticky_pixel()
     g_old_z = g_init;
     g_temp_sqr_x = g_old_z.x * g_old_z.x;
     g_temp_sqr_y = g_old_z.y * g_old_z.y;
-    if (g_bf_math == BFMathType::BIG_NUM)
-    {
-        BigStackSaver saved;
-        BigNum offset{bn_arena(BigLifetime::TEMPORARY), 1e-40};
-        offset = offset * static_cast<U16>(g_col);
-        g_param_z_bn.x = g_init.x;
-        g_param_z_bn.x += offset;
-        g_param_z_bn.y = g_init.y;
-        g_old_z_bn.x = g_param_z_bn.x;
-        g_old_z_bn.y = g_param_z_bn.y;
-    }
-    else if (g_bf_math == BFMathType::BIG_FLT)
+    if (g_bf_math == BFMathType::BIG_FLT)
     {
         BigStackSaver saved;
         BigFloat offset{bf_arena(BigLifetime::TEMPORARY), 1e-40};
@@ -756,7 +744,6 @@ protected:
     ValueSaver<double> m_sqr_x{g_temp_sqr_x};
     ValueSaver<double> m_sqr_y{g_temp_sqr_y};
     ValueSaver<decltype(g_bailout_float)> m_fp{g_bailout_float};
-    ValueSaver<decltype(g_bailout_bignum)> m_bn{g_bailout_bignum};
     ValueSaver<decltype(g_bailout_bigfloat)> m_bf{g_bailout_bigfloat};
 };
 
@@ -778,16 +765,7 @@ void TestStickyBailout::SetUp()
             g_new_z = {};
             g_temp_sqr_x = 1;
             g_temp_sqr_y = 1;
-            if (g_bf_math == BFMathType::BIG_NUM)
-            {
-                g_old_z_bn.x = 1;
-                g_old_z_bn.y = 1;
-                g_param_z_bn.x = 0;
-                g_param_z_bn.y = 0;
-                g_tmp_sqr_x_bn = g_old_z_bn.x.sqr();
-                g_tmp_sqr_y_bn = g_old_z_bn.y.sqr();
-            }
-            else if (g_bf_math == BFMathType::BIG_FLT)
+            if (g_bf_math == BFMathType::BIG_FLT)
             {
                 g_old_z_bf.x = 1;
                 g_old_z_bf.y = 1;
@@ -806,7 +784,7 @@ void TestStickyBailout::SetUp()
             {
                 return julia_orbit();
             }
-            return g_bf_math == BFMathType::BIG_NUM ? julia_orbit_bn() : julia_orbit_bf();
+            return julia_orbit_bf();
         });
 }
 
@@ -831,8 +809,7 @@ TEST_P(TestStickyBailout, nativeContinuationKeepsTheOrdinaryEscapedOrbitState)
     EXPECT_EQ(2, expected_new.y);
     const BFMathType math_type = std::get<2>(GetParam());
     {
-        ValueSaver<FractalType> allocator_type{
-            g_fractal_type, math_type == BFMathType::BIG_NUM ? FractalType::JULIA : FractalType::MANDEL_Z_POWER};
+        ValueSaver<FractalType> allocator_type{g_fractal_type, FractalType::JULIA};
         init_bf_dec(40);
     }
     ASSERT_EQ(math_type, g_bf_math);
@@ -842,24 +819,14 @@ TEST_P(TestStickyBailout, nativeContinuationKeepsTheOrdinaryEscapedOrbitState)
     run(arbitrary_precision);
 
     EXPECT_EQ(3, s_math_calls);
-    if (math_type == BFMathType::BIG_NUM)
-    {
-        EXPECT_EQ(expected_old.x, g_old_z_bn.x.to_float());
-        EXPECT_EQ(expected_old.y, g_old_z_bn.y.to_float());
-        EXPECT_EQ(expected_new.x, g_new_z_bn.x.to_float());
-        EXPECT_EQ(expected_new.y, g_new_z_bn.y.to_float());
-    }
-    else
-    {
-        EXPECT_EQ(expected_old.x, g_old_z_bf.x.to_float());
-        EXPECT_EQ(expected_old.y, g_old_z_bf.y.to_float());
-        EXPECT_EQ(expected_new.x, g_new_z_bf.x.to_float());
-        EXPECT_EQ(expected_new.y, g_new_z_bf.y.to_float());
-    }
+    EXPECT_EQ(expected_old.x, g_old_z_bf.x.to_float());
+    EXPECT_EQ(expected_old.y, g_old_z_bf.y.to_float());
+    EXPECT_EQ(expected_new.x, g_new_z_bf.x.to_float());
+    EXPECT_EQ(expected_new.y, g_new_z_bf.y.to_float());
 }
 
 INSTANTIATE_TEST_SUITE_P(ModesPeriodicityAndMath, TestStickyBailout,
-    Combine(Values(Bailout::MANH, Bailout::MANR), Values(0, 1), Values(BFMathType::BIG_NUM, BFMathType::BIG_FLT)));
+                         Combine(Values(Bailout::MANH, Bailout::MANR), Values(0, 1), Values(BFMathType::BIG_FLT)));
 
 class TestStickyPerturbationBase : public TestStickyOrbitSoundBase
 {

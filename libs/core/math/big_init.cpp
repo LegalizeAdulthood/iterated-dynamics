@@ -17,7 +17,6 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <fractals/fractype.h>
 #include <math/big.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 
 #include <fmt/format.h>
 
@@ -48,33 +47,6 @@ int g_decimals{};
 int g_bf_length{};
 int g_r_bf_length{};
 int g_bf_decimals{};
-BigNum g_bn_tmp2{};
-BigNum g_bn_tmp3{};
-BigArena::Allocation g_bn_tmp_copy1{};
-BigArena::Allocation g_bn_tmp_copy2{};
-// used by other routines, g_bn_length
-BigNum g_x_min_bn{};
-BigNum g_x_max_bn{};
-BigNum g_y_min_bn{};
-BigNum g_y_max_bn{};
-BigNum g_x_3rd_bn{};
-BigNum g_y_3rd_bn{};
-// g_bn_length
-BigNum g_delta_x_bn{};
-BigNum g_delta_y_bn{};
-BigNum g_delta2_x_bn{};
-BigNum g_delta2_y_bn{};
-BigNum g_close_enough_bn{};
-// g_bn_length
-BigNum g_tmp_sqr_x_bn{};
-BigNum g_tmp_sqr_y_bn{};
-// g_bn_length
-BigNum g_bn_tmp{};
-// g_bn_length; g_old_z_bn also retains g_r_length scratch products
-BNComplex g_old_z_bn{};
-BNComplex g_param_z_bn{};
-BNComplex g_saved_z_bn{};
-BNComplex g_new_z_bn{};
 // g_bf_length+2
 BigFloat g_bf_tmp1{};
 BigFloat g_bf_tmp2{};
@@ -116,7 +88,6 @@ BigFloat g_bf_tmp{};
 
 constexpr long BIGNUM_ARENA_SIZE{1024L * 1024};
 // Supported g_bn_length limits are independent of working storage capacity.
-constexpr int MAX_BIGNUM_LENGTH{672};
 constexpr int MAX_BIGFLOAT_LENGTH{708};
 
 /*********************************************************************/
@@ -152,22 +123,9 @@ void calc_lengths()
 // intended only to be called from init_bf_dec() or init_bf_length().
 // initialize bignumber global variables
 
-static BFMathType select_bf_math(const FractalType type)
+static bool supported_bn_length(const int bn_length)
 {
-    if (const int i = find_alternate_math(type, BFMathType::BIG_NUM); i > -1)
-    {
-        return g_alternate_math[i].math;
-    }
-    if (const int i = find_alternate_math(type, BFMathType::BIG_FLT); i > -1)
-    {
-        return g_alternate_math[i].math;
-    }
-    return BFMathType::BIG_NUM;
-}
-
-static bool supported_bn_length(const int bn_length, const BFMathType math)
-{
-    return bn_length > 0 && bn_length <= (math == BFMathType::BIG_NUM ? MAX_BIGNUM_LENGTH : MAX_BIGFLOAT_LENGTH);
+    return bn_length > 0 && bn_length <= MAX_BIGFLOAT_LENGTH;
 }
 
 static int bf_length_for_bn_length(const int bn_length)
@@ -175,9 +133,9 @@ static int bf_length_for_bn_length(const int bn_length)
     return (bn_length + 3) / 4 * 4 + 4;
 }
 
-size_t bf_parameter_bytes(const int bn_length, const FractalType type)
+size_t bf_parameter_bytes(const int bn_length, const FractalType)
 {
-    if (!supported_bn_length(bn_length, select_bf_math(type)))
+    if (!supported_bn_length(bn_length))
     {
         throw PrecisionError(fmt::format("Requested bignumber length of {} is unsupported", bn_length));
     }
@@ -243,10 +201,9 @@ public:
     ~MathArenas();
     bool matches_layout(int bn_length, int int_length) const;
     void bind(bool preserve_parameters);
-    void unbind(bool release_bn_product_scratch);
+    void unbind();
     bool bound() const;
 
-    NumericArenas big_num;
     NumericArenas big_float;
 
 private:
@@ -256,7 +213,6 @@ private:
 };
 
 MathArenas::MathArenas(const int bn_length, const int bf_length, const int int_length) :
-    big_num(bn_length, static_cast<std::size_t>(bn_length), reduce_bn_product),
     big_float(bf_length + 2, static_cast<std::size_t>(bf_length + 2), reduce_bf_product),
     m_bn_length(bn_length),
     m_int_length(int_length)
@@ -267,8 +223,7 @@ MathArenas::~MathArenas()
 {
     if (m_bound)
     {
-        // The private scratch owner has already released its allocation at exit.
-        unbind(false);
+        unbind();
     }
 }
 
@@ -279,53 +234,7 @@ bool MathArenas::matches_layout(const int bn_length, const int int_length) const
 
 void MathArenas::bind(const bool preserve_parameters)
 {
-    big_num.stack.restore(0);
     big_float.stack.restore(0);
-    const auto init_big_num = [this](BigNum &target)
-    {
-        if (!target)
-        {
-            BigNum value{big_num.working};
-            std::destroy_at(&target);
-            ::new (&target) BigNum{std::move(value)};
-        }
-        target.clear();
-    };
-    init_bn_product_scratch(big_num.working);
-    init_big_num(g_bn_tmp2);
-    init_big_num(g_bn_tmp3);
-    const auto init_big_num_copy = [this](BigArena::Allocation &target)
-    {
-        if (!target)
-        {
-            target = big_num.working.allocate_double();
-        }
-        std::memset(target.data(), 0, 2 * big_num.working.block_size());
-    };
-    init_big_num_copy(g_bn_tmp_copy1);
-    init_big_num_copy(g_bn_tmp_copy2);
-    init_big_num(g_old_z_bn.x);
-    init_big_num(g_old_z_bn.y);
-    init_big_num(g_tmp_sqr_x_bn);
-    init_big_num(g_tmp_sqr_y_bn);
-    init_big_num(g_bn_tmp);
-    g_x_min_bn = 0;
-    g_x_max_bn = 0;
-    g_y_min_bn = 0;
-    g_y_max_bn = 0;
-    g_x_3rd_bn = 0;
-    g_y_3rd_bn = 0;
-    g_delta_x_bn = 0;
-    g_delta_y_bn = 0;
-    g_delta2_x_bn = 0;
-    g_delta2_y_bn = 0;
-    g_param_z_bn.x = 0;
-    g_param_z_bn.y = 0;
-    g_new_z_bn.x = 0;
-    g_new_z_bn.y = 0;
-    g_saved_z_bn.x = 0;
-    g_saved_z_bn.y = 0;
-    g_close_enough_bn = 0;
     const auto init_big_float = [this](BigFloat &target)
     {
         if (!target)
@@ -384,42 +293,15 @@ void MathArenas::bind(const bool preserve_parameters)
     m_bound = true;
 }
 
-void MathArenas::unbind(const bool release_bn_product_scratch)
+void MathArenas::unbind()
 {
     m_bound = false;
-    big_num.stack.restore(0);
     big_float.stack.restore(0);
-    if (release_bn_product_scratch)
-    {
-        free_bn_product_scratch();
-    }
     const auto reset = [](auto &value)
     {
         std::destroy_at(&value);
         ::new (&value) std::remove_reference_t<decltype(value)>{};
     };
-    reset(g_bn_tmp2);
-    reset(g_bn_tmp3);
-    g_bn_tmp_copy1.reset();
-    g_bn_tmp_copy2.reset();
-    reset(g_old_z_bn);
-    reset(g_tmp_sqr_x_bn);
-    reset(g_tmp_sqr_y_bn);
-    reset(g_bn_tmp);
-    reset(g_x_min_bn);
-    reset(g_x_max_bn);
-    reset(g_y_min_bn);
-    reset(g_y_max_bn);
-    reset(g_x_3rd_bn);
-    reset(g_y_3rd_bn);
-    reset(g_delta_x_bn);
-    reset(g_delta_y_bn);
-    reset(g_delta2_x_bn);
-    reset(g_delta2_y_bn);
-    reset(g_param_z_bn);
-    reset(g_new_z_bn);
-    reset(g_saved_z_bn);
-    reset(g_close_enough_bn);
     reset(g_bf_pi);
     reset(g_bf_tmp1);
     reset(g_bf_tmp2);
@@ -458,8 +340,7 @@ std::unique_ptr<MathArenas> s_arenas;
 
 static void init_bf2(const int bn_length, const int int_length, const int decimals)
 {
-    const BFMathType math = select_bf_math(g_fractal_type);
-    if (!supported_bn_length(bn_length, math))
+    if (!supported_bn_length(bn_length))
     {
         throw PrecisionError(fmt::format("Requested precision of {} too high", decimals));
     }
@@ -481,7 +362,7 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
             {
                 converted.push_back(corner->convert_precision(replacement->big_float.persistent, bf_length, g_bf_length));
             }
-            s_arenas->unbind(true);
+            s_arenas->unbind();
             for (std::size_t i = 0; i < corners.size(); ++i)
             {
                 std::destroy_at(corners[i]);
@@ -495,7 +376,7 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
     g_int_length = int_length;
     g_decimals = decimals;
     calc_lengths();
-    g_bf_math = math;
+    g_bf_math = BFMathType::BIG_FLT;
     s_arenas->bind(same_layout && carry_view);
     if (carry_view && !same_layout)
     {
@@ -504,11 +385,6 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
             g_bf_params[i] = g_params[i];
         }
     }
-}
-
-BigArena &bn_arena(const BigLifetime lifetime)
-{
-    return s_arenas->big_num.get(lifetime);
 }
 
 BigArena &bf_arena(const BigLifetime lifetime)
@@ -558,15 +434,6 @@ bool BigStack::contains(const Byte *address) const
         [address](const BigArena::Allocation &value) { return value.data() == address; });
 }
 
-BigStack &bn_stack()
-{
-    if (!s_arenas || !s_arenas->bound() || g_bf_math == BFMathType::NONE)
-    {
-        throw std::logic_error("BigNum stack called without initialized arbitrary precision");
-    }
-    return s_arenas->big_num.stack;
-}
-
 BigStack &bf_stack()
 {
     if (!s_arenas || !s_arenas->bound() || g_bf_math == BFMathType::NONE)
@@ -578,7 +445,7 @@ BigStack &bf_stack()
 
 bool BigStackMark::operator==(const BigStackMark &right) const
 {
-    return big_num == right.big_num && big_float == right.big_float;
+    return big_float == right.big_float;
 }
 
 bool BigStackMark::operator!=(const BigStackMark &right) const
@@ -588,21 +455,18 @@ bool BigStackMark::operator!=(const BigStackMark &right) const
 
 bool BigStackMark::operator>(const BigStackMark &right) const
 {
-    return big_num + big_float > right.big_num + right.big_float;
+    return big_float > right.big_float;
 }
 
 BigStackMark save_stack()
 {
-    return !s_arenas || !s_arenas->bound()
-        ? BigStackMark{}
-        : BigStackMark{s_arenas->big_num.stack.mark(), s_arenas->big_float.stack.mark()};
+    return !s_arenas || !s_arenas->bound() ? BigStackMark{} : BigStackMark{s_arenas->big_float.stack.mark()};
 }
 
 void restore_stack(const BigStackMark old_mark)
 {
     if (s_arenas)
     {
-        s_arenas->big_num.stack.restore(old_mark.big_num);
         s_arenas->big_float.stack.restore(old_mark.big_float);
     }
 }
@@ -624,7 +488,7 @@ BigMemoryStats big_memory_stats()
     {
         for (BigLifetime lifetime : {BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY})
         {
-            for (const BigArena *arena : {&bn_arena(lifetime), &bf_arena(lifetime)})
+            for (const BigArena *arena : {&bf_arena(lifetime)})
             {
                 const std::size_t used = arena->high_water_mark() * arena->block_size();
                 (lifetime == BigLifetime::TEMPORARY ? result.temporaries : result.globals) += used;
@@ -673,7 +537,7 @@ void free_bf_vars()
 {
     if (s_arenas)
     {
-        s_arenas->unbind(true);
+        s_arenas->unbind();
     }
     g_bf_math = BFMathType::NONE;
     g_bn_step = 0;

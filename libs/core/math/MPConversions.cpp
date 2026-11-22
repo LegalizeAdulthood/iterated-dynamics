@@ -5,7 +5,6 @@
 
 #include <math/big.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 
 #include <boost/multiprecision/gmp.hpp>
 
@@ -30,15 +29,6 @@ void validate_layout(const std::size_t size, const int expected)
     if (expected <= 0 || size != static_cast<std::size_t>(expected))
     {
         throw std::invalid_argument("Mismatched legacy number layout");
-    }
-}
-
-void validate_bn_layout(const std::size_t size)
-{
-    validate_layout(size, g_bn_length);
-    if ((g_int_length != 1 && g_int_length != 2 && g_int_length != 4) || g_bn_length < g_int_length)
-    {
-        throw std::invalid_argument("Invalid legacy fixed-point scale");
     }
 }
 
@@ -118,16 +108,6 @@ Integer quantize(const MPReal &value, const mpfr_exp_t scale)
 
 } // namespace
 
-MPReal MPConversions::from_big_num(const BigNum &value, const MPPrecision &precision)
-{
-    if (!value)
-    {
-        throw std::invalid_argument("Cannot convert a null BigNum");
-    }
-    validate_bn_layout(value.encoded_size());
-    return import(decode(value.data(), g_bn_length), -8 * (g_bn_length - g_int_length), precision);
-}
-
 MPReal MPConversions::from_big_float(const BigFloat &value, const MPPrecision &precision)
 {
     if (!value)
@@ -139,26 +119,6 @@ MPReal MPConversions::from_big_float(const BigFloat &value, const MPPrecision &p
     const int encoded = bytes[g_bf_length] + 256 * bytes[g_bf_length + 1];
     const int exponent = encoded >= 32768 ? encoded - 65536 : encoded;
     return import(decode(bytes, g_bf_length), 8 * (exponent + 2 - g_bf_length), precision);
-}
-
-BigNum MPConversions::to_big_num(const MPReal &value, BigArena &arena)
-{
-    validate_bn_layout(arena.value_size());
-    validate_finite(value);
-    if (value != 0 && mpfr_get_exp(value.backend().data()) > 8 * g_int_length)
-    {
-        throw PrecisionError("BigNum conversion overflow");
-    }
-    const Integer significand = quantize(value, -8 * (g_bn_length - g_int_length));
-    const Integer bound = Integer{1} << (8 * g_bn_length - 1);
-    if (significand < -bound || significand >= bound)
-    {
-        throw PrecisionError("BigNum conversion overflow");
-    }
-    const auto bytes = encode(significand, g_bn_length);
-    BigNum result{arena};
-    std::memcpy(result.data(), bytes.data(), bytes.size());
-    return result;
 }
 
 BigFloat MPConversions::to_big_float(const MPReal &value, BigArena &arena)

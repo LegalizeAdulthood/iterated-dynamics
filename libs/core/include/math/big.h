@@ -31,7 +31,6 @@ enum
 #define LOG_256   5.5451774444795
 using Big = unsigned char *;
 using BFPtrComplex = Complex<Byte *>;
-using BNPtrComplex = Complex<Byte *>;
 using BFConstPtrComplex = Complex<const Byte *>;
 
 // Precision lengths shared with the initialization layer.
@@ -48,13 +47,7 @@ void calc_lengths();
 Byte *clear_bn(Byte *r);
 Byte *max_bn(Byte *r);
 Byte *copy_bn(Byte *r, const Byte *n);
-void bn_hex_dump(const Byte *r);
-Byte *msb_bn(Byte *value);
-const Byte *msb_bn(const Byte *value);
-void reduce_bn_product(Byte *value);
-int cmp_bn(const Byte *n1, const Byte *n2);
 bool is_bn_neg(const Byte *n);
-bool is_bn_not_zero(const Byte *n);
 Byte *add_bn(Byte *r, const Byte *n1, const Byte *n2);
 Byte *add_a_bn(Byte *r, const Byte *n);
 Byte *sub_bn(Byte *r, const Byte *n1, const Byte *n2);
@@ -94,35 +87,15 @@ misc::U16 BIG_SET16(Byte *addr, misc::U16 val);
 #define BIG_SET32(addr, val) (*(U32 *)(addr) = (U32)(val))
 #define BIG_SET16(addr, val) (*(U16 *)(addr) = (U16)(val))
 #endif
-Byte *str_to_bn(Byte *r, std::string_view s);
-Byte *int_to_bn(Byte *r, long value);
-void set_integer_part(Byte *ones_byte, long value);
-std::string unsafe_bn_to_string(Byte *r, int dec);
-long bn_to_int(const Byte *n);
-Byte *abs_bn(Byte *r, const Byte *n);
-Byte *abs_a_bn(Byte *r);
-Byte *unsafe_inv_bn(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3);
-Byte *divide(Byte *r, Byte *n1, Byte *n2, Byte *tmp1, Byte *tmp2, Byte *tmp3);
 Byte *binary_operation(Byte *result, const Byte *left, const Byte *right, Byte *copy1, Byte *copy2,
-    Byte *(*operation)(Byte *, Byte *, Byte *) );
-int convert_bn(Byte *new_num, const Byte *old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
-void convert_bn_signed(
-    Byte *new_num, const Byte *old_num, int new_bn_len, int new_int_len, int old_bn_len, int old_int_len);
+                       Byte *(*operation)(Byte *, Byte *, Byte *) );
 
 // "safe" versions
-Byte *full_mult_bn(Byte *r, Byte *n1, Byte *n2);
-Byte *mult_bn(Byte *r, Byte *n1, Byte *n2);
-Byte *full_square_bn(Byte *r, Byte *n);
-Byte *square_bn(Byte *r, Byte *n);
-Byte *div_bn(Byte *r, const Byte *n1, const Byte *n2, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *copy1, Byte *copy2);
 // misc
-bool is_bn_zero(const Byte *n);
 Byte *float_to_bn(Byte *r, LDouble f);
 
 void bf_hex_dump_snapshot(const Byte *r);
 Byte *str_to_bf(Byte *r, std::string_view s, Byte *tmp1);
-Byte *bf_to_bn(Byte *n, const Byte *f);
-Byte *bn_to_bf(Byte *f, const Byte *n);
 Byte *int_to_bf(Byte *r, long value);
 int sign_bf(const Byte *n);
 Byte *abs_bf(Byte *r, const Byte *n);

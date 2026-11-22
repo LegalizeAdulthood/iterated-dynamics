@@ -18,13 +18,12 @@ namespace id::math
 
 // values that g_bf_math can hold,
 // 0 = g_bf_math is not being used
-// 1 = g_bf_math is being used
+// 2 = g_bf_math is being used
 enum class BFMathType
 {
     // cppcheck-suppress variableHidingEnum
     NONE = 0,
-    BIG_NUM = 1, // g_bf_math is being used with BigNum numbers
-    BIG_FLT = 2  // g_bf_math is being used with BigFloat numbers
+    BIG_FLT = 2 // g_bf_math is being used with BigFloat numbers
 };
 
 // globals
@@ -60,18 +59,11 @@ enum class BigLifetime
 
 // Arenas have stable addresses and outlive active legacy bindings.
 // Call init_bf_dec or init_bf_length before obtaining an arena.
-BigArena &bn_arena(BigLifetime lifetime);
 BigArena &bf_arena(BigLifetime lifetime);
 
 // Paired operand-preservation workspaces.
-extern BigArena::Allocation g_bn_tmp_copy1;
-extern BigArena::Allocation g_bn_tmp_copy2;
 extern BigArena::Allocation g_bf_tmp_copy1; // Paired operand-preservation workspace.
 extern BigArena::Allocation g_bf_tmp_copy2; // Paired operand-preservation workspace.
-
-void init_bn_product_scratch(BigArena &working);
-bool is_bn_product_scratch(const Byte *source);
-void free_bn_product_scratch();
 
 class BigStack
 {
@@ -91,12 +83,10 @@ private:
     std::vector<BigArena::Allocation> m_values;
 };
 
-BigStack &bn_stack();
 BigStack &bf_stack();
 
 struct BigStackMark
 {
-    std::size_t big_num{};
     std::size_t big_float{};
     bool operator==(const BigStackMark &right) const;
     bool operator!=(const BigStackMark &right) const;

@@ -39,7 +39,6 @@
 #include <math/big_init.h>
 #include <math/BigComplex.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 #include <misc/debug_flags.h>
 #include <misc/stack_avail.h>
 #include <misc/ValueSaver.h>
@@ -937,8 +936,7 @@ std::vector<PerturbationBailoutInput> perturbation_bailout_inputs()
     };
 
     std::vector<PerturbationBailoutInput> inputs;
-    for (const MathMode &math :
-        {MathMode{"Double", BFMathType::NONE}, {"BigNum", BFMathType::BIG_NUM}, {"BigFloat", BFMathType::BIG_FLT}})
+    for (const MathMode &math : {MathMode{"Double", BFMathType::NONE}, {"BigFloat", BFMathType::BIG_FLT}})
     {
         for (const double imag : {-1.0, 1.0})
         {
@@ -971,7 +969,7 @@ protected:
     ValueSaver<DComplex *> m_saved_parameter{g_float_param, &g_init};
     ValueSaver<Bailout> m_saved_test{g_bailout_test};
     ValueSaver<decltype(g_bailout_float)> m_saved_float_bailout{g_bailout_float};
-    ValueSaver<decltype(g_bailout_bignum)> m_saved_bn_bailout{g_bailout_bignum};
+    ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bn_bailout{g_bailout_bigfloat};
     ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bf_bailout{g_bailout_bigfloat};
 };
 
@@ -980,8 +978,7 @@ void TestPerturbationBailout::SetUp()
     TestPerturbationPixels::SetUp();
     if (GetParam().math != BFMathType::NONE)
     {
-        const ValueSaver saved_type{
-            g_fractal_type, GetParam().math == BFMathType::BIG_NUM ? FractalType::MANDEL : FractalType::MANDEL_Z_POWER};
+        const ValueSaver saved_type{g_fractal_type, FractalType::MANDEL};
         init_bf_dec(60);
         m_big_float = true;
     }
@@ -1026,16 +1023,7 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
     g_init = {2.0, input.imag};
     g_old_z = {};
     g_temp_sqr_x = g_temp_sqr_y = 0.0;
-    if (input.math == BFMathType::BIG_NUM)
-    {
-        g_param_z_bn.x = 2;
-        g_param_z_bn.y = input.imag;
-        g_old_z_bn.x = 0;
-        g_old_z_bn.y = 0;
-        g_tmp_sqr_x_bn = g_old_z_bn.x.sqr();
-        g_tmp_sqr_y_bn = g_old_z_bn.y.sqr();
-    }
-    else if (input.math == BFMathType::BIG_FLT)
+    if (input.math == BFMathType::BIG_FLT)
     {
         g_param_z_bf.x = 2.0;
         g_param_z_bf.y = input.imag;
@@ -1053,10 +1041,6 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
         case BFMathType::NONE:
             escaped = julia_orbit() != 0;
             expected.push_back(g_new_z);
-            break;
-        case BFMathType::BIG_NUM:
-            escaped = julia_orbit_bn() != 0;
-            expected.push_back(cmplx_bn_to_float(g_new_z_bn));
             break;
         case BFMathType::BIG_FLT:
             escaped = julia_orbit_bf() != 0;
@@ -1122,7 +1106,7 @@ protected:
     ValueSaver<int> m_saved_col{g_col, WIDTH / 2};
     ValueSaver<int> m_saved_row{g_row, HEIGHT / 2 - 1};
     ValueSaver<decltype(g_bailout_float)> m_saved_float_bailout{g_bailout_float};
-    ValueSaver<decltype(g_bailout_bignum)> m_saved_bn_bailout{g_bailout_bignum};
+    ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bn_bailout{g_bailout_bigfloat};
     ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bf_bailout{g_bailout_bigfloat};
     ValueSaver<Bailout> m_saved_bailout_test{g_bailout_test};
     ValueSaver<Version> m_saved_version{g_version};
@@ -1327,14 +1311,7 @@ void PerturbationIterationTest::initialize_reference(
         m_big_float = true;
         if (g_periodicity_check != 0)
         {
-            if (g_bf_math == BFMathType::BIG_NUM)
-            {
-                g_close_enough_bn = g_close_enough;
-            }
-            else
-            {
-                g_close_enough_bf = g_close_enough;
-            }
+            g_close_enough_bf = g_close_enough;
         }
         BFComplex &center_bf{m_engine.initialize_frame_bf({half_width, 0.0}, {0.0, half_height})};
         center_bf.x = center.real();
@@ -2089,53 +2066,6 @@ TEST_P(TestInitialOffsetReplacement, preservesDisplacedInitialization)
 INSTANTIATE_TEST_SUITE_P(Inputs, TestInitialOffsetReplacement, ValuesIn(initial_offset_replacement_inputs()),
     [](const TestParamInfo<InitialOffsetReplacementInput> &info) { return info.param.name; });
 
-class TestBigNumMandelbrotPerturbationInitialization
-    : public PerturbationIterationTest,
-      public WithParamInterface<std::tuple<std::pair<InitOrbitMode, bool>, std::pair<ColorMethod, bool>>>
-{
-public:
-    TestBigNumMandelbrotPerturbationInitialization();
-};
-
-TestBigNumMandelbrotPerturbationInitialization::TestBigNumMandelbrotPerturbationInitialization() :
-    PerturbationIterationTest{true}
-{
-}
-
-TEST_P(TestBigNumMandelbrotPerturbationInitialization, matchesRegularSeedAndFirstIterateWithBofPrecedence)
-{
-    const auto [mode, zero] = std::get<0>(GetParam());
-    const auto [inside, book] = std::get<1>(GetParam());
-    g_use_init_orbit = mode;
-    g_inside_method = inside;
-    g_bof_match_book_images = book;
-    g_init_orbit = zero ? DComplex{} : DComplex{0.5, -0.25};
-    set_initial_offset({0.125, -0.0625});
-    const bool bof =
-        g_bof_match_book_images && (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61);
-    const std::complex<double> pixel{-0.375, 0.125};
-    std::complex<double> seed = bof                ? std::complex<double>{}
-        : g_use_init_orbit == InitOrbitMode::VALUE ? std::complex<double>{g_init_orbit.x, g_init_orbit.y}
-                                                   : pixel;
-    seed += std::complex<double>{0.125, -0.0625};
-    const std::complex<double> first{seed.real() * seed.real() - seed.imag() * seed.imag() + pixel.real(),
-        2 * seed.real() * seed.imag() + pixel.imag()};
-
-    compare_pixel(pixel, 4);
-
-    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
-    ASSERT_GE(s_perturbation_orbit.size(), 2U);
-    EXPECT_EQ(seed, s_perturbation_orbit.front());
-    EXPECT_EQ(first, s_perturbation_orbit[1]);
-}
-
-INSTANTIATE_TEST_SUITE_P(ModesAndBof, TestBigNumMandelbrotPerturbationInitialization,
-    Combine(Values(std::pair{InitOrbitMode::NORMAL, false}, std::pair{InitOrbitMode::PIXEL, false},
-                std::pair{InitOrbitMode::VALUE, false}, std::pair{InitOrbitMode::VALUE, true}),
-        Values(std::pair{ColorMethod::COLOR, false}, std::pair{ColorMethod::BOF60, false},
-            std::pair{ColorMethod::BOF60, true}, std::pair{ColorMethod::BOF61, false},
-            std::pair{ColorMethod::BOF61, true})));
-
 class TestBigFloatMandelbrotPerturbationInitialization : public PerturbationIterationTest,
                                                          public WithParamInterface<std::pair<InitOrbitMode, bool>>
 {
@@ -2160,7 +2090,7 @@ TestBigFloatMandelbrotPerturbationInitialization::TestBigFloatMandelbrotPerturba
 void TestBigFloatMandelbrotPerturbationInitialization::SetUp()
 {
     PerturbationIterationTest::SetUp();
-    g_fractal_type = FractalType::MANDEL_Z_POWER;
+    g_fractal_type = FractalType::MANDEL;
     m_specific = *get_fractal_specific(g_fractal_type);
     g_dispatch = FractalDispatch{m_specific};
     g_inside_method = ColorMethod::ITER;
@@ -4286,20 +4216,6 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestStarTrailEscape,
         StarTrailEscapeInput{"HighPrecisionFixedSeed", true, {}, 8, DComplex{0.0, 2.0}}),
     [](const TestParamInfo<StarTrailEscapeInput> &info) { return info.param.name; });
 
-struct StarTrailJuliaInput
-{
-    const char *name;
-    DComplex seed;
-    DComplex parameter;
-    bool precise;
-    std::size_t shared_steps;
-};
-
-void PrintTo(const StarTrailJuliaInput &input, std::ostream *out)
-{
-    *out << input.name;
-}
-
 struct StarTrailJuliaStep
 {
     DComplex input;
@@ -4309,221 +4225,7 @@ struct StarTrailJuliaStep
     double square_x;
     double square_y;
     double magnitude;
-    BNComplex fixed_input;
-    BNComplex fixed_output;
-    BNComplex fixed_cache_before;
-    BNComplex fixed_cache_after;
 };
-
-std::vector<StarTrailJuliaStep> s_star_trail_julia_steps;
-
-int record_star_trail_julia()
-{
-    const bool big_num = g_bf_math == BFMathType::BIG_NUM;
-    StarTrailJuliaStep step{};
-    step.input = big_num
-        ? DComplex{static_cast<double>(g_old_z_bn.x.to_float()), static_cast<double>(g_old_z_bn.y.to_float())}
-        : g_old_z;
-    step.observation = g_new_z;
-    step.observed_old = g_old_z;
-    step.square_x = g_temp_sqr_x;
-    step.square_y = g_temp_sqr_y;
-    step.magnitude = g_magnitude;
-    if (big_num)
-    {
-        step.fixed_input = g_old_z_bn;
-        step.fixed_cache_before.x = g_tmp_sqr_x_bn;
-        step.fixed_cache_before.y = g_tmp_sqr_y_bn;
-    }
-    const int escaped = big_num ? julia_orbit_bn() : julia_orbit();
-    step.output = big_num
-        ? DComplex{static_cast<double>(g_new_z_bn.x.to_float()), static_cast<double>(g_new_z_bn.y.to_float())}
-        : g_new_z;
-    if (big_num)
-    {
-        step.fixed_output = g_new_z_bn;
-        step.fixed_cache_after.x = g_tmp_sqr_x_bn;
-        step.fixed_cache_after.y = g_tmp_sqr_y_bn;
-    }
-    s_star_trail_julia_steps.push_back(std::move(step));
-    return escaped;
-}
-
-struct StarTrailJuliaResult
-{
-    std::vector<StarTrailJuliaStep> steps;
-    std::array<double, 15> samples;
-    DComplex final_observation;
-    int color;
-};
-
-class TestBigNumStarTrailContinuation : public PerturbationIterationTest,
-                                        public WithParamInterface<std::tuple<Bailout, StarTrailJuliaInput, bool>>
-{
-public:
-    TestBigNumStarTrailContinuation();
-
-protected:
-    void SetUp() override;
-    StarTrailJuliaResult calculate(bool big_num);
-
-    ValueSaver<long> m_bailout_value{g_user.bailout_value, 11};
-    ValueSaver<int> m_digits{g_bf_digits, 0};
-    ValueSaver<int> m_exponent{g_c_exponent};
-    ValueSaver<bool> m_overflow{g_overflow};
-    ValueSaver<LDouble> m_delta_x{g_delta_x, 0};
-    ValueSaver<LDouble> m_delta_y{g_delta_y, 0};
-    ValueSaver<LDouble> m_delta2_x{g_delta_x2, 0};
-    ValueSaver<LDouble> m_delta2_y{g_delta_y2, 0};
-};
-
-TestBigNumStarTrailContinuation::TestBigNumStarTrailContinuation() :
-    PerturbationIterationTest{false}
-{
-}
-
-void TestBigNumStarTrailContinuation::SetUp()
-{
-    PerturbationIterationTest::SetUp();
-    g_fractal_type = FractalType::JULIA;
-    m_specific = *get_fractal_specific(g_fractal_type);
-    g_inside_method = ColorMethod::STAR_TRAIL;
-    g_max_iterations = 128;
-    g_col = g_row = 0;
-    g_float_param = &g_param_z1;
-    s_star_trail_julia_steps.clear();
-}
-
-StarTrailJuliaResult TestBigNumStarTrailContinuation::calculate(const bool big_num)
-{
-    const StarTrailJuliaInput &input = std::get<1>(GetParam());
-    set_bailout_formula(std::get<0>(GetParam()));
-    g_magnitude_limit = std::get<2>(GetParam()) ? 10 : 100;
-    g_param_z1 = input.parameter;
-    g_image_region = ImageRegion{input.seed, input.seed, input.seed};
-    fill_pixel_grid();
-    g_dispatch = FractalDispatch{m_specific};
-    if (big_num)
-    {
-        init_bf_dec(60);
-        m_big_float = true;
-        EXPECT_EQ(4, g_int_length);
-        g_bf_x_min = input.seed.x;
-        g_bf_x_max = input.seed.x;
-        g_bf_x_3rd = input.seed.x;
-        g_bf_y_min = input.seed.y;
-        g_bf_y_max = input.seed.y;
-        g_bf_y_3rd = input.seed.y;
-        if (input.precise)
-        {
-            const BigFloat epsilon{0x1p-80};
-            g_bf_x_min += epsilon;
-            g_bf_x_max += epsilon;
-            g_bf_x_3rd += epsilon;
-            g_bf_y_min += epsilon;
-            g_bf_y_max += epsilon;
-            g_bf_y_3rd += epsilon;
-        }
-        g_bf_params[0] = input.parameter.x;
-        g_bf_params[1] = input.parameter.y;
-        EXPECT_TRUE(select_alternate_math_dispatch());
-        EXPECT_TRUE(g_dispatch.per_image()());
-    }
-    g_dispatch.set_orbit_calc(record_star_trail_julia);
-    s_star_trail_julia_steps.clear();
-    StandardFractal standard;
-    StarTrailJuliaResult result{};
-    result.color = standard.calculate_standard_pixel(false);
-    result.steps = std::move(s_star_trail_julia_steps);
-    result.final_observation = g_new_z;
-    EXPECT_EQ(16, g_real_color_iter);
-    EXPECT_EQ(128, g_max_iterations);
-    EXPECT_EQ(16U, result.steps.size());
-    // Julia's iteration zero is not a STAR_TRAIL sample. Observe each
-    // bounded sample at the next orbit call, and the last after finishing.
-    for (std::size_t i = 0; i < result.samples.size(); ++i)
-    {
-        const DComplex point = i + 2 < result.steps.size() ? result.steps[i + 2].observation : g_new_z;
-        result.samples[i] = point.y / (point.x + 0.000001);
-    }
-    int expected_color = 0;
-    for (std::size_t i = 1; i < 16; ++i)
-    {
-        const double sample = i < result.samples.size() ? result.samples[i] : 0;
-        if (std::abs(result.samples[0] - sample) < 0.05)
-        {
-            expected_color = static_cast<int>(i);
-            break;
-        }
-    }
-    EXPECT_EQ(expected_color, result.color);
-    return result;
-}
-
-TEST_P(TestBigNumStarTrailContinuation, preservesCanonicalContinuationCachesAndSampleTiming)
-{
-    const StarTrailJuliaInput &input = std::get<1>(GetParam());
-    const StarTrailJuliaResult regular = calculate(false);
-    const StarTrailJuliaResult big_num = calculate(true);
-    ASSERT_EQ(16U, regular.steps.size());
-    ASSERT_EQ(16U, big_num.steps.size());
-    if (input.precise)
-    {
-        const BigNum coordinate = BigNum{1} + BigNum{0x1p-80};
-        const BNComplex expected{coordinate, coordinate};
-        EXPECT_EQ(expected, big_num.steps.front().fixed_input);
-    }
-    EXPECT_EQ(big_num.steps.back().output, big_num.final_observation);
-    if (input.shared_steps == 15)
-    {
-        EXPECT_EQ(regular.samples, big_num.samples);
-        EXPECT_EQ(regular.final_observation, big_num.final_observation);
-    }
-    if (input.parameter.x == 1)
-    {
-        EXPECT_EQ((DComplex{1, 2}), regular.steps[0].output);
-        EXPECT_EQ((DComplex{-2, 4}), regular.steps[1].output);
-        EXPECT_TRUE(std::any_of(regular.steps.begin(), regular.steps.end(),
-            [](const StarTrailJuliaStep &step)
-            {
-                return std::abs(step.observation.x) == std::numeric_limits<float>::max() ||
-                    std::abs(step.observation.y) == std::numeric_limits<float>::max();
-            }));
-    }
-    for (std::size_t i = 0; i < input.shared_steps; ++i)
-    {
-        SCOPED_TRACE(i);
-        EXPECT_EQ(regular.steps[i].input, big_num.steps[i].input);
-        EXPECT_EQ(regular.steps[i].output, big_num.steps[i].output);
-        if (i > 0)
-        {
-            EXPECT_DOUBLE_EQ(regular.samples[i - 1], big_num.samples[i - 1]);
-        }
-    }
-    for (std::size_t i = 1; i < big_num.steps.size(); ++i)
-    {
-        SCOPED_TRACE(i);
-        const StarTrailJuliaStep &previous = big_num.steps[i - 1];
-        const StarTrailJuliaStep &current = big_num.steps[i];
-        EXPECT_EQ(previous.fixed_output, current.fixed_input);
-        EXPECT_EQ(previous.fixed_cache_after, current.fixed_cache_before);
-        if (i > 1)
-        {
-            EXPECT_EQ(previous.output, current.observation);
-            EXPECT_EQ(current.observation, current.observed_old);
-            EXPECT_DOUBLE_EQ(current.observation.x * current.observation.x, current.square_x);
-            EXPECT_DOUBLE_EQ(current.observation.y * current.observation.y, current.square_y);
-            EXPECT_DOUBLE_EQ(current.square_x + current.square_y, current.magnitude);
-        }
-    }
-}
-
-INSTANTIATE_TEST_SUITE_P(ModesAndOrbits, TestBigNumStarTrailContinuation,
-    Combine(Values(Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR),
-        Values(StarTrailJuliaInput{"Growing", {1, 1}, {1, 0}, false, 5},
-            StarTrailJuliaInput{"Bounded", {0, 1}, {0, 0}, false, 15},
-            StarTrailJuliaInput{"Precise", {1, 1}, {1, 0}, true, 0}),
-        Bool()));
 
 struct StarTrailFloatInput
 {
@@ -6249,176 +5951,6 @@ void PerturbationIterationTest::compare_distance_pixel(const std::complex<double
     }
 }
 
-struct NativeBigNumDistanceInput
-{
-    const char *name;
-    DComplex point;
-    std::vector<DComplex> outputs;
-    std::vector<DComplex> derivatives;
-};
-
-void PrintTo(const NativeBigNumDistanceInput &input, std::ostream *out)
-{
-    *out << input.name;
-}
-
-std::vector<DComplex> s_native_distance_inputs;
-std::vector<DComplex> s_native_distance_outputs;
-
-int record_native_bignum_distance()
-{
-    s_standard_orbit.emplace_back(g_old_z.x, g_old_z.y);
-    s_standard_derivatives.push_back(s_standard_distance->derivative());
-    s_native_distance_inputs.push_back(
-        {static_cast<double>(g_old_z_bn.x.to_float()), static_cast<double>(g_old_z_bn.y.to_float())});
-    const int escaped = julia_orbit_bn();
-    s_native_distance_outputs.push_back(
-        {static_cast<double>(g_new_z_bn.x.to_float()), static_cast<double>(g_new_z_bn.y.to_float())});
-    return escaped;
-}
-
-class TestNativeBigNumDistanceInputs : public PerturbationIterationTest,
-                                       public WithParamInterface<std::tuple<NativeBigNumDistanceInput, bool>>
-{
-public:
-    TestNativeBigNumDistanceInputs();
-
-protected:
-    void SetUp() override;
-
-    ValueSaver<UserData> m_user{g_user, UserData{}};
-    ValueSaver<CalcStatus> m_status{g_calc_status, CalcStatus::PARAMS_CHANGED};
-    ValueSaver<bool> m_resuming{g_resuming, false};
-    ValueSaver<bool> m_legacy{g_use_old_distance_estimator};
-    ValueSaver<bool> m_old_colors{g_old_demm_colors, false};
-    ValueSaver<int> m_width{g_distance_estimator_width_factor, 1};
-    ValueSaver<int> m_virtual_width{g_distance_estimator_x_dots, 0};
-    ValueSaver<int> m_virtual_height{g_distance_estimator_y_dots, 0};
-    ValueSaver<int> m_digits{g_bf_digits, 60};
-    ValueSaver<int> m_exponent{g_c_exponent};
-    ValueSaver<DebugFlags> m_debug{g_debug_flag, DebugFlags::FORCE_ARBITRARY_PRECISION_MATH};
-    ValueSaver<std::array<double, 2>> m_tolerance{g_math_tol, std::array<double, 2>{0.05, 0.05}};
-    ValueSaver<bool> m_start_orbit{g_start_show_orbit, false};
-    ValueSaver<bool> m_true_color{g_true_color, false};
-    ValueSaver<SymmetryType> m_symmetry{g_symmetry};
-};
-
-TestNativeBigNumDistanceInputs::TestNativeBigNumDistanceInputs() :
-    PerturbationIterationTest{false}
-{
-}
-
-void TestNativeBigNumDistanceInputs::SetUp()
-{
-    PerturbationIterationTest::SetUp();
-    g_cur_fractal_specific = get_fractal_specific(FractalType::MANDEL);
-    g_dispatch = FractalDispatch{*g_cur_fractal_specific};
-    const DComplex point = std::get<0>(GetParam()).point;
-    g_image_region = ImageRegion{{point.x, point.y - 2}, {point.x + 2, point.y}, {point.x, point.y - 2}};
-    g_user.std_calc_mode = CalcMode::ONE_PASS;
-    g_user.perturbation = PerturbationMode::NO;
-    g_user.distance_estimator_value = 1;
-    g_user.periodicity_value = 0;
-    g_user.biomorph_value = -1;
-    g_user.bailout_value = 4;
-    g_use_old_distance_estimator = std::get<1>(GetParam());
-    m_big_float = true;
-    EXPECT_CALL(m_driver, check_memory()).Times(AnyNumber());
-    static_cast<void>(calc_frac_init());
-    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
-    ASSERT_EQ(1, g_distance_estimator);
-    ASSERT_EQ(std::get<1>(GetParam()), g_use_old_distance_estimator);
-    g_inside_method = ColorMethod::ITER;
-    g_max_iterations = 16;
-    set_bailout_formula(Bailout::MOD);
-    s_standard_orbit.clear();
-    s_standard_derivatives.clear();
-    s_native_distance_inputs.clear();
-    s_native_distance_outputs.clear();
-}
-
-TEST_P(TestNativeBigNumDistanceInputs, nativeSetupSuppliesCurrentOrbitAndMagnitudeToTheEstimator)
-{
-    const NativeBigNumDistanceInput &input = std::get<0>(GetParam());
-    StandardFractal standard;
-    ASSERT_TRUE(standard.resume().empty());
-    bool selected = false;
-    for (int call = 0; call < 10 && !selected; ++call)
-    {
-        selected = standard.select_pixel();
-    }
-    ASSERT_TRUE(selected);
-    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
-    ASSERT_EQ(1, g_distance_estimator);
-    ASSERT_EQ(julia_orbit_bn, g_dispatch.orbit_calc());
-    ASSERT_EQ(mandel_per_pixel_bn, g_dispatch.per_pixel());
-    ASSERT_EQ(standard_fractal_type, g_dispatch.calc_type());
-    // Real setup resets legacy requests; do not force that mode back on.
-    ASSERT_FALSE(g_use_old_distance_estimator);
-    ASSERT_EQ(BigNum{input.point.x}, g_x_min_bn);
-    ASSERT_EQ(BigNum{input.point.y}, g_y_max_bn);
-    g_col = g_row = 0;
-    g_old_z = {-7, 9};
-    g_new_z = {-11, 13};
-    g_magnitude = -17;
-    g_dispatch.set_orbit_calc(record_native_bignum_distance);
-    ValueSaver recording{s_standard_distance, &standard.distance_estimator()};
-    DistanceEstimator terminal_estimator;
-    DComplex terminal;
-    double magnitude = 0;
-    long iterations = 0;
-    EXPECT_CALL(m_driver, write_pixel(_, _, _))
-        .WillRepeatedly(
-            [&](int, int, int)
-            {
-                terminal_estimator = standard.distance_estimator();
-                terminal = g_new_z;
-                magnitude = g_magnitude;
-                iterations = g_real_color_iter;
-            });
-
-    static_cast<void>(standard.calculate_standard_pixel(false));
-
-    ASSERT_EQ(input.outputs.size(), s_native_distance_inputs.size());
-    ASSERT_EQ(input.outputs.size(), s_standard_orbit.size());
-    EXPECT_EQ(input.outputs, s_native_distance_outputs);
-    EXPECT_EQ(input.derivatives, s_standard_derivatives);
-    for (std::size_t i = 0; i < input.outputs.size(); ++i)
-    {
-        SCOPED_TRACE(i);
-        const DComplex expected = i == 0 ? input.point : input.outputs[i - 1];
-        EXPECT_EQ(expected, s_native_distance_inputs[i]);
-        EXPECT_EQ(std::complex<double>(expected.x, expected.y), s_standard_orbit[i]);
-    }
-    const DComplex expected_terminal = input.outputs.back();
-    const double expected_magnitude =
-        expected_terminal.x * expected_terminal.x + expected_terminal.y * expected_terminal.y;
-    const DComplex expected_derivative = input.derivatives.back();
-    const double derivative_norm =
-        expected_derivative.x * expected_derivative.x + expected_derivative.y * expected_derivative.y;
-    const double logarithm = std::log(expected_magnitude);
-    const double distance = expected_magnitude * logarithm * logarithm / derivative_norm;
-    EXPECT_EQ(static_cast<long>(input.outputs.size()), iterations);
-    EXPECT_EQ(expected_terminal, terminal);
-    EXPECT_DOUBLE_EQ(expected_magnitude, magnitude);
-    EXPECT_GT(magnitude, 0);
-    EXPECT_EQ(expected_derivative, terminal_estimator.derivative());
-    EXPECT_DOUBLE_EQ(distance, terminal_estimator.distance_squared(terminal));
-    EXPECT_EQ(-1, terminal_estimator.escape_iteration());
-    standard.finish();
-}
-
-INSTANTIATE_TEST_SUITE_P(OrbitsAndLegacyRequests, TestNativeBigNumDistanceInputs,
-    Combine(Values(NativeBigNumDistanceInput{"FirstRealEscape", {1, 0}, {{2, 0}}, {{3, 0}}},
-                NativeBigNumDistanceInput{"FirstComplexEscape", {1, 1}, {{1, 3}}, {{3, 2}}},
-                NativeBigNumDistanceInput{"ContinuedReal", {0.5, 0},
-                    {{0.75, 0}, {1.0625, 0}, {1.62890625, 0}, {3.1533355712890625, 0}},
-                    {{2, 0}, {4, 0}, {9.5, 0}, {31.94921875, 0}}},
-                NativeBigNumDistanceInput{"ContinuedComplex", {0.5, 0.5},
-                    {{0.5, 1}, {-0.25, 1.5}, {-1.6875, -0.25}, {3.28515625, 1.34375}},
-                    {{2, 1}, {1, 5}, {-14.5, 0.5}, {50.1875, 5.5625}}}),
-        Bool()));
-
 struct NativeBigFloatDistanceInput
 {
     const char *name;
@@ -6433,6 +5965,8 @@ void PrintTo(const NativeBigFloatDistanceInput &input, std::ostream *out)
     *out << input.name;
 }
 
+std::vector<DComplex> s_native_distance_inputs;
+std::vector<DComplex> s_native_distance_outputs;
 std::vector<BFComplex> s_distance_float_inputs;
 std::vector<BFComplex> s_distance_float_outputs;
 
@@ -8775,17 +8309,14 @@ void PrintTo(const DeepPeriodicityInput &input, std::ostream *out)
 std::vector<DeepPeriodicityInput> deep_periodicity_inputs()
 {
     std::vector<DeepPeriodicityInput> inputs;
-    for (const BFMathType math : {BFMathType::BIG_NUM, BFMathType::BIG_FLT})
+    for (const double tolerance : {1e-25, 1e-50})
     {
-        for (const double tolerance : {1e-25, 1e-50})
+        for (const bool replace_reference : {false, true})
         {
-            for (const bool replace_reference : {false, true})
-            {
-                inputs.push_back({std::string{math == BFMathType::BIG_NUM ? "BigNum_" : "BigFloat_"} +
-                        (tolerance == 1e-25 ? "Tolerance1eMinus25_" : "Tolerance1eMinus50_") +
-                        (replace_reference ? "ReplacementReference" : "OriginalReference"),
-                    math, tolerance, replace_reference});
-            }
+            inputs.push_back({std::string{"BigFloat_"} +
+                                  (tolerance == 1e-25 ? "Tolerance1eMinus25_" : "Tolerance1eMinus50_") +
+                                  (replace_reference ? "ReplacementReference" : "OriginalReference"),
+                              BFMathType::BIG_FLT, tolerance, replace_reference});
         }
     }
     return inputs;
@@ -8812,20 +8343,12 @@ void TestDeepPeriodicity::SetUp()
     m_specific.pert_pt = record_perturbation_orbit;
     m_engine.finish();
     {
-        ValueSaver saved_type{
-            g_fractal_type, GetParam().math == BFMathType::BIG_NUM ? FractalType::MANDEL : FractalType::JULIA_Z_POWER};
+        ValueSaver saved_type{g_fractal_type, FractalType::MANDEL};
         init_bf_dec(80);
     }
     m_big_float = true;
     ASSERT_EQ(GetParam().math, g_bf_math);
-    if (GetParam().math == BFMathType::BIG_NUM)
-    {
-        g_close_enough_bn = GetParam().tolerance;
-    }
-    else
-    {
-        g_close_enough_bf = GetParam().tolerance;
-    }
+    g_close_enough_bf = GetParam().tolerance;
     BFComplex &center{m_engine.initialize_frame_bf({1e-40, 0.0}, {})};
     center.x = -2.0;
     center.y = 0;
@@ -8896,16 +8419,16 @@ void TestPeriodicityReplay::SetUp()
     {
         init_bf_dec(1610);
         m_big_float = true;
-        ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
-        g_x_min_bn = 0;
-        g_y_max_bn = 0;
-        g_delta_x_bn = 0;
-        g_delta_y_bn = 0;
-        g_delta2_x_bn = 0;
-        g_delta2_y_bn = 0;
-        g_close_enough_bn = g_close_enough;
-        g_dispatch.set_per_pixel(mandel_per_pixel_bn);
-        g_dispatch.set_orbit_calc(julia_orbit_bn);
+        ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
+        g_bf_x_min = 0;
+        g_bf_y_max = 0;
+        g_delta_x_bf = 0;
+        g_delta_y_bf = 0;
+        g_delta2_x_bf = 0;
+        g_delta2_y_bf = 0;
+        g_close_enough_bf = g_close_enough;
+        g_dispatch.set_per_pixel(mandel_per_pixel_bf);
+        g_dispatch.set_orbit_calc(julia_orbit_bf);
     }
 }
 
@@ -9020,23 +8543,23 @@ TEST_F(TestPerturbationPixels, preciseZeroCycleKeepsOwningValuesUntilPixelCleanu
     }
 }
 
-TEST_F(TestPerturbationPixels, fixedPointInputsRetainSubMachineDigitsAndPreserveOperands)
+TEST_F(TestPerturbationPixels, bigFloatInputsRetainSubMachineDigitsAndPreserveOperands)
 {
     init_bf_dec(80);
     m_big_float = true;
-    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
     g_max_iterations = 4;
     BFComplex &center{m_engine.initialize_frame_bf({}, {})};
     center.x = 0.25;
     center.y = 0;
     ASSERT_TRUE(m_engine.initialize_pixel_strategy());
-    BigArena &temporary = bn_arena(BigLifetime::TEMPORARY);
-    const BNComplex parameter{BigNum{temporary, "0.125" + std::string(36, '0') + "1"},
-        BigNum{temporary, "-0.0625" + std::string(35, '0') + "2"}};
-    const BNComplex value{BigNum{temporary, "0.25" + std::string(37, '0') + "3"},
-        BigNum{temporary, "-0.125" + std::string(36, '0') + "4"}};
-    const BNComplex original_parameter{parameter};
-    const BNComplex original_value{value};
+    BigArena &temporary = bf_arena(BigLifetime::TEMPORARY);
+    const BFComplex parameter{BigFloat{temporary, "0.125" + std::string(36, '0') + "1"},
+                              BigFloat{temporary, "-0.0625" + std::string(35, '0') + "2"}};
+    const BFComplex value{BigFloat{temporary, "0.25" + std::string(37, '0') + "3"},
+                          BigFloat{temporary, "-0.125" + std::string(36, '0') + "4"}};
+    const BFComplex original_parameter{parameter};
+    const BFComplex original_value{value};
     m_specific.pert_ref_bf = [](const BFComplex &parameter, BFComplex &z)
     {
         const BigFloat scale{"1e-40"};
@@ -9053,7 +8576,7 @@ TEST_F(TestPerturbationPixels, fixedPointInputsRetainSubMachineDigitsAndPreserve
     s_reference_coordinates.clear();
     s_reference_values.clear();
 
-    m_engine.begin_orbit_bn(parameter, value, 1);
+    m_engine.begin_orbit_bf(parameter, value, 1);
 
     EXPECT_EQ(1, m_engine.orbit_iteration());
     bool done{};
@@ -13515,7 +13038,7 @@ void TestPerturbationPixels::check_pass_switch(const PerturbationMode mode)
     for (const CalcMode pass : {CalcMode::BOUNDARY_TRACE, CalcMode::SOLID_GUESS, CalcMode::BOUNDARY_TRACE})
     {
         SCOPED_TRACE(static_cast<char>(pass));
-        g_bf_math = BFMathType::BIG_NUM;
+        g_bf_math = BFMathType::BIG_FLT;
         g_std_calc_mode = pass;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         m_pixels.fill(0);
@@ -13533,7 +13056,7 @@ void TestPerturbationPixels::check_pass_switch(const PerturbationMode mode)
         ASSERT_TRUE(calculation.done());
         EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
         EXPECT_EQ(pass, g_std_calc_mode);
-        EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
+        EXPECT_EQ(BFMathType::BIG_FLT, g_bf_math);
         EXPECT_THAT(m_pixels, Each(7));
         ASSERT_FALSE(m_plot_statuses.empty());
         for (const StandardPassStatus &status : m_plot_statuses)
@@ -13563,7 +13086,7 @@ TEST_F(TestPerturbationPixels, automaticLogMappingUsesRawCountsAndThenRendersWit
     ValueSaver saved_user{g_user, UserData{}};
     ValueSaver saved_float_param{g_float_param, &g_init};
     ValueSaver saved_float_bailout{g_bailout_float};
-    ValueSaver saved_bn_bailout{g_bailout_bignum};
+    ValueSaver saved_bn_bailout{g_bailout_bigfloat};
     ValueSaver saved_bf_bailout{g_bailout_bigfloat};
     ValueSaver saved_bailout_test{g_bailout_test, Bailout::MOD};
     ValueSaver saved_region{g_image_region, ImageRegion{{0.5, 0.0}, {0.5, 0.0}, {0.5, 0.0}}};
@@ -13657,7 +13180,7 @@ protected:
     ValueSaver<bool> m_saved_bof{g_bof_match_book_images, false};
     ValueSaver<bool> m_saved_show_orbit{g_show_orbit, false};
     ValueSaver<decltype(g_bailout_float)> m_saved_float_bailout{g_bailout_float};
-    ValueSaver<decltype(g_bailout_bignum)> m_saved_bn_bailout{g_bailout_bignum};
+    ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bn_bailout{g_bailout_bigfloat};
     ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bf_bailout{g_bailout_bigfloat};
     ValueSaver<Bailout> m_saved_bailout_test{g_bailout_test};
 };
@@ -13770,7 +13293,7 @@ protected:
     ValueSaver<double> m_saved_param_imag{g_params[1], 0.0};
     ValueSaver<DComplex *> m_saved_float_param{g_float_param, &g_init};
     ValueSaver<decltype(g_bailout_float)> m_saved_float_bailout{g_bailout_float};
-    ValueSaver<decltype(g_bailout_bignum)> m_saved_bn_bailout{g_bailout_bignum};
+    ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bn_bailout{g_bailout_bigfloat};
     ValueSaver<decltype(g_bailout_bigfloat)> m_saved_bf_bailout{g_bailout_bigfloat};
     ValueSaver<Bailout> m_saved_bailout_test{g_bailout_test};
 };
@@ -13861,11 +13384,11 @@ void TestDeepViewportPass::SetUp()
     // Mandelbrot's production pass setup selects the fixed-point allocator.
     free_bf_vars();
     init_bf_dec(450);
-    ASSERT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    ASSERT_EQ(BFMathType::BIG_FLT, g_bf_math);
     initialize_corners();
-    m_specific.per_image = mandel_per_image_bn;
-    m_specific.per_pixel = mandel_per_pixel_bn;
-    m_specific.orbit_calc = julia_orbit_bn;
+    m_specific.per_image = mandel_per_image_bf;
+    m_specific.per_pixel = mandel_per_pixel_bf;
+    m_specific.orbit_calc = julia_orbit_bf;
     g_dispatch = FractalDispatch{m_specific};
 }
 
@@ -13878,7 +13401,7 @@ TEST_P(TestDeepViewportPass, matchesNativePixelsAcrossSubDoubleViewport)
         SCOPED_TRACE(static_cast<int>(mode));
         g_std_calc_mode = pass;
         g_user.perturbation = mode;
-        g_bf_math = BFMathType::BIG_NUM;
+        g_bf_math = BFMathType::BIG_FLT;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         m_pixels.fill(0);
         m_plot_statuses.clear();
@@ -13892,7 +13415,7 @@ TEST_P(TestDeepViewportPass, matchesNativePixelsAcrossSubDoubleViewport)
         ASSERT_TRUE(calculation.done());
         EXPECT_EQ(CalcStatus::COMPLETED, g_calc_status);
         EXPECT_EQ(pass, g_std_calc_mode);
-        EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
+        EXPECT_EQ(BFMathType::BIG_FLT, g_bf_math);
         for (int row = 0; row < HEIGHT; ++row)
         {
             for (int col = 0; col < WIDTH; ++col)

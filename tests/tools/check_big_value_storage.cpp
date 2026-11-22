@@ -9,7 +9,6 @@
 #include <math/big_init.h>
 #include <math/BigComplex.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 #include <math/complex_fn.h>
 
 #include <fmt/format.h>
@@ -171,17 +170,6 @@ int main()
     g_magnitude_limit = 4;
     set_bailout_formula(Bailout::MOD);
     fmt::print("case,iterations,heap_allocations,milliseconds,arena_high_water_growth\n");
-    g_fractal_type = FractalType::MANDEL;
-    init_bf_dec(40);
-    measure_values<BigNum>("bn_scalar", "bn_complex_power");
-    g_old_z_bn.x = 0.25;
-    g_old_z_bn.y = 0.125;
-    g_param_z_bn.x = -0.2;
-    g_param_z_bn.y = 0.4;
-    g_tmp_sqr_x_bn = g_old_z_bn.x.sqr();
-    g_tmp_sqr_y_bn = g_old_z_bn.y.sqr();
-    measure("bn_julia_orbit", 10000, [] { s_result = julia_orbit_bn() != 0; });
-
     g_fractal_type = FractalType::JULIA_Z_POWER;
     init_bf_dec(40);
     init_big_pi();

@@ -4,7 +4,6 @@
 #pragma once
 
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 #include <math/cmplx.h>
 
 namespace id::math

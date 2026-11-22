@@ -7,7 +7,6 @@
 
 #include <math/big.h>
 #include <math/big_init.h>
-#include <math/BigNum.h>
 
 #include <algorithm>
 #include <cmath>
@@ -136,11 +135,6 @@ BigFloat::BigFloat(const std::string_view text) :
 {
 }
 
-BigFloat::BigFloat(const BigNum &value) :
-    BigFloat(bf_arena(BigLifetime::WORKING), value)
-{
-}
-
 BigFloat::BigFloat(BigArena &arena) :
     BigFloat(arena.allocate_single())
 {
@@ -155,11 +149,6 @@ BigFloat::BigFloat(BigArena &arena, const std::string_view text) :
     BigFloat(arena)
 {
     str_to_bf(m_storage.data(), text, g_bf_tmp1.data());
-}
-
-BigFloat::BigFloat(BigArena &arena, const BigNum &value) :
-    BigFloat(value.to_big_float(arena))
-{
 }
 
 BigFloat::BigFloat(const BigFloat &value) :

@@ -72,7 +72,6 @@ protected:
     ValueSaver<long> m_bailout{g_user.bailout_value, 0};
     ValueSaver<Bailout> m_test{g_bailout_test};
     ValueSaver<decltype(g_bailout_float)> m_fp{g_bailout_float};
-    ValueSaver<decltype(g_bailout_bignum)> m_bn{g_bailout_bignum};
     ValueSaver<decltype(g_bailout_bigfloat)> m_bf{g_bailout_bigfloat};
     ValueSaver<double> m_degree{g_params[2]};
     ValueSaver<double> m_limit{g_magnitude_limit, 4};

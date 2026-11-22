@@ -19,7 +19,6 @@
 #include <math/big_init.h>
 #include <math/BigComplex.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 #include <math/fixed_pt.h>
 
 #include <fmt/format.h>
@@ -46,14 +45,6 @@ namespace id::engine
 std::vector<std::string> g_precision_diagnostics;
 
 //********************************************************************
-std::string format_var_bn(const char *s, const BigNum &n)
-{
-    std::string msg{s};
-    msg += ' ' + n.to_string(40);
-    msg.resize(std::min(msg.size(), size_t{79}));
-    return msg;
-}
-
 std::string format_corners_dbl(const char *s)
 {
     return fmt::format("{:s}\n"                                 //
@@ -71,37 +62,6 @@ std::string format_corners_dbl(const char *s)
 }
 
 // show floating point and bignumber corners
-std::string format_corners_bn(const char *s)
-{
-    constexpr int dec{20};
-    return fmt::format("{:s}\n"
-                       "x_min_bn={:s}\n"
-                       "x_min   ={:.20f}\n"
-                       "\n"
-                       "x_max_bn={:s}\n"
-                       "x_max   ={:.20f}\n"
-                       "\n"
-                       "y_min_bn={:s}\n"
-                       "y_min   ={:.20f}\n"
-                       "\n"
-                       "y_max_bn={:s}\n"
-                       "y_max   ={:.20f}\n"
-                       "\n"
-                       "x_3rd_bn={:s}\n"
-                       "x_3rd   ={:.20f}\n"
-                       "\n"
-                       "y_3rd_bn={:s}\n"
-                       "y_3rd   ={:.20f}\n"
-                       "\n",
-        s,                                                 //
-        g_x_min_bn.to_string(dec), g_image_region.m_min.x, //
-        g_x_max_bn.to_string(dec), g_image_region.m_max.x, //
-        g_y_min_bn.to_string(dec), g_image_region.m_min.y, //
-        g_y_max_bn.to_string(dec), g_image_region.m_max.y, //
-        g_x_3rd_bn.to_string(dec), g_image_region.m_3rd.x, //
-        g_y_3rd_bn.to_string(dec), g_image_region.m_3rd.y);
-}
-
 // show globals
 std::string format_globals_bf(const char *s)
 {
@@ -219,18 +179,6 @@ std::string format_aspect(const char *s)
 }
 
 // compare a double and bignumber
-std::string format_compare_values(const char *s, const LDouble x, const BigNum &bnx)
-{
-    constexpr int dec{40};
-    return fmt::format("{:s}\n"
-                       "bignum={:s}\n"
-                       "double={:.20Lf}\n"
-                       "\n",
-        s,                  //
-        bnx.to_string(dec), //
-        x);
-}
-
 // compare a double and bignumber
 std::string format_compare_values_bf(const char *s, const LDouble x, const BigFloat &bfx)
 {
@@ -270,111 +218,6 @@ void bf_corners_to_float()
             g_params[i] = static_cast<double>(g_bf_params[i].to_float());
         }
     }
-}
-
-bool mandel_per_image_bn()
-{
-    BigStackSaver saved;
-
-    // this should be set up dynamically based on corners
-    g_x_min_bn = g_bf_x_min;
-    g_x_max_bn = g_bf_x_max;
-    g_y_min_bn = g_bf_y_min;
-    g_y_max_bn = g_bf_y_max;
-    g_x_3rd_bn = g_bf_x_3rd;
-    g_y_3rd_bn = g_bf_y_3rd;
-
-    g_bf_math = BFMathType::BIG_NUM;
-
-    // g_delta_x_bn = (g_x_max_bn - g_x_3rd_bn)/(xdots-1)
-    g_delta_x_bn = g_x_max_bn - g_x_3rd_bn;
-    g_delta_x_bn /= static_cast<U16>(g_logical_screen.x_dots - 1);
-
-    // g_delta_y_bn = (g_y_max_bn - g_y_3rd_bn)/(ydots-1)
-    g_delta_y_bn = g_y_max_bn - g_y_3rd_bn;
-    g_delta_y_bn /= static_cast<U16>(g_logical_screen.y_dots - 1);
-
-    // g_delta2_x_bn = (g_x_3rd_bn - g_x_min_bn)/(ydots-1)
-    g_delta2_x_bn = g_x_3rd_bn - g_x_min_bn;
-    g_delta2_x_bn /= static_cast<U16>(g_logical_screen.y_dots - 1);
-
-    // g_delta2_y_bn = (g_y_3rd_bn - g_y_min_bn)/(xdots-1)
-    g_delta2_y_bn = g_y_3rd_bn - g_y_min_bn;
-    g_delta2_y_bn /= static_cast<U16>(g_logical_screen.x_dots - 1);
-
-    g_close_enough_bn = g_delta_x_bn.abs();
-    BigNum bn_temp1 = g_delta2_x_bn.abs();
-    if (bn_temp1 > g_close_enough_bn)
-    {
-        g_close_enough_bn = bn_temp1;
-    }
-    bn_temp1 = g_delta_y_bn.abs();
-    const BigNum bn_temp2 = g_delta2_y_bn.abs();
-    if (bn_temp1 > bn_temp2)
-    {
-        if (bn_temp1 > g_close_enough_bn)
-        {
-            g_close_enough_bn = bn_temp1;
-        }
-    }
-    else if (bn_temp2 > g_close_enough_bn)
-    {
-        g_close_enough_bn = bn_temp2;
-    }
-    {
-        int t = std::abs(g_periodicity_check);
-        while (t--)
-        {
-            g_close_enough_bn = g_close_enough_bn.half();
-        }
-    }
-
-    if (g_std_calc_mode == CalcMode::PERTURBATION && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
-    {
-        return false;
-    }
-
-    g_c_exponent = static_cast<int>(g_params[2]);
-    switch (g_fractal_type)
-    {
-    case FractalType::JULIA:
-        g_param_z_bn.x = g_bf_params[0];
-        g_param_z_bn.y = g_bf_params[1];
-        break;
-
-    case FractalType::MANDEL_Z_POWER:
-        init_big_pi();
-        if (static_cast<double>(g_c_exponent) == g_params[2] && g_c_exponent & 1) // odd exponents
-        {
-            g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
-        }
-        if (g_params[3] != 0)
-        {
-            g_symmetry = SymmetryType::NONE;
-        }
-        break;
-
-    case FractalType::JULIA_Z_POWER:
-        init_big_pi();
-        g_param_z_bn.x = g_bf_params[0];
-        g_param_z_bn.y = g_bf_params[1];
-        if (g_c_exponent & 1 || g_params[3] != 0.0 || static_cast<double>(g_c_exponent) != g_params[2])
-        {
-            g_symmetry = SymmetryType::NONE;
-        }
-        break;
-
-    case FractalType::DIVIDE_BROT5:
-        init_big_pi();
-        g_c_exponent = -(static_cast<int>(g_params[0]) - 2); /* use negative here so only need it once */
-        g_b_const = g_params[1] + 1.0e-20;
-        break;
-
-    default:
-        break;
-    }
-
-    return true;
 }
 
 bool mandel_per_image_bf()
@@ -498,64 +341,6 @@ bool mandel_per_image_bf()
     return true;
 }
 
-int mandel_per_pixel_bn()
-{
-    if (g_std_calc_mode == CalcMode::PERTURBATION &&
-        bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
-    {
-        return true;
-    }
-    // parm.x = x_min + col*delx + row*delx2
-    g_param_z_bn.x = g_delta_x_bn * static_cast<U16>(g_col);
-    g_bn_tmp = g_delta2_x_bn * static_cast<U16>(g_row);
-
-    g_param_z_bn.x += g_bn_tmp;
-    g_param_z_bn.x += g_x_min_bn;
-
-    // parm.y = y_max - row*dely - col*dely2;
-    // note: in next four lines, g_old_z_bn is just used as a temporary variable
-    g_old_z_bn.x = g_delta_y_bn * static_cast<U16>(g_row);
-    g_old_z_bn.y = g_delta2_y_bn * static_cast<U16>(g_col);
-    g_old_z_bn.x += g_old_z_bn.y;
-    g_param_z_bn.y = g_y_max_bn - g_old_z_bn.x;
-
-    if (g_use_init_orbit == InitOrbitMode::VALUE)
-    {
-        g_old_z_bn.x = g_init_orbit.x;
-        g_old_z_bn.y = g_init_orbit.y;
-    }
-    else
-    {
-        g_old_z_bn.x = g_param_z_bn.x;
-        g_old_z_bn.y = g_param_z_bn.y;
-    }
-
-    if ((g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61) && g_bof_match_book_images)
-    {
-        /* kludge to match "Beauty of Fractals" picture since we start
-           Mandelbrot iteration with init rather than 0 */
-        g_old_z_bn.x = g_params[0]; // initial perturbation of parameters set
-        g_old_z_bn.y = g_params[1];
-        g_color_iter = -1;
-    }
-    else
-    {
-        g_new_z_bn.x = g_params[0];
-        g_new_z_bn.y = g_params[1];
-        g_old_z_bn.x += g_new_z_bn.x;
-        g_old_z_bn.y += g_new_z_bn.y;
-    }
-
-    g_new_z_bn.x = g_old_z_bn.x;
-    g_new_z_bn.y = g_old_z_bn.y;
-
-    // Store canonical g_bn_length-byte squares in the caches.
-    g_tmp_sqr_x_bn = g_new_z_bn.x.sqr();
-    g_tmp_sqr_y_bn = g_new_z_bn.y.sqr();
-
-    return 1;                  // 1st iteration has been done
-}
-
 int mandel_per_pixel_bf()
 {
     // I suspect the following code should be somewhere in perform_worklist() to reset the setup routine to
@@ -618,32 +403,6 @@ int mandel_per_pixel_bf()
     return 1;                  // 1st iteration has been done
 }
 
-int julia_per_pixel_bn()
-{
-    // old.x = x_min + col*delx + row*delx2
-    g_old_z_bn.x = g_delta_x_bn * static_cast<U16>(g_col);
-    g_bn_tmp = g_delta2_x_bn * static_cast<U16>(g_row);
-
-    g_old_z_bn.x += g_bn_tmp;
-    g_old_z_bn.x += g_x_min_bn;
-
-    // old.y = y_max - row*dely - col*dely2;
-    // note: in next four lines, g_new_z_bn is just used as a temporary variable
-    g_new_z_bn.x = g_delta_y_bn * static_cast<U16>(g_row);
-    g_new_z_bn.y = g_delta2_y_bn * static_cast<U16>(g_col);
-    g_new_z_bn.x += g_new_z_bn.y;
-    g_old_z_bn.y = g_y_max_bn - g_new_z_bn.x;
-
-    g_new_z_bn.x = g_old_z_bn.x;
-    g_new_z_bn.y = g_old_z_bn.y;
-
-    // Store canonical g_bn_length-byte squares in the caches.
-    g_tmp_sqr_x_bn = g_new_z_bn.x.sqr();
-    g_tmp_sqr_y_bn = g_new_z_bn.y.sqr();
-
-    return 1;                  // 1st iteration has been done
-}
-
 int julia_per_pixel_bf()
 {
     // old.x = x_min + col*delx + row*delx2
@@ -669,22 +428,6 @@ int julia_per_pixel_bf()
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
 
     return 1;                  // 1st iteration has been done
-}
-
-int julia_orbit_bn()
-{
-    BigStackSaver saved;
-
-    // new.x = tmpsqrx - tmpsqry + parm.x;
-    g_tmp_sqr_x_bn -= g_tmp_sqr_y_bn;
-    g_new_z_bn.x = g_tmp_sqr_x_bn + g_param_z_bn.x;
-
-    // new.y = 2 * g_old_z_bn.x * g_old_z_bn.y + parm.y;
-    BigNum product = g_old_z_bn.x * g_old_z_bn.y;
-    product += product;
-    g_new_z_bn.y = product + g_param_z_bn.y;
-
-    return g_bailout_bignum();
 }
 
 int julia_orbit_bf()

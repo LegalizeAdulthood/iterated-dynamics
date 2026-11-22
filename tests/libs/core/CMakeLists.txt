@@ -67,7 +67,6 @@ add_executable(test-core
 
     engine/test_bailout_formula.cpp
     engine/test_BigFloatBailout.cpp
-    engine/test_BigNumBailout.cpp
     engine/test_BoundaryTrace.cpp
     engine/test_calc_frac_init.cpp
     engine/test_color_utils.cpp
@@ -143,7 +142,6 @@ add_executable(test-core
     math/test_BigArena.cpp
     math/test_BigComplex.cpp
     math/test_BigFloat.cpp
-    math/test_BigNum.cpp
     math/test_cmplx.cpp
     math/test_fpu087.cpp
     math/test_MPMath.cpp

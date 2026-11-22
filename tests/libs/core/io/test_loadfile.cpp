@@ -872,7 +872,7 @@ void TestFindPrecisionMetadata::expect_active_image() const
     EXPECT_EQ(FractalType::JULIA, g_fractal_type);
     EXPECT_EQ(1234, g_max_iterations);
     EXPECT_EQ(987, g_file_x_dots);
-    EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    EXPECT_EQ(BFMathType::BIG_FLT, g_bf_math);
     EXPECT_EQ(m_length, g_bf_length);
     EXPECT_EQ(m_stack, save_stack());
     EXPECT_EQ(1.25L, g_bf_x_min.to_float());
@@ -988,9 +988,9 @@ TEST_P(TestUnsupportedPrecision, rejectionPreservesActiveImage)
 }
 
 INSTANTIATE_TEST_SUITE_P(DeclaredPrecision, TestUnsupportedPrecision,
-    Values(PrecisionValue{"Negative", -1}, PrecisionValue{"Zero", 0}, PrecisionValue{"BeyondBigNum", 673},
-        PrecisionValue{"BeyondBigFloat", 709}, PrecisionValue{"MaximumStoredValue", 32767}),
-    [](const TestParamInfo<PrecisionValue> &info) { return info.param.name; });
+                         Values(PrecisionValue{"Negative", -1}, PrecisionValue{"Zero", 0},
+                                PrecisionValue{"BeyondBigFloat", 709}, PrecisionValue{"MaximumStoredValue", 32767}),
+                         [](const TestParamInfo<PrecisionValue> &info) { return info.param.name; });
 
 TEST_F(TestFindPrecisionMetadata, duplicateMainRecordsDoNotChangeActiveImage)
 {
@@ -1049,14 +1049,17 @@ TEST_P(TestValidPrecisionMetadata, readingPreservesPayloadAndActiveImage)
 }
 
 INSTANTIATE_TEST_SUITE_P(PrecisionAndPlacement, TestValidPrecisionMetadata,
-    Combine(Values(PrecisionMetadataCase{"Mandel12", FractalType::MANDEL, 12, 396},
-                PrecisionMetadataCase{"Mandel13", FractalType::MANDEL, 13, 484},
-                PrecisionMetadataCase{"Mandel16", FractalType::MANDEL, 16, 484},
-                PrecisionMetadataCase{"BigNumLimit", FractalType::MANDEL, 672, 14916},
-                PrecisionMetadataCase{"BigFloatLimit", FractalType::DIVIDE_BROT5, 708, 15708}),
-        Bool()),
-    [](const TestParamInfo<PlacedPrecisionMetadata> &info)
-    { return std::string{std::get<0>(info.param).name} + (std::get<1>(info.param) ? "BeforeImage" : "AfterImage"); });
+                         Combine(Values(PrecisionMetadataCase{"Mandel12", FractalType::MANDEL, 12, 396},
+                                        PrecisionMetadataCase{"Mandel13", FractalType::MANDEL, 13, 484},
+                                        PrecisionMetadataCase{"Mandel16", FractalType::MANDEL, 16, 484},
+                                        PrecisionMetadataCase{"FormerFixedPointLimit", FractalType::MANDEL, 672, 14916},
+                                        PrecisionMetadataCase{"BigFloatLimit", FractalType::DIVIDE_BROT5, 708, 15708}),
+                                 Bool()),
+                         [](const TestParamInfo<PlacedPrecisionMetadata> &info)
+                         {
+                             return std::string{std::get<0>(info.param).name} +
+                                 (std::get<1>(info.param) ? "BeforeImage" : "AfterImage");
+                         });
 
 TEST_F(TestFindFractalInfo, skipsInvalidLzwPixelsWhenReadingMetadata)
 {

@@ -517,77 +517,14 @@ Byte *square(Byte *r, Byte *n)
 
 /************************************************************************/
 // convert_bn  -- convert bignum numbers from old to new lengths
-int convert_bn(Byte *new_num, const Byte *old_num, const int new_bn_len, const int new_int_len, const int old_bn_len,
-    const int old_int_len)
-{
-    const int new_fraction = new_bn_len - new_int_len;
-    const int old_fraction = old_bn_len - old_int_len;
-    const int fraction = std::min(new_fraction, old_fraction);
-    const int integer = std::min(new_int_len, old_int_len);
-    std::memset(new_num, 0, new_bn_len);
-    std::memcpy(new_num + new_fraction - fraction, old_num + old_fraction - fraction, fraction + integer);
-    return 0;
-}
-
-void convert_bn_signed(Byte *new_num, const Byte *old_num, const int new_bn_len, const int new_int_len,
-    const int old_bn_len, const int old_int_len)
-{
-    convert_bn(new_num, old_num, new_bn_len, new_int_len, old_bn_len, old_int_len);
-    // Legacy scratch conversion zero-fills new integer bytes;
-    // live signed values require sign extension instead.
-    if (new_int_len > old_int_len && (old_num[old_bn_len - 1] & 0x80) != 0)
-    {
-        const int extension = new_int_len - old_int_len;
-        std::memset(new_num + new_bn_len - extension, 0xff, extension);
-    }
-}
-
 /*********************************************************************/
 //  bn = floor(bf)
 //  Converts a bigfloat to a bignumber (integer)
 //  g_bf_length must be at least g_bn_length+2
-Byte *bf_to_bn(Byte *n, const Byte *f)
-{
-    const int f_exp = static_cast<S16>(BIG_ACCESS16(f + g_bf_length));
-    if (f_exp >= g_int_length)
-    {
-        // if it's too big, use max value
-        max_bn(n);
-        if (is_bf_neg(f))
-        {
-            neg_a_bn(n);
-        }
-        return n;
-    }
-
-    if (-f_exp > g_bn_length - g_int_length) // too small, return zero
-    {
-        clear_bn(n);
-        return n;
-    }
-
-    // already checked for over/underflow, this should be ok
-    const int move_bytes = g_bn_length - g_int_length + f_exp + 1;
-    std::memcpy(n, f + g_bf_length - move_bytes - 1, move_bytes);
-    const Byte hi_byte = *(f + g_bf_length - 1);
-    std::memset(n + move_bytes, hi_byte, g_bn_length - move_bytes); // sign extends
-    return n;
-}
-
 /*********************************************************************/
 //  bf = bn
 //  Converts a bignumber (integer) to a bigfloat
 //  g_bf_length must be at least g_bn_length+2
-Byte *bn_to_bf(Byte *f, const Byte *n)
-{
-    std::memcpy(f + g_bf_length - g_bn_length - 1, n, g_bn_length);
-    std::memset(f, 0, g_bf_length - g_bn_length - 1);
-    *(f + g_bf_length - 1) = static_cast<Byte>(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
-    BIG_SET16(f + g_bf_length, static_cast<S16>(g_int_length - 1));         // exp
-    norm_bf(f);
-    return f;
-}
-
 /************************************************************************/
 // convert_bf  -- convert bigfloat numbers from old to new lengths
 int convert_bf(Byte *new_num, const Byte *old_num, const int new_bf_len, const int old_bf_len)
@@ -618,104 +555,14 @@ Byte *unsafe_mult_bn(Byte *r, Byte *n1, Byte *n2)
     return multiply(r, n1, n2);
 }
 
-Byte *full_mult_bn(Byte *r, Byte *n1, Byte *n2)
-{
-    const bool sign1 = is_bn_neg(n1);
-    const bool sign2 = is_bn_neg(n2);
-    full_multiply(r, n1, n2);
-    if (sign1)
-    {
-        neg_a_bn(n1);
-    }
-    if (sign2)
-    {
-        neg_a_bn(n2);
-    }
-    return r;
-}
-
-Byte *mult_bn(Byte *r, Byte *n1, Byte *n2)
-{
-    const bool sign1 = is_bn_neg(n1);
-    const bool sign2 = is_bn_neg(n2);
-    multiply(r, n1, n2);
-    if (sign1)
-    {
-        neg_a_bn(n1);
-    }
-    if (sign2)
-    {
-        neg_a_bn(n2);
-    }
-    return r;
-}
-
 Byte *unsafe_square_bn(Byte *r, Byte *n)
 {
     return square(r, n);
 }
 
-Byte *full_square_bn(Byte *r, Byte *n)
-{
-    const bool sign = is_bn_neg(n);
-    full_square(r, n);
-    if (sign)
-    {
-        neg_a_bn(n);
-    }
-    return r;
-}
-
-Byte *square_bn(Byte *r, Byte *n)
-{
-    const bool sign = is_bn_neg(n);
-    square(r, n);
-    if (sign)
-    {
-        neg_a_bn(n);
-    }
-    return r;
-}
-
-Byte *msb_bn(Byte *value)
-{
-    return value + g_shift_factor;
-}
-
-const Byte *msb_bn(const Byte *value)
-{
-    return value + g_shift_factor;
-}
-
-void reduce_bn_product(Byte *value)
-{
-    std::memmove(value, msb_bn(value), g_bn_length);
-}
-
 /*********************************************************************/
 //  l = floor(b), floor rounds down
 //  Converts the integer part a bignumber to a long
-long bn_to_int(const Byte *n)
-{
-    long value = 0;
-
-    const Byte *ones_byte = n + g_bn_length - g_int_length;
-    switch (g_int_length)
-    {
-        // only 1, 2, or 4 are allowed
-    case 1:
-        value = *ones_byte;
-        break;
-    case 2:
-        value = BIG_ACCESS16(ones_byte);
-        break;
-    case 4:
-        value = BIG_ACCESS32(ones_byte);
-        break;
-    }
-    return value;
-}
-
 // r = n
 Byte *copy_bn(Byte *r, const Byte *n)
 {
@@ -724,15 +571,6 @@ Byte *copy_bn(Byte *r, const Byte *n)
 }
 
 // For debugging, dump the active fixed-point bytes to stdout.
-void bn_hex_dump(const Byte *r)
-{
-    for (int i = 0; i < g_bn_length; i++)
-    {
-        std::printf("%02X ", r[i]);
-    }
-    std::printf("\n");
-}
-
 // r = n1 + n2
 Byte *add_bn(Byte *r, const Byte *n1, const Byte *n2)
 {
@@ -792,88 +630,13 @@ Byte *mult_bn_int(Byte *r, const Byte *n, const U16 u)
 }
 
 // r = |n|
-Byte *abs_bn(Byte *r, const Byte *n)
-{
-    copy_bn(r, n);
-    if (is_bn_neg(r))
-    {
-        neg_a_bn(r);
-    }
-    return r;
-}
-
 // r = |r|
-Byte *abs_a_bn(Byte *r)
-{
-    if (is_bn_neg(r))
-    {
-        neg_a_bn(r);
-    }
-    return r;
-}
-
 /***************************************************************************/
 // n1 != n2 ?
 // RETURNS:
 //  if n1 == n2 returns 0
 //  if n1 > n2 returns a positive (bytes left to go when mismatch occured)
 //  if n1 < n2 returns a negative (bytes left to go when mismatch occured)
-int cmp_bn(const Byte *n1, const Byte *n2)
-{
-    // two bytes at a time
-    // signed comparison for msb
-    const S16 value1 = BIG_ACCESS_S16(reinterpret_cast<const S16 *>(n1 + g_bn_length - 2));
-    const S16 value2 = BIG_ACCESS_S16(reinterpret_cast<const S16 *>(n2 + g_bn_length - 2));
-    if (value1 > value2)
-    {
-        // now determine which of the two bytes was different
-        if (static_cast<S16>(value1 & 0xFF00) > static_cast<S16>(value2 & 0xFF00)) // compare just high bytes
-        {
-            return g_bn_length;                                                    // high byte was different
-        }
-
-        return g_bn_length - 1;                                                    // low byte was different
-    }
-    if (value1 < value2)
-    {
-        // now determine which of the two bytes was different
-        if (static_cast<S16>(value1 & 0xFF00) < static_cast<S16>(value2 & 0xFF00)) // compare just high bytes
-        {
-            return -g_bn_length;                                                   // high byte was different
-        }
-
-        return -(g_bn_length - 1);                                                 // low byte was different
-    }
-
-    // unsigned comparison for the rest
-    for (int i = g_bn_length - 4; i >= 0; i -= 2)
-    {
-        const U16 n1_value = BIG_ACCESS16(n1 + i);
-        const U16 n2_value = BIG_ACCESS16(n2 + i);
-        if (n1_value > n2_value)
-        {
-            // now determine which of the two bytes was different
-            if ((n1_value & 0xFF00) > (n2_value & 0xFF00)) // compare just high bytes
-            {
-                return i + 2;                              // high byte was different
-            }
-
-            return i + 1;                                  // low byte was different
-        }
-        if (n1_value < n2_value)
-        {
-            // now determine which of the two bytes was different
-            if ((n1_value & 0xFF00) < (n2_value & 0xFF00)) // compare just high bytes
-            {
-                return -(i + 2);                           // high byte was different
-            }
-
-            return -(i + 1);                               // low byte was different
-        }
-    }
-    return 0;
-}
-
 /********************************************************************/
 // r = -n
 Byte *neg_bn(Byte *r, const Byte *n)
@@ -931,19 +694,6 @@ bool is_bn_neg(const Byte *n)
 /********************************************************************/
 // n != 0 ?
 // RETURNS: true if n != 0
-bool is_bn_not_zero(const Byte *n)
-{
-    // two bytes at a time
-    for (int i = 0; i < g_bn_length; i += 2)
-    {
-        if (BIG_ACCESS16(n + i) != 0)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 /********************************************************************/
 // r = 2*n
 Byte *double_bn(Byte *r, const Byte *n)
@@ -1047,11 +797,6 @@ Byte *mult_a_bn_int(Byte *r, const U16 u)
     return r;
 }
 
-bool is_bn_zero(const Byte *n)
-{
-    return !is_bn_not_zero(n);
-}
-
 /********************************************************************/
 // r = n / u  where u is an unsigned integer
 Byte *unsafe_div_bn_int(Byte *r, Byte *n, const U16 u)
@@ -1133,98 +878,6 @@ Byte *div_a_bn_int(Byte *r, const U16 u)
 // uses tmp1 - tmp3 - global temp bignumbers
 //  SIDE-EFFECTS:
 //      n ends up as |n|    Make copy first if necessary.
-Byte *unsafe_inv_bn(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3)
-{
-    // use Newton's recursive method for zeroing in on 1/n : r=r(2-rn)
-
-    bool sign_flag = false;
-    if (is_bn_neg(n))
-    {
-        // will be a lot easier to deal with just positives
-        sign_flag = true;
-        neg_a_bn(n);
-    }
-
-    LDouble f = bn_to_float(n);
-    if (f == 0) // division by zero
-    {
-        max_bn(r);
-        return r;
-    }
-    f = 1 / f;       // approximate inverse
-    const long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
-    if (f > max_val) // check for overflow
-    {
-        max_bn(r);
-        return r;
-    }
-    if (f <= -max_val)
-    {
-        max_bn(r);
-        neg_a_bn(r);
-        return r;
-    }
-
-    // With Newton's Method, there is no need to calculate all the digits
-    // every time.  The precision approximately doubles each iteration.
-    // Save original values.
-    // orig_bntmp1 not needed here
-    int orig_bn_length = g_bn_length;
-    int orig_padding = g_padding;
-    int orig_r_length = g_r_length;
-    int orig_shift_factor = g_shift_factor;
-    Byte *orig_r = r;
-    Byte *orig_n = n;
-    // orig_bntmp1        = tmp1;
-
-    // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
-    g_bn_length = std::min(g_bn_length, orig_bn_length);
-    calc_lengths();
-
-    // adjust pointers
-    r = orig_r + orig_bn_length - g_bn_length;
-    // tmp1 = orig_bntmp1 + orig_bn_length - g_bn_length;
-
-    float_to_bn(r, f);           // start with approximate inverse
-    clear_bn(tmp2);              // will be used as 1.0 and 2.0
-
-    for (int i = 0; i < 25; i++) // safety net, this shouldn't ever be needed
-    {
-        // adjust lengths
-        g_bn_length <<= 1; // double precision
-        g_bn_length = std::min(g_bn_length, orig_bn_length);
-        calc_lengths();
-        r = orig_r + orig_bn_length - g_bn_length;
-        n = orig_n + orig_bn_length - g_bn_length;
-        // tmp1 = orig_bntmp1 + orig_bn_length - g_bn_length;
-
-        unsafe_mult_bn(tmp1, r, n);                                                    // tmp1=rn
-        int_to_bn(tmp2, 1);                                                            // tmp2 = 1.0
-        if (g_bn_length == orig_bn_length && cmp_bn(tmp2, tmp1 + g_shift_factor) == 0) // if not different
-        {
-            break;                                                                     // they must be the same
-        }
-        int_to_bn(tmp2, 2);                                                            // tmp2 = 2.0
-        sub_bn(tmp3, tmp2, tmp1 + g_shift_factor);                                     // tmp3=2-rn
-        unsafe_mult_bn(tmp1, r, tmp3);                                                 // tmp1=r(2-rn)
-        copy_bn(r, tmp1 + g_shift_factor);                                             // r = tmp1
-    }
-
-    // restore original values
-    g_bn_length = orig_bn_length;
-    g_padding = orig_padding;
-    g_r_length = orig_r_length;
-    g_shift_factor = orig_shift_factor;
-    r = orig_r;
-
-    if (sign_flag)
-    {
-        neg_a_bn(r);
-    }
-    return r;
-}
-
 /********************************************************************/
 // r = n1/n2
 //      r - result of length g_bn_length
@@ -1232,177 +885,12 @@ Byte *unsafe_inv_bn(Byte *r, Byte *n, Byte *tmp1, Byte *tmp2, Byte *tmp3)
 //  SIDE-EFFECTS:
 //      n1, n2 can end up as GARBAGE
 //      Make copies first if necessary.
-Byte *divide(Byte *r, Byte *n1, Byte *n2, Byte *tmp1, Byte *tmp2, Byte *tmp3)
-{
-    // first, check for valid data
-    const LDouble a = bn_to_float(n1);
-    if (a == 0)      // division into zero
-    {
-        clear_bn(r); // return 0
-        return r;
-    }
-    const LDouble b = bn_to_float(n2);
-    if (b == 0) // division by zero
-    {
-        max_bn(r);
-        return r;
-    }
-    const LDouble f = a / b; // approximate quotient
-    const long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
-    if (f > max_val)         // check for overflow
-    {
-        max_bn(r);
-        return r;
-    }
-    if (f <= -max_val)
-    {
-        max_bn(r);
-        neg_a_bn(r);
-        return r;
-    }
-    // appears to be ok, do division
-
-    bool sign = false;
-    if (is_bn_neg(n1))
-    {
-        neg_a_bn(n1);
-        sign = !sign;
-    }
-    if (is_bn_neg(n2))
-    {
-        neg_a_bn(n2);
-        sign = !sign;
-    }
-
-    // scale n1 and n2 so: |n| >= 1/256
-    // scale = (int)(log(1/fabs(a))/LOG_256) = LOG_256(1/|a|)
-    int i = g_bn_length - 1;
-    while (i >= 0 && n1[i] == 0)
-    {
-        i--;
-    }
-    int scale1 = g_bn_length - i - 2;
-    scale1 = std::max(scale1, 0);
-    i = g_bn_length - 1;
-    while (i >= 0 && n2[i] == 0)
-    {
-        i--;
-    }
-    int scale2 = g_bn_length - i - 2;
-    scale2 = std::max(scale2, 0);
-
-    // shift n1, n2
-    // important!, use std::memmove(), not std::memcpy()
-    std::memmove(n1 + scale1, n1, g_bn_length - scale1); // shift bytes over
-    std::memset(n1, 0, scale1);                          // zero out the rest
-    std::memmove(n2 + scale2, n2, g_bn_length - scale2); // shift bytes over
-    std::memset(n2, 0, scale2);                          // zero out the rest
-
-    unsafe_inv_bn(r, n2, tmp1, tmp2, tmp3);
-    unsafe_mult_bn(tmp1, n1, r);
-    copy_bn(r, tmp1 + g_shift_factor); // r = tmp1
-
-    if (scale1 != scale2)
-    {
-        // Rescale r back to what it should be.  Overflow has already been checked
-        if (scale1 > scale2)                                 // answer is too big, adjust it
-        {
-            const int scale = scale1 - scale2;
-            std::memmove(r, r + scale, g_bn_length - scale); // shift bytes over
-            std::memset(r + g_bn_length - scale, 0, scale);  // zero out the rest
-        }
-        else if (scale1 < scale2)                            // answer is too small, adjust it
-        {
-            const int scale = scale2 - scale1;
-            std::memmove(r + scale, r, g_bn_length - scale); // shift bytes over
-            std::memset(r, 0, scale);                        // zero out the rest
-        }
-        // else scale1 == scale2
-    }
-
-    if (sign)
-    {
-        neg_a_bn(r);
-    }
-
-    return r;
-}
-
 Byte *binary_operation(Byte *result, const Byte *left, const Byte *right, Byte *copy1, Byte *copy2,
     Byte *(*operation)(Byte *, Byte *, Byte *) )
 {
     copy_bn(copy1, left);
     copy_bn(copy2, right);
     return operation(result, copy1, copy2);
-}
-
-Byte *div_bn(Byte *r, const Byte *n1, const Byte *n2, Byte *tmp1, Byte *tmp2, Byte *tmp3, Byte *copy1, Byte *copy2)
-{
-    copy_bn(copy1, n1);
-    copy_bn(copy2, n2);
-    return divide(r, copy1, copy2, tmp1, tmp2, tmp3);
-}
-
-void set_integer_part(Byte *ones_byte, const long value)
-{
-    switch (g_int_length)
-    {
-        // only 1, 2, or 4 are allowed
-    case 1:
-        *ones_byte = static_cast<Byte>(value);
-        break;
-    case 2:
-        BIG_SET16(ones_byte, static_cast<U16>(value));
-        break;
-    case 4:
-        BIG_SET32(ones_byte, value);
-        break;
-    }
-}
-
-std::string unsafe_bn_to_string(Byte *r, int dec)
-{
-    long value = 0;
-
-    if (dec == 0)
-    {
-        dec = g_decimals;
-    }
-    Byte *ones_byte = r + g_bn_length - g_int_length;
-
-    std::string result;
-    if (is_bn_neg(r))
-    {
-        neg_a_bn(r);
-        result += '-';
-    }
-    switch (g_int_length)
-    {
-        // only 1, 2, or 4 are allowed
-    case 1:
-        value = *ones_byte;
-        break;
-    case 2:
-        value = BIG_ACCESS16(ones_byte);
-        break;
-    case 4:
-        value = BIG_ACCESS32(ones_byte);
-        break;
-    }
-    result += std::to_string(value);
-    result += '.';
-    for (int d = 0; d < dec; d++)
-    {
-        *ones_byte = 0; // clear out highest byte
-        mult_a_bn_int(r, 10);
-        if (is_bn_zero(r))
-        {
-            break;
-        }
-        result += static_cast<char>(*ones_byte + '0');
-    }
-
-    return result;
 }
 
 /********************************************************************/
@@ -2992,50 +2480,6 @@ Byte *str_to_bf(Byte *r, std::string_view s, Byte *tmp1)
 //   note: the string may not be empty or have extra space and may
 //   not use scientific notation (2.3e4).
 
-Byte *str_to_bn(Byte *r, std::string_view s)
-{
-    bool sign_flag = false;
-
-    clear_bn(r);
-    Byte *ones_byte = r + g_bn_length - g_int_length;
-
-    if (s[0] == '+') // for + sign
-    {
-        s.remove_prefix(1);
-    }
-    else if (s[0] == '-') // for neg sign
-    {
-        sign_flag = true;
-        s.remove_prefix(1);
-    }
-
-    if (s.find('.') != std::string_view::npos)              // is there a decimal point?
-    {
-        std::size_t l = s.size();                           // start just past the last digit
-        while (l > 0 && s[l - 1] >= '0' && s[l - 1] <= '9') // while a digit
-        {
-            *ones_byte = static_cast<Byte>(s[--l] - '0');
-            div_a_bn_int(r, 10);
-        }
-
-        if (l > 0 && s[l - 1] == '.')
-        {
-            set_integer_part(ones_byte, parse_long(s));
-        }
-    }
-    else
-    {
-        set_integer_part(ones_byte, parse_long(s));
-    }
-
-    if (sign_flag)
-    {
-        neg_a_bn(r);
-    }
-
-    return r;
-}
-
 /********************************************************************/
 // bntostr() - converts a bignumber into a string
 //   s - string, must be large enough to hold the number.
@@ -3046,26 +2490,6 @@ Byte *str_to_bn(Byte *r, std::string_view s)
 
 //  b = l
 //  Converts a long to a bignumber
-Byte *int_to_bn(Byte *r, const long value)
-{
-    clear_bn(r);
-    Byte *ones_byte = r + g_bn_length - g_int_length;
-    switch (g_int_length)
-    {
-        // only 1, 2, or 4 are allowed
-    case 1:
-        *ones_byte = static_cast<Byte>(value);
-        break;
-    case 2:
-        BIG_SET16(ones_byte, static_cast<U16>(value));
-        break;
-    case 4:
-        BIG_SET32(ones_byte, value);
-        break;
-    }
-    return r;
-}
-
 /*********************************************************************/
 //  b = f
 //  Converts a double to a bignumber

@@ -164,14 +164,8 @@ const MoreParams g_more_fractal_params[] =
 // clang-format off
 const AlternateMath g_alternate_math[] =
 {
-#define USE_BN
-#ifdef USE_BN
-    {FractalType::JULIA, BFMathType::BIG_NUM, julia_orbit_bn, julia_per_pixel_bn,  mandel_per_image_bn},
-    {FractalType::MANDEL, BFMathType::BIG_NUM, julia_orbit_bn, mandel_per_pixel_bn, mandel_per_image_bn},
-#else
     {FractalType::JULIA, BFMathType::BIG_FLT, julia_orbit_bf, julia_per_pixel_bf,  mandel_per_image_bf},
     {FractalType::MANDEL, BFMathType::BIG_FLT, julia_orbit_bf, mandel_per_pixel_bf, mandel_per_image_bf},
-#endif
     {FractalType::JULIA_Z_POWER, BFMathType::BIG_FLT, julia_z_power_orbit_bf, julia_per_pixel_bf, mandel_per_image_bf},
     {FractalType::MANDEL_Z_POWER, BFMathType::BIG_FLT, julia_z_power_orbit_bf, mandel_per_pixel_bf, mandel_per_image_bf},
     {FractalType::DIVIDE_BROT5, BFMathType::BIG_FLT, divide_brot5_orbit_bf, divide_brot5_bf_per_pixel, mandel_per_image_bf},

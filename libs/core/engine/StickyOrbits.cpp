@@ -16,7 +16,6 @@
 #include <fractals/fractalp.h>
 #include <fractals/lorenz.h>
 #include <math/BigFloat.h>
-#include <math/BigNum.h>
 #include <misc/id.h>
 #include <misc/run_cleanup.h>
 
@@ -294,11 +293,7 @@ void StickyOrbits::start_orbit(PertEngine *perturbation)
     {
         const bool burning_ship{g_fractal_type == FractalType::BURNING_SHIP};
         const bool conjugate_value{burning_ship && static_cast<int>(g_params[2]) > 2};
-        if (math::g_bf_math == math::BFMathType::BIG_NUM)
-        {
-            perturbation->begin_orbit_bn(math::g_param_z_bn, math::g_old_z_bn, 0);
-        }
-        else if (math::g_bf_math == math::BFMathType::BIG_FLT)
+        if (math::g_bf_math == math::BFMathType::BIG_FLT)
         {
             if (burning_ship)
             {

@@ -1393,23 +1393,19 @@ TEST_P(TestBigFloatProductLifetime, temporaryRewindsPreservePairedAllocationsAnd
     const BigStackMark mark = save_stack();
     {
         BigStackSaver saved;
-        const std::vector<Byte> fixed_sentinel(2 * bn_arena(BigLifetime::TEMPORARY).block_size(), 0xa5);
         const std::vector<Byte> float_sentinel(2 * temporary.block_size(), 0x6c);
-        Byte *const fixed = bn_stack().allocate_double();
         Byte *const floating = bf_stack().allocate_double();
-        std::copy(fixed_sentinel.begin(), fixed_sentinel.end(), fixed);
         std::copy(float_sentinel.begin(), float_sentinel.end(), floating);
         const BigArena::Allocation local = product.clone(temporary);
         const BigStackMark middle = save_stack();
         {
             BigStackSaver inner;
-            bn_stack().allocate_double();
+
             bf_stack().allocate_double();
             const BigArena::Allocation nested = product.clone(temporary);
             EXPECT_EQ(bytes, paired_bytes(nested));
         }
         EXPECT_EQ(middle, save_stack());
-        EXPECT_TRUE(std::equal(fixed_sentinel.begin(), fixed_sentinel.end(), fixed));
         ASSERT_TRUE(bf_stack().contains(floating));
         EXPECT_TRUE(std::equal(float_sentinel.begin(), float_sentinel.end(), floating));
         EXPECT_EQ(bytes, paired_bytes(local));
@@ -1597,7 +1593,7 @@ TEST_P(TestBigFloatLegacyMultiply, preservesOperandsAndTemporaryLifetime)
     }
     const BigFloat survivor{temporary, -7};
     bf_stack().allocate_single();
-    bn_stack().allocate_single();
+
     const std::size_t temporary_high_water = temporary.high_water_mark();
     const std::size_t destination_high_water = persistent.high_water_mark();
     const BigStackMark mark = save_stack();
@@ -1702,7 +1698,7 @@ TEST_P(TestBigFloatLegacySqr, preservesSourceCachesAndTemporaryLifetime)
     }
     const BigFloat survivor{temporary, -7};
     bf_stack().allocate_single();
-    bn_stack().allocate_single();
+
     bf_arena(BigLifetime::WORKING).allocate_double().reset();
     const std::size_t temporary_high_water = temporary.high_water_mark();
     const BigArena &destination_arena = destination->arena();
