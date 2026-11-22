@@ -1,9 +1,0 @@
-; SPDX-License-Identifier: GPL-3.0-only
-; Copyright 2026 Richard Thomson.
-;
-mandel-perturb {
-  type=mandel center-mag=0/1/1e20
-  video=F6 bfdigits=40 maxiter=300 periodicity=0 inside=0
-  passes=1 perturbation=yes float=yes
-  bailout=4 bailoutest=mod outside=iter colors=@default.map
-}
