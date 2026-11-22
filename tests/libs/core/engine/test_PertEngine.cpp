@@ -10477,10 +10477,6 @@ void TestSignedIntegerOrbit::SetUp()
     g_c_exponent = GetParam().exponent;
     g_params[2] = GetParam().exponent;
     initialize_reference({0.125, 0.0625});
-    if (GetParam().big_float)
-    {
-        init_big_pi();
-    }
     m_native_parameter = {};
     g_float_param = &m_native_parameter;
     if (GetParam().big_float)
@@ -10576,7 +10572,6 @@ void TestSignedSubDoublePower::SetUp()
     g_c_exponent = GetParam().exponent;
     g_params[2] = GetParam().exponent;
     initialize_reference({0.125, 0.0});
-    init_big_pi();
     while (!m_engine.initialize_pixel_strategy())
     {
     }
@@ -11226,7 +11221,6 @@ void TestSubDoublePowerBranch::compare_branch(const int sign)
     m_value.y = BigFloat{sign > 0 ? "1e-400" : "-1e-400"};
     EXPECT_DOUBLE_EQ(-1.0, static_cast<double>(m_value.x.to_float()));
     EXPECT_EQ(sign, m_value.y.sign());
-    EXPECT_NEAR(std::acos(-1.0), static_cast<double>(g_bf_pi.to_float()), 1e-12);
     m_native = pow(m_value, m_exponent);
     // Preserve the native kernel's behavior beyond its initial floating-
     // point approximation range, rather than substituting a new policy.

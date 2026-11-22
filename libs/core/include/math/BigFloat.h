@@ -18,8 +18,6 @@
 namespace id::math
 {
 
-class MPConversions;
-
 class BigFloat
 {
 public:
@@ -33,7 +31,6 @@ public:
     BigFloat &operator=(BigFloat &&value);
     BigFloat &operator=(LDouble value);
     void clear();
-    void load_pi();
 
     // Tests for a value, including numeric zero.
     explicit operator bool() const noexcept
@@ -82,7 +79,6 @@ public:
     static const Byte *unpack_bf(BigFloat &destination, const Byte *source, int stored_length);
 
 private:
-    friend class MPConversions;
     friend Complex<BigFloat> log(const Complex<BigFloat> &value);
     friend Complex<BigFloat> pow(const Complex<BigFloat> &base, const Complex<BigFloat> &exponent);
 
@@ -100,10 +96,8 @@ BigFloat atan2(const BigFloat &y, const BigFloat &x);
 
 using BFComplex = Complex<BigFloat>;
 
-extern BigFloat g_bf_pi;
 extern BigFloat g_bf_tmp;
 
-// g_bf_length+2
 extern BigFloat g_delta_x_bf;
 extern BigFloat g_delta_y_bf;
 extern BigFloat g_delta2_x_bf;
@@ -116,7 +110,6 @@ extern BFComplex g_saved_z_bf;
 extern BFComplex g_old_z_bf;
 extern BFComplex g_new_z_bf;
 
-// g_bf_length+2
 extern BigFloat g_bf_x_min;
 extern BigFloat g_bf_x_max;
 extern BigFloat g_bf_y_min;
@@ -129,6 +122,6 @@ extern BigFloat g_bf_save_y_min;
 extern BigFloat g_bf_save_y_max;
 extern BigFloat g_bf_save_x_3rd;
 extern BigFloat g_bf_save_y_3rd;
-extern BigFloat g_bf_params[10]; // (g_bf_length+2)*10
+extern BigFloat g_bf_params[10];
 
 } // namespace id::math

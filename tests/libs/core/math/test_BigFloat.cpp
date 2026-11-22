@@ -152,8 +152,7 @@ TEST_P(TestBigFloatStorageProcedures, copiesOrClearsWithoutChangingTheSource)
     const BigFloat original{input.source};
     const BigFloat expected{input.expected};
     BigFloat destination{-2.5L};
-    const std::array<int, 7> lengths{
-        g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    const std::array<int, 3> lengths{g_bn_length, g_bf_length, g_int_length};
 
     switch (input.operation)
     {
@@ -167,9 +166,7 @@ TEST_P(TestBigFloatStorageProcedures, copiesOrClearsWithoutChangingTheSource)
 
     EXPECT_EQ(expected, destination);
     EXPECT_EQ(original, source);
-    EXPECT_EQ(lengths,
-        (std::array<int, 7>{
-            g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+    EXPECT_EQ(lengths, (std::array<int, 3>{g_bn_length, g_bf_length, g_int_length}));
 }
 
 INSTANTIATE_TEST_SUITE_P(PrecisionsAndOperations, TestBigFloatStorageProcedures,
@@ -442,17 +439,14 @@ TEST_P(TestBigFloatUnpack, preservesDestinationStorageSourceCursorAndPrecision)
     source.insert(source.end(), input.source.begin(), input.source.end());
     source.push_back(0xbb);
     const std::vector<Byte> original = source;
-    const std::array<int, 7> lengths{
-        g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor};
+    const std::array<int, 3> lengths{g_bn_length, g_bf_length, g_int_length};
 
     const Byte *const cursor = BigFloat::unpack_bf(destination, source.data() + 1, input.stored_length);
 
     EXPECT_EQ(source.data() + source.size() - 1, cursor);
     EXPECT_EQ(input.expected, packed_value(destination));
     EXPECT_EQ(original, source);
-    EXPECT_EQ(lengths,
-        (std::array<int, 7>{
-            g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length, g_shift_factor}));
+    EXPECT_EQ(lengths, (std::array<int, 3>{g_bn_length, g_bf_length, g_int_length}));
 }
 
 INSTANTIATE_TEST_SUITE_P(Layouts, TestBigFloatUnpack,
@@ -787,7 +781,6 @@ class TestBigFloatSineCosine : public TestBigFloatValue, public testing::WithPar
 
 TEST_P(TestBigFloatSineCosine, returnsOwningValuesAndPreservesTheSource)
 {
-    init_big_pi();
     const LDouble angle = GetParam();
     const BigFloat source{angle};
     const BigFloat original{source};
@@ -807,7 +800,6 @@ class TestBigFloatSineCosineAlias : public TestBigFloatValue, public testing::Wi
 
 TEST_P(TestBigFloatSineCosineAlias, supportsAssignmentToEitherOperand)
 {
-    init_big_pi();
     constexpr LDouble angle = -0.625L;
     BigFloat source{angle};
     BigFloat other{0};
@@ -830,7 +822,6 @@ class TestBigFloatArctangent2 : public TestBigFloatValue,
 
 TEST_P(TestBigFloatArctangent2, returnsAnOwningResultAndPreservesOperands)
 {
-    init_big_pi();
     const LDouble y = std::get<0>(GetParam());
     const LDouble x = std::get<1>(GetParam());
     const BigFloat ny{y};
@@ -854,7 +845,6 @@ class TestBigFloatArctangent2Alias : public TestBigFloatValue, public testing::W
 
 TEST_P(TestBigFloatArctangent2Alias, supportsAssignmentToEitherOperand)
 {
-    init_big_pi();
     BigFloat ny{-1.0L};
     BigFloat nx{-2.0L};
     BigFloat &result = GetParam() ? ny : nx;
@@ -1478,12 +1468,10 @@ TEST_P(TestBigFloatWorkspaceRamp, preservesOperandsAndRestoresPrecision)
 {
     g_fractal_type = FractalType::JULIA_Z_POWER;
     init_bf_length(std::get<0>(GetParam()));
-    init_big_pi();
     const BigFloatRampInput &test = std::get<1>(GetParam());
     const BigFloat input{test.input};
     const BigFloat original{input};
     const BigFloat one{1};
-    const BigFloat original_pi{g_bf_pi};
     const int length = g_bf_length;
     const int bn_length = g_bn_length;
 
@@ -1491,7 +1479,6 @@ TEST_P(TestBigFloatWorkspaceRamp, preservesOperandsAndRestoresPrecision)
 
     EXPECT_EQ(length, g_bf_length);
     EXPECT_EQ(bn_length, g_bn_length);
-    EXPECT_EQ(original_pi, g_bf_pi);
     EXPECT_EQ(original, input);
     EXPECT_EQ(test.expected, result.to_string(12));
 }

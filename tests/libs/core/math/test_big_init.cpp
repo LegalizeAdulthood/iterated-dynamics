@@ -43,7 +43,6 @@ static_assert(std::is_same_v<decltype(g_bf_save_y_max), BigFloat>);
 static_assert(std::is_same_v<decltype(g_bf_save_x_3rd), BigFloat>);
 static_assert(std::is_same_v<decltype(g_bf_save_y_3rd), BigFloat>);
 static_assert(std::is_same_v<decltype(g_bf_params), BigFloat[10]>);
-static_assert(std::is_same_v<decltype(g_bf_pi), BigFloat>);
 
 class TestBigFloat : public testing::Test
 {
@@ -71,90 +70,6 @@ protected:
     ValueSaver<int> m_saved_bf_digits;
     ValueSaver<FractalType> m_saved_fractal_type;
 };
-
-class TestBigFloatPiStorage : public TestBigFloat, public testing::WithParamInterface<int>
-{
-protected:
-    void SetUp() override;
-    static void expect_pi_value();
-};
-
-void TestBigFloatPiStorage::SetUp()
-{
-    g_fractal_type = FractalType::JULIA_Z_POWER;
-    init_bf_length(GetParam());
-    ASSERT_TRUE(g_bf_pi);
-}
-
-void TestBigFloatPiStorage::expect_pi_value()
-{
-    EXPECT_NEAR(3.141592653589793238L, g_bf_pi.to_float(), 0.00002L);
-}
-
-TEST_P(TestBigFloatPiStorage, initializationLoadsPiAtCurrentPrecision)
-{
-    g_bf_pi = -1.25L;
-
-    init_big_pi();
-
-    ASSERT_TRUE(g_bf_pi);
-    expect_pi_value();
-}
-
-TEST_P(TestBigFloatPiStorage, reinitializationClearsPi)
-{
-    init_big_pi();
-
-    init_bf_length(GetParam());
-
-    ASSERT_TRUE(g_bf_pi);
-    EXPECT_EQ(BigFloat{0}, g_bf_pi);
-    init_big_pi();
-    expect_pi_value();
-}
-
-TEST_P(TestBigFloatPiStorage, precisionChangesClearPiBeforeReinitialization)
-{
-    init_big_pi();
-
-    init_bf_length(GetParam() == 708 ? 4 : 708);
-
-    ASSERT_TRUE(g_bf_pi);
-    EXPECT_EQ(BigFloat{0}, g_bf_pi);
-    init_big_pi();
-    expect_pi_value();
-
-    init_bf_length(GetParam());
-
-    ASSERT_TRUE(g_bf_pi);
-    EXPECT_EQ(BigFloat{0}, g_bf_pi);
-    init_big_pi();
-    expect_pi_value();
-}
-
-
-TEST_P(TestBigFloatPiStorage, repeatedCleanupUnbindsPiAndReinitializationRestoresItsValue)
-{
-    init_big_pi();
-    const BigFloat original{g_bf_pi};
-
-    free_bf_vars();
-
-    EXPECT_FALSE(g_bf_pi);
-
-    free_bf_vars();
-
-    EXPECT_FALSE(g_bf_pi);
-
-    init_bf_length(GetParam());
-    ASSERT_TRUE(g_bf_pi);
-    EXPECT_EQ(BigFloat{0}, g_bf_pi);
-    init_big_pi();
-
-    EXPECT_EQ(original, g_bf_pi);
-}
-
-INSTANTIATE_TEST_SUITE_P(Precisions, TestBigFloatPiStorage, testing::Values(4, 12, 56, 64, 708));
 
 class TestActivePrecision : public TestBigFloat
 {
@@ -397,8 +312,7 @@ TEST_P(TestBigFloatParameterPrecision, derivesTheSavedPrecisionBeforeUnpacking)
     init_bf_length(std::get<0>(GetParam()));
     const int stored_bn_length = g_bn_length;
     init_bf_length(stored_bn_length);
-    const std::array<int, 10> expected_lengths{g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length,
-        g_r_bf_length, g_shift_factor, g_bn_step, g_decimals, g_bf_decimals};
+    const std::array<int, 5> expected_lengths{g_bn_length, g_bf_length, g_int_length, g_decimals, g_bf_decimals};
     g_bf_x_min = 1.25L;
     g_bf_params[9] = -2.5L;
     g_bf_save_y_3rd = 3.75L;
@@ -412,9 +326,8 @@ TEST_P(TestBigFloatParameterPrecision, derivesTheSavedPrecisionBeforeUnpacking)
     EXPECT_EQ(1.25L, g_bf_x_min.to_float());
     EXPECT_EQ(-2.5L, g_bf_params[9].to_float());
     EXPECT_EQ(3.75L, g_bf_save_y_3rd.to_float());
-    EXPECT_EQ(expected_lengths,
-        (std::array<int, 10>{g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length,
-            g_shift_factor, g_bn_step, g_decimals, g_bf_decimals}));
+    EXPECT_EQ(
+        expected_lengths, (std::array<int, 5>{g_bn_length, g_bf_length, g_int_length, g_decimals, g_bf_decimals}));
     EXPECT_EQ(expected, payload);
 }
 

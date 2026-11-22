@@ -110,8 +110,8 @@ TEST_F(TestPrecisionDiagnostics, formatsSavedBigFloatCorners)
 
 TEST_F(TestPrecisionDiagnostics, formatsBigFloatGlobals)
 {
-    EXPECT_THAT(
-        format_globals_bf("globals"), AllOf(StartsWith("globals\n"), HasSubstr("bn_step=4"), HasSubstr("decimals=20")));
+    EXPECT_THAT(format_globals_bf("globals"),
+        AllOf(StartsWith("globals\n"), HasSubstr("bn_length="), HasSubstr("decimals=20")));
 }
 
 TEST_F(TestPrecisionDiagnostics, formatsBigFloatVariable)

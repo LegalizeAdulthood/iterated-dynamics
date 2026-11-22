@@ -3,13 +3,15 @@
 //
 #include <math/BigFloat.h>
 
-#include <math/big.h>
 #include <math/big_init.h>
 #include <math/MPConversions.h>
+
+#include <fmt/format.h>
 
 #include <algorithm>
 #include <charconv>
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <stdexcept>
 #include <vector>
@@ -226,11 +228,6 @@ BigFloat &BigFloat::operator=(const LDouble value)
 void BigFloat::clear()
 {
     *m_value = 0;
-}
-
-void BigFloat::load_pi()
-{
-    *m_value = boost::multiprecision::acos(MPReal{-1, m_value->precision()});
 }
 
 BigFloat BigFloat::operator-() const
@@ -482,7 +479,12 @@ void BigFloat::hex_dump() const
 {
     std::vector<Byte> record(static_cast<std::size_t>(g_bf_length + 2));
     pack_bf(record.data(), record.size());
-    bf_hex_dump_snapshot(record.data());
+    for (int i = 0; i < g_bf_length; ++i)
+    {
+        fmt::print("{:02X} ", record[i]);
+    }
+    const auto exponent = static_cast<std::uint16_t>(record[g_bf_length] + 256 * record[g_bf_length + 1]);
+    fmt::print(" e {:04X}\n", exponent);
 }
 
 void BigFloat::set_precision(const MPPrecision &precision)

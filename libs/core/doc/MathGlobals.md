@@ -6,19 +6,19 @@ Copyright 2026 Richard Thomson.
 # Math Global Variables
 
 This document describes the current owning values, numeric setup, and
-remaining legacy byte-kernel support in the core math layer.
+saved-file compatibility in the core math layer.
 
 ## Numeric Representation And Precision
 
-Headers: `big.h`, `big_init.h`, and `BigFloat.h`.
+Headers: `big_init.h`, `BigFloat.h`, and `MPConversions.h`.
 
 - `g_bf_math` selects native or arbitrary-precision calculations.
 - `g_decimals` records requested decimal precision; `g_bf_digits` is the
   explicit user override.
-- `g_bn_step`, `g_bn_length`, `g_int_length`, `g_padding`, `g_r_length`,
-  and `g_shift_factor` describe the remaining fixed-point byte kernels.
-- `g_bf_length`, `g_r_bf_length`, and `g_bf_decimals` describe legacy
-  mantissa layouts, working buffers, and saved-file precision metadata.
+- `g_bn_length` and `g_int_length` retain the existing file-precision
+  policy and metadata interpretation.
+- `g_bf_length` and `g_bf_decimals` describe legacy mantissa layouts and
+  saved-file precision metadata.
 
 BigFloat owns an optional Boost.Multiprecision MPReal. Default
 construction is null; numeric construction selects working precision
@@ -84,21 +84,13 @@ indexed pixels and palette after the BigFloat cutover.
 
 ## Arena And Scratch Stack
 
-Header: `big_init.h`.
-
-Numeric setup initializes owning globals directly. Precision changes
-resize preserved current and saved corners; changes to the legacy byte
-layout repopulate the ten parameter values from native render parameters.
-Repeated setup at the same precision preserves parameter values and
-clears working state. `free_bf_vars()` resets globals to null.
-
-`bf_arena()`, `bf_stack()`, BigStackMark, and BigStackSaver remain only
-for legacy byte kernels and their tests. Storage is allocated lazily on
-the first byte-kernel request. Owning arithmetic, rendering consumers,
-and perturbation continuation do not allocate in these arenas or retain
-stack marks. Precision changes and cleanup release the legacy storage.
-`calc_lengths()` remains allocation-free for temporary byte-kernel
-length changes.
+The arena classes, byte stacks, lifetime selection, product reservations,
+and their allocation tests are removed. Numeric setup initializes
+owning globals directly. Precision changes resize preserved current and
+saved corners; changes to the legacy byte layout repopulate the ten
+parameter values from native render parameters. Repeated setup at the
+same precision preserves parameter values and clears working state.
+`free_bf_vars()` resets globals to null.
 
 ## BigNum Temporaries
 
@@ -108,13 +100,10 @@ Removed with the BigNum rendering implementation.
 
 Header: `BigFloat.h`.
 
-- `g_bf_tmp` is an owning scalar used by existing orbit and bailout code.
-- `g_bf_pi` is an owning Pi value computed through Boost at its working
-  precision when `init_big_pi()` is called.
-
-The six unused kernel owners and two paired copy-buffer bindings are
-removed. Ordinary BigFloat operations retain their own Boost values and
-do not use shared kernel scratch or Pi-table buffers.
+`g_bf_tmp` is an owning scalar used by existing orbit and bailout code.
+The unused kernel owners, paired copy buffers, global Pi value, and Pi
+setup calls are removed. BigFloat operations retain their own Boost
+values; trigonometric functions require no global Pi initialization.
 
 ## BigNum Coordinates And Iteration State
 
@@ -124,7 +113,7 @@ perturbation continuation use the BigFloat values below.
 
 ## BigFloat Coordinates And Iteration State
 
-Header: `big.h`.
+Header: `BigFloat.h`.
 
 - `g_delta_x_bf`, `g_delta_y_bf`, `g_delta2_x_bf`, `g_delta2_y_bf` -
   owning `BigFloat` increments.
@@ -140,7 +129,7 @@ interfaces retain their existing organization.
 
 ## Persistent BigFloat Bounds And Parameters
 
-Header: `big.h`.
+Header: `BigFloat.h`.
 
 Each scalar below owns an MPReal:
 
@@ -180,11 +169,11 @@ operations use Boost precision propagation and default rounding. Complex
 library functions preserve the documented branch and zero conventions.
 Formatting retains the existing notation and decimal carry conventions.
 
-The remaining `unsafe_*` byte routines may destroy operands. Their
-preserving wrappers and explicit byte workspaces remain for legacy
-kernel tests until the byte subsystem is removed. They do not implement
-owning BigFloat arithmetic.
+The old byte arithmetic, normalization, Pi tables, and native conversion
+routines are removed. MPConversions exposes only binary file-record
+encoding and decoding. BigFloat packing and unpacking use that codec;
+there are no live-value conversion bridges or alternate byte backend.
 
-Numeric setup, render state, byte lengths, and interpreter bindings
+Numeric setup, render state, file-layout metadata, and interpreter bindings
 remain global. Future render-ownership work belongs in
 [hexagonal.md](hexagonal.md).

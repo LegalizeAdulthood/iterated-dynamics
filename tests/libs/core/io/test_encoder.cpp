@@ -631,8 +631,7 @@ TEST_P(TestGifWriterPrecisionRestore, restoresTheSavedPayloadAndMetadataPrecisio
     ASSERT_EQ(stored_bn_length, metadata.fractal.bf_length);
     ASSERT_EQ(expected, metadata.extended.apm_data);
     init_bf_length(metadata.fractal.bf_length);
-    const std::array<int, 10> expected_lengths{g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length,
-        g_r_bf_length, g_shift_factor, g_bn_step, g_decimals, g_bf_decimals};
+    const std::array<int, 5> expected_lengths{g_bn_length, g_bf_length, g_int_length, g_decimals, g_bf_decimals};
     init_bf_length(stored_bn_length == 4 ? 64 : 4);
 
     apply_image_extensions(metadata);
@@ -642,9 +641,8 @@ TEST_P(TestGifWriterPrecisionRestore, restoresTheSavedPayloadAndMetadataPrecisio
     EXPECT_EQ(1.25L, g_bf_x_min.to_float());
     EXPECT_EQ(-2.5L, g_bf_params[9].to_float());
     EXPECT_EQ(3.75L, g_bf_save_y_3rd.to_float());
-    EXPECT_EQ(expected_lengths,
-        (std::array<int, 10>{g_bn_length, g_bf_length, g_int_length, g_padding, g_r_length, g_r_bf_length,
-            g_shift_factor, g_bn_step, g_decimals, g_bf_decimals}));
+    EXPECT_EQ(
+        expected_lengths, (std::array<int, 5>{g_bn_length, g_bf_length, g_int_length, g_decimals, g_bf_decimals}));
 }
 
 INSTANTIATE_TEST_SUITE_P(StoredPrecisions, TestGifWriterPrecisionRestore, Values(4, 5, 12, 708));

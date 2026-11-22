@@ -65,14 +65,9 @@ std::string format_corners_dbl(const char *s)
 // show globals
 std::string format_globals_bf(const char *s)
 {
-    return fmt::format("{:s}\n"                                                                   //
-                       "bn_step={:d} bn_length={:d} int_length={:d} r_length={:d} padding={:d}\n" //
-                       "shift_factor={:d} decimals={:d} bf_length={:d} r_bf_length={:d}\n"        //
-                       "bf_decimals={:d} ",                                                       //
-        s,                                                                                        //
-        g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,                              //
-        g_shift_factor, g_decimals, g_bf_length, g_r_bf_length,                                   //
-        g_bf_decimals);
+    return fmt::format("{:s}\nbn_length={:d} int_length={:d} decimals={:d}\n"
+                       "bf_length={:d} bf_decimals={:d} ",
+        s, g_bn_length, g_int_length, g_decimals, g_bf_length, g_bf_decimals);
 }
 
 std::string format_corners_bf(const char *s)
@@ -301,7 +296,6 @@ bool mandel_per_image_bf()
         break;
 
     case FractalType::MANDEL_Z_POWER:
-        init_big_pi();
         if (static_cast<double>(g_c_exponent) == g_params[2] && g_c_exponent & 1) // odd exponents
         {
             g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
@@ -317,7 +311,6 @@ bool mandel_per_image_bf()
         break;
 
     case FractalType::JULIA_Z_POWER:
-        init_big_pi();
         g_param_z_bf.x = g_bf_params[0];
         g_param_z_bf.y = g_bf_params[1];
         if (g_c_exponent & 1 || g_params[3] != 0.0 || static_cast<double>(g_c_exponent) != g_params[2])
@@ -327,7 +320,6 @@ bool mandel_per_image_bf()
         break;
 
     case FractalType::DIVIDE_BROT5:
-        init_big_pi();
         g_c_exponent = -(static_cast<int>(g_params[0]) - 2); /* use negative here so only need it once */
         g_b_const = g_params[1] + 1.0e-20;
         break;
@@ -394,7 +386,7 @@ int mandel_per_pixel_bf()
     g_new_z_bf.x = g_old_z_bf.x;
     g_new_z_bf.y = g_old_z_bf.y;
 
-    // Square these to g_r_bf_length bytes of precision
+    // Cache the squared owning values
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
 
@@ -421,7 +413,7 @@ int julia_per_pixel_bf()
     g_new_z_bf.x = g_old_z_bf.x;
     g_new_z_bf.y = g_old_z_bf.y;
 
-    // Square these to g_r_bf_length bytes of precision
+    // Cache the squared owning values
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
 

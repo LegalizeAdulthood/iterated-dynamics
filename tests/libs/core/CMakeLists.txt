@@ -137,9 +137,7 @@ add_executable(test-core
     io/test_trim_filename.cpp
     io/test_update_save_name.cpp
 
-    math/test_big.cpp
     math/test_big_init.cpp
-    math/test_BigArena.cpp
     math/test_BigComplex.cpp
     math/test_BigFloat.cpp
     math/test_cmplx.cpp

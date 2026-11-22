@@ -116,7 +116,6 @@ TestBigComplexBase::TestBigComplexBase() :
 void TestBigComplexBase::initialize_precision(const int precision)
 {
     init_bf_dec(precision);
-    init_big_pi();
 }
 
 void TestBigComplexBase::TearDown()

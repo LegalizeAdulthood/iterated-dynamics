@@ -66,7 +66,6 @@ TEST_F(TestMandelPowerState, nativeBigFloatReadsBothExponentComponentsOnEveryCal
     const ValueSaver saved_imaginary{g_params[3]};
     const ValueSaver saved_bailout{g_bailout_bigfloat, +[] { return 17; }};
     initialize_precision();
-    init_big_pi();
     const std::complex<double> seed{0.5, 0.25};
     const std::complex<double> parameter{0.125, -0.0625};
     g_param_z_bf.x = parameter.real();
@@ -294,7 +293,6 @@ std::complex<double> TestSignedPowerState::ordinary_power(const std::complex<dou
 void TestSignedPowerState::initialize_signed_precision()
 {
     initialize_precision();
-    init_big_pi();
 }
 
 std::complex<double> TestSignedPowerState::precise_power(const std::complex<double> &z)
@@ -568,7 +566,6 @@ std::complex<double> TestComplexPowerState::native_power(const std::complex<doub
 void TestComplexPowerState::initialize_complex_precision()
 {
     initialize_precision();
-    init_big_pi();
 }
 
 struct ComplexPowerExponent

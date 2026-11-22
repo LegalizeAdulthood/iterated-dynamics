@@ -292,6 +292,12 @@ INSTANTIATE_TEST_SUITE_P(ModesAndOutcomes, TestBigFloatBailoutContinuation,
 TEST_F(TestBigFloatBailout, quadraticOrbitMatchesHigherPrecisionReference)
 {
     const MPPrecision precision{400};
+    const auto as_reference = [&precision](const BigFloat &value)
+    {
+        std::vector<Byte> bytes(static_cast<std::size_t>(g_bf_length) + 2);
+        value.pack_bf(bytes.data(), bytes.size());
+        return MPConversions::from_legacy(bytes.data(), g_bf_length, precision);
+    };
     for (const int length : {32, 64})
     {
         SCOPED_TRACE(length);
@@ -305,10 +311,10 @@ TEST_F(TestBigFloatBailout, quadraticOrbitMatchesHigherPrecisionReference)
         g_param_z_bf.y = 0.0625L;
         g_tmp_sqr_x_bf = g_old_z_bf.x.sqr();
         g_tmp_sqr_y_bf = g_old_z_bf.y.sqr();
-        auto x = MPConversions::from_big_float(g_old_z_bf.x, precision);
-        auto y = MPConversions::from_big_float(g_old_z_bf.y, precision);
-        const auto cx = MPConversions::from_big_float(g_param_z_bf.x, precision);
-        const auto cy = MPConversions::from_big_float(g_param_z_bf.y, precision);
+        auto x = as_reference(g_old_z_bf.x);
+        auto y = as_reference(g_old_z_bf.y);
+        const auto cx = as_reference(g_param_z_bf.x);
+        const auto cy = as_reference(g_param_z_bf.y);
         ASSERT_NE(precision.real("-0.5"), x);
         auto tolerance = precision.real("1");
         mpfr_mul_2si(tolerance.backend().data(), tolerance.backend().data(), -8 * (g_bf_length - 2) + 24, MPFR_RNDN);
@@ -320,8 +326,8 @@ TEST_F(TestBigFloatBailout, quadraticOrbitMatchesHigherPrecisionReference)
             x = next_x;
             y = next_y;
             ASSERT_EQ(0, julia_orbit_bf());
-            EXPECT_LE(abs(MPConversions::from_big_float(g_new_z_bf.x, precision) - x), tolerance);
-            EXPECT_LE(abs(MPConversions::from_big_float(g_new_z_bf.y, precision) - y), tolerance);
+            EXPECT_LE(abs(as_reference(g_new_z_bf.x) - x), tolerance);
+            EXPECT_LE(abs(as_reference(g_new_z_bf.y) - y), tolerance);
         }
     }
 }

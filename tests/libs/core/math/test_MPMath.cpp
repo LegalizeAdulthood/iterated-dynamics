@@ -3,7 +3,6 @@
 //
 #include <math/MPMath.h>
 
-#include <math/BigArena.h>
 
 #include <gtest/gtest.h>
 

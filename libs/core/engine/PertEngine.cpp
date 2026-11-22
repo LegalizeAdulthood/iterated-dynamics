@@ -692,11 +692,6 @@ void PertEngine::initialize_pixel_state()
         throw std::logic_error{"Perturbation requires image dimensions and a positive iteration limit"};
     }
 
-    if (g_bf_math != BFMathType::NONE && g_fractal_type == FractalType::MANDEL_Z_POWER &&
-        mandel_z_power_uses_complex_power())
-    {
-        init_big_pi();
-    }
     allocate_working_values();
 }
 

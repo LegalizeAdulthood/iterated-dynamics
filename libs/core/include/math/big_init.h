@@ -3,7 +3,9 @@
 //
 #pragma once
 
-#include <math/BigArena.h>
+#include <math/PrecisionError.h>
+
+#include <config/port.h>
 
 #include <cstddef>
 #include <vector>
@@ -30,15 +32,10 @@ enum class BFMathType
 
 // globals
 extern BFMathType g_bf_math;
-extern int g_bn_step;
 extern int g_int_length;
 extern int g_bn_length;
-extern int g_r_length;
-extern int g_padding;
 extern int g_decimals;
-extern int g_shift_factor;
 extern int g_bf_length;
-extern int g_r_bf_length;
 extern int g_bf_decimals;
 extern int g_bf_digits; // digits to use (force) for g_bf_math
 
@@ -50,72 +47,17 @@ enum class ResolutionFlag
     CURRENT = 1,
 };
 
-void calc_lengths();
-
-enum class BigLifetime
-{
-    PERSISTENT,
-    WORKING,
-    TEMPORARY
-};
-
-// Legacy byte-kernel storage is allocated lazily and never holds BigFloat values.
-// Call init_bf_dec or init_bf_length before requesting byte storage.
-BigArena &bf_arena(BigLifetime lifetime);
+// Legacy file precision uses base-256 mantissas.
+inline constexpr double LOG10_256{2.4082399653118};
 MPPrecision bf_precision();
-
-class BigStack
-{
-public:
-    explicit BigStack(BigArena &arena);
-    BigStack(const BigStack &) = delete;
-    BigStack &operator=(const BigStack &) = delete;
-    // Retain each allocation's handle until the matching stack rewind.
-    Byte *allocate_single();
-    Byte *allocate_double();
-    std::size_t mark() const;
-    void restore(std::size_t mark);
-    bool contains(const Byte *address) const;
-
-private:
-    BigArena &m_arena;
-    std::vector<BigArena::Allocation> m_values;
-};
-
-BigStack &bf_stack();
-
-struct BigStackMark
-{
-    std::size_t big_float{};
-    bool operator==(const BigStackMark &right) const;
-    bool operator!=(const BigStackMark &right) const;
-    bool operator>(const BigStackMark &right) const;
-};
 
 std::vector<Byte> pack_bf_parameters();
 void unpack_bf_parameters(const std::vector<Byte> &parameters);
 
 void free_bf_vars();
-BigStackMark save_stack();
-void restore_stack(BigStackMark old_mark);
 void init_bf_dec(int dec);
 void init_bf_length(int bnl);
 // Validate stored precision and return the corner/parameter payload size.
 size_t bf_parameter_bytes(int bn_length, fractals::FractalType type);
-void init_big_pi();
-
-class BigStackSaver
-{
-public:
-    BigStackSaver();
-    BigStackSaver(const BigStackSaver &rhs) = delete;
-    BigStackSaver(BigStackSaver &&rhs) = delete;
-    ~BigStackSaver();
-    BigStackSaver &operator=(const BigStackSaver &rhs) = delete;
-    BigStackSaver &operator=(BigStackSaver &&rhs) = delete;
-
-private:
-    BigStackMark m_mark;
-};
 
 } // namespace id::math

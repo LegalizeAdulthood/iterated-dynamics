@@ -3,24 +3,13 @@
 //
 #include <math/MPConversions.h>
 
-#include <engine/bailout_formula.h>
-#include <engine/UserData.h>
-#include <fractals/fractype.h>
-#include <math/big.h>
-#include <math/big_init.h>
-#include <math/BigFloat.h>
-#include <misc/ValueSaver.h>
-
 #include <gtest/gtest.h>
 
 #include <algorithm>
 #include <cstdint>
 #include <stdexcept>
+#include <utility>
 #include <vector>
-
-using namespace id::engine;
-using namespace id::fractals;
-using namespace id::misc;
 
 namespace id::math
 {
@@ -30,78 +19,65 @@ namespace
 class TestMPConversions : public testing::Test
 {
 protected:
-    void SetUp() override;
-    void TearDown() override;
     MPReal power(int exponent) const;
-    BigFloat unpack(std::vector<Byte> bytes, int exponent) const;
-    std::vector<Byte> pack(const BigFloat &value) const;
+    std::vector<Byte> record(std::vector<Byte> bytes, int exponent) const;
+    MPReal unpack(std::vector<Byte> bytes, int exponent) const;
+    MPReal decode(const std::vector<Byte> &bytes) const;
+    std::vector<Byte> pack(const MPReal &value) const;
 
-    ValueSaver<long> m_bailout{g_user.bailout_value, 0};
-    ValueSaver<Bailout> m_test{g_bailout_test, Bailout::MOD};
-    ValueSaver<int> m_digits{g_bf_digits, 0};
-    ValueSaver<FractalType> m_type{g_fractal_type, FractalType::MANDEL};
+    int m_length{36};
     const MPPrecision m_precision{200};
 };
 
-void TestMPConversions::SetUp()
-{
-    init_bf_length(32);
-}
-
-void TestMPConversions::TearDown()
-{
-    free_bf_vars();
-}
-
 MPReal TestMPConversions::power(const int exponent) const
 {
-    MPReal result = m_precision.real("1");
-    mpfr_mul_2si(result.backend().data(), result.backend().data(), exponent, MPFR_RNDN);
-    return result;
+    return boost::multiprecision::ldexp(m_precision.real("1"), exponent);
 }
 
-BigFloat TestMPConversions::unpack(std::vector<Byte> bytes, const int exponent) const
+std::vector<Byte> TestMPConversions::record(std::vector<Byte> bytes, const int exponent) const
 {
-    bytes.resize(g_bf_length + 2);
+    bytes.resize(m_length + 2);
     const auto encoded = static_cast<std::uint16_t>(exponent);
-    bytes[g_bf_length] = static_cast<Byte>(encoded & 0xff);
-    bytes[g_bf_length + 1] = static_cast<Byte>(encoded >> 8);
-    BigFloat result{0};
-    BigFloat::unpack_bf(result, bytes.data(), g_bf_length);
-    return result;
+    bytes[m_length] = static_cast<Byte>(encoded & 0xff);
+    bytes[m_length + 1] = static_cast<Byte>(encoded >> 8);
+    return bytes;
 }
 
-std::vector<Byte> TestMPConversions::pack(const BigFloat &value) const
+MPReal TestMPConversions::unpack(std::vector<Byte> bytes, const int exponent) const
 {
-    std::vector<Byte> result(g_bf_length + 2);
-    value.pack_bf(result.data(), result.size());
-    return result;
+    return decode(record(std::move(bytes), exponent));
 }
 
-TEST_F(TestMPConversions, importsLegacyValuesAndExportsToSelectedArenas)
+MPReal TestMPConversions::decode(const std::vector<Byte> &bytes) const
 {
-    const MPPrecision low{1};
-    BigArena bf{static_cast<std::size_t>(g_bf_length + 2), 4, reduce_bf_product};
+    return MPConversions::from_legacy(bytes.data(), m_length, m_precision);
+}
+
+std::vector<Byte> TestMPConversions::pack(const MPReal &value) const
+{
+    std::vector<Byte> bytes(m_length + 2);
+    MPConversions::to_legacy(value, bytes.data(), m_length);
+    return bytes;
+}
+
+TEST_F(TestMPConversions, roundTripsCanonicalValues)
+{
     for (const char *text : {"0", "1.25", "-1.25"})
     {
         SCOPED_TRACE(text);
-        const auto expected = low.real(text);
-        EXPECT_EQ(expected, MPConversions::from_big_float(BigFloat{text}, m_precision));
-        const auto floating = MPConversions::to_big_float(expected);
-        EXPECT_EQ(pack(BigFloat{text}), pack(floating));
+        const auto expected = m_precision.real(text);
+        EXPECT_EQ(expected, decode(pack(expected)));
     }
 }
 
 TEST_F(TestMPConversions, decodesSignedMantissaAndSubDoubleCoordinateBits)
 {
-    std::vector<Byte> bytes(g_bf_length);
-    bytes[g_bf_length - 2] = 1;
-    bytes[g_bf_length - 12] = 1;
-    const auto positive = unpack(bytes, 0);
+    std::vector<Byte> bytes(m_length);
+    bytes[m_length - 2] = 1;
+    bytes[m_length - 12] = 1;
     const auto expected = m_precision.real("1") + power(-80);
-    EXPECT_EQ(expected, MPConversions::from_big_float(positive, m_precision));
-    EXPECT_EQ(pack(positive), pack(MPConversions::to_big_float(expected)));
-    // Two's complement of the independently assembled positive mantissa.
+    EXPECT_EQ(expected, unpack(bytes, 0));
+    EXPECT_EQ(record(bytes, 0), pack(expected));
     unsigned carry = 1;
     for (Byte &byte : bytes)
     {
@@ -109,35 +85,32 @@ TEST_F(TestMPConversions, decodesSignedMantissaAndSubDoubleCoordinateBits)
         byte = static_cast<Byte>(carry);
         carry >>= 8;
     }
-    EXPECT_EQ(-expected, MPConversions::from_big_float(unpack(bytes, 0), m_precision));
+    EXPECT_EQ(-expected, unpack(bytes, 0));
 }
 
 TEST_F(TestMPConversions, importsZeroRegardlessOfStoredExponent)
 {
-    EXPECT_EQ(0, MPConversions::from_big_float(unpack({}, 32767), m_precision));
-    EXPECT_EQ(0, MPConversions::from_big_float(unpack({}, -32768), m_precision));
+    EXPECT_EQ(0, unpack({}, 32767));
+    EXPECT_EQ(0, unpack({}, -32768));
 }
 
 TEST_F(TestMPConversions, preservesExtremeExponentsAndLowestSubnormalBit)
 {
-    std::vector<Byte> bytes(g_bf_length);
-    bytes[g_bf_length - 2] = 1;
+    std::vector<Byte> bytes(m_length);
+    bytes[m_length - 2] = 1;
     for (const int exponent : {-32768, 32767})
     {
         SCOPED_TRACE(exponent);
-        const auto source = unpack(bytes, exponent);
         const auto expected = power(8 * exponent);
-        EXPECT_EQ(expected, MPConversions::from_big_float(source, m_precision));
-        EXPECT_EQ(pack(source), pack(MPConversions::to_big_float(expected)));
-        const auto negative = -expected;
-        EXPECT_EQ(negative, MPConversions::from_big_float(MPConversions::to_big_float(negative), m_precision));
+        EXPECT_EQ(expected, unpack(bytes, exponent));
+        EXPECT_EQ(record(bytes, exponent), pack(expected));
+        EXPECT_EQ(-expected, decode(pack(-expected)));
     }
     std::fill(bytes.begin(), bytes.end(), 0);
     bytes[0] = 1;
-    const auto source = unpack(bytes, -32768);
-    const auto expected = power(8 * (-32768 + 2 - g_bf_length));
-    EXPECT_EQ(expected, MPConversions::from_big_float(source, m_precision));
-    EXPECT_EQ(pack(source), pack(MPConversions::to_big_float(expected)));
+    const auto expected = power(8 * (-32768 + 2 - m_length));
+    EXPECT_EQ(expected, unpack(bytes, -32768));
+    EXPECT_EQ(record(bytes, -32768), pack(expected));
 }
 
 TEST_F(TestMPConversions, roundsImportsToNearestEvenAtRequestedPrecision)
@@ -146,108 +119,97 @@ TEST_F(TestMPConversions, roundsImportsToNearestEvenAtRequestedPrecision)
     auto one = low.real("1");
     const int bits = static_cast<int>(mpfr_get_prec(one.backend().data()));
     const auto half = power(-bits);
-    auto lower = MPConversions::to_big_float(m_precision.real("1") + half);
-    auto upper = MPConversions::to_big_float(m_precision.real("1") + 3 * half);
-    EXPECT_EQ(one, MPConversions::from_big_float(lower, low));
+    const auto decode_low = [this, &low](const MPReal &value)
+    {
+        const auto bytes = pack(value);
+        return MPConversions::from_legacy(bytes.data(), m_length, low);
+    };
+
+    EXPECT_EQ(one, decode_low(m_precision.real("1") + half));
     mpfr_nextabove(one.backend().data());
     mpfr_nextabove(one.backend().data());
-    EXPECT_EQ(one, MPConversions::from_big_float(upper, low));
-    const auto sticky = MPConversions::to_big_float(m_precision.real("1") + half + power(-bits - 8));
+    EXPECT_EQ(one, decode_low(m_precision.real("1") + 3 * half));
     mpfr_nextbelow(one.backend().data());
-    EXPECT_EQ(one, MPConversions::from_big_float(sticky, low));
+    EXPECT_EQ(one, decode_low(m_precision.real("1") + half + power(-bits - 8)));
 }
 
 TEST_F(TestMPConversions, roundsFloatingPointTiesAndCarry)
 {
-    const auto quantum = power(-8 * (g_bf_length - 2));
-    EXPECT_EQ(pack(BigFloat{"1"}), pack(MPConversions::to_big_float(m_precision.real("1") + quantum / 2)));
-    EXPECT_EQ(m_precision.real("1") + 2 * quantum,
-        MPConversions::from_big_float(
-            MPConversions::to_big_float(m_precision.real("1") + 3 * quantum / 2), m_precision));
-    std::vector<Byte> bytes(g_bf_length);
-    bytes[g_bf_length - 2] = 1;
-    const auto carried = MPConversions::to_big_float(m_precision.real("256") - quantum / 2);
-    EXPECT_EQ(pack(unpack(bytes, 1)), pack(carried));
-    EXPECT_EQ(m_precision.real("256"), MPConversions::from_big_float(carried, m_precision));
-    EXPECT_EQ(pack(BigFloat{"-1"}), pack(MPConversions::to_big_float(m_precision.real("-1"))));
+    const auto quantum = power(-8 * (m_length - 2));
+    EXPECT_EQ(pack(m_precision.real("1")), pack(m_precision.real("1") + quantum / 2));
+    EXPECT_EQ(m_precision.real("1") + 2 * quantum, decode(pack(m_precision.real("1") + 3 * quantum / 2)));
+    std::vector<Byte> bytes(m_length);
+    bytes[m_length - 2] = 1;
+    const auto carried = pack(m_precision.real("256") - quantum / 2);
+    EXPECT_EQ(record(bytes, 1), carried);
+    EXPECT_EQ(m_precision.real("256"), decode(carried));
+    EXPECT_EQ(m_precision.real("-1"), decode(pack(m_precision.real("-1"))));
 }
 
 TEST_F(TestMPConversions, handlesFloatingPointUnderflowAndAsymmetricOverflow)
 {
-    const auto quantum = power(8 * (-32768 + 2 - g_bf_length));
+    const auto quantum = power(8 * (-32768 + 2 - m_length));
     const auto limit = power(8 * 32768);
     for (const int sign : {-1, 1})
     {
         SCOPED_TRACE(sign);
-        EXPECT_EQ(pack(BigFloat{"0"}), pack(MPConversions::to_big_float(sign * quantum / 2)));
-        EXPECT_EQ(sign * 2 * quantum,
-            MPConversions::from_big_float(MPConversions::to_big_float(sign * 3 * quantum / 2), m_precision));
-        EXPECT_THROW(MPConversions::to_big_float(sign * 256 * limit), PrecisionError);
+        EXPECT_EQ(pack(m_precision.real("0")), pack(sign * quantum / 2));
+        EXPECT_EQ(sign * 2 * quantum, decode(pack(sign * 3 * quantum / 2)));
+        EXPECT_THROW(pack(sign * 256 * limit), PrecisionError);
     }
-    EXPECT_THROW(MPConversions::to_big_float(limit), PrecisionError);
-    EXPECT_EQ(-limit, MPConversions::from_big_float(MPConversions::to_big_float(-limit), m_precision));
-    const auto top_quantum = power(8 * (32767 + 2 - g_bf_length));
-    EXPECT_THROW(MPConversions::to_big_float(limit - top_quantum / 2), PrecisionError);
-    EXPECT_EQ(limit - top_quantum,
-        MPConversions::from_big_float(MPConversions::to_big_float(limit - top_quantum), m_precision));
+    EXPECT_THROW(pack(limit), PrecisionError);
+    EXPECT_EQ(-limit, decode(pack(-limit)));
+    const auto top_quantum = power(8 * (32767 + 2 - m_length));
+    EXPECT_THROW(pack(limit - top_quantum / 2), PrecisionError);
+    EXPECT_EQ(limit - top_quantum, decode(pack(limit - top_quantum)));
 }
 
-TEST_F(TestMPConversions, rejectsNonFiniteAndNullValues)
+TEST_F(TestMPConversions, rejectsNonFiniteAndIncompleteRecords)
 {
     for (const char *text : {"nan", "inf", "-inf"})
     {
         SCOPED_TRACE(text);
-        const auto value = m_precision.real(text);
-        EXPECT_THROW(MPConversions::to_big_float(value), std::invalid_argument);
+        EXPECT_THROW(pack(m_precision.real(text)), std::invalid_argument);
     }
-    EXPECT_THROW(MPConversions::from_big_float(BigFloat{}, m_precision), std::invalid_argument);
+    std::vector<Byte> bytes(m_length + 2);
+    EXPECT_THROW(MPConversions::from_legacy(nullptr, m_length, m_precision), std::invalid_argument);
+    EXPECT_THROW(MPConversions::from_legacy(bytes.data(), 1, m_precision), std::invalid_argument);
+    EXPECT_THROW(MPConversions::to_legacy(m_precision.real(), nullptr, m_length), std::invalid_argument);
+    EXPECT_THROW(MPConversions::to_legacy(m_precision.real(), bytes.data(), 1), std::invalid_argument);
 }
 
-TEST_F(TestMPConversions, canonicalizesSignedZeroWithoutChangingDefaultsOrLegacyState)
+TEST_F(TestMPConversions, canonicalizesSignedZeroWithoutChangingDefaultsOrInput)
 {
     const auto defaults = MPReal::default_precision();
     const auto thread_defaults = MPReal::thread_default_precision();
-    const int bn_length = g_bn_length;
-    const int bf_length = g_bf_length;
-    const auto source = BigFloat{"-1.25"};
-    const auto zero = pack(BigFloat{0.0L});
-    const auto before = pack(source);
-    const auto value = MPConversions::from_big_float(source, m_precision);
-    EXPECT_EQ(zero, pack(MPConversions::to_big_float(m_precision.real("-0"))));
-    EXPECT_EQ(before, pack(source));
-    EXPECT_EQ(bn_length, g_bn_length);
-    EXPECT_EQ(bf_length, g_bf_length);
+    const auto source = m_precision.real("-1.25");
+    const auto original = source;
+    const auto bytes = pack(source);
+    const auto retained = decode(bytes);
+
+    EXPECT_EQ(pack(m_precision.real("0")), pack(m_precision.real("-0")));
+    EXPECT_EQ(original, source);
+    EXPECT_EQ(source, retained);
+    EXPECT_EQ(bytes, pack(retained));
     EXPECT_EQ(defaults, MPReal::default_precision());
     EXPECT_EQ(thread_defaults, MPReal::thread_default_precision());
-    EXPECT_EQ(m_precision.working_digits(), value.precision());
+    EXPECT_EQ(m_precision.working_digits(), retained.precision());
 }
 
-TEST_F(TestMPConversions, importedValueOutlivesLegacyContext)
+TEST_F(TestMPConversions, preservesAllSignificandBitsAtMaximumStoredPrecision)
 {
-    MPReal retained = m_precision.real();
-    {
-        const BigFloat source{"-1.25"};
-        retained = MPConversions::from_big_float(source, m_precision);
-    }
-    free_bf_vars();
-    EXPECT_EQ(m_precision.real("-1.25"), retained);
-}
-
-TEST_F(TestMPConversions, preservesAllSignificandBitsAtMaximumPrecision)
-{
-    g_fractal_type = FractalType::MANDEL_Z_POWER;
-    init_bf_length(708);
+    m_length = 712;
     const MPPrecision precision{2000};
-    std::vector<Byte> bytes(g_bf_length, 0xff);
+    std::vector<Byte> bytes(m_length, 0xff);
     bytes.back() = 0;
-    const auto source = unpack(bytes, 0);
-    const auto imported = MPConversions::from_big_float(source, precision);
-    auto expected = precision.real("1");
-    mpfr_mul_2si(expected.backend().data(), expected.backend().data(), -8 * (g_bf_length - 2), MPFR_RNDN);
-    mpfr_ui_sub(expected.backend().data(), 256, expected.backend().data(), MPFR_RNDN);
+    bytes = record(std::move(bytes), 0);
+    const auto imported = MPConversions::from_legacy(bytes.data(), m_length, precision);
+    const auto expected =
+        precision.real("256") - boost::multiprecision::ldexp(precision.real("1"), -8 * (m_length - 2));
+
     EXPECT_EQ(expected, imported);
     EXPECT_EQ(precision.working_digits(), imported.precision());
-    EXPECT_EQ(pack(source), pack(MPConversions::to_big_float(imported)));
+    EXPECT_EQ(bytes, pack(imported));
 }
 
 } // namespace

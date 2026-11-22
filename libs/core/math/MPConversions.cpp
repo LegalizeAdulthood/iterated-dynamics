@@ -3,9 +3,6 @@
 //
 #include <math/MPConversions.h>
 
-#include <math/big.h>
-#include <math/BigFloat.h>
-
 #include <boost/multiprecision/gmp.hpp>
 
 #include <algorithm>
@@ -100,15 +97,6 @@ Integer quantize(const MPReal &value, const mpfr_exp_t scale)
 
 } // namespace
 
-MPReal MPConversions::from_big_float(const BigFloat &value, const MPPrecision &precision)
-{
-    if (!value)
-    {
-        throw std::invalid_argument("Cannot convert a null BigFloat");
-    }
-    return MPReal{*value.m_value, precision.working_digits()};
-}
-
 MPReal MPConversions::from_legacy(const Byte *bytes, const int length, const MPPrecision &precision)
 {
     if (bytes == nullptr || length < 2)
@@ -118,15 +106,6 @@ MPReal MPConversions::from_legacy(const Byte *bytes, const int length, const MPP
     const int encoded = bytes[length] + 256 * bytes[length + 1];
     const int exponent = encoded >= 32768 ? encoded - 65536 : encoded;
     return import(decode(bytes, length), 8 * (exponent + 2 - length), precision);
-}
-
-BigFloat MPConversions::to_big_float(const MPReal &value)
-{
-    std::vector<Byte> bytes(static_cast<std::size_t>(g_bf_length) + 2);
-    to_legacy(value, bytes.data(), g_bf_length);
-    BigFloat result{0};
-    BigFloat::unpack_bf(result, bytes.data(), g_bf_length);
-    return result;
 }
 
 void MPConversions::to_legacy(const MPReal &value, Byte *record, const int length)

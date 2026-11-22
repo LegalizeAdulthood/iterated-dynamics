@@ -526,19 +526,6 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     // arbitrary value... stops browser zooming out too far
     int corner_count = 0;
     bool cant_see = false;
-    // Save original values.
-    int orig_bf_length = g_bf_length;
-    int orig_bn_length = g_bn_length;
-    int orig_padding = g_padding;
-    int orig_r_length = g_r_length;
-    int orig_shift_factor = g_shift_factor;
-    int orig_r_bf_length = g_r_bf_length;
-    /*
-       if (oldbf_math && info->bf_math && (g_bn_length+4 < info->g_bf_length)) {
-          g_bn_length = info->g_bf_length;
-          calc_lengths();
-       }
-    */
     BigFloat bt_x{0};
     BigFloat bt_y{0};
     BigFloat bt_x_min{0};
@@ -704,15 +691,7 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         cant_see = true;
     }
 
-    // restore original values
-    g_bf_length      = orig_bf_length;
-    g_bn_length   = orig_bn_length;
-    g_padding     = orig_padding;
-    g_r_length    = orig_r_length;
-    g_shift_factor = orig_shift_factor;
-    g_r_bf_length = orig_r_bf_length;
-
-    if (cant_see)   // do it this way so bignum stack is released
+    if (cant_see) // Clear the owning browser temporaries
     {
         s_n_a = BigFloat{};
         s_n_b = BigFloat{};
