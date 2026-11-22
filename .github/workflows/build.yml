@@ -42,7 +42,7 @@ jobs:
 
     - name: Setup vcpkg package cache
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         bootstrap: "true"
@@ -62,7 +62,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -471,7 +471,7 @@ jobs:
 
     - name: Setup vcpkg package cache
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         bootstrap: "true"
@@ -531,7 +531,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -626,7 +626,7 @@ jobs:
 
     - name: Generate vcpkg cache setup script
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         execution-mode: emit-script
@@ -731,7 +731,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -800,7 +800,7 @@ jobs:
 
     - name: Generate vcpkg cache setup script
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         execution-mode: emit-script
@@ -911,7 +911,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -980,7 +980,7 @@ jobs:
 
     - name: Generate vcpkg cache setup script
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         execution-mode: emit-script
@@ -1107,7 +1107,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -1266,7 +1266,7 @@ jobs:
 
     - name: Setup vcpkg package cache
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         bootstrap: "true"
@@ -1285,7 +1285,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@40cd86389171f069d4524dc5c2c2588c89a93cd8 # v1.5.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
       with:
         token: ${{github.token}}
         build-log: build.log
