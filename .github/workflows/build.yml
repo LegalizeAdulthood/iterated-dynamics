@@ -595,7 +595,6 @@ jobs:
     needs: [ html-docs, pdf-docs ]
     runs-on: ubuntu-22.04
     permissions:
-      actions: write
       contents: read
       packages: write
 
@@ -758,18 +757,11 @@ jobs:
         if-no-files-found: error
         compression-level: 0
 
-    - name: Cancel workflow after FreeBSD build failure
-      if: failure()
-      env:
-        GH_TOKEN: ${{github.token}}
-      run: gh run cancel ${{github.run_id}} || true
-
   #############################################################################
   build-openbsd:
     needs: [ html-docs, pdf-docs ]
     runs-on: ubuntu-22.04
     permissions:
-      actions: write
       contents: read
       packages: write
 
@@ -938,18 +930,11 @@ jobs:
         if-no-files-found: error
         compression-level: 0
 
-    - name: Cancel workflow after OpenBSD build failure
-      if: failure()
-      env:
-        GH_TOKEN: ${{github.token}}
-      run: gh run cancel ${{github.run_id}} || true
-
   #############################################################################
   build-netbsd:
     needs: [ html-docs, pdf-docs ]
     runs-on: ubuntu-22.04
     permissions:
-      actions: write
       contents: read
       packages: write
 
@@ -1133,12 +1118,6 @@ jobs:
         path: ${{github.workspace}}/*.tar.gz
         if-no-files-found: error
         compression-level: 0
-
-    - name: Cancel workflow after NetBSD build failure
-      if: failure()
-      env:
-        GH_TOKEN: ${{github.token}}
-      run: gh run cancel ${{github.run_id}} || true
 
   #############################################################################
   # When a tag is pushed, create a draft release from the build assets
