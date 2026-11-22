@@ -448,8 +448,9 @@ std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
 {
     std::pair<BigFloat, BigFloat> result{
         BigFloat{bf_arena(BigLifetime::WORKING), *this}, BigFloat{bf_arena(BigLifetime::WORKING), *this}};
-    *result.first.m_value = boost::multiprecision::sin(*m_value);
-    *result.second.m_value = boost::multiprecision::cos(*m_value);
+    // Boost has no combined operation; share MPFR's argument reduction.
+    mpfr_sin_cos(result.first.m_value->backend().data(), result.second.m_value->backend().data(),
+        m_value->backend().data(), MPFR_RNDN);
     return result;
 }
 
