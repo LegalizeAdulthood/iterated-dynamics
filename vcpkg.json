@@ -19,9 +19,16 @@
       "description": "Iterated Dynamics",
       "dependencies": [
         "boost-endian",
+        "boost-multiprecision",
         "cpuid",
         "fmt",
         "giflib",
+        "mpc",
+        "mpfr",
+        {
+          "name": "pkgconf",
+          "host": true
+        },
         {
           "name": "libx11",
           "platform": "!windows"

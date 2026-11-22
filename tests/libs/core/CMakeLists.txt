@@ -146,6 +146,7 @@ add_executable(test-core
     math/test_BigNum.cpp
     math/test_cmplx.cpp
     math/test_fpu087.cpp
+    math/test_MPMath.cpp
     math/test_round_float_double.cpp
 
     misc/test_driver.cpp

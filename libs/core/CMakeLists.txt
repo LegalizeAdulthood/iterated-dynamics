@@ -2,6 +2,26 @@
 # Copyright 2026 Richard Thomson.
 #
 find_package(boost_endian CONFIG REQUIRED)
+find_package(boost_multiprecision CONFIG REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+function(id_find_mpfr_gmp suffix prefix)
+    if(prefix)
+        set(CMAKE_PREFIX_PATH "${prefix}")
+    endif()
+    pkg_check_modules(MPFR_GMP${suffix} REQUIRED IMPORTED_TARGET GLOBAL mpfr gmp)
+endfunction()
+
+# pkg-config targets describe one configuration. Query both vcpkg metadata
+# roots for multi-config generators; other builds use the normal search path.
+if(VCPKG_TARGET_TRIPLET AND CMAKE_CONFIGURATION_TYPES)
+    id_find_mpfr_gmp("" "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}")
+    id_find_mpfr_gmp("_DEBUG" "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug")
+else()
+    id_find_mpfr_gmp("" "")
+endif()
+
+find_package(MPC REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 prefer_vcpkg_gif()
 find_package(cpuid CONFIG REQUIRED)
@@ -176,6 +196,7 @@ add_library(id-core
     include/math/fixed_pt.h math/fixed_pt.cpp
     include/math/fpu087.h math/fpu087.cpp
     include/math/hcmplx.h math/hcmplx.cpp
+    include/math/MPMath.h math/MPMath.cpp
     include/math/Point.h
     include/math/round_float_double.h math/round_float_double.cpp
     include/math/sign.h
@@ -223,5 +244,12 @@ if(WIN32)
     target_link_libraries(id-core PRIVATE shell32.lib)
 endif()
 target_link_libraries(id-core PUBLIC help-defs config algos Boost::endian GIF::GIF cpuid::cpuid)
+target_link_libraries(id-core PUBLIC Boost::multiprecision MPC::MPC)
+if(TARGET PkgConfig::MPFR_GMP_DEBUG)
+    target_link_libraries(id-core PUBLIC
+        "$<IF:$<CONFIG:Debug>,PkgConfig::MPFR_GMP_DEBUG,PkgConfig::MPFR_GMP>")
+else()
+    target_link_libraries(id-core PUBLIC PkgConfig::MPFR_GMP)
+endif()
 target_folder(id-core "Libraries")
 add_dependencies(id-core native-help)
