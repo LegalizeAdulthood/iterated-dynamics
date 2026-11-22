@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <ostream>
+#include <string>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -331,6 +332,39 @@ TEST_P(TestBigComplex, owningCalculationsDoNotAllocateArenaStorage)
     EXPECT_EQ(marker, save_stack());
     restore_stack(marker);
     EXPECT_EQ(result, pow(base, BFComplex{BigFloat{0.375L}, BigFloat{-0.25L}}));
+}
+
+TEST_F(TestBigComplexBase, libraryFunctionsRetainComponentPrecisionAcrossContextChanges)
+{
+    initialize_precision(160);
+    BFComplex base{BigFloat{"1." + std::string(79, '0') + '1'}, BigFloat{0}};
+    base.y.set_precision(MPPrecision{20});
+    const BFComplex original = base;
+    init_bf_dec(20);
+    const BFComplex exponent = value(2, 0);
+    const unsigned real_default = MPReal::thread_default_precision();
+    const unsigned complex_default = MPComplex::thread_default_precision();
+
+    const BFComplex logarithm = log(base);
+    const BFComplex squared = pow(base, exponent);
+
+    EXPECT_GT(logarithm.x, BigFloat{0});
+    EXPECT_EQ(BigFloat{0}, logarithm.y);
+    EXPECT_EQ(base * base, squared);
+    EXPECT_NE(BigFloat{1}, squared.x);
+    EXPECT_EQ(original, base);
+    EXPECT_EQ(real_default, MPReal::thread_default_precision());
+    EXPECT_EQ(complex_default, MPComplex::thread_default_precision());
+}
+
+TEST_F(TestBigComplexBase, libraryResultsCanonicalizeSignedZero)
+{
+    initialize_precision(20);
+
+    const BFComplex reciprocal = pow(value(1, 0), value(-1, 0));
+
+    EXPECT_EQ((value(1, 0)), reciprocal);
+    EXPECT_FALSE(std::signbit(reciprocal.y.to_float()));
 }
 
 TEST_P(TestBigComplex, logarithmAndPowerMatchRecordedLegacySamples)

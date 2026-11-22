@@ -3,32 +3,42 @@
 //
 #include <math/BigComplex.h>
 
-#include <utility>
+#include <algorithm>
 
 namespace id::math
 {
+namespace
+{
+
+MPComplex complex_value(const MPReal &real, const MPReal &imag)
+{
+    return MPComplex{real, imag, std::max(real.precision(), imag.precision())};
+}
+
+} // namespace
+
 BFComplex log(const BFComplex &value)
 {
-    if (value == BFComplex{BigFloat{0}, BigFloat{0}})
+    if (value.x.is_zero() && value.y.is_zero())
     {
         return {BigFloat{0}, BigFloat{0}};
     }
-    BigFloat real = log(mag_squared(value)).half();
-    BigFloat imag = atan2(value.y, value.x);
-    return {std::move(real), std::move(imag)};
+    const MPComplex input = complex_value(*value.x.m_value, *value.y.m_value);
+    const MPComplex output = boost::multiprecision::log(input);
+    return {BigFloat::from_value(output.real()), BigFloat::from_value(output.imag())};
 }
 
 BFComplex pow(const BFComplex &base, const BFComplex &exponent)
 {
     // Preserve the legacy convention, including zero and negative exponents.
-    if (base == BFComplex{BigFloat{0}, BigFloat{0}})
+    if (base.x.is_zero() && base.y.is_zero())
     {
         return {BigFloat{0}, BigFloat{0}};
     }
-    const BFComplex product = log(base) * exponent;
-    const BigFloat magnitude = exp(product.x);
-    const auto [sine, cosine] = sin_cos(product.y);
-    return {magnitude * cosine, magnitude * sine};
+    const MPComplex input = complex_value(*base.x.m_value, *base.y.m_value);
+    const MPComplex power = complex_value(*exponent.x.m_value, *exponent.y.m_value);
+    const MPComplex output = boost::multiprecision::pow(input, power);
+    return {BigFloat::from_value(output.real()), BigFloat::from_value(output.imag())};
 }
 
 } // namespace id::math

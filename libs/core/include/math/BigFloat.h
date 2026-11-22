@@ -94,6 +94,10 @@ public:
 
 private:
     friend class MPConversions;
+    friend Complex<BigFloat> log(const Complex<BigFloat> &value);
+    friend Complex<BigFloat> pow(const Complex<BigFloat> &base, const Complex<BigFloat> &exponent);
+
+    static BigFloat from_value(MPReal value);
 
     std::size_t encoded_size() const noexcept
     {

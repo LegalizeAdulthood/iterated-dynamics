@@ -162,6 +162,19 @@ std::string format_value(const MPReal &value, const int requested, const bool sc
 
 BigFloat::BigFloat() noexcept = default;
 
+BigFloat BigFloat::from_value(MPReal value)
+{
+    BigFloat result;
+    result.m_arena = &bf_arena(BigLifetime::WORKING);
+    result.m_encoded_size = result.m_arena->value_size();
+    result.m_value.emplace(std::move(value));
+    if (result.is_zero())
+    {
+        result.clear();
+    }
+    return result;
+}
+
 BigFloat::BigFloat(const LDouble value) :
     BigFloat(bf_arena(BigLifetime::WORKING), value)
 {
