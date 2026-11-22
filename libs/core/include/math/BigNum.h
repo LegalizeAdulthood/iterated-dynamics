@@ -17,6 +17,8 @@ namespace id::math
 {
 
 class BigFloat;
+class MPConversions;
+
 class BigNum
 {
 public:
@@ -79,6 +81,8 @@ public:
     void hex_dump() const;
 
 private:
+    friend class MPConversions;
+
     explicit BigNum(BigArena::Allocation storage);
 
     Byte *data() noexcept;
@@ -88,6 +92,7 @@ private:
     {
         return arena().value_size();
     }
+
     // Signed little-endian fixed point: g_int_length high bytes are integral.
     // The remaining g_bn_length - g_int_length bytes are fractional.
     BigArena::Allocation m_storage;

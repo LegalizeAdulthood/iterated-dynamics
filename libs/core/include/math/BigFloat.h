@@ -91,6 +91,8 @@ public:
     static const Byte *unpack_bf(BigFloat &destination, const Byte *source, int stored_length);
 
 private:
+    friend class MPConversions;
+
     friend BigFloat BigNum::to_big_float(BigArena &arena) const;
     friend BigNum &BigNum::operator=(const BigFloat &value);
 
