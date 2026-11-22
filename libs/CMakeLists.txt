@@ -3,5 +3,7 @@
 #
 add_subdirectory(algos)
 add_subdirectory(config)
-add_subdirectory(core)
-add_subdirectory(ui)
+if(("id" IN_LIST VCPKG_MANIFEST_FEATURES) OR ("wx" IN_LIST VCPKG_MANIFEST_FEATURES) OR NOT VCPKG_MANIFEST_FEATURES)
+    add_subdirectory(core)
+    add_subdirectory(ui)
+endif()
