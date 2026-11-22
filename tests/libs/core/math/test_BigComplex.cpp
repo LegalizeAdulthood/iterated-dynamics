@@ -273,7 +273,7 @@ TEST_P(TestBigComplexPower, powerHandlesNegativeAndComplexExponents)
     expect_value(exp, exponent.x, exponent.y);
 }
 
-TEST_P(TestBigComplex, powerPreservesTheExactHalfPiSineCosineQuirk)
+TEST_P(TestBigComplex, squareRootOfNegativeOneUsesThePrincipalBranch)
 {
     BFComplex base = value(-1, 0);
     BFComplex exponent = value(0.5L, 0);
@@ -281,8 +281,7 @@ TEST_P(TestBigComplex, powerPreservesTheExactHalfPiSineCosineQuirk)
 
     result = pow(base, exponent);
 
-    // Range reduction returns early before applying the quadrant change.
-    expect_value(result, 1, 0);
+    expect_value(result, 0, 1);
 }
 
 TEST_P(TestBigComplex, cube)

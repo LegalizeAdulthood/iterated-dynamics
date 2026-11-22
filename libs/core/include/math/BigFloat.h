@@ -5,11 +5,13 @@
 
 #include <math/BigArena.h>
 #include <math/cmplx.h>
+#include <math/MPMath.h>
 #include <misc/sized_types.h>
 
 #include <config/port.h>
 
 #include <cstddef>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -41,12 +43,12 @@ public:
     // Tests for an allocated value, including numeric zero.
     explicit operator bool() const noexcept
     {
-        return static_cast<bool>(m_storage);
+        return m_value.has_value();
     }
 
     BigArena &arena() const noexcept
     {
-        return m_storage.arena();
+        return *m_arena;
     }
 
     BigFloat operator-() const;
@@ -84,7 +86,8 @@ public:
     std::string to_scientific_string(int digits = 0) const;
     void hex_dump() const;
 
-    BigFloat convert_precision(BigArena &arena, int new_length, int old_length) const;
+    void set_precision(const MPPrecision &precision);
+    BigFloat convert_precision(BigArena &arena, int new_length, int old_length, int digits = 0) const;
 
     void pack_bf(Byte *record, std::size_t length) const;
     static const Byte *unpack_bf(BigFloat &destination, const Byte *source, int stored_length);
@@ -92,24 +95,15 @@ public:
 private:
     friend class MPConversions;
 
-    explicit BigFloat(BigArena::Allocation storage);
-
-    Byte *data() noexcept
-    {
-        return m_storage.data();
-    }
-
-    const Byte *data() const noexcept
-    {
-        return m_storage.data();
-    }
-
     std::size_t encoded_size() const noexcept
     {
-        return arena().value_size();
+        return m_encoded_size;
     }
 
-    BigArena::Allocation m_storage;
+    // Arena identity is a construction compatibility tag, not value storage.
+    BigArena *m_arena{};
+    std::size_t m_encoded_size{};
+    std::optional<MPReal> m_value;
 };
 
 BigFloat abs(const BigFloat &value);

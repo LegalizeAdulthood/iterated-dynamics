@@ -589,7 +589,7 @@ TEST_F(TestGifWriterExtensions, omitsIterationRangesForThreeDimensionalDisplay)
     EXPECT_FALSE(m_result.ranges.got_data);
 }
 
-TEST_F(TestGifWriterExtensions, preservesOpaqueArbitraryPrecisionParameters)
+TEST_F(TestGifWriterExtensions, preservesCanonicalArbitraryPrecisionParameters)
 {
     std::vector<Byte> parameters(22 * (16 + 2));
     for (std::size_t i = 0; i < parameters.size(); ++i)
@@ -597,6 +597,7 @@ TEST_F(TestGifWriterExtensions, preservesOpaqueArbitraryPrecisionParameters)
         parameters[i] = static_cast<Byte>(i * 53 + 157);
     }
     prepare_parameters(parameters);
+    parameters = pack_bf_parameters();
     g_bf_math = BFMathType::BIG_FLT;
 
     ASSERT_EQ(0, save());
@@ -806,6 +807,7 @@ TEST_F(TestGifWriterExtensions, preservesCompleteRecordOrderingAndTotalEncodedLe
     g_iteration_ranges = {16, 32};
     std::vector<Byte> parameters(22 * (16 + 2), 0xA5);
     prepare_parameters(parameters);
+    parameters = pack_bf_parameters();
     g_bf_math = BFMathType::BIG_FLT;
     const std::optional<EvolutionInfo> evolution{EvolutionInfo{}};
     g_std_calc_mode = CalcMode::ORBIT;

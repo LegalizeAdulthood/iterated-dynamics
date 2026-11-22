@@ -94,6 +94,31 @@ TEST_F(TestBigFloatValue, zeroConstructionLeavesTheLegacyStackUnchanged)
     EXPECT_EQ("0.0", value.to_string());
 }
 
+TEST_F(TestBigFloatValue, automaticPrecisionPreservesNativeScalarBits)
+{
+    init_bf_dec(3);
+    const LDouble input = std::nextafter(LDouble{1}, LDouble{2});
+
+    const BigFloat value{input};
+
+    EXPECT_EQ(input, value.to_float());
+}
+
+TEST_F(TestBigFloatValue, sameByteLayoutPrecisionIncreaseReconfiguresOwningCorners)
+{
+    init_bf_dec(20);
+    g_bf_x_min = 1;
+    const int length = g_bf_length;
+
+    init_bf_dec(21);
+
+    ASSERT_EQ(length, g_bf_length);
+    const BigFloat updated{"1." + std::string(28, '0') + '1'};
+    ASSERT_NE(BigFloat{1}, updated);
+    g_bf_x_min = updated;
+    EXPECT_EQ(updated, g_bf_x_min);
+}
+
 TEST_F(TestBigFloatValue, parsesTheSpecifiedView)
 {
     const std::string text{"-1.25x"};
@@ -502,13 +527,13 @@ TEST_P(TestBigFloatUnpack, preservesDestinationStorageSourceCursorAndPrecision)
 
 INSTANTIATE_TEST_SUITE_P(LayoutsAndLifetimes, TestBigFloatUnpack,
     testing::Combine(testing::Values(BigLifetime::PERSISTENT, BigLifetime::WORKING, BigLifetime::TEMPORARY),
-        testing::Values(BigFloatUnpackInput{8, 8, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12},
-                            {0, 0, 0, 0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}},
+        testing::Values(BigFloatUnpackInput{8, 8, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xff, 0x34, 0x12},
+                            {0, 0, 0, 0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xff, 0x34, 0x12}},
             BigFloatUnpackInput{4, 12,
-                {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xfe, 0xfe, 0xff},
-                {0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xfe, 0xfe, 0xff}},
-            BigFloatUnpackInput{4, 8, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12},
-                {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0x34, 0x12}})));
+                {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xff, 0xfe, 0xff},
+                {0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xff, 0xfe, 0xff}},
+            BigFloatUnpackInput{4, 8, {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xff, 0x34, 0x12},
+                {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xff, 0x34, 0x12}})));
 
 TEST_F(TestBigFloatValue, valueSurvivesArenaRewindAndReuse)
 {
@@ -1467,7 +1492,7 @@ void TestBigFloatOperatorProducts::SetUp()
     init_bf_length(std::get<0>(GetParam()));
 }
 
-TEST_P(TestBigFloatOperatorProducts, preservesOperandsAndReleasesBothProductSlots)
+TEST_P(TestBigFloatOperatorProducts, preservesOperandsWithoutUsingProductSlots)
 {
     const BigFloatOperatorProductInput &input = std::get<1>(GetParam());
     BigArena &working = bf_arena(BigLifetime::WORKING);
@@ -1495,7 +1520,7 @@ TEST_P(TestBigFloatOperatorProducts, preservesOperandsAndReleasesBothProductSlot
         EXPECT_EQ(mark, save_stack());
 
         BigArena::Allocation companion_slot = working.allocate_single();
-        ASSERT_EQ(index + 1, companion_slot.index());
+        ASSERT_EQ(index, companion_slot.index());
         companion_slot.reset();
         const BigFloat companion{working, -8};
         EXPECT_EQ(high_water, working.high_water_mark());

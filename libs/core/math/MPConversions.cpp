@@ -59,7 +59,7 @@ MPReal import(const Integer &significand, const mpfr_exp_t scale, const MPPrecis
 {
     MPReal result = precision.real();
     mpfr_set_z_2exp(result.backend().data(), significand.backend().data(), scale, MPFR_RNDN);
-    if (!mpfr_number_p(result.backend().data()) || (significand != 0 && result == 0))
+    if (!boost::multiprecision::isfinite(result) || (significand != 0 && result == 0))
     {
         throw PrecisionError("Legacy value outside the MPFR exponent range");
     }
@@ -68,7 +68,7 @@ MPReal import(const Integer &significand, const mpfr_exp_t scale, const MPPrecis
 
 void validate_finite(const MPReal &value)
 {
-    if (!mpfr_number_p(value.backend().data()))
+    if (!boost::multiprecision::isfinite(value))
     {
         throw std::invalid_argument("Cannot encode a non-finite legacy number");
     }
@@ -115,15 +115,36 @@ MPReal MPConversions::from_big_float(const BigFloat &value, const MPPrecision &p
         throw std::invalid_argument("Cannot convert a null BigFloat");
     }
     validate_layout(value.encoded_size(), g_bf_length + 2);
-    const Byte *bytes = value.data();
-    const int encoded = bytes[g_bf_length] + 256 * bytes[g_bf_length + 1];
+    return MPReal{*value.m_value, precision.working_digits()};
+}
+
+MPReal MPConversions::from_legacy(const Byte *bytes, const int length, const MPPrecision &precision)
+{
+    if (bytes == nullptr || length < 2)
+    {
+        throw std::invalid_argument("Incomplete legacy value buffer");
+    }
+    const int encoded = bytes[length] + 256 * bytes[length + 1];
     const int exponent = encoded >= 32768 ? encoded - 65536 : encoded;
-    return import(decode(bytes, g_bf_length), 8 * (exponent + 2 - g_bf_length), precision);
+    return import(decode(bytes, length), 8 * (exponent + 2 - length), precision);
 }
 
 BigFloat MPConversions::to_big_float(const MPReal &value, BigArena &arena)
 {
     validate_layout(arena.value_size(), g_bf_length + 2);
+    std::vector<Byte> bytes(arena.value_size());
+    to_legacy(value, bytes.data(), g_bf_length);
+    BigFloat result{arena};
+    BigFloat::unpack_bf(result, bytes.data(), g_bf_length);
+    return result;
+}
+
+void MPConversions::to_legacy(const MPReal &value, Byte *record, const int length)
+{
+    if (record == nullptr || length < 2)
+    {
+        throw std::invalid_argument("Incomplete legacy value buffer");
+    }
     validate_finite(value);
     mpfr_exp_t exponent{};
     if (value != 0)
@@ -136,8 +157,8 @@ BigFloat MPConversions::to_big_float(const MPReal &value, BigArena &arena)
         throw PrecisionError("BigFloat conversion overflow");
     }
     exponent = std::clamp(exponent, mpfr_exp_t{MIN_EXPONENT}, mpfr_exp_t{MAX_EXPONENT});
-    Integer significand = quantize(value, 8 * (exponent + 2 - g_bf_length));
-    const Integer bound = Integer{1} << (8 * (g_bf_length - 1));
+    Integer significand = quantize(value, 8 * (exponent + 2 - length));
+    const Integer bound = Integer{1} << (8 * (length - 1));
     if (significand == bound && exponent < MAX_EXPONENT)
     {
         significand >>= 8;
@@ -157,13 +178,11 @@ BigFloat MPConversions::to_big_float(const MPReal &value, BigArena &arena)
     {
         exponent = 0;
     }
-    const auto bytes = encode(significand, g_bf_length);
-    BigFloat result{arena};
-    std::memcpy(result.data(), bytes.data(), bytes.size());
+    const auto bytes = encode(significand, length);
+    std::memcpy(record, bytes.data(), bytes.size());
     const auto encoded = static_cast<std::uint16_t>(exponent);
-    result.data()[g_bf_length] = static_cast<Byte>(encoded & 0xff);
-    result.data()[g_bf_length + 1] = static_cast<Byte>(encoded >> 8);
-    return result;
+    record[length] = static_cast<Byte>(encoded & 0xff);
+    record[length + 1] = static_cast<Byte>(encoded >> 8);
 }
 
 } // namespace id::math

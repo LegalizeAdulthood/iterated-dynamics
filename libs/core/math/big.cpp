@@ -4,6 +4,7 @@
 // Wesley Loewer's Big Numbers. (C) 1994-95, Wesley B. Loewer
 //
 #include <math/big.h>
+#include <math/big_init.h>
 
 #include <algorithm>
 #include <cfloat>
@@ -2180,6 +2181,34 @@ Byte *square_wide(Byte *r, Byte *n)
 /********************************************************************/
 // r = n * u  where u is an unsigned integer
 // SIDE-EFFECTS: n can be "de-normalized" and lose precision
+Byte *unsafe_square_bf(Byte *r, Byte *n)
+{
+    if (is_bf_zero(n))
+    {
+        return clear_bf(r);
+    }
+    auto product = bf_arena(BigLifetime::TEMPORARY).allocate_double();
+    std::memset(product.data(), 0, 2 * product.arena().block_size());
+    square_wide(product.data(), n);
+    product.reduce();
+    copy_bf(r, product.data());
+    return r;
+}
+
+Byte *unsafe_mult_bf(Byte *r, Byte *n1, Byte *n2)
+{
+    if (is_bf_zero(n1) || is_bf_zero(n2))
+    {
+        return clear_bf(r);
+    }
+    auto product = bf_arena(BigLifetime::TEMPORARY).allocate_double();
+    std::memset(product.data(), 0, 2 * product.arena().block_size());
+    multiply_wide(product.data(), n1, n2);
+    product.reduce();
+    copy_bf(r, product.data());
+    return r;
+}
+
 Byte *unsafe_mult_bf_int(Byte *r, Byte *n, const U16 u)
 {
     S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);

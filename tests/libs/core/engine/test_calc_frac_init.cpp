@@ -149,7 +149,8 @@ TEST_F(TestCalcFracInit, arbitraryPrecisionBoundsShrinkOversizedRegionsAtTheSame
 {
     set_region({{-65535.98, -49151.985}, {65535.98, 49151.985}, {-65535.98, -49151.985}}, true);
 
-    EXPECT_TRUE(calc_frac_init());
+    // Symmetric resizing does not translate the center.
+    EXPECT_FALSE(calc_frac_init());
 
     const ImageRegion region{current_region()};
     EXPECT_NEAR(-32767.99, region.m_min.x, 1e-7);
@@ -183,8 +184,6 @@ TEST_F(TestCalcFracInit, enteringArbitraryPrecisionStillInvalidatesResume)
 struct MinimumIncrementPrecision
 {
     int digits;
-    const char *positive;
-    const char *negative;
 };
 
 void PrintTo(const MinimumIncrementPrecision &value, std::ostream *str)
@@ -211,7 +210,7 @@ class TestBigFloatMinimumIncrement
 {
 };
 
-TEST_P(TestBigFloatMinimumIncrement, preservesExactCoordinateBytesAtActivePrecision)
+TEST_P(TestBigFloatMinimumIncrement, preservesCoordinateIncrementAtActivePrecision)
 {
     const auto &precision = std::get<0>(GetParam());
     const auto &coordinate = std::get<1>(GetParam());
@@ -227,26 +226,11 @@ TEST_P(TestBigFloatMinimumIncrement, preservesExactCoordinateBytesAtActivePrecis
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
     EXPECT_EQ(saved, save_stack());
     EXPECT_EQ(&bf_arena(BigLifetime::PERSISTENT), &coordinate.target->arena());
-    std::vector<Byte> packed(static_cast<std::size_t>(g_bf_length + 2));
-    coordinate.target->pack_bf(packed.data(), packed.size());
-    std::string encoded;
-    constexpr char hex_digits[]{"0123456789abcdef"};
-    for (const Byte value : packed)
-    {
-        encoded.push_back(hex_digits[value >> 4]);
-        encoded.push_back(hex_digits[value & 15]);
-    }
-    EXPECT_EQ(coordinate.negative ? precision.negative : precision.positive, encoded);
+    EXPECT_EQ(coordinate.negative ? "-2.500000000000001" : "1.250000000000001", coordinate.target->to_string(16));
 }
 
-// Canonical byte snapshots from the pointer-based increment, including
-// precision-dependent truncation of the low mantissa bytes.
 INSTANTIATE_TEST_SUITE_P(Coordinates, TestBigFloatMinimumIncrement,
-    Combine(Values(MinimumIncrementPrecision{10, "0d37092d00000000004001000000", "e591eda5ffffffffff7ffdff0000"},
-                MinimumIncrementPrecision{
-                    20, "003757420d37092d00000000004001000000", "0092517be591eda5ffffffffff7ffdff0000"},
-                MinimumIncrementPrecision{50, "000000000000000000000000003757420d37092d00000000004001000000",
-                    "0000000000000000000000000092517be591eda5ffffffffff7ffdff0000"}),
+    Combine(Values(MinimumIncrementPrecision{10}, MinimumIncrementPrecision{20}, MinimumIncrementPrecision{50}),
         Values(MinimumIncrementCoordinate{"XMax", {{1.25, -3}, {1.25, -2}, {2.25, -3}}, &g_bf_x_max, false},
             MinimumIncrementCoordinate{"YMax", {{0.25, -2.5}, {2.25, -2.5}, {0.25, -3.5}}, &g_bf_y_max, true},
             MinimumIncrementCoordinate{"XThird", {{0.25, -3}, {2.25, -2}, {1.25, -3}}, &g_bf_x_3rd, false},

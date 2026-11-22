@@ -16,6 +16,8 @@ enum class FractalType;
 namespace id::math
 {
 
+class MPPrecision;
+
 // values that g_bf_math can hold,
 // 0 = g_bf_math is not being used
 // 2 = g_bf_math is being used
@@ -60,6 +62,7 @@ enum class BigLifetime
 // Arenas have stable addresses and outlive active legacy bindings.
 // Call init_bf_dec or init_bf_length before obtaining an arena.
 BigArena &bf_arena(BigLifetime lifetime);
+MPPrecision bf_precision();
 
 // Paired operand-preservation workspaces.
 extern BigArena::Allocation g_bf_tmp_copy1; // Paired operand-preservation workspace.

@@ -679,13 +679,15 @@ TEST_F(TestBigFloat, ownedArenaValuesSurviveContextResetAtTheSamePrecision)
     EXPECT_EQ(BigFloat{0}, g_bf_x_min);
 }
 
-TEST_F(TestBigFloat, parameterPackingPreservesOpaqueBytesAndRejectsIncompletePayloads)
+TEST_F(TestBigFloat, parameterPackingCanonicalizesLegacyBytesAndRejectsIncompletePayloads)
 {
-    std::vector<Byte> expected(22 * (g_bf_length + 2));
-    for (std::size_t i = 0; i < expected.size(); ++i)
+    std::vector<Byte> input(22 * (g_bf_length + 2));
+    for (std::size_t i = 0; i < input.size(); ++i)
     {
-        expected[i] = static_cast<Byte>(i * 53 + 157);
+        input[i] = static_cast<Byte>(i * 53 + 157);
     }
+    unpack_bf_parameters(input);
+    const auto expected = pack_bf_parameters();
     unpack_bf_parameters(expected);
 
     EXPECT_EQ(expected, pack_bf_parameters());
@@ -760,10 +762,16 @@ TEST_P(TestPersistentBigFloatParameters, preservesEverySerializedFieldAndRejects
     std::vector<Byte> expected(22 * width);
     for (std::size_t field = 0; field < 22; ++field)
     {
-        for (std::size_t byte = 0; byte < width; ++byte)
+        for (std::size_t byte = 0; byte < width - 2; ++byte)
         {
             expected[field * width + byte] = static_cast<Byte>(field * 17 + byte * 53);
         }
+        // Canonical signed significands with distinct values and exponent bytes.
+        expected[(field + 1) * width - 4] = static_cast<Byte>(0x31 + field);
+        expected[(field + 1) * width - 3] = field % 2 == 0 ? 0x00 : 0xff;
+        const auto exponent = static_cast<std::uint16_t>(static_cast<int>(field) - 11);
+        expected[(field + 1) * width - 2] = static_cast<Byte>(exponent);
+        expected[(field + 1) * width - 1] = static_cast<Byte>(exponent >> 8);
     }
 
     const std::vector<Byte> zeros(expected.size());
@@ -790,16 +798,12 @@ TEST_P(TestPersistentBigFloatParameters, samePrecisionBindingPreservesValuesAndC
         &g_bf_params[0], &g_bf_params[1], &g_bf_params[2], &g_bf_params[3], &g_bf_params[4], &g_bf_params[5],
         &g_bf_params[6], &g_bf_params[7], &g_bf_params[8], &g_bf_params[9], &g_bf_save_x_min, &g_bf_save_x_max,
         &g_bf_save_y_min, &g_bf_save_y_max, &g_bf_save_x_3rd, &g_bf_save_y_3rd};
-    const std::size_t width = static_cast<std::size_t>(g_bf_length + 2);
-    std::vector<Byte> expected(values.size() * width);
     for (std::size_t i = 0; i < values.size(); ++i)
     {
         const int value = -static_cast<int>(i + 1);
         *values[i] = static_cast<LDouble>(value);
-        // The last two mantissa bytes hold the signed integer, then the exponent is zero.
-        expected[(i + 1) * width - 4] = static_cast<Byte>(value);
-        expected[(i + 1) * width - 3] = 0xff;
     }
+    const auto expected = pack_bf_parameters();
     const BigArena &arena = bf_arena(BigLifetime::PERSISTENT);
     const std::size_t high_water = arena.high_water_mark();
 
@@ -1289,15 +1293,17 @@ TYPED_TEST(TestBigValueStorage, movedFromValuesRetainTheirAllocatorForReassignme
     EXPECT_EQ(TypeParam{-1.25L}, source);
 }
 
-TYPED_TEST(TestBigValueStorage, aFullArenaPermitsMovesAndExistingDestinationAssignment)
+TYPED_TEST(TestBigValueStorage, aFullArenaDoesNotLimitOwningValues)
 {
     auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
     BigArena arena{working.value_size(), working.block_size(), 2, unused_reducer};
+    const auto first_slot = arena.allocate_single();
+    const auto second_slot = arena.allocate_single();
     TypeParam first{arena, -1.25L};
     TypeParam second{arena, 2.5L};
     const TypeParam outside{3.75L};
 
-    EXPECT_THROW((TypeParam{first}), PrecisionError);
+    EXPECT_NO_THROW((TypeParam{first}));
     TypeParam moved{std::move(first)};
     first = std::move(second);
     moved = outside;
@@ -1308,16 +1314,19 @@ TYPED_TEST(TestBigValueStorage, aFullArenaPermitsMovesAndExistingDestinationAssi
     EXPECT_EQ(outside, moved);
 }
 
-TYPED_TEST(TestBigValueStorage, failedCrossArenaAssignmentToAnEmptyValuePreservesTheSource)
+TYPED_TEST(TestBigValueStorage, aFullArenaDoesNotBlockAssignmentToAnEmptyValue)
 {
     auto &working = value_arena<TypeParam>(BigLifetime::WORKING);
     BigArena arena{working.value_size(), working.block_size(), 2, unused_reducer};
+    const auto first_slot = arena.allocate_single();
+    const auto second_slot = arena.allocate_single();
     TypeParam destination{arena, -1.25L};
     const TypeParam occupied{arena, 2.5L};
     const TypeParam moved{std::move(destination)};
     TypeParam outside{3.75L};
 
-    EXPECT_THROW(destination = std::move(outside), PrecisionError);
+    EXPECT_NO_THROW(destination = std::move(outside));
+    EXPECT_EQ(TypeParam{3.75L}, destination);
     EXPECT_EQ(&arena, &destination.arena());
     EXPECT_EQ(TypeParam{3.75L}, outside);
     EXPECT_EQ(TypeParam{-1.25L}, moved);

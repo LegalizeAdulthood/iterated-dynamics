@@ -23,6 +23,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include <limits>
 #include <memory>
 #include <new>
 #include <type_traits>
@@ -200,7 +201,7 @@ public:
     MathArenas(int bn_length, int bf_length, int int_length);
     ~MathArenas();
     bool matches_layout(int bn_length, int int_length) const;
-    void bind(bool preserve_parameters);
+    void bind(bool preserve_parameters, bool preserve_precision);
     void unbind();
     bool bound() const;
 
@@ -232,10 +233,11 @@ bool MathArenas::matches_layout(const int bn_length, const int int_length) const
     return bn_length == m_bn_length && int_length == m_int_length;
 }
 
-void MathArenas::bind(const bool preserve_parameters)
+void MathArenas::bind(const bool preserve_parameters, const bool preserve_precision)
 {
     big_float.stack.restore(0);
-    const auto init_big_float = [this](BigFloat &target)
+    const MPPrecision precision{bf_precision()};
+    const auto init_big_float = [this, &precision](BigFloat &target)
     {
         if (!target)
         {
@@ -243,6 +245,7 @@ void MathArenas::bind(const bool preserve_parameters)
             std::destroy_at(&target);
             ::new (&target) BigFloat{std::move(value)};
         }
+        target.set_precision(precision);
         target.clear();
     };
     init_big_float(g_bf_tmp1);
@@ -262,32 +265,33 @@ void MathArenas::bind(const bool preserve_parameters)
     init_big_float_copy(g_bf_tmp_copy1);
     init_big_float_copy(g_bf_tmp_copy2);
     init_big_float(g_bf_pi);
-    g_delta_x_bf = 0;
-    g_delta_y_bf = 0;
-    g_delta2_x_bf = 0;
-    g_delta2_y_bf = 0;
-    g_param_z_bf.x = 0;
-    g_param_z_bf.y = 0;
-    g_old_z_bf.x = 0;
-    g_old_z_bf.y = 0;
-    g_new_z_bf.x = 0;
-    g_new_z_bf.y = 0;
-    g_saved_z_bf.x = 0;
-    g_saved_z_bf.y = 0;
-    g_close_enough_bf = 0;
-    g_tmp_sqr_x_bf = 0;
-    g_tmp_sqr_y_bf = 0;
-    g_bf_tmp = 0;
-    if (!preserve_parameters)
+    init_big_float(g_delta_x_bf);
+    init_big_float(g_delta_y_bf);
+    init_big_float(g_delta2_x_bf);
+    init_big_float(g_delta2_y_bf);
+    init_big_float(g_param_z_bf.x);
+    init_big_float(g_param_z_bf.y);
+    init_big_float(g_old_z_bf.x);
+    init_big_float(g_old_z_bf.y);
+    init_big_float(g_new_z_bf.x);
+    init_big_float(g_new_z_bf.y);
+    init_big_float(g_saved_z_bf.x);
+    init_big_float(g_saved_z_bf.y);
+    init_big_float(g_close_enough_bf);
+    init_big_float(g_tmp_sqr_x_bf);
+    init_big_float(g_tmp_sqr_y_bf);
+    init_big_float(g_bf_tmp);
+    for (BigFloat *target : parameter_bindings())
     {
-        for (BigFloat *target : parameter_bindings())
+        if (!preserve_parameters && !*target)
         {
-            if (!*target)
-            {
-                BigFloat value{big_float.persistent};
-                std::destroy_at(target);
-                ::new (target) BigFloat{std::move(value)};
-            }
+            BigFloat value{big_float.persistent};
+            std::destroy_at(target);
+            ::new (target) BigFloat{std::move(value)};
+        }
+        if (!preserve_parameters || !preserve_precision)
+        {
+            target->set_precision(precision);
         }
     }
     m_bound = true;
@@ -347,6 +351,7 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
     const int bf_length = bf_length_for_bn_length(bn_length);
     const int rounded_length = bf_length - 4;
     const bool carry_view = s_arenas && s_arenas->bound();
+    const bool same_precision = carry_view && g_decimals == decimals;
     const bool same_layout = s_arenas && s_arenas->matches_layout(rounded_length, int_length);
     if (!same_layout)
     {
@@ -360,7 +365,8 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
             converted.reserve(corners.size());
             for (const BigFloat *corner : corners)
             {
-                converted.push_back(corner->convert_precision(replacement->big_float.persistent, bf_length, g_bf_length));
+                converted.push_back(
+                    corner->convert_precision(replacement->big_float.persistent, bf_length, g_bf_length, decimals));
             }
             s_arenas->unbind();
             for (std::size_t i = 0; i < corners.size(); ++i)
@@ -377,7 +383,7 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
     g_decimals = decimals;
     calc_lengths();
     g_bf_math = BFMathType::BIG_FLT;
-    s_arenas->bind(same_layout && carry_view);
+    s_arenas->bind(same_layout && carry_view, same_precision);
     if (carry_view && !same_layout)
     {
         for (int i = 0; i < MAX_PARAMS; ++i)
@@ -390,6 +396,14 @@ static void init_bf2(const int bn_length, const int int_length, const int decima
 BigArena &bf_arena(const BigLifetime lifetime)
 {
     return s_arenas->big_float.get(lifetime);
+}
+
+MPPrecision bf_precision()
+{
+    // A stored byte layout can have no requested decimal fraction digits.
+    const int native_digits = std::numeric_limits<LDouble>::max_digits10 - static_cast<int>(MPPrecision::GUARD_DIGITS);
+    const int digits = std::max(g_decimals > 0 ? g_decimals : g_bf_decimals, native_digits);
+    return MPPrecision{std::max(digits, 1), g_bf_digits};
 }
 
 BigStack::BigStack(BigArena &arena) :
