@@ -3,6 +3,8 @@
 //
 #pragma once
 
+#include <math/PrecisionError.h>
+
 #include <config/port.h>
 
 #include <cstddef>
@@ -14,12 +16,6 @@
 
 namespace id::math
 {
-
-class PrecisionError : public std::runtime_error
-{
-public:
-    using std::runtime_error::runtime_error;
-};
 
 class BigArena
 {

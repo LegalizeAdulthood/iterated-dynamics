@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Copyright 2026 Richard Thomson.
 //
-#include <ui/zoom.h>
 #include <math/BigFloat.h>
+#include <ui/zoom.h>
 
 #include <engine/calcfrac.h>
 #include <engine/ImageRegion.h>
@@ -141,7 +141,6 @@ protected:
 TEST_F(TestBigFloatZoomBase, unrotatedBoxPreservesExactCornerValues)
 {
     const std::array<BigFloat, 6> original = saved_corners();
-    const BigStackMark stack = save_stack();
 
     draw_box(false);
 
@@ -155,7 +154,6 @@ TEST_F(TestBigFloatZoomBase, unrotatedBoxPreservesExactCornerValues)
         EXPECT_EQ(expected, *corners[i]);
     }
     EXPECT_EQ(original, saved_corners());
-    EXPECT_EQ(stack, save_stack());
 }
 
 class TestBigFloatZoom : public TestBigFloatZoomBase, public WithParamInterface<std::tuple<int, int, bool>>
@@ -178,25 +176,20 @@ void TestBigFloatZoom::SetUp()
 TEST_P(TestBigFloatZoom, preservesZoomCoordinatesSavedValuesAndStackLifetime)
 {
     const std::array<BigFloat, 6> original = saved_corners();
-    const BigStackMark stack = save_stack();
     g_bf_math = BFMathType::BIG_FLT;
 
     draw_box(false);
 
     expect_current_region(g_image_region);
     EXPECT_EQ(original, saved_corners());
-    EXPECT_EQ(stack, save_stack());
     const std::array<BigFloat, 6> first_draw = current_corners();
     const std::vector<BigFloat> first_parameters(std::begin(g_bf_params), std::end(g_bf_params));
-    const std::size_t high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
 
     draw_box(false);
 
     EXPECT_EQ(first_draw, current_corners());
     EXPECT_EQ(original, saved_corners());
     EXPECT_TRUE(std::equal(first_parameters.begin(), first_parameters.end(), std::begin(g_bf_params)));
-    EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
-    EXPECT_EQ(stack, save_stack());
     const ImageRegion zoomed{g_image_region};
     g_bf_math = BFMathType::NONE;
     zoom_out();
@@ -208,7 +201,6 @@ TEST_P(TestBigFloatZoom, preservesZoomCoordinatesSavedValuesAndStackLifetime)
 
     expect_current_region(expected);
     EXPECT_EQ(original, saved_corners());
-    EXPECT_EQ(stack, save_stack());
     g_zoom_box_width = 0;
     draw_box(false);
     expect_current_region(g_save_image_region);

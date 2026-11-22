@@ -140,7 +140,6 @@ int TestBigFloatBrowser::browse()
 TEST_P(TestBigFloatBrowser, preservesExactCornersInputsAndTemporaryLifetimeAcrossBrowsing)
 {
     const auto bytes = pack_bf_parameters();
-    const auto saved = save_stack();
     const int bf_length = g_bf_length;
     const int bn_length = g_bn_length;
     const int decimals = g_decimals;
@@ -157,18 +156,14 @@ TEST_P(TestBigFloatBrowser, preservesExactCornersInputsAndTemporaryLifetimeAcros
     EXPECT_EQ(5, g_box_x[3]);
     EXPECT_EQ(5, g_box_y[3]);
     EXPECT_EQ(bytes, pack_bf_parameters());
-    EXPECT_EQ(saved, save_stack());
     EXPECT_EQ(bf_length, g_bf_length);
     EXPECT_EQ(bn_length, g_bn_length);
     EXPECT_EQ(decimals, g_decimals);
-    const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
 
     EXPECT_EQ(ID_KEY_ENTER, browse());
 
     EXPECT_EQ(m_path, g_browse.selected_path);
     EXPECT_EQ(bytes, pack_bf_parameters());
-    EXPECT_EQ(saved, save_stack());
-    EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
     EXPECT_EQ(bf_length, g_bf_length);
     EXPECT_EQ(bn_length, g_bn_length);
     EXPECT_EQ(decimals, g_decimals);
@@ -196,7 +191,6 @@ TEST_P(TestBigFloatBrowser, preservesOrdinaryViewAcrossBrowsing)
 
     EXPECT_EQ(m_path, g_browse.selected_path);
     EXPECT_EQ(BFMathType::NONE, g_bf_math);
-    EXPECT_EQ(BigStackMark{}, save_stack());
     EXPECT_FALSE(g_bf_x_min);
     EXPECT_EQ(2, g_box_x[0]);
     EXPECT_EQ(2, g_box_y[0]);
@@ -207,7 +201,6 @@ TEST_P(TestBigFloatBrowser, preservesOrdinaryViewAcrossBrowsing)
 
     EXPECT_EQ(m_path, g_browse.selected_path);
     EXPECT_EQ(BFMathType::NONE, g_bf_math);
-    EXPECT_EQ(BigStackMark{}, save_stack());
     EXPECT_FALSE(g_bf_x_min);
 }
 
@@ -217,22 +210,17 @@ void TestBigFloatBrowser::expect_rejected()
     EXPECT_CALL(m_driver, get_key()).Times(0);
     EXPECT_CALL(m_driver, wait_key_pressed(false)).Times(2).WillRepeatedly(Return(0));
     const auto bytes = pack_bf_parameters();
-    const auto saved = save_stack();
 
     EXPECT_EQ(0, file_get_window());
 
     EXPECT_FALSE(g_browse.sub_images);
     EXPECT_TRUE(g_browse.selected_path.empty());
     EXPECT_EQ(bytes, pack_bf_parameters());
-    EXPECT_EQ(saved, save_stack());
-    const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
 
     EXPECT_EQ(0, file_get_window());
 
     EXPECT_FALSE(g_browse.sub_images);
     EXPECT_EQ(bytes, pack_bf_parameters());
-    EXPECT_EQ(saved, save_stack());
-    EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
 }
 
 TEST_P(TestBigFloatBrowser, releasesTemporaryValuesWhenWindowIsTooSmall)

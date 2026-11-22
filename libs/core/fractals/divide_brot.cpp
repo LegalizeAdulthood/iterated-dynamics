@@ -50,11 +50,10 @@ int divide_brot5_bf_per_pixel()
 
 int divide_brot5_orbit_bf()
 {
-    BigStackSaver saved;
-    BFComplex bf_tmp_new{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex bf_numer{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex bf_c_exp{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BFComplex bf_tmp_new{BigFloat{0}, BigFloat{0}};
+    BFComplex bf_numer{BigFloat{0}, BigFloat{0}};
+    BFComplex bf_c_exp{BigFloat{0}, BigFloat{0}};
+    BigFloat tmp1{0};
 
     /* sqr(z) */
     /* bfnumer.x = g_tmp_sqr_x_bf - g_tmp_sqr_y_bf;   */

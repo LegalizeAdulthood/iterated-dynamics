@@ -165,8 +165,6 @@ BigFloat::BigFloat() noexcept = default;
 BigFloat BigFloat::from_value(MPReal value)
 {
     BigFloat result;
-    result.m_arena = &bf_arena(BigLifetime::WORKING);
-    result.m_encoded_size = result.m_arena->value_size();
     result.m_value.emplace(std::move(value));
     if (result.is_zero())
     {
@@ -176,34 +174,15 @@ BigFloat BigFloat::from_value(MPReal value)
 }
 
 BigFloat::BigFloat(const LDouble value) :
-    BigFloat(bf_arena(BigLifetime::WORKING), value)
-{
-}
-
-BigFloat::BigFloat(const std::string_view text) :
-    BigFloat(bf_arena(BigLifetime::WORKING), text)
-{
-}
-
-BigFloat::BigFloat(BigArena &arena) :
-    m_arena(&arena),
-    m_encoded_size(arena.value_size()),
     m_value(bf_precision().real())
-{
-}
-
-BigFloat::BigFloat(BigArena &arena, const LDouble value) :
-    BigFloat(arena)
 {
     *this = value;
 }
 
-BigFloat::BigFloat(BigArena &arena, const std::string_view text) :
-    m_arena(&arena),
-    m_encoded_size(arena.value_size()),
+BigFloat::BigFloat(const std::string_view text) :
     m_value(bf_precision().real(decimal_input(text)))
 {
-    if (*m_value == 0)
+    if (is_zero())
     {
         clear();
     }
@@ -211,74 +190,20 @@ BigFloat::BigFloat(BigArena &arena, const std::string_view text) :
 
 BigFloat::BigFloat(const BigFloat &value) = default;
 
-BigFloat::BigFloat(BigArena &arena, const BigFloat &value) :
-    m_arena(&arena),
-    m_encoded_size(arena.value_size()),
-    m_value(value.m_value)
-{
-}
-
 BigFloat::BigFloat(BigFloat &&value) noexcept :
-    m_arena(value.m_arena),
-    m_encoded_size(value.m_encoded_size),
     m_value(std::move(value.m_value))
 {
     value.m_value.reset();
 }
 
-BigFloat &BigFloat::operator=(const BigFloat &value)
-{
-    if (this != &value)
-    {
-        if (!value.m_value)
-        {
-            m_value.reset();
-        }
-        else
-        {
-            if (m_arena == nullptr)
-            {
-                m_arena = &bf_arena(BigLifetime::WORKING);
-                m_encoded_size = m_arena->value_size();
-            }
-            if (m_value)
-            {
-                *m_value = *value.m_value;
-            }
-            else
-            {
-                m_value.emplace(*value.m_value);
-            }
-        }
-    }
-    return *this;
-}
+BigFloat &BigFloat::operator=(const BigFloat &value) = default;
 
 BigFloat &BigFloat::operator=(BigFloat &&value)
 {
     if (this != &value)
     {
-        if (!value.m_value)
-        {
-            m_value.reset();
-        }
-        else
-        {
-            if (m_arena == nullptr)
-            {
-                m_arena = &bf_arena(BigLifetime::WORKING);
-                m_encoded_size = m_arena->value_size();
-            }
-            if (m_arena == value.m_arena)
-            {
-                m_value = std::move(value.m_value);
-                value.m_value.reset();
-            }
-            else
-            {
-                *this = static_cast<const BigFloat &>(value);
-            }
-        }
+        m_value = std::move(value.m_value);
+        value.m_value.reset();
     }
     return *this;
 }
@@ -288,11 +213,6 @@ BigFloat &BigFloat::operator=(const LDouble value)
     validate_scalar(value);
     if (!m_value)
     {
-        if (m_arena == nullptr)
-        {
-            m_arena = &bf_arena(BigLifetime::WORKING);
-            m_encoded_size = m_arena->value_size();
-        }
         m_value.emplace(bf_precision().real());
     }
     *m_value = value;
@@ -315,7 +235,7 @@ void BigFloat::load_pi()
 
 BigFloat BigFloat::operator-() const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     *result.m_value = -*m_value;
     if (result.is_zero())
     {
@@ -378,28 +298,28 @@ BigFloat &BigFloat::operator/=(const misc::U16 right)
 
 BigFloat BigFloat::operator+(const BigFloat &right) const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     result += right;
     return result;
 }
 
 BigFloat BigFloat::operator-(const BigFloat &right) const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     result -= right;
     return result;
 }
 
 BigFloat BigFloat::operator*(const BigFloat &right) const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     result *= right;
     return result;
 }
 
 BigFloat BigFloat::operator*(const misc::U16 right) const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     *result.m_value *= right;
     if (result.is_zero())
     {
@@ -410,35 +330,35 @@ BigFloat BigFloat::operator*(const misc::U16 right) const
 
 BigFloat BigFloat::operator/(const BigFloat &right) const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     result /= right;
     return result;
 }
 
 BigFloat BigFloat::abs() const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     *result.m_value = boost::multiprecision::abs(*m_value);
     return result;
 }
 
 BigFloat BigFloat::sqr() const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     *result.m_value = *m_value * *m_value;
     return result;
 }
 
 BigFloat BigFloat::half() const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     result /= misc::U16{2};
     return result;
 }
 
 BigFloat BigFloat::log() const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     if (sign() <= 0)
     {
         legacy_limit(*result.m_value, true);
@@ -452,15 +372,14 @@ BigFloat BigFloat::log() const
 
 BigFloat BigFloat::exp() const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     *result.m_value = boost::multiprecision::exp(*m_value);
     return result;
 }
 
 std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
 {
-    std::pair<BigFloat, BigFloat> result{
-        BigFloat{bf_arena(BigLifetime::WORKING), *this}, BigFloat{bf_arena(BigLifetime::WORKING), *this}};
+    std::pair<BigFloat, BigFloat> result{BigFloat{*this}, BigFloat{*this}};
     // Boost has no combined operation; share MPFR's argument reduction.
     mpfr_sin_cos(result.first.m_value->backend().data(), result.second.m_value->backend().data(),
         m_value->backend().data(), MPFR_RNDN);
@@ -469,7 +388,7 @@ std::pair<BigFloat, BigFloat> BigFloat::sin_cos() const
 
 BigFloat BigFloat::atan2(const BigFloat &x) const
 {
-    BigFloat result{bf_arena(BigLifetime::WORKING), *this};
+    BigFloat result{*this};
     *result.m_value = boost::multiprecision::atan2(*m_value, *x.m_value);
     return result;
 }
@@ -561,7 +480,7 @@ std::string BigFloat::to_scientific_string(const int digits) const
 
 void BigFloat::hex_dump() const
 {
-    std::vector<Byte> record(encoded_size());
+    std::vector<Byte> record(static_cast<std::size_t>(g_bf_length + 2));
     pack_bf(record.data(), record.size());
     bf_hex_dump_snapshot(record.data());
 }
@@ -574,27 +493,18 @@ void BigFloat::set_precision(const MPPrecision &precision)
     }
 }
 
-BigFloat BigFloat::convert_precision(BigArena &arena, const int new_length, const int, const int digits) const
-{
-    BigFloat result{arena, *this};
-    const MPPrecision precision{
-        digits > 0 ? digits : std::max(1, static_cast<int>((new_length - 2) * LOG10_256)), g_bf_digits};
-    result.set_precision(precision);
-    return result;
-}
-
 void BigFloat::pack_bf(Byte *record, const std::size_t length) const
 {
-    if (record == nullptr || length < encoded_size())
+    if (record == nullptr || g_bf_length <= 0 || length < static_cast<std::size_t>(g_bf_length + 2))
     {
         throw std::invalid_argument("BigFloat requires a complete legacy value buffer");
     }
-    MPConversions::to_legacy(*m_value, record, static_cast<int>(encoded_size()) - 2);
+    MPConversions::to_legacy(*m_value, record, g_bf_length);
 }
 
 const Byte *BigFloat::unpack_bf(BigFloat &destination, const Byte *source, const int stored_length)
 {
-    const int length = static_cast<int>(destination.encoded_size()) - 2;
+    const int length = g_bf_length;
     const int retained = std::min(length, stored_length);
     std::vector<Byte> bytes(static_cast<std::size_t>(length) + 2, 0);
     std::copy_n(source + stored_length - retained, retained, bytes.data() + length - retained);

@@ -5,78 +5,52 @@ Copyright 2026 Richard Thomson.
 
 # Math Global Variables
 
-Inventory of public `g_*` declarations in `libs/core/include/math`. Lengths
-and offsets below describe the current allocator in
-`libs/core/math/big_init.cpp`; some older comments in `big.h` differ from
-the actual reservations.
+This document describes the current owning values, numeric setup, and
+remaining legacy byte-kernel support in the core math layer.
 
 ## Numeric Representation And Precision
 
 Headers: `big.h`, `big_init.h`, and `BigFloat.h`.
 
-- `g_bf_math` - active representation: `NONE` or `BIG_FLT`.
-- `g_bn_step` - byte-length alignment, set to four by `calc_lengths()`.
-- `g_int_length` - integer-byte count for internal fixed-point kernels.
-- `g_bn_length` - internal fixed-point working length in bytes.
-- `g_padding` - extra multiplication working bytes.
-- `g_r_length` - `g_bn_length + g_padding`.
-- `g_decimals` - requested decimal precision.
-- `g_shift_factor` - offset used by partial fixed-point multiplication.
-- `g_bf_length` - floating-point mantissa length.
-- `g_r_bf_length` - mantissa working length including padding.
-- `g_bf_decimals` - decimal precision derived from mantissa length.
+- `g_bf_math` selects native or arbitrary-precision calculations.
+- `g_decimals` records requested decimal precision; `g_bf_digits` is the
+  explicit user override.
+- `g_bn_step`, `g_bn_length`, `g_int_length`, `g_padding`, `g_r_length`,
+  and `g_shift_factor` describe the remaining fixed-point byte kernels.
+- `g_bf_length`, `g_r_bf_length`, and `g_bf_decimals` describe legacy
+  mantissa layouts, working buffers, and saved-file precision metadata.
 
-Mandelbrot and Julia use the BigFloat orbit, pixel, and image functions.
-The owning BigNum type, its rendering state, and its arenas are removed.
-BigFloat still uses fixed-point byte primitives for mantissa arithmetic and
-native conversion. Remaining `g_bn_*` lengths serve those primitives.
+BigFloat owns an optional Boost.Multiprecision MPReal. Default
+construction is null; numeric construction selects working precision
+through MPPrecision. Copies and assignments retain the source value's
+precision. Moves transfer ownership and leave the source null. Values
+remain valid after numeric-context cleanup or precision changes.
 
-BigFloat owns an indexed arena allocation containing a signed base-256
-mantissa and a two-byte exponent. Default construction is null. Numeric
-construction and eager results use the working arena unless a compatible
-arena is selected explicitly. Copies retain the source allocator;
-assignments retain the destination allocator. Moves within an arena
-transfer a block; moves across arenas copy the value. Moved-from objects
-retain their allocator binding.
+Ordinary arithmetic and math functions use Boost. The combined
+sine/cosine operation uses mpfr_sin_cos to share argument reduction.
+BFComplex owns two BigFloat components. Complex logarithm and power use
+MPC temporaries inside the math layer. Logarithms of zero and powers with
+a zero base return zero; integer powers with nonpositive degrees return
+one. Complex division by zero sets `g_overflow` and returns zero.
 
-The allocator separates canonical size, aligned stride, and allocation
-width. Live owning handles survive `free_bf_vars()` at the same layout.
-Precision changes replace the numeric context and preserve current and
-saved corners. Arithmetic, parsing, native conversion, and formatting
-require a compatible active context and share scratch values.
+MPConversions encodes and decodes legacy binary significands and
+exponents without native floating-point intermediates. Lossy encoding
+rounds to nearest with ties to even, rejects non-finite values and
+overflow, and canonicalizes signed zero. Legacy layouts are a codec
+concern rather than owning-value storage.
 
-Arithmetic preserves its operands, including self-assignment.
-Multiplication and squaring normalize a paired wide product and reduce the
-canonical mantissa and exponent into one block. Unsigned scalar operations
-retain legacy rounding, normalization, and zero-divisor behavior. Newton
-iterations can retain guard-digit differences from reused destination
-bytes; value operations start with fresh results.
-
-BFComplex owns two BigFloat components. Complex multiplication and division
-materialize both results before assignment. Logarithms of zero and powers
-with a zero base return zero. Integer powers with nonpositive degrees
-return one. Division by zero sets `g_overflow` and returns zero.
-Trigonometric operations require `init_big_pi()` in the active context.
-
-MPConversions bridges BigFloat and MPReal through binary significands and
-exponents. Imports use MPPrecision. Exports use a selected legacy arena.
-Lossy conversions round to nearest with ties to even. Exports reject non-
-finite inputs and overflow and canonicalize signed zero. Conversions do not
-use a native floating-point intermediate.
-
-Precision selection depends on coordinate/resolution error, overrides, and
-alternate math. The supported `g_bn_length` limit is 708 bytes for every
-arbitrary-precision fractal, independently of arena capacity.
+The supported `g_bn_length` limit remains 708 bytes for every
+arbitrary-precision fractal. Automatic owner precision retains native
+scalar bits; explicit `bfdigits` overrides remain authoritative.
 
 ### Value Storage Measurements
 
-`check-big-value-storage` measures warmed scalar expressions, integer
-complex powers, and the actual Julia orbit callbacks. Its allocation hooks
-are confined to the measurement executable. The following historical
-results predate the BigFloat-only cutover and compare vector storage with
-indexed arena handles on Windows/MSVC, Release, at 40 decimal digits. Times
-are medians of three runs in milliseconds; heap counts are calls to the
-replacement `operator new`.
+The arena measurement tool is retired with arena-backed owning values.
+These historical Windows/MSVC Release measurements at 40 decimal digits
+predate the BigFloat-only cutover and compare vector storage with indexed
+arena handles. They do not describe current Boost allocation behavior.
+Times are medians of three runs in milliseconds; heap counts are calls
+to the replacement `operator new`.
 
 | Case | Reps | Heap before | Heap after | ms before | ms after |
 |---|---|---|---|---|---|
@@ -88,22 +62,11 @@ replacement `operator new`.
 | BF Julia orbit | 10000 | 0 | 0 | 5.102 | 5.262 |
 | BF Julia power orbit | 250 | 6250 | 0 | 35.503 | 36.203 |
 
-Every case had zero arena high-water growth after warmup, before and after
-the change. Arena free lists reuse released value blocks without repeated
-backing allocations. Scalar and complex timings improved in these runs;
-fractal timings were slightly slower. These short timings depend on the
-machine and load and are not a rendering-speed guarantee.
-
-Build the `check-big-value-storage` target and run
-`tests/tools/Release/check-big-value-storage.exe` from the build directory
-to repeat the measurement.
-
 ### BigFloat Cutover Measurements
 
-The BigFloat-only cutover baseline uses Windows/MSVC, Release, at 40
-decimal digits. The table records medians of three warmed runs of
-`check-big-value-storage`; timings depend on the machine and its load.
-Repeat this configuration when comparing the Boost implementation.
+The retired measurement tool recorded this BigFloat-only baseline on
+Windows/MSVC, Release, at 40 decimal digits. Times are medians of three
+warmed runs and depend on the machine and its load.
 
 | Case | Reps | Median ms | Heap allocations | Arena growth |
 |---|---|---|---|---|
@@ -123,85 +86,35 @@ indexed pixels and palette after the BigFloat cutover.
 
 Header: `big_init.h`.
 
-- `g_bf_digits` - explicit decimal-precision override.
-- `bf_arena()` selects persistent, working, or temporary BigFloat
-  storage through BigLifetime.
-- `big_memory_stats()` reports high-water payload bytes and capacity
-  across the three arenas.
+Numeric setup initializes owning globals directly. Precision changes
+resize preserved current and saved corners; changes to the legacy byte
+layout repopulate the ten parameter values from native render parameters.
+Repeated setup at the same precision preserves parameter values and
+clears working state. `free_bf_vars()` resets globals to null.
 
-Each arena starts with about 1 MiB of payload capacity. Blocks and backing
-storage are aligned to 64 bytes. Precision changes rebuild the context,
-preserving six current and six saved corners. The ten parameter bindings
-are initialized from render parameters. These 22 persistent values retain
-their historical serialized order, excluding allocator metadata.
-
-`init_bf_dec()` and `init_bf_length()` establish lengths and bindings.
-`bf_stack()` retains handles for borrowed raw workspaces. Allocation
-requests take no byte count. BigStackMark contains one BigFloat stack mark;
-`save_stack()`, `restore_stack()`, and BigStackSaver manage it. Exhaustion
-raises PrecisionError. Uninitialized stack use raises std::logic_error.
-Rejected requests preserve active allocation state.
-
-`free_bf_vars()` unbinds active globals and releases stack reservations.
-Other attached handles survive until the context is replaced.
-`calc_lengths()` remains allocation-free for temporary Newton lengths.
+`bf_arena()`, `bf_stack()`, BigStackMark, and BigStackSaver remain only
+for legacy byte kernels and their tests. Storage is allocated lazily on
+the first byte-kernel request. Owning arithmetic, rendering consumers,
+and perturbation continuation do not allocate in these arenas or retain
+stack marks. Precision changes and cleanup release the legacy storage.
+`calc_lengths()` remains allocation-free for temporary byte-kernel
+length changes.
 
 ## BigNum Temporaries
 
-Removed with the BigNum rendering implementation. BigFloat owns the
-remaining scratch values and paired operand-preservation buffers.
+Removed with the BigNum rendering implementation.
 
 ## BigFloat Temporaries
 
-Header: `big.h`.
+Header: `BigFloat.h`.
 
-- `g_bf_tmp1`, `g_bf_tmp2`, `g_bf_tmp3`, `g_bf_tmp4`, `g_bf_tmp5`,
-  `g_bf_tmp6` - owning canonical `BigFloat` kernel workspaces, each in one
-  working-arena slot. They hold `g_bf_length + 2` bytes or shortened
-  scratch values at the existing calculation sites.
-- `g_bf_tmp_copy1`, `g_bf_tmp_copy2` - owning `BigArena::Allocation`
-  handles, each reserving two working-arena blocks for operand copies
-  and destructive formatter scratch.
-- `g_bf_tmp` - owning `BigFloat` temporary, `g_bf_length + 2` encoded
-  bytes in the working arena.
-- `g_bf_pi` - owning `BigFloat` Pi storage in one working-arena
-  slot, with `g_bf_length + 2` canonical bytes.
+- `g_bf_tmp` is an owning scalar used by existing orbit and bailout code.
+- `g_bf_pi` is an owning Pi value computed through Boost at its working
+  precision when `init_big_pi()` is called.
 
-Single slots are sized from `g_bf_length + 2`, rounded up to 64 bytes.
-Multiply and sqr use separate `BigFloatProduct` temporaries, each owning
-two adjacent slots for `g_r_bf_length + 2` wide bytes. The existing
-reduction keeps canonical bytes in the first slot and releases the second.
-Square caches and bailout metrics remain canonical `BigFloat`.
-
-`MathArenas` constructs these six kernel values and two paired buffers in
-their existing allocation order. Binding clears each full reservation and
-reuses its allocation; unbinding releases it and leaves a null owner.
-Precision relocation discards kernel scratch, copy-buffer, and pi bytes.
-Live canonical values and products retain their existing conversions.
-Temporary stack rewinds do not release working-arena owners.
-
-Logarithm uses a borrowed, shifted window into `g_bf_tmp5`; arctangent does
-the same with `g_bf_tmp3`. Their `orig_*` pointers retain the base
-addresses while the existing loops change the active lengths. Exponent
-cursors and operand-copy pointers are also borrows, not new values.
-
-`init_big_pi()` copies the appropriate precision from a constant table. It
-writes the existing `g_bf_pi` slot. Pointer callers borrow `data()`.
-Arctangent preserves its existing precision offsets in a local borrowed
-pointer and passes that shortened view to the private sine/cosine helper.
-The owner keeps its base allocation throughout.
-
-Pi is allocated after the kernel copy buffers. Binding clears the full slot
-before the other BigFloat workspaces; repeated binding reuses it. Precision
-relocation discards its bytes, as the previous raw binding did. Callers
-repopulate the table with `init_big_pi()`; `data()` resolves the relocated
-slot. Temporary rewinds leave the working slot intact. Unbinding releases
-the owner and leaves `g_bf_pi` null.
-
-The 22 parameter bindings already refer to owning BigFloat values in the
-persistent arena. Their construction, precision conversion, and payload
-copy sites are unchanged. Pi was the last raw working binding, so the
-`WorkingBinding` table and its single/wide binding methods are retired.
+The six unused kernel owners and two paired copy-buffer bindings are
+removed. Ordinary BigFloat operations retain their own Boost values and
+do not use shared kernel scratch or Pi-table buffers.
 
 ## BigNum Coordinates And Iteration State
 
@@ -220,19 +133,16 @@ Header: `big.h`.
 - `g_old_z_bf`, `g_new_z_bf`, `g_saved_z_bf`, `g_param_z_bf` - owning
   `BFComplex` iteration values and parameter.
 
-The owning globals have canonical `g_bf_length + 2` bytes per scalar. Their
-handles start null. `MathArenas::bind` initializes them in the BigFloat
-working arena and clears existing values on later binds.
-`MathArenas::unbind` releases their blocks before arena destruction.
-Remaining legacy scalar callers borrow buffers with `BigFloat::data()`.
-Each bailout's threshold is an owning temporary-arena value, assigned at
-the existing scalar conversion site.
+These globals start null. Numeric setup initializes and clears working
+values directly; cleanup releases their owned values. Bailout thresholds
+are ordinary owning temporaries. Render-state ownership and continuation
+interfaces retain their existing organization.
 
 ## Persistent BigFloat Bounds And Parameters
 
 Header: `big.h`.
 
-Each scalar below reserves `g_bf_length + 2` bytes in the persistent area:
+Each scalar below owns an MPReal:
 
 - `g_bf_x_min`, `g_bf_x_max`, `g_bf_y_min`, `g_bf_y_max` - bounds.
 - `g_bf_x_3rd`, `g_bf_y_3rd` - third corner.
@@ -240,8 +150,9 @@ Each scalar below reserves `g_bf_length + 2` bytes in the persistent area:
   `g_bf_save_y_max`, `g_bf_save_x_3rd`, `g_bf_save_y_3rd` - saved bounds.
 - `g_bf_params` - ten scalar parameter bindings.
 
-The complete serialized area occupies `22 * (g_bf_length + 2)` bytes. It is
-retained across scratch-stack use and converted when precision changes.
+The serialized payload occupies `22 * (g_bf_length + 2)` bytes in its
+historical field order. Packing and unpacking retain this binary format;
+live values have no arena identity or encoded-size field.
 
 ## Double Interpreter And Trigonometric Bindings
 
@@ -263,20 +174,17 @@ Header: `fixed_pt.h`.
 
 ## Arithmetic And Conversion Contracts
 
-Arithmetic uses shared temporaries.  The distinction between ordinary and
-`unsafe_*` operations primarily concerns destructive operand use:
-preserving wrappers copy operands before calling destructive arithmetic. It
-is not a general validated-versus-unchecked input contract.
+BigFloat arithmetic preserves operands and materializes owning results.
+Precision is selected at construction or explicit changes; ordinary
+operations use Boost precision propagation and default rounding. Complex
+library functions preserve the documented branch and zero conventions.
+Formatting retains the existing notation and decimal carry conventions.
 
-The remaining fixed-point primitives support BigFloat mantissa arithmetic.
-Native conversion uses float_to_bf and bf_to_float; convert_bf handles
-legacy precision changes. The float spelling does not necessarily mean C++
-float; native values use LDouble.
+The remaining `unsafe_*` byte routines may destroy operands. Their
+preserving wrappers and explicit byte workspaces remain for legacy
+kernel tests until the byte subsystem is removed. They do not implement
+owning BigFloat arithmetic.
 
-BigFloat formatting keeps its decimal representation and conversion helpers
-private to the formatter. Each call owns its decimal scratch buffer; this
-storage is outside the shared arena.
-
-Shared arena, temporaries, lengths, and interpreter bindings are not
-thread-isolated.  Future ownership work belongs in
-[hexagonal.md](hexagonal.md), not an assumed performance or zoom model.
+Numeric setup, render state, byte lengths, and interpreter bindings
+remain global. Future render-ownership work belongs in
+[hexagonal.md](hexagonal.md).

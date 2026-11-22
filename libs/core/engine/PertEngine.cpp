@@ -116,7 +116,7 @@ std::complex<double> initialize_orbit(const std::complex<double> &coordinate)
 
 void initialize_orbit_bf(BFComplex &z, const BFComplex &coordinate)
 {
-    BigFloat offset{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat offset{0};
     z.x = g_params[0];
     z.y = g_params[1];
     if (!bof_initialization())
@@ -161,8 +161,7 @@ double bailout_limit()
 
 bool relative_delta(const BFComplex &value, const BFComplex &reference, std::complex<double> &delta)
 {
-    BigStackSaver saved;
-    BFComplex difference{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex difference{BigFloat{0}, BigFloat{0}};
     difference.x = value.x - reference.x;
     difference.y = value.y - reference.y;
     delta = {static_cast<double>(difference.x.to_float()), static_cast<double>(difference.y.to_float())};
@@ -204,11 +203,10 @@ bool ambiguous_bailout(const std::complex<double> &reference, const std::complex
 
 bool precise_bailout_reached(const BFComplex &z)
 {
-    BigStackSaver saved;
-    BigFloat x{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat y{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat metric{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat limit{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat x{0};
+    BigFloat y{0};
+    BigFloat metric{0};
+    BigFloat limit{0};
     limit = bailout_limit();
     x = sqr(z.x);
     y = sqr(z.y);
@@ -271,10 +269,10 @@ BFComplex &PertEngine::initialize_frame_bf(
     const std::complex<double> &half_horizontal, const std::complex<double> &half_vertical)
 {
     reset_for_frame(half_horizontal, half_vertical);
-    m_center_bf.x = BigFloat{bf_arena(BigLifetime::WORKING)};
-    m_center_bf.y = BigFloat{bf_arena(BigLifetime::WORKING)};
-    m_half_horizontal_bf = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-    m_half_vertical_bf = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
+    m_center_bf.x = BigFloat{0};
+    m_center_bf.y = BigFloat{0};
+    m_half_horizontal_bf = {BigFloat{0}, BigFloat{0}};
+    m_half_vertical_bf = {BigFloat{0}, BigFloat{0}};
     m_half_horizontal_bf.x = half_horizontal.real();
     m_half_horizontal_bf.y = half_horizontal.imag();
     m_half_vertical_bf.x = half_vertical.real();
@@ -492,8 +490,8 @@ bool PertEngine::advance_bailout()
             return false;
         }
         {
-            BigFloat real{bf_arena(BigLifetime::TEMPORARY)};
-            BigFloat imag{bf_arena(BigLifetime::TEMPORARY)};
+            BigFloat real{0};
+            BigFloat imag{0};
             real = sqr(m_pixel.precise_orbit.x);
             imag = sqr(m_pixel.precise_orbit.y);
             real = real - imag;
@@ -706,14 +704,14 @@ void PertEngine::allocate_working_values()
 {
     if (g_bf_math != BFMathType::NONE)
     {
-        m_reference_coordinate_bf.x = BigFloat{bf_arena(BigLifetime::WORKING)};
-        m_reference_coordinate_bf.y = BigFloat{bf_arena(BigLifetime::WORKING)};
-        m_reference_z_bf.x = BigFloat{bf_arena(BigLifetime::WORKING)};
-        m_reference_z_bf.y = BigFloat{bf_arena(BigLifetime::WORKING)};
-        m_reference_initial_bf = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-        m_orbit_parameter_bf = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-        m_orbit_initial_bf = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-        m_tmp_bf = BigFloat{bf_arena(BigLifetime::WORKING)};
+        m_reference_coordinate_bf.x = BigFloat{0};
+        m_reference_coordinate_bf.y = BigFloat{0};
+        m_reference_z_bf.x = BigFloat{0};
+        m_reference_z_bf.y = BigFloat{0};
+        m_reference_initial_bf = {BigFloat{0}, BigFloat{0}};
+        m_orbit_parameter_bf = {BigFloat{0}, BigFloat{0}};
+        m_orbit_initial_bf = {BigFloat{0}, BigFloat{0}};
+        m_tmp_bf = BigFloat{0};
     }
 }
 
@@ -763,11 +761,10 @@ std::complex<double> PertEngine::inverted_coordinate(const std::complex<double> 
 
 void PertEngine::inverted_coordinate(BFComplex &coordinate, const std::complex<double> &pixel_position) const
 {
-    BigStackSaver saved;
-    BigFloat horizontal{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat vertical{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat scale{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat delta{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat horizontal{0};
+    BigFloat vertical{0};
+    BigFloat scale{0};
+    BigFloat delta{0};
     horizontal = pixel_position.real();
     scale = g_logical_screen.x_dots - 1;
     horizontal /= scale;
@@ -796,10 +793,9 @@ void PertEngine::inverted_coordinate(BFComplex &coordinate, const std::complex<d
 
 void PertEngine::pixel_delta(BFComplex &delta, const std::complex<double> &pixel_position) const
 {
-    BigStackSaver saved;
-    BigFloat factor{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat divisor{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat term{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat factor{0};
+    BigFloat divisor{0};
+    BigFloat term{0};
     delta.x = 0;
     delta.y = 0;
     const double width{g_logical_screen.x_dots - 1.0};
@@ -836,8 +832,7 @@ bool PertEngine::parameter_delta(const std::complex<double> &pixel_position, std
                                         : pixel_delta(pixel_position) - m_reference.delta;
         return true;
     }
-    BigStackSaver saved;
-    BFComplex coordinate{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex coordinate{BigFloat{0}, BigFloat{0}};
     coordinate_bf(coordinate, pixel_position);
     return relative_delta(coordinate, m_reference_coordinate_bf, delta);
 }
@@ -945,10 +940,6 @@ bool PertEngine::iterate_reference()
 
 void PertEngine::clear_point()
 {
-    if (m_pixel.active)
-    {
-        restore_stack(m_pixel.stack);
-    }
     m_pixel = {};
 }
 
@@ -966,7 +957,6 @@ void PertEngine::clear_output()
 
 void PertEngine::begin_point(const Point &pt)
 {
-    m_pixel.stack = save_stack();
     m_pixel.active = true;
     if (m_explicit_orbit)
     {
@@ -1050,9 +1040,8 @@ bool PertEngine::advance_precise_orbit(const std::size_t target, std::size_t &re
 {
     if (!m_pixel.precise_orbit.x)
     {
-        m_pixel.precise_coordinate = {
-            BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-        m_pixel.precise_orbit = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
+        m_pixel.precise_coordinate = {BigFloat{0}, BigFloat{0}};
+        m_pixel.precise_orbit = {BigFloat{0}, BigFloat{0}};
         if (m_explicit_orbit)
         {
             if (m_orbit_input.precise)
@@ -1115,8 +1104,8 @@ bool PertEngine::save_precise_value(std::size_t &remaining)
 {
     if (!m_pixel.precise_saved.x)
     {
-        m_pixel.precise_saved = {BigFloat{bf_arena(BigLifetime::WORKING)}, BigFloat{bf_arena(BigLifetime::WORKING)}};
-        m_pixel.precise_tolerance = BigFloat{bf_arena(BigLifetime::WORKING)};
+        m_pixel.precise_saved = {BigFloat{0}, BigFloat{0}};
+        m_pixel.precise_tolerance = BigFloat{0};
         m_pixel.precise_tolerance = g_close_enough_bf;
     }
     if (m_pixel.have_saved_sample)
@@ -1640,11 +1629,9 @@ int PertEngine::finish_point(const Point &pt)
 
 void PertEngine::advance_reference_bf(const std::size_t end)
 {
-    BigStackSaver saved;
-
-    BigFloat temp_real_bf{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat temp_imag_bf{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat tmp_bf{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat temp_real_bf{0};
+    BigFloat temp_imag_bf{0};
+    BigFloat tmp_bf{0};
 
     tmp_bf = m_glitch_tolerance;
     for (; m_reference_sample < end; ++m_reference_sample)

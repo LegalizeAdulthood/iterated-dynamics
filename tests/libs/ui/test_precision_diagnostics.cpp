@@ -161,7 +161,6 @@ TEST_P(TestBigFloatPrecisionDiagnostics, preservesExactOutputAndInputValue)
     init_bf_length(input.length);
     const BigFloat value{input.text};
     const BigFloat original{value};
-    const BigStackMark stack = save_stack();
     const std::string number{input.number};
 
     EXPECT_EQ(number, format_var_bf("ignored label", value));
@@ -172,7 +171,6 @@ TEST_P(TestBigFloatPrecisionDiagnostics, preservesExactOutputAndInputValue)
         "bf\nbignum=" + number + "\ndouble=-1.50000000000000000000\n\n", format_compare_values_bf("bf", -1.5L, value));
 
     EXPECT_EQ(original, value);
-    EXPECT_EQ(stack, save_stack());
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatPrecisionDiagnostics,

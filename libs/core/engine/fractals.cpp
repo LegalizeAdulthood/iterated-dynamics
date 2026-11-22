@@ -221,12 +221,11 @@ void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 
 void mandel_ref_pt_bf(const BFComplex &center, BFComplex &z)
 {
-    BigStackSaver saved;
-    BigFloat temp_real{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat real_sqr{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat imag_sqr{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat real_imag{bf_arena(BigLifetime::TEMPORARY)};
-    BFComplex z2{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BigFloat temp_real{0};
+    BigFloat real_sqr{0};
+    BigFloat imag_sqr{0};
+    BigFloat real_imag{0};
+    BFComplex z2{BigFloat{0}, BigFloat{0}};
     z2.x = z.x + z.x;
     z2.y = z.y + z.y;
 

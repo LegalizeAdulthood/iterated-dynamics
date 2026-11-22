@@ -29,11 +29,10 @@ double Inversion::apply(DComplex &point) const
 
 void Inversion::apply(BFComplex &point) const
 {
-    BigStackSaver saved;
-    BigFloat center_x{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat center_y{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat magnitude{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat scale{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat center_x{0};
+    BigFloat center_y{0};
+    BigFloat magnitude{0};
+    BigFloat scale{0};
     center_x = center.x;
     center_y = center.y;
     point.x -= center_x;

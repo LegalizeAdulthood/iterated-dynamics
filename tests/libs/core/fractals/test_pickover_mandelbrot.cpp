@@ -71,7 +71,6 @@ TEST_F(TestMandelPowerState, nativeBigFloatReadsBothExponentComponentsOnEveryCal
     const std::complex<double> parameter{0.125, -0.0625};
     g_param_z_bf.x = parameter.real();
     g_param_z_bf.y = parameter.imag();
-    const auto stack = save_stack();
     for (const std::complex<double> exponent :
         {std::complex<double>{2, 0}, {3, 0}, {-1, 0}, {0.5, 0.25}, {0.5, -0.25}, {0, 0}})
     {
@@ -87,7 +86,6 @@ TEST_F(TestMandelPowerState, nativeBigFloatReadsBothExponentComponentsOnEveryCal
 
         EXPECT_NEAR(expected.real(), static_cast<double>(g_new_z_bf.x.to_float()), tolerance);
         EXPECT_NEAR(expected.imag(), static_cast<double>(g_new_z_bf.y.to_float()), tolerance);
-        EXPECT_EQ(stack, save_stack());
     }
 }
 
@@ -204,13 +202,12 @@ TEST_P(TestMandelZPowerPerturbation, referenceSequenceMatchesRepeatedMultiplicat
 TEST_P(TestMandelZPowerPerturbation, preciseReferenceSequenceMatchesRepeatedMultiplication)
 {
     initialize_precision();
-    BigStackSaver saved;
-    BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex actual{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex expected{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex powered{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex product{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
+    BFComplex center{BigFloat{0}, BigFloat{0}};
+    BFComplex actual{BigFloat{0}, BigFloat{0}};
+    BFComplex expected{BigFloat{0}, BigFloat{0}};
+    BFComplex powered{BigFloat{0}, BigFloat{0}};
+    BFComplex product{BigFloat{0}, BigFloat{0}};
+    BigFloat difference{0};
     center.x = BigFloat{"-0.12500000000000000000000000000000000000001"};
     center.y = BigFloat{"0.000125"};
     actual.x = BigFloat{"0.99900000000000000000000000000000000000001"};
@@ -302,10 +299,9 @@ void TestSignedPowerState::initialize_signed_precision()
 
 std::complex<double> TestSignedPowerState::precise_power(const std::complex<double> &z)
 {
-    BigStackSaver saved;
-    BFComplex value{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex result{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex value{BigFloat{0}, BigFloat{0}};
+    BFComplex exponent{BigFloat{0}, BigFloat{0}};
+    BFComplex result{BigFloat{0}, BigFloat{0}};
     value.x = z.real();
     value.y = z.imag();
     exponent.x = g_c_exponent;
@@ -462,13 +458,12 @@ void TestPreciseSignedPowerReference::SetUp()
 
 TEST_P(TestPreciseSignedPowerReference, matchesTheNativePowerKernel)
 {
-    BigStackSaver saved;
-    BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex actual{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex seed{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex expected{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
+    BFComplex exponent{BigFloat{0}, BigFloat{0}};
+    BFComplex actual{BigFloat{0}, BigFloat{0}};
+    BFComplex seed{BigFloat{0}, BigFloat{0}};
+    BFComplex expected{BigFloat{0}, BigFloat{0}};
+    BFComplex center{BigFloat{0}, BigFloat{0}};
+    BigFloat difference{0};
     exponent.x = GetParam().exponent;
     exponent.y = 0;
     center.x = 0.125;
@@ -798,13 +793,12 @@ void TestPreciseComplexPowerReference::SetUp()
 
 TEST_P(TestPreciseComplexPowerReference, usesTheNativeArbitraryPrecisionKernel)
 {
-    BigStackSaver saved;
-    BFComplex seed{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex actual{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex expected{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BigFloat difference{bf_arena(BigLifetime::TEMPORARY)};
+    BFComplex seed{BigFloat{0}, BigFloat{0}};
+    BFComplex actual{BigFloat{0}, BigFloat{0}};
+    BFComplex expected{BigFloat{0}, BigFloat{0}};
+    BFComplex exponent{BigFloat{0}, BigFloat{0}};
+    BFComplex center{BigFloat{0}, BigFloat{0}};
+    BigFloat difference{0};
     exponent.x = GetParam().exponent.real();
     exponent.y = GetParam().exponent.imag();
     center.x = 0.0625;
@@ -842,9 +836,8 @@ void TestPreciseComplexPowerZero::SetUp()
 
 TEST_P(TestPreciseComplexPowerZero, zeroReferenceProducesTheCenter)
 {
-    BigStackSaver saved;
-    BFComplex actual{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex actual{BigFloat{0}, BigFloat{0}};
+    BFComplex center{BigFloat{0}, BigFloat{0}};
     center.x = 0.0625;
     center.y = -0.03125;
     actual.x = 0;

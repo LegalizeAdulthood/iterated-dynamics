@@ -185,10 +185,6 @@ static bool tab_display2()
 
     const std::string version{to_string(current_id_version())};
     write_row(++row, "Version {:s}", version);
-    const BigMemoryStats memory = big_memory_stats();
-    write_row(++row, "{:d} of {:d} bignum memory used", memory.globals + memory.temporaries, memory.capacity);
-    write_row(++row, "   {:d} used for bignum globals", memory.globals);
-    write_row(++row, "   {:d} used for temporary values", memory.temporaries);
     if (g_bf_math != BFMathType::NONE)
     {
         write_row(++row, "g_int_length {:d} g_bf_length {:d} ", g_int_length, g_bf_length);
@@ -345,8 +341,8 @@ int tab_display() // display the status of the current image
     driver_stack_screen();
     if (g_bf_math != BFMathType::NONE)
     {
-        bf_x_ctr = BigFloat{bf_arena(BigLifetime::WORKING)};
-        bf_y_ctr = BigFloat{bf_arena(BigLifetime::WORKING)};
+        bf_x_ctr = BigFloat{0};
+        bf_y_ctr = BigFloat{0};
     }
     if (g_fractal_type == FractalType::FORMULA)
     {

@@ -6,7 +6,6 @@
 
 #include <MockDriver.h>
 
-#include <math/BigFloat.h>
 #include <engine/bailout_formula.h>
 #include <engine/calcfrac.h>
 #include <engine/fractalb.h>
@@ -18,6 +17,7 @@
 #include <engine/VideoInfo.h>
 #include <fractals/fractalp.h>
 #include <math/big_init.h>
+#include <math/BigFloat.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 
@@ -218,14 +218,11 @@ TEST_P(TestBigFloatMinimumIncrement, preservesCoordinateIncrementAtActivePrecisi
     g_logical_screen = {2, 3, 0, 0, 1.0, 2.0};
     ValueSaver saved_drift{g_aspect_drift, 0.0F};
     set_region(coordinate.region, true);
-    const auto saved = save_stack();
 
     EXPECT_FALSE(calc_frac_init());
 
     EXPECT_EQ(precision.digits, g_decimals);
     EXPECT_EQ(CalcStatus::RESUMABLE, g_calc_status);
-    EXPECT_EQ(saved, save_stack());
-    EXPECT_EQ(&bf_arena(BigLifetime::PERSISTENT), &coordinate.target->arena());
     EXPECT_EQ(coordinate.negative ? "-2.500000000000001" : "1.250000000000001", coordinate.target->to_string(16));
 }
 

@@ -119,7 +119,6 @@ private:
         double magnitude{};
         int saved_incr{1};
         int epsilon_axis{};
-        math::BigStackMark stack{};
         bool active{};
         bool star_trail{};
         bool high_precision{};

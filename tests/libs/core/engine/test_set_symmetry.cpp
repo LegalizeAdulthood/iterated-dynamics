@@ -94,7 +94,6 @@ TEST_F(TestBigFloatSymmetry, doublePrecisionNeedsNoArena)
     EXPECT_EQ(sym_plot4, g_plot);
     EXPECT_EQ((Point2i{3, 3}), g_i_stop_pt);
     EXPECT_EQ(0x33, g_work_symmetry);
-    EXPECT_EQ(BigStackMark{}, save_stack());
 }
 
 struct SymmetryScratchInput
@@ -130,7 +129,6 @@ TEST_P(TestBigFloatSymmetryScratch, preservesPlotDecisionsInputsAndTemporaryLife
     g_inversion.invert = input.inversion ? 1 : 0;
     g_param_z1.x = input.parameter ? 1 : 0;
     const auto bytes = pack_bf_parameters();
-    const auto saved = save_stack();
 
     set_symmetry(input.requested, input.use_list);
 
@@ -142,8 +140,6 @@ TEST_P(TestBigFloatSymmetryScratch, preservesPlotDecisionsInputsAndTemporaryLife
     EXPECT_EQ(0, g_num_work_list);
     EXPECT_EQ((Point2i{7, 7}), g_stop_pt);
     EXPECT_EQ(bytes, pack_bf_parameters());
-    EXPECT_EQ(saved, save_stack());
-    const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
     g_plot = put_color_a;
     g_i_stop_pt = {7, 7};
     g_work_symmetry = 0;
@@ -156,8 +152,6 @@ TEST_P(TestBigFloatSymmetryScratch, preservesPlotDecisionsInputsAndTemporaryLife
     EXPECT_EQ(input.work_symmetry, g_work_symmetry);
     EXPECT_EQ(input.pi_pixels, g_pi_in_pixels);
     EXPECT_EQ(bytes, pack_bf_parameters());
-    EXPECT_EQ(saved, save_stack());
-    EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
 }
 
 INSTANTIATE_TEST_SUITE_P(Paths, TestBigFloatSymmetryScratch,
@@ -270,8 +264,6 @@ TEST_P(TestBigFloatSymmetryExit, returnsBeforeAllocatingScratch)
         g_inside_method = ColorMethod::FMODI;
         break;
     }
-    const auto saved = save_stack();
-    const auto high_water = GetParam().initialized ? bf_arena(BigLifetime::TEMPORARY).high_water_mark() : 0;
 
     set_symmetry(requested, true);
 
@@ -280,10 +272,8 @@ TEST_P(TestBigFloatSymmetryExit, returnsBeforeAllocatingScratch)
     EXPECT_EQ((Point2i{7, 7}), g_i_stop_pt);
     EXPECT_EQ(0, g_work_symmetry);
     EXPECT_EQ(0, g_num_work_list);
-    EXPECT_EQ(saved, save_stack());
     if (GetParam().initialized)
     {
-        EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
     }
     else
     {

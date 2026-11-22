@@ -6,8 +6,8 @@
 #include <engine/CommandProcessor.h>
 
 #include <ColorMapSaver.h>
-#include <CommandTestFile.h>
 #include <CommandParameterTest.h>
+#include <CommandTestFile.h>
 #include <fractals/formula.h>
 #include <TemporaryDirectory.h>
 #include <test_data.h>
@@ -34,11 +34,11 @@
 #include <engine/random_seed.h>
 #include <engine/reset_version.h>
 #include <engine/show_dot.h>
-#include <engine/SynchronousOrbit.h>
 #include <engine/SolidGuess.h>
 #include <engine/sound.h>
 #include <engine/spindac.h>
 #include <engine/StickyOrbits.h>
+#include <engine/SynchronousOrbit.h>
 #include <engine/text_color.h>
 #include <engine/trig_fns.h>
 #include <engine/UserData.h>
@@ -72,9 +72,9 @@
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 
+#include <gif_lib.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <gif_lib.h>
 
 #include <algorithm>
 #include <array>
@@ -2585,14 +2585,11 @@ class TestBigFloatCornersInput : public TestBigFloatCommandInputs, public WithPa
 
 TEST_P(TestBigFloatCornersInput, parsesEachSlashDelimitedCoordinateExactly)
 {
-    const auto saved = save_stack();
-
     exec_cmd_arg(GetParam().argument);
 
     ASSERT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(m_parsed.diagnostics.errors.empty());
     EXPECT_FALSE(g_use_center_mag);
-    EXPECT_EQ(saved, save_stack());
     const std::array<const BigFloat *, 6> values{
         &g_bf_x_min, &g_bf_x_max, &g_bf_y_min, &g_bf_y_max, &g_bf_x_3rd, &g_bf_y_3rd};
     for (std::size_t i = 0; i < values.size(); ++i)
@@ -2634,7 +2631,6 @@ TEST_P(TestBigFloatCenterInput, preservesParsedCentersOptionsAndTemporaryLifetim
     const int digits = g_decimals;
     unpack_bf_parameters(std::vector<Byte>(expected.size()));
     init_bf_dec(digits);
-    const auto saved = save_stack();
 
     exec_cmd_arg(GetParam().argument);
 
@@ -2642,21 +2638,17 @@ TEST_P(TestBigFloatCenterInput, preservesParsedCentersOptionsAndTemporaryLifetim
     EXPECT_TRUE(g_use_center_mag);
     EXPECT_TRUE(m_parsed.diagnostics.errors.empty());
     EXPECT_EQ(expected, pack_bf_parameters());
-    EXPECT_EQ(saved, save_stack());
     EXPECT_EQ(static_cast<double>(g_bf_x_min.to_float()), g_image_region.m_min.x);
     EXPECT_EQ(static_cast<double>(g_bf_x_max.to_float()), g_image_region.m_max.x);
     EXPECT_EQ(static_cast<double>(g_bf_y_min.to_float()), g_image_region.m_min.y);
     EXPECT_EQ(static_cast<double>(g_bf_y_max.to_float()), g_image_region.m_max.y);
     EXPECT_EQ(static_cast<double>(g_bf_x_3rd.to_float()), g_image_region.m_3rd.x);
     EXPECT_EQ(static_cast<double>(g_bf_y_3rd.to_float()), g_image_region.m_3rd.y);
-    const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
 
     exec_cmd_arg(GetParam().argument);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(expected, pack_bf_parameters());
-    EXPECT_EQ(saved, save_stack());
-    EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestBigFloatCenterInput,
@@ -2675,14 +2667,12 @@ class TestInvalidBigFloatCommandInput : public TestBigFloatCommandInputs, public
 TEST_P(TestInvalidBigFloatCommandInput, reportsErrorWithoutChangingCoordinateBytes)
 {
     const auto expected = pack_bf_parameters();
-    const auto saved = save_stack();
 
     exec_cmd_arg(GetParam());
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
     EXPECT_EQ(1U, m_parsed.diagnostics.errors.size());
     EXPECT_EQ(expected, pack_bf_parameters());
-    EXPECT_EQ(saved, save_stack());
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestInvalidBigFloatCommandInput,

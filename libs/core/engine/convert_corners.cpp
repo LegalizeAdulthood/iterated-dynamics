@@ -84,9 +84,8 @@ void cvt_corners(const double ctr_x, const double ctr_y, const LDouble mag, doub
 void cvt_corners_bf(
     const BigFloat &ctr_x, const BigFloat &ctr_y, const LDouble mag, double x_mag_factor, double rot, const double skew)
 {
-    BigStackSaver saved;
-    BigFloat bfh{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bfw{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bfh{0};
+    BigFloat bfw{0};
 
     if (x_mag_factor == 0.0)
     {
@@ -115,7 +114,7 @@ void cvt_corners_bf(
         return;
     }
 
-    BigFloat bf_tmp{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_tmp{0};
     // in unrotated, untranslated coordinate system
     const double tan_skew = std::tan(deg_to_rad(skew));
     const LDouble x_min = -w + h * tan_skew;

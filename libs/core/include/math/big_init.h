@@ -59,14 +59,10 @@ enum class BigLifetime
     TEMPORARY
 };
 
-// Arenas have stable addresses and outlive active legacy bindings.
-// Call init_bf_dec or init_bf_length before obtaining an arena.
+// Legacy byte-kernel storage is allocated lazily and never holds BigFloat values.
+// Call init_bf_dec or init_bf_length before requesting byte storage.
 BigArena &bf_arena(BigLifetime lifetime);
 MPPrecision bf_precision();
-
-// Paired operand-preservation workspaces.
-extern BigArena::Allocation g_bf_tmp_copy1; // Paired operand-preservation workspace.
-extern BigArena::Allocation g_bf_tmp_copy2; // Paired operand-preservation workspace.
 
 class BigStack
 {
@@ -96,14 +92,6 @@ struct BigStackMark
     bool operator>(const BigStackMark &right) const;
 };
 
-struct BigMemoryStats
-{
-    std::size_t globals{};
-    std::size_t temporaries{};
-    std::size_t capacity{};
-};
-
-BigMemoryStats big_memory_stats();
 std::vector<Byte> pack_bf_parameters();
 void unpack_bf_parameters(const std::vector<Byte> &parameters);
 

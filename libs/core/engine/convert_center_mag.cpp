@@ -129,8 +129,8 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
     if (g_bf_x_3rd == g_bf_x_min && g_bf_y_3rd == g_bf_y_min)
     {
         // no rotation or skewing, but stretching is allowed
-        BigFloat width_bf{bf_arena(BigLifetime::TEMPORARY)};
-        BigFloat height_bf{bf_arena(BigLifetime::TEMPORARY)};
+        BigFloat width_bf{0};
+        BigFloat height_bf{0};
         // width  = x_max - x_min;
         width_bf = g_bf_x_max - g_bf_x_min;
         const LDouble width = width_bf.to_float();
@@ -150,8 +150,8 @@ void cvt_center_mag_bf(BigFloat &ctr_x, BigFloat &ctr_y, LDouble &mag, double &x
     }
     else
     {
-        BigFloat tmp_x_bf{bf_arena(BigLifetime::TEMPORARY)};
-        BigFloat tmp_y_bf{bf_arena(BigLifetime::TEMPORARY)};
+        BigFloat tmp_x_bf{0};
+        BigFloat tmp_y_bf{0};
 
         // set up triangle ABC, having sides abc
         // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)

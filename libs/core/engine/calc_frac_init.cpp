@@ -410,9 +410,9 @@ void adjust_corner_bf()
     double skew;
     LDouble magnification;
 
-    BigFloat bf_temp{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_temp2{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_temp{0};
+    BigFloat bf_temp2{0};
+    BigFloat b_tmp1{0};
 
     // While we're at it, let's adjust the x_mag_factor as well
     // use bf_temp, bftemp2 as bfXctr, bfYctr
@@ -528,27 +528,27 @@ static bool adjust_to_limits_bf(const double expand)
 {
     BigFloat b_corner_x[4];
     BigFloat b_corner_y[4];
-    b_corner_x[0] = BigFloat{bf_arena(BigLifetime::WORKING)};
-    b_corner_x[1] = BigFloat{bf_arena(BigLifetime::WORKING)};
-    b_corner_x[2] = BigFloat{bf_arena(BigLifetime::WORKING)};
-    b_corner_x[3] = BigFloat{bf_arena(BigLifetime::WORKING)};
-    b_corner_y[0] = BigFloat{bf_arena(BigLifetime::WORKING)};
-    b_corner_y[1] = BigFloat{bf_arena(BigLifetime::WORKING)};
-    b_corner_y[2] = BigFloat{bf_arena(BigLifetime::WORKING)};
-    b_corner_y[3] = BigFloat{bf_arena(BigLifetime::WORKING)};
-    BigFloat b_low_x{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_high_x{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_low_y{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_high_y{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_limit{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_temp{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_center_x{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_center_y{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_adj_x{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_adj_y{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_tmp2{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_expand{bf_arena(BigLifetime::TEMPORARY)};
+    b_corner_x[0] = BigFloat{0};
+    b_corner_x[1] = BigFloat{0};
+    b_corner_x[2] = BigFloat{0};
+    b_corner_x[3] = BigFloat{0};
+    b_corner_y[0] = BigFloat{0};
+    b_corner_y[1] = BigFloat{0};
+    b_corner_y[2] = BigFloat{0};
+    b_corner_y[3] = BigFloat{0};
+    BigFloat b_low_x{0};
+    BigFloat b_high_x{0};
+    BigFloat b_low_y{0};
+    BigFloat b_high_y{0};
+    BigFloat b_limit{0};
+    BigFloat bf_temp{0};
+    BigFloat b_center_x{0};
+    BigFloat b_center_y{0};
+    BigFloat b_adj_x{0};
+    BigFloat b_adj_y{0};
+    BigFloat b_tmp1{0};
+    BigFloat b_tmp2{0};
+    BigFloat b_expand{0};
 
     constexpr LDouble limit = 32767.99;
 
@@ -882,7 +882,7 @@ static void smallest_add(double *num)
 
 static void smallest_add_bf(BigFloat &num)
 {
-    BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp1{0};
     b_tmp1 = 5.0e-16;
     b_tmp1 *= num;
     num += b_tmp1;

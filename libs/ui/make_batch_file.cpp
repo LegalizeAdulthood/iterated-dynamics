@@ -988,8 +988,8 @@ static void write_batch_params(
     BigFloat bf_y_ctr{};
     if (g_bf_math != BFMathType::NONE)
     {
-        bf_x_ctr = BigFloat{bf_arena(BigLifetime::WORKING)};
-        bf_y_ctr = BigFloat{bf_arena(BigLifetime::WORKING)};
+        bf_x_ctr = BigFloat{0};
+        bf_y_ctr = BigFloat{0};
     }
 
     s_wb_data.buf.clear(); // force first parm to start on new line

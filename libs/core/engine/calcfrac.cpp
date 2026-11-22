@@ -1289,9 +1289,8 @@ int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
                     g_old_z = g_new_z;
                     if (g_bf_math == BFMathType::BIG_FLT)
                     {
-                        BigStackSaver saved;
-                        const BigFloat maximum{bf_arena(BigLifetime::TEMPORARY), STAR_TRAIL_MAX};
-                        const BigFloat minimum{bf_arena(BigLifetime::TEMPORARY), STAR_TRAIL_MIN};
+                        const BigFloat maximum{STAR_TRAIL_MAX};
+                        const BigFloat minimum{STAR_TRAIL_MIN};
                         if (g_new_z_bf.x > maximum)
                         {
                             g_new_z_bf.x = maximum;
@@ -2001,7 +2000,6 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     bool y_axis_between = false; // if axis between 2 pixels, not on one
     double f_temp;
     BigFloat bft1;
-    BigStackMark saved{};
     g_symmetry = SymmetryType::X_AXIS;
     if (g_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT || g_std_calc_mode == CalcMode::ORBIT)
     {
@@ -2085,8 +2083,7 @@ void set_symmetry(SymmetryType sym, const bool use_list)
     bool y_axis_on_screen;
     if (g_bf_math != BFMathType::NONE)
     {
-        saved = save_stack();
-        BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+        BigFloat value{0};
         std::destroy_at(&bft1);
         ::new (&bft1) BigFloat{std::move(value)};
         x_axis_on_screen = g_bf_y_min.sign() != g_bf_y_max.sign();
@@ -2317,7 +2314,6 @@ origin_symmetry:
     if (g_bf_math != BFMathType::NONE)
     {
         bft1 = BigFloat{};
-        restore_stack(saved);
     }
 }
 

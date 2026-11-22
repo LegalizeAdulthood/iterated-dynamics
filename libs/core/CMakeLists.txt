@@ -196,6 +196,7 @@ add_library(id-core
     include/math/fpu087.h math/fpu087.cpp
     include/math/hcmplx.h math/hcmplx.cpp
     include/math/MPMath.h math/MPMath.cpp
+    include/math/PrecisionError.h
     include/math/MPConversions.h math/MPConversions.cpp
     include/math/Point.h
     include/math/round_float_double.h math/round_float_double.cpp

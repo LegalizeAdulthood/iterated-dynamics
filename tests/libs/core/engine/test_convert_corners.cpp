@@ -79,7 +79,6 @@ TEST_P(TestBigFloatCornerPaths, preservesCentersCornerBytesAndTemporaryLifetime)
     const BigFloat y{"-2.5"};
     const BigFloat original_x{x};
     const BigFloat original_y{y};
-    const auto saved = save_stack();
     cvt_corners(1.25, -2.5, 2, transform.factor, transform.rotation, transform.skew);
     const std::array<double, 6> expected{g_image_region.m_min.x, g_image_region.m_max.x, g_image_region.m_min.y,
         g_image_region.m_max.y, g_image_region.m_3rd.x, g_image_region.m_3rd.y};
@@ -96,16 +95,12 @@ TEST_P(TestBigFloatCornerPaths, preservesCentersCornerBytesAndTemporaryLifetime)
     }
     EXPECT_EQ(original_x, x);
     EXPECT_EQ(original_y, y);
-    EXPECT_EQ(saved, save_stack());
-    const auto high_water = bf_arena(BigLifetime::TEMPORARY).high_water_mark();
 
     cvt_corners_bf(x, y, 2, transform.factor, transform.rotation, transform.skew);
 
     EXPECT_EQ(corner_bytes, pack_bf_parameters());
     EXPECT_EQ(original_x, x);
     EXPECT_EQ(original_y, y);
-    EXPECT_EQ(saved, save_stack());
-    EXPECT_EQ(high_water, bf_arena(BigLifetime::TEMPORARY).high_water_mark());
 }
 
 INSTANTIATE_TEST_SUITE_P(Paths, TestBigFloatCornerPaths,

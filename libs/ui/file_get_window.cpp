@@ -166,12 +166,12 @@ int file_get_window()
         fractal_float_to_bf();
         g_calc_status = old_calc_status;
     }
-    s_bt_a = BigFloat{bf_arena(BigLifetime::WORKING)};
-    s_bt_b = BigFloat{bf_arena(BigLifetime::WORKING)};
-    s_bt_c = BigFloat{bf_arena(BigLifetime::WORKING)};
-    s_bt_d = BigFloat{bf_arena(BigLifetime::WORKING)};
-    s_bt_e = BigFloat{bf_arena(BigLifetime::WORKING)};
-    s_bt_f = BigFloat{bf_arena(BigLifetime::WORKING)};
+    s_bt_a = BigFloat{0};
+    s_bt_b = BigFloat{0};
+    s_bt_c = BigFloat{0};
+    s_bt_d = BigFloat{0};
+    s_bt_e = BigFloat{0};
+    s_bt_f = BigFloat{0};
 
     const int num_dots = g_screen_x_dots + g_screen_y_dots;
     vid_too_big = num_dots > 4096;
@@ -526,8 +526,6 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     // arbitrary value... stops browser zooming out too far
     int corner_count = 0;
     bool cant_see = false;
-
-    BigStackSaver saved;
     // Save original values.
     int orig_bf_length = g_bf_length;
     int orig_bn_length = g_bn_length;
@@ -541,44 +539,44 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
           calc_lengths();
        }
     */
-    BigFloat bt_x{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_y{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_x_min{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_x_max{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_y_min{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_y_max{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_x_3rd{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_y_3rd{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_x{0};
+    BigFloat bt_y{0};
+    BigFloat bt_x_min{0};
+    BigFloat bt_x_max{0};
+    BigFloat bt_y_min{0};
+    BigFloat bt_y_max{0};
+    BigFloat bt_x_3rd{0};
+    BigFloat bt_y_3rd{0};
 
     if (s_old_bf_math != BFMathType::NONE || info->bf_math != 0)
     {
         {
-            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            BigFloat value{0};
             std::destroy_at(&s_n_a);
             ::new (&s_n_a) BigFloat{std::move(value)};
         }
         {
-            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            BigFloat value{0};
             std::destroy_at(&s_n_b);
             ::new (&s_n_b) BigFloat{std::move(value)};
         }
         {
-            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            BigFloat value{0};
             std::destroy_at(&s_n_c);
             ::new (&s_n_c) BigFloat{std::move(value)};
         }
         {
-            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            BigFloat value{0};
             std::destroy_at(&s_n_d);
             ::new (&s_n_d) BigFloat{std::move(value)};
         }
         {
-            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            BigFloat value{0};
             std::destroy_at(&s_n_e);
             ::new (&s_n_e) BigFloat{std::move(value)};
         }
         {
-            BigFloat value{bf_arena(BigLifetime::TEMPORARY)};
+            BigFloat value{0};
             std::destroy_at(&s_n_f);
             ::new (&s_n_f) BigFloat{std::move(value)};
         }
@@ -878,13 +876,13 @@ static void bf_setup_convert_to_screen()
     // setup_convert_to_screen() in LORENZ.C, converted to g_bf_math
     // Call only from within fgetwindow()
 
-    BigFloat bt_inter1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_inter2{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_det{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_xd{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_yd{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_tmp1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_tmp2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_inter1{0};
+    BigFloat bt_inter2{0};
+    BigFloat bt_det{0};
+    BigFloat bt_xd{0};
+    BigFloat bt_yd{0};
+    BigFloat bt_tmp1{0};
+    BigFloat bt_tmp2{0};
 
     // xx3rd-xxmin
     bt_inter1 = g_bf_x_3rd - g_bf_x_min;
@@ -958,8 +956,8 @@ static void bf_setup_convert_to_screen()
 // maps points onto view screen
 static void bf_transform(BigFloat &bt_x, BigFloat &bt_y, DblCoords *point)
 {
-    BigFloat bt_tmp1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt_tmp2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt_tmp1{0};
+    BigFloat bt_tmp2{0};
 
     //  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e;
     bt_tmp1 = s_n_a * bt_x;

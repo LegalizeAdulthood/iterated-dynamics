@@ -139,8 +139,7 @@ static int fp_manr_bailout()
 
 static int bf_mod_bailout()
 {
-    BigStackSaver saved;
-    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp1{0};
 
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
@@ -157,8 +156,7 @@ static int bf_mod_bailout()
 
 static int bf_real_bailout()
 {
-    BigStackSaver saved;
-    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp1{0};
 
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
@@ -176,8 +174,7 @@ static int bf_real_bailout()
 
 static int bf_imag_bailout()
 {
-    BigStackSaver saved;
-    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp1{0};
 
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
@@ -194,8 +191,7 @@ static int bf_imag_bailout()
 
 static int bf_or_bailout()
 {
-    BigStackSaver saved;
-    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp1{0};
 
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
@@ -212,8 +208,7 @@ static int bf_or_bailout()
 
 static int bf_and_bailout()
 {
-    BigStackSaver saved;
-    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp1{0};
 
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
@@ -230,11 +225,10 @@ static int bf_and_bailout()
 
 static int bf_manh_bailout()
 {
-    BigStackSaver saved;
-    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat abs_x{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat abs_y{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat metric{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp1{0};
+    BigFloat abs_x{0};
+    BigFloat abs_y{0};
+    BigFloat metric{0};
 
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);
@@ -255,9 +249,8 @@ static int bf_manh_bailout()
 
 static int bf_manr_bailout()
 {
-    BigStackSaver saved;
-    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat metric{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat tmp1{0};
+    BigFloat metric{0};
 
     g_tmp_sqr_x_bf = sqr(g_new_z_bf.x);
     g_tmp_sqr_y_bf = sqr(g_new_z_bf.y);

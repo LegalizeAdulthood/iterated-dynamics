@@ -123,23 +123,20 @@ TEST_P(TestBurningShipPoint, nativeOrbitRetainsAbsoluteValuesAndParameterSigns)
             parameter;
     }
     const double tolerance = 1e-12 * std::max(1.0, std::abs(expected));
-    const auto stack = save_stack();
 
     EXPECT_EQ(17, burning_ship_bf_fractal());
 
     EXPECT_NEAR(expected.real(), static_cast<double>(g_new_z_bf.x.to_float()), tolerance);
     EXPECT_NEAR(expected.imag(), static_cast<double>(g_new_z_bf.y.to_float()), tolerance);
     EXPECT_EQ(original, g_old_z_bf);
-    EXPECT_EQ(stack, save_stack());
 }
 
 TEST_P(TestBurningShipPoint, referenceOrbitKeepsItsOrientationAndScratchRoles)
 {
     const auto &input = GetParam();
     g_params[2] = input.degree;
-    BigStackSaver saved;
-    BFComplex point{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
-    BFComplex center{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex point{BigFloat{0}, BigFloat{0}};
+    BFComplex center{BigFloat{0}, BigFloat{0}};
     point.x = input.point.real();
     point.y = input.point.imag();
     center.x = 0.125;
@@ -160,14 +157,12 @@ TEST_P(TestBurningShipPoint, referenceOrbitKeepsItsOrientationAndScratchRoles)
             std::complex<double>{0.125, -0.0625};
     }
     const double tolerance = 1e-12 * std::max(1.0, std::abs(expected));
-    const auto stack = save_stack();
 
     burning_ship_ref_pt_bf(center, point);
 
     EXPECT_NEAR(expected.real(), static_cast<double>(point.x.to_float()), tolerance);
     EXPECT_NEAR(expected.imag(), static_cast<double>(point.y.to_float()), tolerance);
     EXPECT_EQ(original_center, center);
-    EXPECT_EQ(stack, save_stack());
     if (input.degree == 2)
     {
         EXPECT_EQ(BigFloat{7}, g_new_z_bf.x);

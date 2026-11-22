@@ -24,14 +24,6 @@ using Integer = boost::multiprecision::mpz_int;
 constexpr int MIN_EXPONENT = std::numeric_limits<std::int16_t>::min();
 constexpr int MAX_EXPONENT = std::numeric_limits<std::int16_t>::max();
 
-void validate_layout(const std::size_t size, const int expected)
-{
-    if (expected <= 0 || size != static_cast<std::size_t>(expected))
-    {
-        throw std::invalid_argument("Mismatched legacy number layout");
-    }
-}
-
 Integer decode(const Byte *bytes, const int length)
 {
     Integer result;
@@ -114,7 +106,6 @@ MPReal MPConversions::from_big_float(const BigFloat &value, const MPPrecision &p
     {
         throw std::invalid_argument("Cannot convert a null BigFloat");
     }
-    validate_layout(value.encoded_size(), g_bf_length + 2);
     return MPReal{*value.m_value, precision.working_digits()};
 }
 
@@ -129,12 +120,11 @@ MPReal MPConversions::from_legacy(const Byte *bytes, const int length, const MPP
     return import(decode(bytes, length), 8 * (exponent + 2 - length), precision);
 }
 
-BigFloat MPConversions::to_big_float(const MPReal &value, BigArena &arena)
+BigFloat MPConversions::to_big_float(const MPReal &value)
 {
-    validate_layout(arena.value_size(), g_bf_length + 2);
-    std::vector<Byte> bytes(arena.value_size());
+    std::vector<Byte> bytes(static_cast<std::size_t>(g_bf_length) + 2);
     to_legacy(value, bytes.data(), g_bf_length);
-    BigFloat result{arena};
+    BigFloat result{0};
     BigFloat::unpack_bf(result, bytes.data(), g_bf_length);
     return result;
 }

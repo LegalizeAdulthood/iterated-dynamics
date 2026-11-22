@@ -79,9 +79,9 @@ static void move_row(int from_row, int to_row, int col);
 static void calc_corner(
     BigFloat &target, const BigFloat &p1, const double p2, BigFloat &p3, const double p4, BigFloat &p5)
 {
-    BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_tmp2{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_tmp3{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp1{0};
+    BigFloat b_tmp2{0};
+    BigFloat b_tmp3{0};
 
     // use target as temporary variable
     b_tmp3 = p2;
@@ -155,11 +155,11 @@ void draw_box(const bool draw_it)
     BigFloat bf_f_x_adj{};
     if (g_bf_math != BFMathType::NONE)
     {
-        bf_f_x_width = BigFloat{bf_arena(BigLifetime::WORKING)};
-        bf_f_x_skew = BigFloat{bf_arena(BigLifetime::WORKING)};
-        bf_f_y_height = BigFloat{bf_arena(BigLifetime::WORKING)};
-        bf_f_y_skew = BigFloat{bf_arena(BigLifetime::WORKING)};
-        bf_f_x_adj = BigFloat{bf_arena(BigLifetime::WORKING)};
+        bf_f_x_width = BigFloat{0};
+        bf_f_x_skew = BigFloat{0};
+        bf_f_y_height = BigFloat{0};
+        bf_f_y_skew = BigFloat{0};
+        bf_f_x_adj = BigFloat{0};
     }
     double f_temp1 = PI * g_zoom_box_rotation / 72; // convert to radians
     const double rot_cos = std::cos(f_temp1);   // sin & cos of rotation
@@ -465,14 +465,14 @@ static void zoom_out_calc(BigFloat &bf_dx, BigFloat &bf_dy, //
     BigFloat &bf_plot_my1, BigFloat &bf_plot_my2,           //
     BigFloat &bf_f_temp)
 {
-    BigFloat b_tmp1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_tmp2{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_tmp3{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_tmp4{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_tmp2a{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_tmp4a{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_temp_x{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_temp_y{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_tmp1{0};
+    BigFloat b_tmp2{0};
+    BigFloat b_tmp3{0};
+    BigFloat b_tmp4{0};
+    BigFloat b_tmp2a{0};
+    BigFloat b_tmp4a{0};
+    BigFloat b_temp_x{0};
+    BigFloat b_temp_y{0};
 
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0,0) topleft through (1,1) bottom right */
@@ -532,19 +532,19 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
        then extend these co-ords from current real screen corners to get
        new actual corners
        */
-    BigFloat save_bf_x_min{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat save_bf_y_max{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_f_temp{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat tmp1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat tmp2{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat tmp3{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat tmp4{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat tmp5{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat tmp6{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_plot_mx1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_plot_mx2{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_plot_my1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_plot_my2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat save_bf_x_min{0};
+    BigFloat save_bf_y_max{0};
+    BigFloat bf_f_temp{0};
+    BigFloat tmp1{0};
+    BigFloat tmp2{0};
+    BigFloat tmp3{0};
+    BigFloat tmp4{0};
+    BigFloat tmp5{0};
+    BigFloat tmp6{0};
+    BigFloat bf_plot_mx1{0};
+    BigFloat bf_plot_mx2{0};
+    BigFloat bf_plot_my1{0};
+    BigFloat bf_plot_my2{0};
     // ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax);
     tmp1 = g_bf_y_min - g_bf_y_3rd;
     tmp2 = g_bf_x_3rd - g_bf_x_min;

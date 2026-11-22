@@ -28,8 +28,8 @@ int get_prec_bf_mag()
     double skew;
     LDouble magnification;
 
-    BigFloat b_x_ctr{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat b_y_ctr{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat b_x_ctr{0};
+    BigFloat b_y_ctr{0};
     // this is just to find magnification
     cvt_center_mag_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
 
@@ -47,13 +47,13 @@ int get_prec_bf_mag()
 int get_prec_bf(const ResolutionFlag flag)
 {
     int res;
-    BigFloat del1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat del2{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat one{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_x_delta{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_x_delta2{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_y_delta{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_y_delta2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat del1{0};
+    BigFloat del2{0};
+    BigFloat one{0};
+    BigFloat bf_x_delta{0};
+    BigFloat bf_x_delta2{0};
+    BigFloat bf_y_delta{0};
+    BigFloat bf_y_delta2{0};
     one = 1.0;
     if (flag == ResolutionFlag::MAX)
     {

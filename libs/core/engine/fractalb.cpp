@@ -162,10 +162,9 @@ std::string format_three_bf(const char *s1, const BigFloat &t1, const char *s2, 
 // for aspect ratio debugging
 std::string format_aspect(const char *s)
 {
-    BigStackSaver saved;
-    BigFloat bt1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bt2{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat aspect{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bt1{0};
+    BigFloat bt2{0};
+    BigFloat aspect{0};
     bt1 = g_bf_x_max - g_bf_x_min;
     bt2 = g_bf_y_max - g_bf_y_min;
     aspect = bt2 / bt1;
@@ -232,9 +231,8 @@ bool mandel_per_image_bf()
     }
 
     // this should be set up dynamically based on corners
-    BigStackSaver saved;
-    BigFloat bf_temp1{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat bf_temp2{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat bf_temp1{0};
+    BigFloat bf_temp2{0};
 
     g_bf_math = BFMathType::BIG_FLT;
 
@@ -445,8 +443,7 @@ int julia_orbit_bf()
 
 int julia_z_power_orbit_bf()
 {
-    BigStackSaver saved;
-    BFComplex param2{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex param2{BigFloat{0}, BigFloat{0}};
 
     param2.x = g_params[2];
     param2.y = g_params[3];

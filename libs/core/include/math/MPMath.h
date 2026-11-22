@@ -3,6 +3,8 @@
 //
 #pragma once
 
+#include <math/PrecisionError.h>
+
 #include <boost/multiprecision/mpc.hpp>
 #include <boost/multiprecision/mpfr.hpp>
 

@@ -207,14 +207,13 @@ void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double
 void burning_ship_ref_pt_bf(const BFComplex &center, BFComplex &z)
 {
     const int degree = static_cast<int>(g_params[2]);
-    BigStackSaver saved;
-    BigFloat temp_real{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat real_sqr{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat imag_sqr{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat real_imag{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat temp_real{0};
+    BigFloat real_sqr{0};
+    BigFloat imag_sqr{0};
+    BigFloat real_imag{0};
     BFComplex z2;
-    z2.x = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
-    z2.y = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
+    z2.x = BigFloat{0};
+    z2.y = BigFloat{0};
     z2.x = z.x + z.x;
     z2.y = z.y + z.y;
     if (degree == 2)
@@ -240,7 +239,6 @@ void burning_ship_ref_pt_bf(const BFComplex &center, BFComplex &z)
 int burning_ship_bf_fractal()
 {
     const int degree = static_cast<int>(g_params[2]);
-    BigStackSaver saved;
 
     if (degree == 2) // Burning Ship
     {
@@ -256,8 +254,8 @@ int burning_ship_bf_fractal()
     else if (degree > 2) // Burning Ship to higher power
     {
         BFComplex big_z;
-        big_z.x = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
-        big_z.y = BigFloat{bf_arena(BigLifetime::TEMPORARY)};
+        big_z.x = BigFloat{0};
+        big_z.y = BigFloat{0};
         big_z.x = abs(g_old_z_bf.x);
         big_z.y = abs(g_old_z_bf.y);
         big_z.y = -big_z.y;

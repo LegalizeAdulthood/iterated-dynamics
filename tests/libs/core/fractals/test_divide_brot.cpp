@@ -144,14 +144,12 @@ TEST_P(TestDivideBrot5Orbit, retainsSetupFormulaAndSelectedBailout)
         seed * seed / (std::pow(seed, g_c_exponent) + static_cast<double>(g_b_const)) + parameter;
     const double tolerance = 1e-11 * std::max(1.0, std::abs(expected));
     const bool escaped = bailout_reached(input.bailout, expected.real(), expected.imag(), g_magnitude_limit, true);
-    const auto stack = save_stack();
 
     EXPECT_EQ(escaped, divide_brot5_orbit_bf() != 0);
 
     EXPECT_NEAR(expected.real(), static_cast<double>(g_new_z_bf.x.to_float()), tolerance);
     EXPECT_NEAR(expected.imag(), static_cast<double>(g_new_z_bf.y.to_float()), tolerance);
     EXPECT_FALSE(g_overflow);
-    EXPECT_EQ(stack, save_stack());
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestDivideBrot5Orbit, testing::ValuesIn(orbit_inputs()),

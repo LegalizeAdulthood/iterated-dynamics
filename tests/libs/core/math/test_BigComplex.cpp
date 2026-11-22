@@ -126,7 +126,7 @@ void TestBigComplexBase::TearDown()
 
 BFComplex TestBigComplexBase::value(const LDouble real, const LDouble imag)
 {
-    BFComplex result{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex result{BigFloat{0}, BigFloat{0}};
     result.x = real;
     result.y = imag;
     return result;
@@ -324,13 +324,10 @@ TEST_P(TestBigComplex, realValueFunctionsPreserveTheirOperands)
 
 TEST_P(TestBigComplex, owningCalculationsDoNotAllocateArenaStorage)
 {
-    const auto marker = save_stack();
     const BFComplex base{BigFloat{-0.75L}, BigFloat{0.125L}};
 
     const BFComplex result = pow(base, BFComplex{BigFloat{0.375L}, BigFloat{-0.25L}});
 
-    EXPECT_EQ(marker, save_stack());
-    restore_stack(marker);
     EXPECT_EQ(result, pow(base, BFComplex{BigFloat{0.375L}, BigFloat{-0.25L}}));
 }
 
@@ -391,7 +388,6 @@ TEST_P(TestBigComplexBinaryAlias, binaryOperationsCaptureBothInputsBeforeWriting
 {
     const auto kind = std::get<1>(GetParam());
     const bool alias_left = std::get<2>(GetParam());
-    BigStackSaver saved;
     BFComplex left = value(-0.75L, 0.25L);
     BFComplex right = value(0.375L, -0.125L);
     BFComplex &output = alias_left ? left : right;

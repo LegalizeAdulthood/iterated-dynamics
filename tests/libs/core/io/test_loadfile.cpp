@@ -849,7 +849,6 @@ protected:
     ValueSaver<long> m_saved_iterations{g_max_iterations, 1234};
     ValueSaver<std::vector<Byte>> m_saved_resume{g_resume_data, std::vector<Byte>{1, 2, 3}};
     int m_length{};
-    BigStackMark m_stack{};
 };
 
 void TestFindPrecisionMetadata::SetUp()
@@ -858,7 +857,6 @@ void TestFindPrecisionMetadata::SetUp()
     g_bf_x_min = 1.25;
     g_file_x_dots = 987;
     m_length = g_bf_length;
-    m_stack = save_stack();
 }
 
 void TestFindPrecisionMetadata::TearDown()
@@ -874,7 +872,6 @@ void TestFindPrecisionMetadata::expect_active_image() const
     EXPECT_EQ(987, g_file_x_dots);
     EXPECT_EQ(BFMathType::BIG_FLT, g_bf_math);
     EXPECT_EQ(m_length, g_bf_length);
-    EXPECT_EQ(m_stack, save_stack());
     EXPECT_EQ(1.25L, g_bf_x_min.to_float());
     EXPECT_EQ((std::vector<Byte>{1, 2, 3}), g_resume_data);
 }

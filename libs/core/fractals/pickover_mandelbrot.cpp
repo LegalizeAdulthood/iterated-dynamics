@@ -169,8 +169,7 @@ void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<doub
 
 void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
 {
-    BigStackSaver saved;
-    BFComplex tmp{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+    BFComplex tmp{BigFloat{0}, BigFloat{0}};
     // The ordinary arbitrary-precision power kernel defines 0^n as 0,
     // including zero and negative exponents.
     if (z.x.is_zero() && z.y.is_zero())
@@ -180,7 +179,7 @@ void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
     }
     else if (mandel_z_power_uses_complex_power())
     {
-        BFComplex exponent{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+        BFComplex exponent{BigFloat{0}, BigFloat{0}};
         exponent.x = g_params[2];
         exponent.y = g_params[3];
         tmp = pow(z, exponent);
@@ -195,8 +194,8 @@ void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z)
     }
     else
     {
-        BigFloat denominator{bf_arena(BigLifetime::TEMPORARY)};
-        BFComplex powered{BigFloat{bf_arena(BigLifetime::TEMPORARY)}, BigFloat{bf_arena(BigLifetime::TEMPORARY)}};
+        BigFloat denominator{0};
+        BFComplex powered{BigFloat{0}, BigFloat{0}};
         tmp = power(z, -(g_c_exponent + 1));
         powered = tmp * z;
         tmp.x = sqr(powered.x);

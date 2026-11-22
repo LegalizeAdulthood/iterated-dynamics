@@ -3,8 +3,6 @@
 //
 #include <math/MPMath.h>
 
-#include <math/BigArena.h>
-
 #include <fmt/format.h>
 
 #include <algorithm>

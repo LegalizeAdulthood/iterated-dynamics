@@ -97,12 +97,10 @@ protected:
 TEST_F(TestBigFloatViewportPrecision, retainsResolutionAndMagnificationDigitSelection)
 {
     set_corners({{-2.0, -1.5}, {2.0, 1.5}, {-2.0, -1.5}});
-    const auto stack{save_stack()};
 
     EXPECT_EQ(3, get_prec_bf_mag());
     EXPECT_EQ(3, get_prec_bf(ResolutionFlag::CURRENT));
     EXPECT_EQ(4, get_prec_bf(ResolutionFlag::MAX));
-    EXPECT_EQ(stack, save_stack());
 
     g_bf_x_min = BigFloat{"-2e-40"};
     g_bf_x_max = BigFloat{"2e-40"};
@@ -114,7 +112,6 @@ TEST_F(TestBigFloatViewportPrecision, retainsResolutionAndMagnificationDigitSele
     EXPECT_EQ(43, get_prec_bf_mag());
     EXPECT_EQ(43, get_prec_bf(ResolutionFlag::CURRENT));
     EXPECT_EQ(44, get_prec_bf(ResolutionFlag::MAX));
-    EXPECT_EQ(stack, save_stack());
 }
 
 TEST_F(TestBigFloatViewportPrecision, collapsedCoordinatesRetainTheFailureSentinel)
@@ -135,7 +132,6 @@ TEST_F(TestBigFloatViewportPrecision, centerConversionPreservesInputsAndTheOutpu
         g_image_region = region;
         set_corners(region);
         const auto original{pack_bf_parameters()};
-        const auto stack{save_stack()};
         double expected_x;
         double expected_y;
         LDouble expected_mag;
@@ -143,8 +139,8 @@ TEST_F(TestBigFloatViewportPrecision, centerConversionPreservesInputsAndTheOutpu
         double expected_rot;
         double expected_skew;
         cvt_center_mag(expected_x, expected_y, expected_mag, expected_factor, expected_rot, expected_skew);
-        BigFloat x{bf_arena(BigLifetime::PERSISTENT)};
-        BigFloat y{bf_arena(BigLifetime::PERSISTENT)};
+        BigFloat x{0};
+        BigFloat y{0};
         LDouble mag;
         double factor;
         double rot;
@@ -159,9 +155,6 @@ TEST_F(TestBigFloatViewportPrecision, centerConversionPreservesInputsAndTheOutpu
         EXPECT_NEAR(expected_rot, rot, 1e-12);
         EXPECT_NEAR(expected_skew, skew, 1e-12);
         EXPECT_EQ(original, pack_bf_parameters());
-        EXPECT_EQ(&bf_arena(BigLifetime::PERSISTENT), &x.arena());
-        EXPECT_EQ(&bf_arena(BigLifetime::PERSISTENT), &y.arena());
-        EXPECT_EQ(stack, save_stack());
     }
 }
 
@@ -175,8 +168,8 @@ TEST_F(TestBigFloatViewportPrecision, subtractsDeepCornersBeforeMachineConversio
     g_bf_y_max += offset;
     g_bf_y_min -= offset;
     g_bf_y_3rd -= offset;
-    BigFloat x{bf_arena(BigLifetime::TEMPORARY)};
-    BigFloat y{bf_arena(BigLifetime::TEMPORARY)};
+    BigFloat x{0};
+    BigFloat y{0};
     LDouble mag;
     double factor;
     double rot;
