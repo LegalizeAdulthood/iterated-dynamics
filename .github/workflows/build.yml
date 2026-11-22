@@ -832,6 +832,7 @@ jobs:
             bash \
             gmake \
             metaauto \
+            libtool \
             ninja \
             rsync-- \
             unzip-- \
@@ -1018,6 +1019,7 @@ jobs:
             cmake \
             git \
             gmake \
+            libtool-base \
             ninja-build \
             patchelf \
             pkgconf \
