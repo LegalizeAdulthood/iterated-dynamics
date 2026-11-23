@@ -200,8 +200,8 @@ TEST_F(TestMPConversions, preservesAllSignificandBitsAtMaximumStoredPrecision)
 {
     m_length = 712;
     const MPPrecision precision{2000};
-    std::vector<Byte> bytes(m_length, 0xff);
-    bytes.back() = 0;
+    std::vector<Byte> bytes(m_length - 1, 0xff);
+    bytes.push_back(0);
     bytes = record(std::move(bytes), 0);
     const auto imported = MPConversions::from_legacy(bytes.data(), m_length, precision);
     const auto expected =
