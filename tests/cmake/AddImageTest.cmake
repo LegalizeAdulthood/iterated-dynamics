@@ -2,7 +2,7 @@
 #
 
 function(add_image_test name)
-    cmake_parse_arguments(IMAGE_TEST "DISABLED;IGNORE_COLORMAP;POTENTIAL" "GOLD;WORKING_DIRECTORY"
+    cmake_parse_arguments(IMAGE_TEST "DISABLED;IGNORE_COLORMAP;POTENTIAL" "GOLD;TIMEOUT;WORKING_DIRECTORY"
         "PARAMETERS;LABELS" ${ARGN})
     if(IMAGE_TEST_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "Unknown arguments: ${IMAGE_TEST_UNPARSED_ARGUMENTS}")
@@ -40,6 +40,9 @@ function(add_image_test name)
     )
     list(APPEND IMAGE_TEST_LABELS "image")
     set_tests_properties(ImageTest.${name} PROPERTIES LABELS "${IMAGE_TEST_LABELS}")
+    if(DEFINED IMAGE_TEST_TIMEOUT)
+        set_tests_properties(ImageTest.${name} PROPERTIES TIMEOUT "${IMAGE_TEST_TIMEOUT}")
+    endif()
     if(IMAGE_TEST_DISABLED)
         set_tests_properties(ImageTest.${name} PROPERTIES DISABLED TRUE)
     endif()
