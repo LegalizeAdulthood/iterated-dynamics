@@ -34,7 +34,7 @@ jobs:
 
       - name: Setup vcpkg package cache
         id: vc
-        uses: LegalizeAdulthood/vcpkg-github-cache@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
+        uses: LegalizeAdulthood/vcpkg-github-cache@6d1a67d46e53cb0f154eced79e4d9f7ec69c0586 # v1.6.0
         with:
           token: ${{github.token}}
           bootstrap: "true"
@@ -63,7 +63,7 @@ jobs:
 
       - name: Analyze vcpkg package cache
         if: always()
-        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
+        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@6d1a67d46e53cb0f154eced79e4d9f7ec69c0586 # v1.6.0
         with:
           token: ${{github.token}}
           build-log: build.log
@@ -107,7 +107,7 @@ jobs:
 
       - name: Setup vcpkg package cache
         id: vc
-        uses: LegalizeAdulthood/vcpkg-github-cache@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
+        uses: LegalizeAdulthood/vcpkg-github-cache@6d1a67d46e53cb0f154eced79e4d9f7ec69c0586 # v1.6.0
         with:
           token: ${{github.token}}
           bootstrap: "true"
@@ -124,7 +124,7 @@ jobs:
 
       - name: Analyze vcpkg package cache
         if: always()
-        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
+        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@6d1a67d46e53cb0f154eced79e4d9f7ec69c0586 # v1.6.0
         with:
           token: ${{github.token}}
           build-log: build.log
@@ -194,7 +194,7 @@ jobs:
 
       - name: Setup vcpkg package cache
         id: vc
-        uses: LegalizeAdulthood/vcpkg-github-cache@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
+        uses: LegalizeAdulthood/vcpkg-github-cache@6d1a67d46e53cb0f154eced79e4d9f7ec69c0586 # v1.6.0
         with:
           token: ${{github.token}}
           bootstrap: "true"
@@ -211,7 +211,7 @@ jobs:
 
       - name: Analyze vcpkg package cache
         if: always()
-        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4f26eb074ce5bc6212bdc92a7dfaa97f298a49a5 # post-v1.5.0 BSD fixes
+        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@6d1a67d46e53cb0f154eced79e4d9f7ec69c0586 # v1.6.0
         with:
           token: ${{github.token}}
           build-log: build.log
