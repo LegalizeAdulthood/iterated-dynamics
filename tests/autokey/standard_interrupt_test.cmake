@@ -29,7 +29,7 @@ if(STICKY_PERTURBATION)
         "orbitdrawmode=${STICKY_DRAW_MODE}")
     if(STICKY_PERTURBATION STREQUAL "auto")
         list(APPEND PARAMETERS "bfdigits=30" "center-mag=-0.75/0.1/1e14"
-            "orbitcorners=-2.5/1.5/-1.5/1.5")
+            "orbitcorners=-2.5/1.5/-1.5/1.5" "viewwindows=1/0.75/no/16/12")
     endif()
 endif()
 

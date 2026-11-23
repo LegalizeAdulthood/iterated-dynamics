@@ -5,7 +5,8 @@ file(MAKE_DIRECTORY image)
 file(REMOVE image/render000.gif image/render001.gif image/render002.gif
     image/render003.gif image/control-b.gif image/control-g.gif debug/stopmsg.txt)
 set(PARAMETERS "video=F6" "askvideo=no" "type=mandel" "bfdigits=30"
-    "center-mag=0/1/1e20" "maxiter=300" "periodicity=0" "inside=7"
+    "viewwindows=1/0.75/no/32/24" "center-mag=0/1/1e20"
+    "maxiter=300" "periodicity=0" "inside=7"
     "perturbation=${PERTURBATION}" "sound=off" "savedir=." "exitnoask=yes")
 
 foreach(pass IN ITEMS b g)
