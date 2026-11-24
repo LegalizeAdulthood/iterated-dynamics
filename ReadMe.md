@@ -74,6 +74,11 @@ git submodule update
 
 CMake presets are provided to simplify building the code.
 
+On Windows, configure with `-DID_DEBUG_HEAP=ON` to check the CRT debug
+heap on every allocation and deallocation in Debug builds. This option
+defaults to `OFF` and applies to both the native and wxWidgets drivers.
+Other Debug checks and exit-time leak reporting remain enabled.
+
 ## Building the Native Driver on Windows, Linux and macOS
 
 The `default` preset builds the native user interface for the host

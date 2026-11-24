@@ -4,6 +4,9 @@ include(CheckIncludeFile)
 include(CheckSymbolExists)
 include(TestBigEndian)
 
+option(ID_DEBUG_HEAP "Check the Windows debug heap on every allocation and deallocation" OFF)
+configure_file(debug_heap.h.in include/config/debug_heap.h @ONLY)
+
 function(configure_flavor_header name flavor)
     configure_file(
         "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/${name}.${flavor}.h.in"
@@ -147,6 +150,7 @@ configure_flavor_header("path_limits" "${PATH_LIMITS_FLAVOR}")
 configure_file("home_dir.h.in" "include/config/home_dir.h" @ONLY)
 
 add_library(config
+    debug_heap.h.in
     driver_types.h.in
     fdio.fcntl.h.in fdio.io.h.in
     filelength.io.h.in filelength.stat.h.in
@@ -159,6 +163,7 @@ add_library(config
     string_lower.string.h.in string_lower.manual.h.in ${ID_STRING_LOWER_SOURCES}
     cmd_shell.comspec.cpp.in cmd_shell.null.cpp.in cmd_shell.shell.cpp.in
     include/config/cmd_shell.h "${CMAKE_CURRENT_BINARY_DIR}/cmd_shell.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/config/debug_heap.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/driver_types.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/fdio.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/filelength.h"

@@ -3,6 +3,7 @@
 //
 #include <wx_id.h>
 
+#include <config/debug_heap.h>
 #include <config/driver_types.h>
 #include <misc/stack_avail.h>
 #include <ui/id_main.h>
@@ -36,7 +37,10 @@ int run(int argc, char *argv[])
 #ifdef WIN32
     __try // NOLINT(clang-diagnostic-language-extension-token)
     {
-        _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
+        _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
+#if ID_DEBUG_HEAP && defined(_DEBUG)
+        _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF);
+#endif
         result = id_main(argc, argv, {get_wx_driver(), get_wx_disk_driver()});
     }
     __except (create_minidump(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
