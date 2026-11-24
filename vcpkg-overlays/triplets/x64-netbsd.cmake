@@ -7,3 +7,8 @@ set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
 set(VCPKG_CMAKE_SYSTEM_NAME NetBSD)
+
+# Older vcpkg make helpers do not recognize NetBSD hosts.
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "NetBSD")
+    find_program(Z_VCPKG_MAKE NAMES gmake REQUIRED)
+endif()

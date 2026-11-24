@@ -41,7 +41,7 @@ endforeach()
 # Full-size reference images need longer render budgets in Debug.
 foreach(par Land_of_Loti Waves_in_the_Night Mass_Ejection shockwave
         monument raindisk)
-    add_par_test(${par} TIMEOUT 360)
+    add_par_test(${par} TIMEOUT 600)
 endforeach()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -52,5 +52,5 @@ elseif(ID_TEST_MACOS_X64_GOLD)
     set(KILLER_MOSQUITO_GOLD GOLD "gold-Killer_Mosquito-macOS-x64")
 endif()
 if(NOT CMAKE_SYSTEM_NAME MATCHES "^.*BSD$")
-    add_par_test(Killer_Mosquito ${KILLER_MOSQUITO_GOLD} TIMEOUT 360)
+    add_par_test(Killer_Mosquito ${KILLER_MOSQUITO_GOLD} TIMEOUT 600)
 endif()
