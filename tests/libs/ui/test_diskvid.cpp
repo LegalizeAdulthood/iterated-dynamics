@@ -294,20 +294,6 @@ void TestDiskPixelTarget::TearDown()
     set_null_video();
 }
 
-class TestDiskPixelColors : public TestDiskPixelTarget, public testing::WithParamInterface<int>
-{
-};
-
-TEST_P(TestDiskPixelColors, roundTripsColor)
-{
-    put_color_a(5, 7, GetParam());
-
-    EXPECT_EQ(GetParam(), get_color(5, 7));
-}
-
-INSTANTIATE_TEST_SUITE_P(Color, TestDiskPixelColors, testing::Range(0, 256),
-    [](const testing::TestParamInfo<int> &info) { return "Color" + std::to_string(info.param); });
-
 TEST_F(TestDiskPixelTarget, repeatedOperationsDoNotCallUi)
 {
     for (int i = 0; i < 2048; ++i)

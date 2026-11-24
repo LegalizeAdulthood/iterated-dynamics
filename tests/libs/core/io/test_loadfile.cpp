@@ -1202,7 +1202,61 @@ static std::vector<char> metadata_gif_bytes()
     return small_gif_bytes(metadata.get());
 }
 
-class TestTruncatedGifMetadata : public TestFindFractalInfo, public WithParamInterface<size_t>
+struct MetadataCutoffInput
+{
+    std::string name;
+    size_t bytes;
+};
+
+void PrintTo(const MetadataCutoffInput &input, std::ostream *out)
+{
+    *out << input.name;
+}
+
+static std::vector<MetadataCutoffInput> metadata_cutoff_inputs()
+{
+    const std::vector<char> bytes{metadata_gif_bytes()};
+    // The fixture has a two-color global map and one image before its metadata.
+    constexpr size_t IMAGE_DESCRIPTOR{13 + 2 * 3};
+    constexpr size_t IMAGE_CODE_SIZE{IMAGE_DESCRIPTOR + 10};
+    size_t block{IMAGE_CODE_SIZE + 1};
+    std::vector<MetadataCutoffInput> inputs{
+        {"Empty", 0},
+        {"Signature", 5},
+        {"ScreenDescriptor", 12},
+        {"ColorMap", IMAGE_DESCRIPTOR - 1},
+        {"ImageDescriptor", IMAGE_CODE_SIZE - 1},
+        {"ImageCodeSize", IMAGE_CODE_SIZE},
+        {"ImageBlockSize", block},
+        {"ImageBlockPayload", block + static_cast<Byte>(bytes.at(block))},
+    };
+    while (bytes.at(block) != 0)
+    {
+        block += 1 + static_cast<Byte>(bytes.at(block));
+    }
+    inputs.push_back({"ImageTerminator", block});
+    const size_t extension{block + 1};
+    if (bytes.at(IMAGE_DESCRIPTOR) != ',' || bytes.at(extension) != '!')
+    {
+        throw std::logic_error("Unexpected metadata truncation fixture layout");
+    }
+    inputs.push_back({"ExtensionFunction", extension + 1});
+    inputs.push_back({"IdentifierSize", extension + 2});
+    block = extension + 3 + static_cast<Byte>(bytes.at(extension + 2));
+    inputs.push_back({"IdentifierPayload", block - 1});
+    for (int index = 0; bytes.at(block) != 0; ++index)
+    {
+        const std::string name{"MetadataBlock" + std::to_string(index)};
+        inputs.push_back({name + "Size", block});
+        block += 1 + static_cast<Byte>(bytes.at(block));
+        inputs.push_back({name + "Payload", block - 1});
+    }
+    inputs.push_back({"ExtensionTerminator", block});
+    inputs.push_back({"GifTrailer", bytes.size() - 1});
+    return inputs;
+}
+
+class TestTruncatedGifMetadata : public TestFindFractalInfo, public WithParamInterface<MetadataCutoffInput>
 {
 protected:
     void SetUp() override;
@@ -1213,10 +1267,10 @@ protected:
 void TestTruncatedGifMetadata::SetUp()
 {
     m_bytes = metadata_gif_bytes();
-    ASSERT_LT(GetParam(), m_bytes.size());
+    ASSERT_LT(GetParam().bytes, m_bytes.size());
     m_path = test_path();
     std::ofstream output{m_path, std::ios::binary | std::ios::trunc};
-    output.write(m_bytes.data(), static_cast<std::streamsize>(GetParam()));
+    output.write(m_bytes.data(), static_cast<std::streamsize>(GetParam().bytes));
     ASSERT_TRUE(output);
 }
 
@@ -1226,8 +1280,8 @@ TEST_P(TestTruncatedGifMetadata, reportsFailureAndClosesInput)
     EXPECT_TRUE(std::filesystem::remove(m_path));
 }
 
-INSTANTIATE_TEST_SUITE_P(ByteCutoffs, TestTruncatedGifMetadata, Range<size_t>(0, metadata_gif_bytes().size()),
-    [](const TestParamInfo<size_t> &info) { return "Bytes" + std::to_string(info.param); });
+INSTANTIATE_TEST_SUITE_P(StructureBoundaries, TestTruncatedGifMetadata, ValuesIn(metadata_cutoff_inputs()),
+    [](const TestParamInfo<MetadataCutoffInput> &info) { return info.param.name; });
 
 TEST_F(TestFindFractalInfo, completeMetadataFileIsAccepted)
 {

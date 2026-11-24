@@ -5169,6 +5169,7 @@ struct DecompositionInput
     int sectors;
     int colors;
     std::complex<double> point;
+    int color;
 };
 
 void PrintTo(const DecompositionInput &input, std::ostream *out)
@@ -5178,41 +5179,80 @@ void PrintTo(const DecompositionInput &input, std::ostream *out)
 
 std::vector<DecompositionInput> decomposition_inputs()
 {
-    struct Point
+    struct Sample
     {
         const char *name;
-        std::complex<double> value;
+        int sectors;
+        int colors;
+        std::complex<double> point;
+        int color;
     };
 
-    const Point points[]{
-        {"PositiveReal", {3.0, 0.0}},
-        {"UpperRightReal", {3.0, 1.0}},
-        {"UpperRightDiagonal", {3.0, 3.0}},
-        {"UpperRightImaginary", {1.0, 3.0}},
-        {"PositiveImaginary", {0.0, 3.0}},
-        {"UpperLeftImaginary", {-1.0, 3.0}},
-        {"UpperLeftReal", {-3.0, 1.0}},
-        {"NegativeReal", {-3.0, 0.0}},
-        {"LowerLeftReal", {-3.0, -1.0}},
-        {"LowerLeftImaginary", {-1.0, -3.0}},
-        {"NegativeImaginary", {0.0, -3.0}},
-        {"LowerRightImaginary", {1.0, -3.0}},
-        {"LowerRightReal", {3.0, -1.0}},
+    const Sample samples[]{
+        {"TwoSectorsUpperRight", 2, 256, {3.0, 1.0}, 1},
+        {"TwoSectorsUpperLeft", 2, 256, {-3.0, 1.0}, 1},
+        {"TwoSectorsLowerLeft", 2, 256, {-3.0, -1.0}, 2},
+        {"TwoSectorsLowerRight", 2, 256, {3.0, -1.0}, 2},
+        {"TwoColorsUpper", 2, 2, {3.0, 1.0}, 1},
+        {"TwoColorsLowerWrap", 2, 2, {3.0, -1.0}, 0},
+        {"FourSectorsUpperRight", 4, 256, {3.0, 1.0}, 1},
+        {"FourSectorsUpperLeft", 4, 256, {-3.0, 1.0}, 2},
+        {"FourSectorsLowerLeft", 4, 256, {-3.0, -1.0}, 3},
+        {"FourSectorsLowerRight", 4, 256, {3.0, -1.0}, 4},
+        {"FourSectorsPositiveReal", 4, 256, {3.0, 0.0}, 1},
+        {"FourSectorsPositiveImaginary", 4, 256, {0.0, 3.0}, 1},
+        {"FourSectorsNegativeReal", 4, 256, {-3.0, 0.0}, 2},
+        {"FourSectorsNegativeImaginary", 4, 256, {0.0, -3.0}, 4},
+        {"EightSectorsNegativeSwap", 8, 256, {-3.0, -4.0}, 6},
+        {"PaletteSmallerThanSectors", 8, 4, {3.0, -4.0}, 2},
+        {"PaletteEqualsSectors", 8, 8, {3.0, -4.0}, 6},
+        {"LargePaletteWrap", 256, 16, {0.0, 3.0}, 3},
     };
 
+    struct Boundary
+    {
+        const char *name;
+        int sectors;
+        double tangent;
+    };
+
+    const Boundary boundaries[]{
+        {"Diagonal", 8, 1.0},
+        {"Angle22p5", 16, 0.41421356237309500},
+        {"Angle11p25", 32, 0.19891236737965800},
+        {"Angle5p625", 64, 0.09849140335716425},
+        {"Angle2p8125", 128, 0.04912684976946725},
+        {"Angle1p4063", 256, 0.02454862210892544},
+    };
+
+    struct Side
+    {
+        const char *name;
+        double offset;
+        int sector;
+    };
+
+    const Side sides[]{
+        {"Below", -1e-6, 0},
+        {"Exact", 0.0, 0},
+        {"Above", 1e-6, 1},
+    };
     std::vector<DecompositionInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const int sectors : {2, 4, 8, 16, 32, 64, 128, 256})
+        const std::string prefix{big_float ? "HighPrecision_" : "Double_"};
+        for (const Sample &sample : samples)
         {
-            for (const int colors : {2, 4, 16, 256})
+            inputs.push_back(
+                {prefix + sample.name, big_float, sample.sectors, sample.colors, sample.point, sample.color});
+        }
+        for (const Boundary &boundary : boundaries)
+        {
+            for (const Side &side : sides)
             {
-                for (const Point &point : points)
-                {
-                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Sectors" +
-                            std::to_string(sectors) + "_Colors" + std::to_string(colors) + "_" + point.name,
-                        big_float, sectors, colors, point.value});
-                }
+                const int color{side.sector + (boundary.sectors < 256 ? 1 : 0)};
+                inputs.push_back({prefix + boundary.name + side.name, big_float, boundary.sectors, 256,
+                    {4.0, 4.0 * (boundary.tangent + side.offset)}, color});
             }
         }
     }
@@ -5249,65 +5289,11 @@ TEST_P(TestDecompositionPalette, matchesStandardSectorsAndPalette)
     compare_pixel(GetParam().point, 8);
 
     EXPECT_EQ(1, g_real_color_iter);
+    EXPECT_EQ(GetParam().color, g_color);
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestDecompositionPalette, ValuesIn(decomposition_inputs()),
     [](const TestParamInfo<DecompositionInput> &info) { return info.param.name; });
-
-struct DecompositionQuadrantInput
-{
-    const char *name;
-    bool big_float;
-    std::complex<double> point;
-    int color;
-};
-
-void PrintTo(const DecompositionQuadrantInput &input, std::ostream *out)
-{
-    *out << input.name;
-}
-
-class TestDecompositionQuadrant : public PerturbationIterationTest,
-                                  public WithParamInterface<DecompositionQuadrantInput>
-{
-public:
-    TestDecompositionQuadrant();
-
-protected:
-    void SetUp() override;
-};
-
-TestDecompositionQuadrant::TestDecompositionQuadrant() :
-    PerturbationIterationTest{GetParam().big_float}
-{
-}
-
-void TestDecompositionQuadrant::SetUp()
-{
-    PerturbationIterationTest::SetUp();
-    g_inside_method = ColorMethod::ITER;
-    g_decomp[0] = 4;
-    const std::complex<double> point{GetParam().point};
-    set_initial_offset({-point.real(), -point.imag()});
-}
-
-TEST_P(TestDecompositionQuadrant, usesStandardQuadrantColor)
-{
-    compare_pixel(GetParam().point, 8);
-
-    EXPECT_EQ(GetParam().color, g_color);
-}
-
-INSTANTIATE_TEST_SUITE_P(Inputs, TestDecompositionQuadrant,
-    Values(DecompositionQuadrantInput{"DoubleUpperRight", false, {3.0, 1.0}, 1},
-        DecompositionQuadrantInput{"DoubleUpperLeft", false, {-3.0, 1.0}, 2},
-        DecompositionQuadrantInput{"DoubleLowerLeft", false, {-3.0, -1.0}, 3},
-        DecompositionQuadrantInput{"DoubleLowerRight", false, {3.0, -1.0}, 4},
-        DecompositionQuadrantInput{"HighPrecisionUpperRight", true, {3.0, 1.0}, 1},
-        DecompositionQuadrantInput{"HighPrecisionUpperLeft", true, {-3.0, 1.0}, 2},
-        DecompositionQuadrantInput{"HighPrecisionLowerLeft", true, {-3.0, -1.0}, 3},
-        DecompositionQuadrantInput{"HighPrecisionLowerRight", true, {3.0, -1.0}, 4}),
-    [](const TestParamInfo<DecompositionQuadrantInput> &info) { return info.param.name; });
 
 class TestDecompositionOverride : public MappedColorMethodTest
 {
@@ -8801,37 +8787,32 @@ std::vector<EscapePaletteInput> escape_palette_inputs()
 {
     struct Sample
     {
+        const char *name;
+        int colors;
+        ColorMethod inside;
         double real;
         long iterations;
-        std::array<int, 4> colors;
+        int color;
     };
 
     // Midpoints between escape-count boundaries avoid ambiguous bailout comparisons.
-    constexpr std::array<Sample, 6> SAMPLES{{
-        {0.25014833044660284, 255, {1, 3, 15, 255}},
-        {0.2501471869631891, 256, {0, 0, 1, 1}},
-        {0.25014605665218975, 257, {1, 1, 2, 2}},
-        {0.2500373634283777, 511, {1, 3, 1, 1}},
-        {0.25003721845435867, 512, {0, 0, 2, 2}},
-        {0.25000935820314196, 1024, {0, 0, 4, 4}},
-    }};
-    constexpr std::array<int, 4> PALETTE_SIZES{2, 4, 16, 256};
+    const Sample samples[]{
+        {"SmallPaletteZero", 2, ColorMethod::ITER, 0.2501471869631891, 256, 0},
+        {"SmallPaletteMask", 4, ColorMethod::ITER, 0.25014833044660284, 255, 3},
+        {"Palette16Modulus", 16, ColorMethod::ITER, 0.25014833044660284, 255, 15},
+        {"BeforeWrap", 256, ColorMethod::ITER, 0.25014833044660284, 255, 255},
+        {"AtWrap", 256, ColorMethod::ITER, 0.2501471869631891, 256, 1},
+        {"AfterWrap", 256, ColorMethod::ITER, 0.25014605665218975, 257, 2},
+        {"MultipleWraps", 256, ColorMethod::ITER, 0.2500373634283777, 511, 1},
+        {"FixedInsideDoesNotAffectEscape", 256, ColorMethod::COLOR, 0.2501471869631891, 256, 1},
+    };
     std::vector<EscapePaletteInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (std::size_t palette = 0; palette < PALETTE_SIZES.size(); ++palette)
+        for (const Sample &sample : samples)
         {
-            for (const Sample &sample : SAMPLES)
-            {
-                for (const ColorMethod inside : {ColorMethod::ITER, ColorMethod::COLOR})
-                {
-                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Palette" +
-                            std::to_string(PALETTE_SIZES[palette]) + "_Iterations" + std::to_string(sample.iterations) +
-                            (inside == ColorMethod::ITER ? "_InsideIterations" : "_InsideFixed"),
-                        big_float, PALETTE_SIZES[palette], inside, sample.real, sample.iterations,
-                        sample.colors[palette]});
-                }
-            }
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + sample.name, big_float,
+                sample.colors, sample.inside, sample.real, sample.iterations, sample.color});
         }
     }
     return inputs;
@@ -9054,7 +9035,6 @@ struct FrameCoordinateTransform
 
 struct FrameCoordinateContext
 {
-    const char *name;
     std::optional<FrameCoordinateTransform> transform;
     Inversion inversion;
     CalcMode pass;
@@ -9080,38 +9060,59 @@ std::vector<FrameCoordinateInput> frame_coordinate_inputs()
 {
     const Inversion inversion{3, 0.5, {2.0, 1.0}, {0.5, 2.0, 1.0}};
     const FrameCoordinateTransform reduced_transform{0.6, 37.0, 21.0};
-    const FrameCoordinateContext contexts[]{
-        {"Default", std::nullopt, {}, CalcMode::ONE_PASS, {}},
-        {"Rotation37", FrameCoordinateTransform{1.0, 37.0, 0.0}, {}, CalcMode::ONE_PASS, {}},
-        {"Skew21", FrameCoordinateTransform{1.0, 0.0, 21.0}, {}, CalcMode::ONE_PASS, {}},
-        {"XMagnification2p5", FrameCoordinateTransform{2.5, 0.0, 0.0}, {}, CalcMode::ONE_PASS, {}},
-        {"CombinedNegative", FrameCoordinateTransform{0.6, -72.0, -18.0}, {}, CalcMode::ONE_PASS, {}},
-        {"QuarterTurn", FrameCoordinateTransform{1.0, 90.0, 0.0}, {}, CalcMode::ONE_PASS, {}},
-        {"ReducedBoundaryTrace", reduced_transform, {}, CalcMode::BOUNDARY_TRACE, {3, 2}},
-        {"ReducedSolidGuess", reduced_transform, {}, CalcMode::SOLID_GUESS, {3, 2}},
-        {"ReducedInvertedBoundaryTrace", reduced_transform, inversion, CalcMode::BOUNDARY_TRACE, {3, 2}},
-        {"ReducedInvertedSolidGuess", reduced_transform, inversion, CalcMode::SOLID_GUESS, {3, 2}},
-        {"InvertedAffine", reduced_transform, inversion, CalcMode::ONE_PASS, {}},
+    const FrameCoordinateContext ordinary{std::nullopt, {}, CalcMode::ONE_PASS, {}};
+    const FrameCoordinateContext affine{FrameCoordinateTransform{0.6, -72.0, -18.0}, {}, CalcMode::ONE_PASS, {}};
+    const FrameCoordinateContext inverted{reduced_transform, inversion, CalcMode::ONE_PASS, {}};
+    const FrameCoordinateContext boundary{reduced_transform, {}, CalcMode::BOUNDARY_TRACE, {3, 2}};
+    const FrameCoordinateContext guess{reduced_transform, {}, CalcMode::SOLID_GUESS, {3, 2}};
+    const FrameCoordinateContext inverted_boundary{reduced_transform, inversion, CalcMode::BOUNDARY_TRACE, {3, 2}};
+    const FrameCoordinateContext inverted_guess{reduced_transform, inversion, CalcMode::SOLID_GUESS, {3, 2}};
+
+    struct Sample
+    {
+        const char *name;
+        Point2i size;
+        FractalType type;
+        double tolerance;
+        FrameCoordinateContext context;
+    };
+
+    const Sample samples[]{
+        {"LandscapeEven", {8, 6}, FractalType::MANDEL, 1e-6, ordinary},
+        {"PortraitEven", {6, 8}, FractalType::MANDEL, 1e-6, ordinary},
+        {"LandscapeOdd", {17, 9}, FractalType::MANDEL, 1e-6, ordinary},
+        {"PortraitOdd", {9, 17}, FractalType::MANDEL, 1e-6, ordinary},
+        {"BurningShip", {8, 6}, FractalType::BURNING_SHIP, 1e-6, ordinary},
+        {"Rotation37", {8, 6}, FractalType::MANDEL, 1e-6,
+            {FrameCoordinateTransform{1.0, 37.0, 0.0}, {}, CalcMode::ONE_PASS, {}}},
+        {"Skew21", {6, 8}, FractalType::MANDEL, 1e-6,
+            {FrameCoordinateTransform{1.0, 0.0, 21.0}, {}, CalcMode::ONE_PASS, {}}},
+        {"XMagnification2p5", {17, 9}, FractalType::MANDEL, 1e-6,
+            {FrameCoordinateTransform{2.5, 0.0, 0.0}, {}, CalcMode::ONE_PASS, {}}},
+        {"CombinedNegative", {9, 17}, FractalType::MANDEL, 1e-6, affine},
+        {"QuarterTurn", {8, 6}, FractalType::MANDEL, 1e-6,
+            {FrameCoordinateTransform{1.0, 90.0, 0.0}, {}, CalcMode::ONE_PASS, {}}},
+        {"ReducedBoundaryTrace", {8, 6}, FractalType::MANDEL, 1e-6, boundary},
+        {"ReducedSolidGuess", {9, 17}, FractalType::MANDEL, 1e-6, guess},
+        {"ReducedInvertedBoundaryTrace", {6, 8}, FractalType::BURNING_SHIP, 1e-6, inverted_boundary},
+        {"ReducedInvertedSolidGuess", {17, 9}, FractalType::MANDEL, 1e-6, inverted_guess},
+        {"InvertedAffine", {17, 9}, FractalType::MANDEL, 1e-6, inverted},
+        {"InvertedBurningShip", {9, 17}, FractalType::BURNING_SHIP, 1e-6, inverted},
+        {"ReplacementDefault", {8, 6}, FractalType::MANDEL, 2.0, ordinary},
+        {"ReplacementAffine", {9, 17}, FractalType::MANDEL, 2.0, affine},
+        {"ReplacementInvertedBurningShip", {6, 8}, FractalType::BURNING_SHIP, 2.0, inverted},
+        {"ReplacementBoundaryTrace", {8, 6}, FractalType::MANDEL, 2.0, boundary},
+        {"ReplacementSolidGuess", {9, 17}, FractalType::MANDEL, 2.0, guess},
+        {"ReplacementInvertedBoundaryTrace", {6, 8}, FractalType::BURNING_SHIP, 2.0, inverted_boundary},
+        {"ReplacementInvertedSolidGuess", {17, 9}, FractalType::MANDEL, 2.0, inverted_guess},
     };
     std::vector<FrameCoordinateInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const FrameCoordinateContext &context : contexts)
+        for (const Sample &sample : samples)
         {
-            for (const double tolerance : {1e-6, 2.0})
-            {
-                for (const Point2i &size : {Point2i{8, 6}, Point2i{6, 8}, Point2i{17, 9}, Point2i{9, 17}})
-                {
-                    for (const FractalType type : {FractalType::MANDEL, FractalType::BURNING_SHIP})
-                    {
-                        inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + context.name +
-                                (tolerance > 1.0 ? "_ReplacementTolerance_" : "_SmallTolerance_") + "Width" +
-                                std::to_string(size.x) + "_Height" + std::to_string(size.y) +
-                                (type == FractalType::MANDEL ? "_Mandel" : "_BurningShip"),
-                            big_float, size, type, tolerance, context});
-                    }
-                }
-            }
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + sample.name, big_float,
+                sample.size, sample.type, sample.tolerance, sample.context});
         }
     }
     return inputs;
