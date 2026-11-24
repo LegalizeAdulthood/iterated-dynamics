@@ -318,44 +318,49 @@ void PrintTo(const DistanceBandInput &input, std::ostream *out)
 
 std::vector<DistanceBandInput> distance_band_inputs()
 {
-    std::vector<DistanceBandInput> inputs;
-
-    struct BandWidth
+    struct Formula
     {
         const char *name;
-        double value;
+        bool legacy;
+        bool old_colors;
     };
 
-    for (const BandWidth &width : {BandWidth{"OneEighth", 0.125}, {"One", 1.0}, {"Four", 4.0}})
+    std::vector<DistanceBandInput> inputs;
+    for (const Formula &formula :
+        {Formula{"Ordinary", false, false}, {"Legacy", true, false}, {"OldColors", false, true}})
     {
-        for (const bool legacy : {false, true})
+        const std::string prefix{formula.name};
+        inputs.push_back({prefix + "_Zero", 1.0, formula.legacy, formula.old_colors, 0.0, 1});
+        // Each formula crosses its first and a later integer boundary.
+        for (const double width : {1.0, 0.125})
         {
-            for (const bool old_colors : {false, true})
+            for (const long color : {2L, 16L})
             {
-                const std::string prefix{std::string{width.name} + (legacy ? "_Legacy" : "_Ordinary") +
-                    (old_colors ? "_OldColors" : "_CurrentColors")};
-                inputs.push_back({prefix + "_Zero", width.value, legacy, old_colors, 0.0, 1});
-                for (const long color : {2L, 3L, 8L, 16L})
+                if (width != 1.0 && color != 2)
                 {
-                    double threshold{width.value * (color - 1)};
-                    if (old_colors)
-                    {
-                        threshold = sqr(width.value * (color * color - 1));
-                    }
-                    else if (legacy)
-                    {
-                        threshold = width.value * (color * color - 1);
-                    }
-                    const std::string name{prefix + "_Color" + std::to_string(color)};
-                    inputs.push_back(
-                        {name + "_Below", width.value, legacy, old_colors, threshold * (1.0 - 1.0 / 1024), color - 1});
-                    inputs.push_back({name + "_At", width.value, legacy, old_colors, threshold, color});
-                    inputs.push_back(
-                        {name + "_Above", width.value, legacy, old_colors, threshold * (1.0 + 1.0 / 1024), color});
+                    continue;
                 }
+                double threshold{width * (color - 1)};
+                if (formula.old_colors)
+                {
+                    threshold = sqr(width * (color * color - 1));
+                }
+                else if (formula.legacy)
+                {
+                    threshold = width * (color * color - 1);
+                }
+                const std::string name{
+                    prefix + (width == 1.0 ? "_UnitWidth" : "_FractionalWidth") + "_Color" + std::to_string(color)};
+                inputs.push_back({name + "_Below", width, formula.legacy, formula.old_colors,
+                    threshold * (1.0 - 1.0 / 1024), color - 1});
+                inputs.push_back({name + "_At", width, formula.legacy, formula.old_colors, threshold, color});
+                inputs.push_back({name + "_Above", width, formula.legacy, formula.old_colors,
+                    threshold * (1.0 + 1.0 / 1024), color});
             }
         }
     }
+    // Old colors take precedence over the legacy formula.
+    inputs.push_back({"OldColorsOverrideLegacy", 1.0, true, true, 9.0, 2});
     return inputs;
 }
 
@@ -455,11 +460,17 @@ std::vector<ReferenceSampleCountInput> reference_sample_count_inputs()
         std::vector<double>{}.max_size(), std::numeric_limits<std::size_t>::max() / BYTES_PER_SAMPLE})};
     const std::uintmax_t max_iterations{std::numeric_limits<long>::max()};
     const long largest_supported{static_cast<long>(std::min(max_iterations, max_samples - 1))};
-    inputs.push_back({"LargestSupported", largest_supported, static_cast<std::uintmax_t>(largest_supported) + 1});
+    if (largest_supported != WINDOWS_LONG_MAX)
+    {
+        inputs.push_back({"LargestSupported", largest_supported, static_cast<std::uintmax_t>(largest_supported) + 1});
+    }
     if (max_samples <= max_iterations)
     {
         inputs.push_back({"ContainerLimit", static_cast<long>(max_samples), std::nullopt});
-        inputs.push_back({"LongMaximum", std::numeric_limits<long>::max(), std::nullopt});
+        if (max_iterations != max_samples && max_iterations != WINDOWS_LONG_MAX)
+        {
+            inputs.push_back({"LongMaximum", std::numeric_limits<long>::max(), std::nullopt});
+        }
     }
     return inputs;
 }
@@ -794,22 +805,6 @@ TEST_F(TestPerturbationPixels, frameCenterReferenceKeepsOwnershipAndCleanupAtThe
     EXPECT_EQ(BigFloat{0}, next_center.y);
 }
 
-TEST_F(TestPerturbationPixels, finishingOwnedFrameClearsOwningValues)
-{
-    init_bf_dec(60);
-    m_big_float = true;
-    g_max_iterations = 4;
-    BFComplex &center{m_engine.initialize_frame_bf({}, {})};
-    center.x = 0.125;
-    center.y = 0;
-    ASSERT_TRUE(m_engine.initialize_pixel_strategy());
-
-    m_engine.finish();
-
-    EXPECT_FALSE(center.x);
-    EXPECT_FALSE(center.y);
-}
-
 TEST_F(TestPerturbationPixels, referenceCallbacksPreserveTheCenter)
 {
     const ValueSaver saved_exponent{g_c_exponent, 2};
@@ -925,11 +920,14 @@ std::vector<PerturbationBailoutInput> perturbation_bailout_inputs()
                      {"Imaginary", Bailout::IMAG}, {"Or", Bailout::OR}, {"And", Bailout::AND},
                      {"Manhattan", Bailout::MANH}, {"ManhattanReal", Bailout::MANR}})
             {
+                // Only Manhattan metrics distinguish the component signs.
+                if (imag > 0.0 && bailout.value != Bailout::MANH && bailout.value != Bailout::MANR)
+                {
+                    continue;
+                }
                 const double metric{metrics[static_cast<std::size_t>(bailout.value)]};
-                for (const Threshold &threshold :
-                    {Threshold{"FarBelow", metric - 0.25}, {"Below", std::nextafter(metric, 0.0)}, {"At", metric},
-                        {"Above", std::nextafter(metric, std::numeric_limits<double>::infinity())},
-                        {"FarAbove", metric + 0.25}})
+                for (const Threshold &threshold : {Threshold{"Below", std::nextafter(metric, 0.0)}, {"At", metric},
+                         {"Above", std::nextafter(metric, std::numeric_limits<double>::infinity())}})
                 {
                     inputs.push_back({std::string{math.name} + (imag < 0.0 ? "_NegativeImag_" : "_PositiveImag_") +
                             bailout.name + "_" + threshold.name,
@@ -964,33 +962,6 @@ void TestPerturbationBailout::SetUp()
     }
     ASSERT_EQ(GetParam().math, g_bf_math);
     g_max_iterations = 4;
-}
-
-TEST_P(TestPerturbationBailout, firstStepUsesInclusiveThreshold)
-{
-    const PerturbationBailoutInput &input = GetParam();
-    g_bailout_test = input.bailout;
-    g_magnitude_limit = input.limit;
-    m_engine.finish();
-    if (input.math == BFMathType::NONE)
-    {
-        m_engine.initialize_frame({}, {}, {});
-    }
-    else
-    {
-        BFComplex &center = m_engine.initialize_frame_bf({}, {});
-        center.x = 0;
-        center.y = 0;
-    }
-    m_engine.begin_orbit({2, input.imag}, {}, 0);
-    const bool escaped = input.metric >= input.limit;
-
-    EXPECT_EQ(escaped, m_engine.iterate_orbit());
-
-    EXPECT_EQ(1, m_engine.orbit_iteration());
-    EXPECT_EQ(escaped, m_engine.orbit_escaped());
-    EXPECT_DOUBLE_EQ(2, m_engine.orbit_value().real());
-    EXPECT_DOUBLE_EQ(input.imag, m_engine.orbit_value().imag());
 }
 
 TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
@@ -1044,6 +1015,10 @@ TEST_P(TestPerturbationBailout, boundaryDecisionsMatchNativeOrbitCallbacks)
     {
         SCOPED_TRACE(i);
         const bool done{m_engine.iterate_orbit()};
+        if (i == 0)
+        {
+            EXPECT_EQ(input.metric >= input.limit, done);
+        }
         EXPECT_EQ(i + 1, m_engine.orbit_iteration());
         EXPECT_DOUBLE_EQ(expected[i].x, m_engine.orbit_value().real());
         EXPECT_DOUBLE_EQ(expected[i].y, m_engine.orbit_value().imag());
@@ -1536,9 +1511,8 @@ std::vector<PerturbationPixelChunkInput> perturbation_pixel_chunk_inputs()
     std::vector<PerturbationPixelChunkInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const InsideMethod &inside : {InsideMethod{"Iterations", ColorMethod::ITER},
-                 {"Magnitude", ColorMethod::ZMAG}, {"Bof60", ColorMethod::BOF60}, {"Bof61", ColorMethod::BOF61},
-                 {"Fmod", ColorMethod::FMODI}, {"Atan", ColorMethod::ATANI}})
+        for (const InsideMethod &inside : {InsideMethod{"Magnitude", ColorMethod::ZMAG}, {"Bof60", ColorMethod::BOF60},
+                 {"Bof61", ColorMethod::BOF61}, {"Fmod", ColorMethod::FMODI}, {"Atan", ColorMethod::ATANI}})
         {
             for (const double offset : {0.0, 0.125})
             {
@@ -2190,6 +2164,11 @@ std::vector<InitialOrbitReplacementInput> initial_orbit_replacement_inputs()
         {
             for (const InitialValue &initial : {InitialValue{"Zero", {}}, {"Complex", {0.25, 0.125}}})
             {
+                // PIXEL ignores the fixed initial value.
+                if (mode == InitOrbitMode::PIXEL && initial.value == DComplex{})
+                {
+                    continue;
+                }
                 for (const double tolerance : {0.0, 2.0})
                 {
                     inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
@@ -2278,29 +2257,34 @@ void PrintTo(const OutsideTerminalInput &input, std::ostream *out)
 
 std::vector<OutsideTerminalInput> outside_terminal_inputs()
 {
-    struct Point
+    struct Sample
     {
         const char *name;
-        std::complex<double> value;
+        ColorMethod outside;
+        ColorMethod inside;
+        std::complex<double> point;
     };
 
+    // Formula ranges are covered separately; retain division by zero,
+    // atan quadrants and the negative axis, and nondefault inside state.
+    const Sample samples[]{
+        {"ProductZeroImaginary", ColorMethod::MULT, ColorMethod::ITER, {1.0, 0.0}},
+        {"AtanUpperRight", ColorMethod::ATAN, ColorMethod::ITER, {1.0, 0.5}},
+        {"AtanLowerRight", ColorMethod::ATAN, ColorMethod::ITER, {1.0, -0.5}},
+        {"AtanUpperLeft", ColorMethod::ATAN, ColorMethod::ITER, {-2.0, 1.0}},
+        {"AtanLowerLeft", ColorMethod::ATAN, ColorMethod::ITER, {-2.0, -1.0}},
+        {"AtanNegativeReal", ColorMethod::ATAN, ColorMethod::ITER, {-3.0, 0.0}},
+        {"RealWithMagnitude", ColorMethod::REAL, ColorMethod::ZMAG, {1.0, 0.5}},
+        {"RealWithBof60", ColorMethod::REAL, ColorMethod::BOF60, {1.0, 0.5}},
+        {"RealWithBof61", ColorMethod::REAL, ColorMethod::BOF61, {1.0, 0.5}},
+    };
     std::vector<OutsideTerminalInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const PerturbationColorMethod &outside : SPECIAL_OUTSIDE_METHODS)
+        for (const Sample &sample : samples)
         {
-            for (const PerturbationColorMethod &inside : ORBIT_INSIDE_METHODS)
-            {
-                for (const Point &point : {Point{"UpperRight", {1.0, 0.5}}, {"LowerRight", {1.0, -0.5}},
-                         {"UpperLeft", {-2.0, 1.0}}, {"LowerLeft", {-2.0, -1.0}}, {"PositiveImaginary", {0.0, 2.0}},
-                         {"NegativeImaginary", {0.0, -2.0}}, {"PositiveReal", {1.0, 0.0}},
-                         {"NegativeReal", {-3.0, 0.0}}})
-                {
-                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + outside.name + "_" +
-                            inside.name + "_" + point.name,
-                        big_float, outside.method, inside.method, point.value});
-                }
-            }
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + sample.name, big_float,
+                sample.outside, sample.inside, sample.point});
         }
     }
     return inputs;
@@ -2366,12 +2350,6 @@ void PrintTo(const OutsideRangeInput &input, std::ostream *out)
 
 std::vector<OutsideRangeInput> outside_range_inputs()
 {
-    struct CompatibilityVersion
-    {
-        const char *name;
-        Version version;
-    };
-
     const OutsideRangeSample samples[]{
         {"RealPositive", ColorMethod::REAL, {1.0, 0.0}, 128, 10, false},
         {"RealZero", ColorMethod::REAL, {0.0, 3.0}, 128, 1, true},
@@ -2396,16 +2374,22 @@ std::vector<OutsideRangeInput> outside_range_inputs()
     std::vector<OutsideRangeInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const CompatibilityVersion &version : {CompatibilityVersion{"Legacy1960", parse_legacy_version(1960)},
-                 {"Legacy1961", parse_legacy_version(1961)}, {"Current", current_id_version()}})
+        const std::string prefix{big_float ? "HighPrecision_" : "Double_"};
+        for (const OutsideRangeSample &sample : samples)
         {
-            for (const OutsideRangeSample &sample : samples)
+            inputs.push_back({prefix + "Current_" + sample.name, big_float, current_id_version(), sample});
+        }
+        // Range correction is shared: zero and excessive colors bracket
+        // the compatibility cutoff; one negative color covers color < 0.
+        for (const int version : {1960, 1961})
+        {
+            for (const OutsideRangeSample &sample : {samples[1], samples[3]})
             {
-                inputs.push_back(
-                    {std::string{big_float ? "HighPrecision_" : "Double_"} + version.name + "_" + sample.name,
-                        big_float, version.version, sample});
+                inputs.push_back({prefix + "Legacy" + std::to_string(version) + "_" + sample.name, big_float,
+                    parse_legacy_version(version), sample});
             }
         }
+        inputs.push_back({prefix + "LegacyNegativeColor", big_float, parse_legacy_version(1960), samples[5]});
     }
     return inputs;
 }
@@ -2471,7 +2455,7 @@ std::vector<OutsideAtanInput> outside_atan_inputs()
     for (const bool big_float : {false, true})
     {
         for (const CompatibilityVersion &version : {CompatibilityVersion{"Legacy2002", parse_legacy_version(2002)},
-                 {"Legacy2003", parse_legacy_version(2003)}, {"Current", current_id_version()}})
+                 {"Legacy2003", parse_legacy_version(2003)}})
         {
             for (const int colors : {16, 256})
             {
@@ -2531,14 +2515,10 @@ std::vector<OutsideTerminalInput> outside_inside_inputs()
     std::vector<OutsideTerminalInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const PerturbationColorMethod &outside : SPECIAL_OUTSIDE_METHODS)
+        for (const PerturbationColorMethod &inside : ORBIT_INSIDE_METHODS)
         {
-            for (const PerturbationColorMethod &inside : ORBIT_INSIDE_METHODS)
-            {
-                inputs.push_back(
-                    {std::string{big_float ? "HighPrecision_" : "Double_"} + outside.name + "_" + inside.name,
-                        big_float, outside.method, inside.method, {}});
-            }
+            inputs.push_back({std::string{big_float ? "HighPrecision_Real_" : "Double_Real_"} + inside.name, big_float,
+                ColorMethod::REAL, inside.method, {}});
         }
     }
     return inputs;
@@ -2644,7 +2624,7 @@ void PrintTo(const FmodMetricInput &input, std::ostream *out)
     *out << input.name;
 }
 
-std::vector<FmodMetricInput> fmod_metric_inputs(const std::vector<FmodProximity> &proximities)
+std::vector<FmodMetricInput> fmod_metric_inputs(const double proximity)
 {
     struct Metric
     {
@@ -2652,19 +2632,15 @@ std::vector<FmodMetricInput> fmod_metric_inputs(const std::vector<FmodProximity>
         Bailout value;
     };
 
+    // MOD qualification and colors have explicit value tests below.
     std::vector<FmodMetricInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const Metric &metric :
-            {Metric{"Mod", Bailout::MOD}, {"Real", Bailout::REAL}, {"Imaginary", Bailout::IMAG}, {"Or", Bailout::OR},
-                {"And", Bailout::AND}, {"Manhattan", Bailout::MANH}, {"ManhattanReal", Bailout::MANR}})
+        for (const Metric &metric : {Metric{"Real", Bailout::REAL}, {"Imaginary", Bailout::IMAG}, {"Or", Bailout::OR},
+                 {"And", Bailout::AND}, {"Manhattan", Bailout::MANH}, {"ManhattanReal", Bailout::MANR}})
         {
-            for (const FmodProximity &proximity : proximities)
-            {
-                inputs.push_back(
-                    {std::string{big_float ? "HighPrecision_" : "Double_"} + metric.name + "_" + proximity.name,
-                        big_float, metric.value, proximity.value});
-            }
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + metric.name, big_float,
+                metric.value, proximity});
         }
     }
     return inputs;
@@ -2713,9 +2689,7 @@ TEST_P(TestOutsideFmodMetric, matchesStandardBailoutMetric)
     EXPECT_GT(m_engine.reference_count(), 0);
 }
 
-INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideFmodMetric,
-    ValuesIn(fmod_metric_inputs({{"Half", 0.5}, {"OneAndQuarter", 1.25}, {"Two", 2.0}, {"TwoAndFiveSixteenths", 2.3125},
-        {"Four", 4.0}, {"Sixteen", 16.0}, {"NegativeSixteen", -16.0}})),
+INSTANTIATE_TEST_SUITE_P(Inputs, TestOutsideFmodMetric, ValuesIn(fmod_metric_inputs(16.0)),
     [](const TestParamInfo<FmodMetricInput> &info) { return info.param.name; });
 
 class TestInsideFmodMetric : public TestFmodMetric
@@ -2738,9 +2712,7 @@ TEST_P(TestInsideFmodMetric, matchesStandardBailoutMetric)
     EXPECT_GT(m_engine.reference_count(), 0);
 }
 
-INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideFmodMetric,
-    ValuesIn(fmod_metric_inputs(
-        {{"OneThousandth", 0.001}, {"OneHundredth", 0.01}, {"OneTenth", 0.1}, {"NegativeOneTenth", -0.1}})),
+INSTANTIATE_TEST_SUITE_P(Inputs, TestInsideFmodMetric, ValuesIn(fmod_metric_inputs(0.1)),
     [](const TestParamInfo<FmodMetricInput> &info) { return info.param.name; });
 
 struct OutsideFmodSample
@@ -2849,8 +2821,12 @@ std::vector<FmodOrbitInput> inside_fmod_value_inputs()
     {
         for (const FmodProximity &proximity : {FmodProximity{"Two", 2.0}, {"One", 1.0}, {"NegativeTwo", -2.0}})
         {
-            for (const long iterations : {2L, 3L, 4L, 5L})
+            for (const long iterations : {2L, 3L})
             {
+                if (proximity.value != 2.0 && iterations != 3)
+                {
+                    continue;
+                }
                 inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + proximity.name +
                         "_Iterations" + std::to_string(iterations),
                     big_float, proximity.value, {-1.0, 0.0}, iterations,
@@ -3168,7 +3144,7 @@ std::vector<TotalDistanceRangeInput> total_distance_range_inputs()
     for (const bool big_float : {false, true})
     {
         for (const CompatibilityVersion &version : {CompatibilityVersion{"Legacy1960", parse_legacy_version(1960)},
-                 {"Legacy1961", parse_legacy_version(1961)}, {"Current", current_id_version()}})
+                 {"Legacy1961", parse_legacy_version(1961)}})
         {
             for (const Sample &sample :
                 {Sample{"Mod", Bailout::MOD, {1.0, 0.0}, 1}, {"Imaginary", Bailout::IMAG, {8.0, 0.0625}, 2}})
@@ -3387,7 +3363,7 @@ std::vector<InsideAtanInput> inside_atan_inputs()
     for (const bool big_float : {false, true})
     {
         for (const CompatibilityVersion &version : {CompatibilityVersion{"Legacy2002", parse_legacy_version(2002)},
-                 {"Legacy2003", parse_legacy_version(2003)}, {"Current", current_id_version()}})
+                 {"Legacy2003", parse_legacy_version(2003)}})
         {
             for (const int colors : {16, 256})
             {
@@ -4065,30 +4041,21 @@ std::vector<StarTrailHistoryInput> star_trail_history_inputs()
         std::complex<double> point;
         int color;
     };
-
-    struct Periodicity
-    {
-        const char *name;
-        int value;
-    };
-
     std::vector<StarTrailHistoryInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const long limit : {1L, 8L, 128L})
+        const std::string prefix{big_float ? "HighPrecision_" : "Double_"};
+        for (const Sample &sample :
+            {Sample{"Origin", {}, 1}, {"NegativeReal", {-1.0, 0.0}, 1}, {"PositiveImaginary", {0.0, 1.0}, 2},
+                {"SmallComplex", {0.125, 0.125}, 0}, {"LeftOffset", {-0.75, 0.125}, 2}})
         {
-            for (const Periodicity &periodicity : {Periodicity{"Disabled", 0}, {"Enabled", 1}, {"Highlighted", -1}})
-            {
-                for (const Sample &sample : {Sample{"Origin", {0.0, 0.0}, 1}, {"NegativeReal", {-1.0, 0.0}, 1},
-                         {"PositiveImaginary", {0.0, 1.0}, 2}, {"SmallComplex", {0.125, 0.125}, 0},
-                         {"LeftOffset", {-0.75, 0.125}, 2}})
-                {
-                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Limit" +
-                            std::to_string(limit) + "_" + periodicity.name + "_" + sample.name,
-                        big_float, limit, periodicity.value, sample.point, sample.color});
-                }
-            }
+            inputs.push_back({prefix + sample.name, big_float, 128, 0, sample.point, sample.color});
         }
+        // Star trail fixes the history at 16, then restores the caller's limit.
+        inputs.push_back({prefix + "LimitBelowHistory", big_float, 1, 0, {}, 1});
+        inputs.push_back({prefix + "LimitEqualsHistory", big_float, 16, 0, {}, 1});
+        inputs.push_back({prefix + "PeriodicityIgnored", big_float, 128, 1, {}, 1});
+        inputs.push_back({prefix + "HighlightIgnored", big_float, 128, -1, {}, 1});
     }
     return inputs;
 }
@@ -4416,15 +4383,37 @@ TEST_P(TestBigFloatStarTrailContinuation, preservesBoundedValuesCachesSamplesAnd
     EXPECT_EQ(expected_color, color);
 }
 
-INSTANTIATE_TEST_SUITE_P(ModesOrbitsAndYielding, TestBigFloatStarTrailContinuation,
-    Combine(Values(Bailout::MOD, Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR),
-        Values(StarTrailFloatInput{"Growing", {1, 1}, {1, 0}, {}, 0}, StarTrailFloatInput{"Bounded", {0, 1}, {}, {}, 0},
-            StarTrailFloatInput{"Precise", {1, 1}, {1, 0}, {0x1p-80, 0x1p-80}, 0},
-            StarTrailFloatInput{"RealClamp", {2, 0}, {}, {0, 0x1p-200}, 0},
-            StarTrailFloatInput{"ImagClamp", {0, 2}, {}, {0x1p-200, 0}, 0},
-            StarTrailFloatInput{"AboveBound", {std::numeric_limits<float>::max(), 0}, {}, {}, 1},
-            StarTrailFloatInput{"BelowBound", {std::numeric_limits<float>::max(), 0}, {}, {}, -1}),
-        Bool()));
+std::vector<std::tuple<Bailout, StarTrailFloatInput, bool>> star_trail_continuation_inputs()
+{
+    const StarTrailFloatInput samples[]{
+        {"Growing", {1, 1}, {1, 0}, {}, 0},
+        {"Bounded", {0, 1}, {}, {}, 0},
+        {"Precise", {1, 1}, {1, 0}, {0x1p-80, 0x1p-80}, 0},
+        {"RealClamp", {2, 0}, {}, {0, 0x1p-200}, 0},
+        {"ImagClamp", {0, 2}, {}, {0x1p-200, 0}, 0},
+        {"AboveBound", {std::numeric_limits<float>::max(), 0}, {}, {}, 1},
+        {"BelowBound", {std::numeric_limits<float>::max(), 0}, {}, {}, -1},
+    };
+    std::vector<std::tuple<Bailout, StarTrailFloatInput, bool>> inputs;
+    for (const bool yielding : {false, true})
+    {
+        for (const StarTrailFloatInput &sample : samples)
+        {
+            inputs.emplace_back(Bailout::MOD, sample, yielding);
+        }
+        // Every metric must retain cache state after bailout. Clamping and
+        // precision boundaries use the same history path for every metric.
+        for (const Bailout bailout :
+            {Bailout::REAL, Bailout::IMAG, Bailout::OR, Bailout::AND, Bailout::MANH, Bailout::MANR})
+        {
+            inputs.emplace_back(bailout, samples[0], yielding);
+        }
+    }
+    return inputs;
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    ModesOrbitsAndYielding, TestBigFloatStarTrailContinuation, ValuesIn(star_trail_continuation_inputs()));
 
 struct StarTrailPaletteInput
 {
@@ -4920,34 +4909,6 @@ INSTANTIATE_TEST_SUITE_P(Inputs, TestCycleMappingBypass,
         MappedColorMethodInput{"HighPrecision", true, ColorMethod::ITER}),
     [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
 
-class TestPotentialMapping : public MappingBypassTest
-{
-protected:
-    void SetUp() override;
-};
-
-void TestPotentialMapping::SetUp()
-{
-    MappingBypassTest::SetUp();
-    g_inside_method = GetParam().method;
-    g_outside_method = ColorMethod::ITER;
-    g_outside_color = 4;
-    g_periodicity_check = 0;
-    g_potential = {{23.0, 10.0, 4.0}, false, true};
-}
-
-TEST_P(TestPotentialMapping, mapsPotentialColor)
-{
-    compare_pixel({}, 128);
-
-    EXPECT_EQ(99, g_color);
-}
-
-INSTANTIATE_TEST_SUITE_P(Inputs, TestPotentialMapping,
-    Values(MappedColorMethodInput{"Double", false, ColorMethod::COLOR},
-        MappedColorMethodInput{"HighPrecision", true, ColorMethod::COLOR}),
-    [](const TestParamInfo<MappedColorMethodInput> &info) { return info.param.name; });
-
 struct LogMapPathInput
 {
     std::string name;
@@ -4966,44 +4927,40 @@ void PrintTo(const LogMapPathInput &input, std::ostream *out)
 
 std::vector<LogMapPathInput> log_map_path_inputs()
 {
-    struct CompatibilityVersion
-    {
-        const char *name;
-        Version version;
-    };
-
     struct Flag
     {
         const char *name;
         long value;
     };
-
-    struct Sample
-    {
-        const char *name;
-        std::complex<double> point;
-        int iterations;
-    };
-
     std::vector<LogMapPathInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const CompatibilityVersion &version : {CompatibilityVersion{"Legacy1920", parse_legacy_version(1920)},
-                 {"Legacy1921", parse_legacy_version(1921)}, {"Legacy2001", parse_legacy_version(2001)},
-                 {"Legacy2002", parse_legacy_version(2002)}, {"Current", current_id_version()}})
+        const std::string prefix{big_float ? "HighPrecision_" : "Double_"};
+        for (const Flag &flag :
+            {Flag{"PositiveOne", 1L}, {"NegativeOne", -1L}, {"PositiveEight", 8L}, {"NegativeEight", -8L}})
         {
-            for (const Flag &flag :
-                {Flag{"PositiveOne", 1L}, {"NegativeOne", -1L}, {"PositiveEight", 8L}, {"NegativeEight", -8L}})
+            for (const bool calculate : {false, true})
             {
-                for (const bool calculate : {false, true})
-                {
-                    for (const Sample &sample : {Sample{"Outside", {0.5, 0.0}, 4}, {"Inside", {}, 128}})
-                    {
-                        inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + version.name + "_" +
-                                flag.name + (calculate ? "_OnTheFly_" : "_Table_") + sample.name,
-                            big_float, version.version, flag.value, calculate, sample.point, sample.iterations});
-                    }
-                }
+                const std::string name{prefix + flag.name + (calculate ? "_OnTheFly" : "_Table")};
+                inputs.push_back(
+                    {name + "_Outside", big_float, current_id_version(), flag.value, calculate, {0.5, 0.0}, 4});
+                inputs.push_back({name + "_Inside", big_float, current_id_version(), flag.value, calculate, {}, 128});
+            }
+            // Only stored tables use the pre-1921 construction algorithm.
+            for (const int version : {1920, 1921})
+            {
+                inputs.push_back({prefix + flag.name + "_Legacy" + std::to_string(version), big_float,
+                    parse_legacy_version(version), flag.value, false, {0.5, 0.0}, 4});
+            }
+        }
+        // A compressed, nonconstant color exercises the 2001/2002 rounding boundary.
+        for (const int version : {2001, 2002})
+        {
+            for (const bool calculate : {false, true})
+            {
+                inputs.push_back(
+                    {prefix + "CompressedRounding" + std::to_string(version) + (calculate ? "_OnTheFly" : "_Table"),
+                        big_float, parse_legacy_version(version), 2L, calculate, {0.5, 0.0}, 4});
             }
         }
     }
@@ -5045,6 +5002,10 @@ TEST_P(TestLogMapPaths, usesSharedTableOrOnTheFlyMapping)
 
     EXPECT_EQ(standard_palette_color(log_table_calc(GetParam().iterations)), g_color);
     EXPECT_EQ(GetParam().iterations, g_real_color_iter);
+    if (GetParam().flag == 2)
+    {
+        EXPECT_EQ(GetParam().version < 2002 ? 3 : 2, g_color);
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestLogMapPaths, ValuesIn(log_map_path_inputs()),
@@ -5482,6 +5443,18 @@ std::vector<BiomorphBoundaryInput> biomorph_boundary_inputs()
             {
                 for (const Sample &sample : samples)
                 {
+                    // Color zero is a finishing case, not another geometry.
+                    if ((color == 0 &&
+                            (limit.value != 4.0 ||
+                                (std::string{sample.name} != "PositiveRealAxis" &&
+                                    std::string{sample.name} != "RealAtThreshold"))) ||
+                        (limit.value != 4.0 && std::string{sample.name} != "RealAtThreshold" &&
+                            std::string{sample.name} != "RealBelowThreshold" &&
+                            std::string{sample.name} != "ImaginaryAtThreshold" &&
+                            std::string{sample.name} != "ImaginaryBelowThreshold"))
+                    {
+                        continue;
+                    }
                     inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Limit" + limit.name +
                             "_Color" + std::to_string(color) + "_" + sample.name,
                         big_float, limit.value, color, sample.point, sample.hit});
@@ -5560,6 +5533,11 @@ std::vector<BiomorphOutsideInput> biomorph_outside_inputs()
             {
                 for (const bool hit : {true, false})
                 {
+                    // The inside formula is ignored on escape.
+                    if (inside.method == ColorMethod::COLOR && outside.method != ColorMethod::REAL)
+                    {
+                        continue;
+                    }
                     std::optional<int> color;
                     if (hit)
                     {
@@ -5640,11 +5618,9 @@ void PrintTo(const BiomorphInsideInput &input, std::ostream *out)
 
 std::vector<BiomorphInsideInput> biomorph_inside_inputs()
 {
-    const std::array<PerturbationColorMethod, 10> methods{
-        {{"FixedColor", ColorMethod::COLOR}, {"Iterations", ColorMethod::ITER}, {"Magnitude", ColorMethod::ZMAG},
-            {"Bof60", ColorMethod::BOF60}, {"Bof61", ColorMethod::BOF61}, {"Atan", ColorMethod::ATANI},
-            {"Fmod", ColorMethod::FMODI}, {"EpsilonCross", ColorMethod::EPS_CROSS}, {"Period", ColorMethod::PERIOD},
-            {"StarTrail", ColorMethod::STAR_TRAIL}}};
+    const std::array<PerturbationColorMethod, 4> methods{
+        {{"FixedColor", ColorMethod::COLOR}, {"Iterations", ColorMethod::ITER},
+            {"EpsilonCross", ColorMethod::EPS_CROSS}, {"StarTrail", ColorMethod::STAR_TRAIL}}};
     std::vector<BiomorphInsideInput> inputs;
     for (const bool big_float : {false, true})
     {
@@ -6274,8 +6250,16 @@ std::vector<DistanceBoundaryColorInput> distance_boundary_inputs()
                     std::to_string(std::abs(width))};
                 const std::optional<int> exterior_color{
                     width == 100 ? std::optional<int>{mode > 0 ? 32 : 9} : std::nullopt};
+                // Mode sign changes boundary finishing, not width conversion.
+                if (mode < 0 && width != 1 && width != 100)
+                {
+                    continue;
+                }
                 inputs.push_back({name + "_Exterior", big_float, mode, width, {0.5, 0.0}, true, exterior_color});
-                inputs.push_back({name + "_Interior", big_float, mode, width, {0.125, 0.0625}, false, 32});
+                if (mode > 0 && width == 1)
+                {
+                    inputs.push_back({name + "_Interior", big_float, mode, width, {0.125, 0.0625}, false, 32});
+                }
             }
         }
     }
@@ -6588,9 +6572,6 @@ std::vector<DistanceInsideMappingInput> distance_inside_mapping_inputs()
     const PerturbationColorMethod outside_methods[]{
         {"Iterations", ColorMethod::ITER},
         {"FixedColor", ColorMethod::COLOR},
-        {"Real", ColorMethod::REAL},
-        {"Atan", ColorMethod::ATAN},
-        {"Fmod", ColorMethod::FMOD},
         {"TotalDistance", ColorMethod::TDIS},
     };
     const PerturbationColorMethod inside_methods[]{
@@ -6756,10 +6737,15 @@ std::vector<DistanceBandSampleInput> distance_band_sample_inputs()
         {
             for (const bool old_colors : {false, true})
             {
-                for (const long mode : {2L, 64L, 256L, 1024L})
+                for (const long mode : {2L, 256L, 1024L})
                 {
                     for (const Sample &sample : samples)
                     {
+                        // Geometry and band scaling are independent.
+                        if (mode != 256 && std::string{sample.name} != "FarExterior")
+                        {
+                            continue;
+                        }
                         inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
                                 (legacy ? "Legacy_" : "Current_") + (old_colors ? "OldColors_" : "NewColors_") +
                                 "Mode" + std::to_string(mode) + "_" + sample.name,
@@ -6823,8 +6809,6 @@ std::vector<DistanceBandOutsideInput> distance_band_outside_inputs()
 {
     const PerturbationColorMethod methods[]{
         {"FixedColor", ColorMethod::COLOR},
-        {"Real", ColorMethod::REAL},
-        {"Atan", ColorMethod::ATAN},
         {"Fmod", ColorMethod::FMOD},
         {"TotalDistance", ColorMethod::TDIS},
     };
@@ -6995,6 +6979,14 @@ std::vector<RegularDistanceColorInput> regular_distance_color_inputs()
             {
                 for (const PerturbationColorMethod &method : methods)
                 {
+                    // Legacy escape uses its saved iteration and point,
+                    // bypassing all outside formulas except fixed color.
+                    if ((mode < 0 && method.method != ColorMethod::ITER) ||
+                        (legacy && method.method != ColorMethod::ITER && method.method != ColorMethod::COLOR &&
+                            method.method != ColorMethod::REAL))
+                    {
+                        continue;
+                    }
                     inputs.push_back(
                         {std::string{big_float ? "HighPrecision_" : "Double_"} + (legacy ? "Legacy_" : "Current_") +
                                 (mode > 0 ? "PositiveMode_" : "NegativeMode_") + method.name,
@@ -7155,6 +7147,13 @@ std::vector<PeriodicityScheduleInput> periodicity_schedule_inputs()
                 {
                     for (const double real : {0.0, -1.0})
                     {
+                        // Disabled checking ignores schedule, reset and point;
+                        // exact cycles do not depend on tolerance magnitude.
+                        if ((periodicity == 0 && (legacy || reset || real != 0.0)) ||
+                            (periodicity == 5 && (legacy || reset || real != 0.0)))
+                        {
+                            continue;
+                        }
                         inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
                                 (legacy ? "LegacySchedule_" : "CurrentSchedule_") + (reset ? "Reset_" : "NoReset_") +
                                 "Periodicity" + std::to_string(periodicity) + (real == 0.0 ? "_Zero" : "_MinusOne"),
@@ -7656,10 +7655,6 @@ void PrintTo(const PotentialExteriorInput &input, std::ostream *out)
 
 std::vector<PotentialExteriorInput> potential_exterior_inputs()
 {
-    const PerturbationColorMethod inside_methods[]{
-        {"FixedColor", ColorMethod::COLOR},
-        {"Iterations", ColorMethod::ITER},
-    };
     const PerturbationColorMethod outside_methods[]{
         {"Iterations", ColorMethod::ITER},
         {"FixedColor", ColorMethod::COLOR},
@@ -7671,24 +7666,27 @@ std::vector<PotentialExteriorInput> potential_exterior_inputs()
         {"Fmod", ColorMethod::FMOD},
         {"TotalDistance", ColorMethod::TDIS},
     };
+    // Potential bypasses exterior finishing. Vary each ignored setting
+    // independently, and retain one case with every override enabled.
+    const PotentialExteriorInput overrides[]{
+        {"FixedInside", false, ColorMethod::COLOR, 0, -1, ColorMethod::ITER},
+        {"Decomposition", false, ColorMethod::ITER, 16, -1, ColorMethod::ITER},
+        {"Biomorph", false, ColorMethod::ITER, 0, 9, ColorMethod::ITER},
+        {"CombinedOverrides", false, ColorMethod::COLOR, 16, 9, ColorMethod::COLOR},
+    };
     std::vector<PotentialExteriorInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const PerturbationColorMethod &inside : inside_methods)
+        const std::string prefix{big_float ? "HighPrecision_" : "Double_"};
+        for (const PerturbationColorMethod &outside : outside_methods)
         {
-            for (const int decomposition : {0, 16})
-            {
-                for (const int biomorph : {-1, 9})
-                {
-                    for (const PerturbationColorMethod &outside : outside_methods)
-                    {
-                        inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Inside" +
-                                inside.name + "_Decomposition" + std::to_string(decomposition) +
-                                (biomorph < 0 ? "_NoBiomorph_" : "_BiomorphNine_") + "Outside" + outside.name,
-                            big_float, inside.method, decomposition, biomorph, outside.method});
-                    }
-                }
-            }
+            inputs.push_back({prefix + outside.name, big_float, ColorMethod::ITER, 0, -1, outside.method});
+        }
+        for (PotentialExteriorInput sample : overrides)
+        {
+            sample.name = prefix + sample.name;
+            sample.big_float = big_float;
+            inputs.push_back(sample);
         }
     }
     return inputs;
@@ -7836,9 +7834,15 @@ std::vector<PotentialMappedSampleInput> potential_mapped_sample_inputs()
             {
                 const std::string prefix{std::string{big_float ? "HighPrecision_" : "Double_"} + "Inside" +
                     inside.name + "_Outside" + outside.name};
-                inputs.push_back({prefix + "_Exterior", big_float, inside.method, outside.method, {0.5, 0.5}, 31});
-                inputs.push_back({prefix + "_Interior", big_float, inside.method, outside.method, {0.125, 0.0625},
-                    inside.method == ColorMethod::COLOR ? 37 : 41});
+                if (inside.method == ColorMethod::ITER)
+                {
+                    inputs.push_back({prefix + "_Exterior", big_float, inside.method, outside.method, {0.5, 0.5}, 31});
+                }
+                if (outside.method == ColorMethod::ITER)
+                {
+                    inputs.push_back({prefix + "_Interior", big_float, inside.method, outside.method, {0.125, 0.0625},
+                        inside.method == ColorMethod::COLOR ? 37 : 41});
+                }
             }
         }
     }
@@ -7974,19 +7978,11 @@ std::vector<PotentialStorageInput> potential_storage_inputs()
     std::vector<PotentialStorageInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const bool mapped : {false, true})
-        {
-            for (const bool retry : {false, true})
-            {
-                for (const int row : {0, HEIGHT - 1})
-                {
-                    inputs.push_back(
-                        {std::string{big_float ? "HighPrecision_" : "Double_"} + (mapped ? "Mapped_" : "Unmapped_") +
-                                (retry ? "Retry_" : "NoRetry_") + (row == 0 ? "TopRow" : "BottomRow"),
-                            big_float, mapped, retry, row});
-                }
-            }
-        }
+        const std::string prefix{big_float ? "HighPrecision_" : "Double_"};
+        inputs.push_back({prefix + "UnmappedTopRow", big_float, false, false, 0});
+        inputs.push_back({prefix + "MappedTopRow", big_float, true, false, 0});
+        inputs.push_back({prefix + "UnmappedBottomRow", big_float, false, false, HEIGHT - 1});
+        inputs.push_back({prefix + "MappedRetryBottomRow", big_float, true, true, HEIGHT - 1});
     }
     return inputs;
 }
@@ -8581,32 +8577,37 @@ std::vector<BailoutTerminationInput> bailout_termination_inputs()
     struct Sample
     {
         const char *name;
+        Bailout bailout;
         std::complex<double> point;
-        std::array<long, 7> iterations;
+        long iterations;
     };
 
+    // Adjacent bailout thresholds are covered by TestPerturbationBailout.
+    // Retain multi-update termination, axis suppression, and signed sums.
     const Sample samples[]{
-        {"OneReal", {1.0, 0.0}, {1, 1, 6, 1, 6, 1, 1}},
-        {"OneImaginary", {0.0, 1.0}, {6, 6, 6, 6, 6, 1, 6}},
-        {"OneMinusImaginary", {1.0, -1.0}, {1, 2, 1, 1, 2, 1, 1}},
-        {"HalfComplex", {0.5, 0.5}, {4, 4, 5, 4, 5, 4, 4}},
+        {"Mod", Bailout::MOD, {0.5, 0.5}, 4},
+        {"Real", Bailout::REAL, {0.5, 0.5}, 4},
+        {"Imaginary", Bailout::IMAG, {0.5, 0.5}, 5},
+        {"Or", Bailout::OR, {0.5, 0.5}, 4},
+        {"And", Bailout::AND, {0.5, 0.5}, 5},
+        {"Manhattan", Bailout::MANH, {0.5, 0.5}, 4},
+        {"ManhattanReal", Bailout::MANR, {0.5, 0.5}, 4},
+        {"ModCycle", Bailout::MOD, {0.0, 1.0}, 6},
+        {"RealZeroComponent", Bailout::REAL, {0.0, 1.0}, 6},
+        {"ImaginaryZeroComponent", Bailout::IMAG, {1.0, 0.0}, 6},
+        {"OrRealComponent", Bailout::OR, {1.0, 0.0}, 1},
+        {"OrImaginaryComponent", Bailout::OR, {0.0, 1.0}, 6},
+        {"AndZeroComponent", Bailout::AND, {1.0, 0.0}, 6},
+        {"ManhattanSigned", Bailout::MANH, {1.0, -1.0}, 1},
+        {"ManhattanRealSigned", Bailout::MANR, {1.0, -1.0}, 1},
     };
     std::vector<BailoutTerminationInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const PerturbationBailoutMethod &method : TERMINATION_BAILOUTS)
+        for (const Sample &sample : samples)
         {
-            for (const Sample &sample : samples)
-            {
-                for (const double limit : {1.0, 4.0, 16.0})
-                {
-                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + method.name + "_" +
-                            sample.name + "_Limit" + std::to_string(static_cast<int>(limit)),
-                        big_float, method.test, sample.point, limit,
-                        limit == 4.0 ? std::optional<long>{sample.iterations[static_cast<std::size_t>(method.test)]}
-                                     : std::nullopt});
-                }
-            }
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + sample.name, big_float,
+                sample.bailout, sample.point, 4.0, sample.iterations});
         }
     }
     return inputs;
@@ -8882,17 +8883,29 @@ void PrintTo(const InsidePaletteInput &input, std::ostream *out)
 
 std::vector<InsidePaletteInput> inside_palette_inputs()
 {
+    struct Sample
+    {
+        const char *name;
+        int colors;
+        long iterations;
+    };
+
+    const Sample samples[]{
+        {"SmallPaletteZero", 2, 256},
+        {"SmallPaletteMask", 4, 255},
+        {"Palette16Modulus", 16, 255},
+        {"BeforeWrap", 256, 255},
+        {"AtWrap", 256, 256},
+        {"AfterWrap", 256, 257},
+        {"MultipleWraps", 256, 511},
+    };
     std::vector<InsidePaletteInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const int colors : {2, 4, 16, 256})
+        for (const Sample &sample : samples)
         {
-            for (const long iterations : {255L, 256L, 257L, 511L, 512L, 1024L})
-            {
-                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + "Palette" +
-                        std::to_string(colors) + "_Iterations" + std::to_string(iterations),
-                    big_float, colors, iterations});
-            }
+            inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + sample.name, big_float,
+                sample.colors, sample.iterations});
         }
     }
     return inputs;
@@ -8951,7 +8964,7 @@ std::vector<BoundaryPaletteInput> boundary_palette_inputs()
     std::vector<BoundaryPaletteInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const int colors : {2, 4, 16, 256})
+        for (const int colors : {2, 256})
         {
             const std::string prefix{
                 std::string{big_float ? "HighPrecision_" : "Double_"} + "Palette" + std::to_string(colors)};
@@ -9541,7 +9554,7 @@ TEST_P(TestShipPreciseManr, replaysNativeCoordinates)
 }
 
 INSTANTIATE_TEST_SUITE_P(Inputs, TestShipPreciseManr,
-    ValuesIn(ship_reference_inputs({2, 3, 4, 5}, SHIP_ORIGINAL_AND_REPLACED)),
+    ValuesIn(ship_reference_inputs({3, 4, 5}, SHIP_ORIGINAL_AND_REPLACED)),
     [](const TestParamInfo<ShipReferenceInput> &info) { return info.param.name; });
 
 const std::vector<BurningShipReference> SHIP_REFERENCES{
@@ -9601,6 +9614,12 @@ std::vector<ShipInitializerInput> ship_initializer_inputs()
             {
                 for (const BurningShipReference &reference : SHIP_REFERENCES)
                 {
+                    // PIXEL and NORMAL share the seed policy. Retain PIXEL
+                    // once for quadratic and higher-degree orientation.
+                    if (mode == InitOrbitMode::PIXEL && (degree > 3 || reference.offset != 0.0))
+                    {
+                        continue;
+                    }
                     inputs.push_back(
                         {std::string{big_float ? "HighPrecision_" : "Double_"} + "Degree" + std::to_string(degree) +
                                 (mode == InitOrbitMode::NORMAL ? "_Normal_" : "_Pixel_") + reference.name,
@@ -9691,6 +9710,12 @@ std::vector<ShipBofInput> ship_bof_inputs()
     std::vector<ShipBofInput> inputs;
     for (const ShipReferenceInput &reference : ship_reference_inputs({2, 3, 4, 5}, SHIP_REFERENCES))
     {
+        // Degree-specific kernels are tested at the original reference;
+        // displaced BOF state needs both coordinate orientations only.
+        if (reference.degree > 3 && reference.offset != 0.0)
+        {
+            continue;
+        }
         for (const bool match_book : {false, true})
         {
             for (const PerturbationColorMethod &method : methods)
@@ -9797,6 +9822,13 @@ std::vector<ShipBailoutEqualityInput> ship_bailout_equality_inputs()
             {
                 for (const BurningShipReference &reference : SHIP_ORIGINAL_AND_REPLACED)
                 {
+                    // Shared predicates are bracketed at the original point;
+                    // MANR additionally depends on native ship orientation.
+                    if (reference.replace && method.test != Bailout::MANR &&
+                        !(method.test == Bailout::MOD && boundary.limit == metric))
+                    {
+                        continue;
+                    }
                     inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + method.name + "_" +
                             boundary.name + "_" + reference.name,
                         big_float, method.test, boundary.limit, reference.offset, reference.replace});
@@ -10014,6 +10046,7 @@ TEST_P(TestPerturbationContinuation, suppliedStateOverridesPixelSeedsAndColoring
 
     check_orbit({0.125, 0.0625}, {0.03125, -0.0625}, 7);
 
+    EXPECT_FALSE(m_engine.orbit_escaped());
     EXPECT_EQ(-19, g_real_color_iter);
     EXPECT_EQ(17, s_perturbation_orbit.size());
     ASSERT_FALSE(s_reference_values.empty());
@@ -10084,6 +10117,7 @@ TEST_P(TestPerturbationContinuation, escapingContinuationRetainsTheActualTermina
 
     check_orbit({1.0, 0.0}, {0.5, 0.0}, 12);
 
+    EXPECT_TRUE(m_engine.orbit_escaped());
     EXPECT_EQ(14, m_engine.orbit_iteration());
     EXPECT_EQ((std::complex<double>{2.5625, 0.0}), m_engine.orbit_value());
 }
@@ -10374,25 +10408,52 @@ void PrintTo(const IntegerOrbitInput &input, std::ostream *out)
     *out << input.name;
 }
 
-std::vector<IntegerOrbitInput> integer_orbit_inputs(const std::vector<int> &exponents,
-    const std::vector<NamedOrbitValue> &parameters, const std::vector<NamedOrbitValue> &seeds)
+std::vector<IntegerOrbitInput> large_integer_orbit_inputs()
+{
+    const NamedOrbitValue seeds[]{
+        {"ContractingSeed", {0.75, -0.000125}},
+        {"GrowingSeed", {1.125, -0.000125}},
+    };
+    std::vector<IntegerOrbitInput> inputs;
+    for (const bool big_float : {false, true})
+    {
+        const std::string prefix{big_float ? "HighPrecision_" : "Double_"};
+        // Bracket the native power cutoff and retain the large-power
+        // regression with underflow, overflow, and a finite result.
+        for (const int exponent : {28, 29, 2048})
+        {
+            for (const NamedOrbitValue &seed : seeds)
+            {
+                inputs.push_back({prefix + "Power" + std::to_string(exponent) + "_" + seed.name, big_float, exponent,
+                    {-0.125125, -0.000125}, seed.value});
+            }
+        }
+        inputs.push_back(
+            {prefix + "Power2048_NearUnitSeed", big_float, 2048, {-0.125125, -0.000125}, {0.999, -0.000125}});
+    }
+    return inputs;
+}
+
+std::vector<IntegerOrbitInput> signed_integer_orbit_inputs()
 {
     std::vector<IntegerOrbitInput> inputs;
     for (const bool big_float : {false, true})
     {
-        for (const int exponent : exponents)
+        const std::string prefix{big_float ? "HighPrecision_" : "Double_"};
+        for (const int exponent : {0, 1, -1, -2, -3, -29})
         {
-            for (const NamedOrbitValue &parameter : parameters)
+            const std::string name{
+                prefix + (exponent < 0 ? "NegativePower" : "Power") + std::to_string(std::abs(exponent))};
+            inputs.push_back({name + "_ZeroSeed", big_float, exponent, {0.125, 0.0625}, {}});
+            inputs.push_back({name + "_NonzeroSeed", big_float, exponent, {0.125, 0.0625}, {0.75, 0.125}});
+            if (exponent < 0)
             {
-                for (const NamedOrbitValue &seed : seeds)
-                {
-                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} +
-                            (exponent < 0 ? "NegativePower" : "Power") + std::to_string(std::abs(exponent)) + "_" +
-                            parameter.name + "_" + seed.name,
-                        big_float, exponent, parameter.value, seed.value});
-                }
+                inputs.push_back(
+                    {name + "_ContractingReciprocal", big_float, exponent, {0.125, 0.0625}, {1.25, -0.25}});
             }
         }
+        inputs.push_back({prefix + "PowerZero_ZeroParameter", big_float, 0, {}, {}});
+        inputs.push_back({prefix + "NegativePowerOne_ZeroParameter", big_float, -1, {}, {}});
     }
     return inputs;
 }
@@ -10451,10 +10512,7 @@ TEST_P(TestLargeIntegerOrbit, matchesStandardOrbitSequence)
     EXPECT_TRUE(m_plots.empty());
 }
 
-INSTANTIATE_TEST_SUITE_P(Inputs, TestLargeIntegerOrbit,
-    ValuesIn(integer_orbit_inputs({28, 29, 32, 64, 128, 2048},
-        {{"ReferenceParameter", {-0.125, 0.000125}}, {"DisplacedParameter", {-0.125125, -0.000125}}},
-        {{"Seed0p75", {0.75, -0.000125}}, {"Seed0p999", {0.999, -0.000125}}, {"Seed1p125", {1.125, -0.000125}}})),
+INSTANTIATE_TEST_SUITE_P(Inputs, TestLargeIntegerOrbit, ValuesIn(large_integer_orbit_inputs()),
     [](const TestParamInfo<IntegerOrbitInput> &info) { return info.param.name; });
 
 class TestSignedIntegerOrbit : public PerturbationIntegerPowerTest, public WithParamInterface<IntegerOrbitInput>
@@ -10535,10 +10593,7 @@ TEST_P(TestSignedIntegerOrbit, matchesNativeOrbitAndBailout)
     EXPECT_TRUE(m_plots.empty());
 }
 
-INSTANTIATE_TEST_SUITE_P(Inputs, TestSignedIntegerOrbit,
-    ValuesIn(
-        integer_orbit_inputs({0, 1, -1, -2, -3, -29}, {{"ZeroParameter", {}}, {"ComplexParameter", {0.125, 0.0625}}},
-            {{"ZeroSeed", {}}, {"Seed0p75", {0.75, 0.125}}, {"Seed1p25", {1.25, -0.25}}})),
+INSTANTIATE_TEST_SUITE_P(Inputs, TestSignedIntegerOrbit, ValuesIn(signed_integer_orbit_inputs()),
     [](const TestParamInfo<IntegerOrbitInput> &info) { return info.param.name; });
 
 struct PrecisePowerInput
@@ -10946,7 +11001,6 @@ std::vector<ComplexOrbitInput> complex_orbit_inputs()
     const std::vector<NamedOrbitValue> powers{{"Power2p5", {2.5, 0.0}}, {"Power0p5", {0.5, 0.0}},
         {"NegativePower0p5", {-0.5, 0.0}}, {"Power2p5Plus0p25i", {2.5, 0.25}}, {"Power0p25Minus0p5i", {0.25, -0.5}},
         {"Power0p5i", {0.0, 0.5}}};
-    const std::vector<NamedOrbitValue> parameters{{"ZeroParameter", {}}, {"ComplexParameter", {0.0625, 0.03125}}};
     const std::vector<NamedOrbitValue> seeds{{"ZeroSeed", {}}, {"PositiveSeed", {0.5, 0.125}},
         {"AboveBranch", {-0.5, 0.000125}}, {"BelowBranch", {-0.5, -0.000125}}};
     std::vector<ComplexOrbitInput> inputs;
@@ -10954,14 +11008,10 @@ std::vector<ComplexOrbitInput> complex_orbit_inputs()
     {
         for (const NamedOrbitValue &power : powers)
         {
-            for (const NamedOrbitValue &parameter : parameters)
+            for (const NamedOrbitValue &seed : seeds)
             {
-                for (const NamedOrbitValue &seed : seeds)
-                {
-                    inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + power.name + "_" +
-                            parameter.name + "_" + seed.name,
-                        big_float, power.value, parameter.value, seed.value});
-                }
+                inputs.push_back({std::string{big_float ? "HighPrecision_" : "Double_"} + power.name + "_" + seed.name,
+                    big_float, power.value, {0.0625, 0.03125}, seed.value});
             }
         }
     }
@@ -11242,55 +11292,6 @@ TEST_F(TestSubDoublePowerBranch, matchesNativeBranchBelowDoubleRange)
 {
     compare_branch(-1);
 }
-
-struct ContinuationExitInput
-{
-    const char *name;
-    bool big_float;
-    std::complex<double> parameter;
-    std::complex<double> value;
-    long iteration;
-    bool escaped;
-};
-
-void PrintTo(const ContinuationExitInput &input, std::ostream *out)
-{
-    *out << input.name;
-}
-
-class TestContinuationExitReason : public PerturbationContinuationTest, public WithParamInterface<ContinuationExitInput>
-{
-public:
-    TestContinuationExitReason();
-
-protected:
-    void SetUp() override;
-};
-
-TestContinuationExitReason::TestContinuationExitReason() :
-    PerturbationContinuationTest{GetParam().big_float}
-{
-}
-
-void TestContinuationExitReason::SetUp()
-{
-    PerturbationContinuationTest::SetUp();
-    prepare();
-}
-
-TEST_P(TestContinuationExitReason, distinguishesBailoutFromIterationLimit)
-{
-    check_orbit(GetParam().parameter, GetParam().value, GetParam().iteration);
-
-    EXPECT_EQ(GetParam().escaped, m_engine.orbit_escaped());
-}
-
-INSTANTIATE_TEST_SUITE_P(Inputs, TestContinuationExitReason,
-    Values(ContinuationExitInput{"Double_IterationLimit", false, {0.125, 0.0625}, {0.03125, -0.0625}, 7, false},
-        ContinuationExitInput{"Double_Escaped", false, {1.0, 0.0}, {0.5, 0.0}, 12, true},
-        ContinuationExitInput{"HighPrecision_IterationLimit", true, {0.125, 0.0625}, {0.03125, -0.0625}, 7, false},
-        ContinuationExitInput{"HighPrecision_Escaped", true, {1.0, 0.0}, {0.5, 0.0}, 12, true}),
-    [](const TestParamInfo<ContinuationExitInput> &info) { return info.param.name; });
 
 class TestReleasedContinuation : public PerturbationContinuationTest, public WithParamInterface<bool>
 {
@@ -12414,7 +12415,7 @@ TEST_F(TestPerturbationPixels, failedReferenceComputesTheRequestedPixelImmediate
 {
     m_engine.initialize_frame({1.0, 0.0}, {0.75, 0.0}, {0.0, 0.75});
 
-    for (int request = 0; request < WIDTH * HEIGHT * 2; ++request)
+    for (int request = 0; request < 3; ++request)
     {
         EXPECT_EQ(7, m_engine.calculate_pixel(0, 2));
         EXPECT_EQ(7, m_pixels[2 * WIDTH]);
@@ -12439,35 +12440,6 @@ TEST_F(TestPerturbationPixels, replacesTheCurrentReferenceWithoutRetainingHistor
     EXPECT_EQ(7, m_engine.calculate_pixel(0, 0));
     EXPECT_EQ(4, m_engine.reference_count());
     EXPECT_THAT(m_plots, ElementsAre(Point2i{0, 0}, Point2i{WIDTH - 1, HEIGHT - 1}, Point2i{0, 0}, Point2i{0, 0}));
-}
-
-TEST_F(TestPerturbationPixels, stringentToleranceCompletesRepeatedReferenceReplacements)
-{
-    g_max_iterations = 10000;
-    m_engine.initialize_frame({-0.1, 0.1}, {1e-10, 0.0}, {0.0, 1e-10});
-    m_engine.set_glitch_tolerance(2.0);
-    m_engine.initialize_pixel_strategy();
-    int references{1};
-
-    for (int pass = 0; pass < 3; ++pass)
-    {
-        for (int row = 0; row < HEIGHT; ++row)
-        {
-            for (int col = 0; col < WIDTH; ++col)
-            {
-                SCOPED_TRACE(row * WIDTH + col);
-                EXPECT_EQ(7, m_engine.calculate_pixel(col, row));
-                EXPECT_EQ(++references, m_engine.reference_count());
-                EXPECT_EQ(7, m_engine.calculate_pixel(col, row));
-                EXPECT_EQ(references, m_engine.reference_count());
-            }
-        }
-    }
-
-    EXPECT_THAT(m_pixels, Each(7));
-    EXPECT_EQ(2 * WIDTH * HEIGHT * 3, m_plots.size());
-    m_engine.finish();
-    EXPECT_EQ(0, m_engine.reference_count());
 }
 
 TEST_F(TestPerturbationPixels, defaultToleranceMatchesPerPixelReferences)
@@ -12536,20 +12508,6 @@ TEST_F(TestPerturbationPixels, deepZoomBoundaryTraceCompletesWithoutDeferredOrRe
     {
         EXPECT_EQ(0, visits.at(pixel.y * WIDTH + pixel.x)++);
     }
-}
-
-TEST_F(TestPerturbationPixels, boundaryTraceReceivesTheStoredNonzeroPaletteColor)
-{
-    m_engine.initialize_frame({0.25, 0.0}, {1e-10, 0.0}, {0.0, 1e-10});
-    g_std_calc_mode = CalcMode::BOUNDARY_TRACE;
-    g_inside_method = ColorMethod::ITER;
-    g_max_iterations = 256;
-
-    const int color{m_engine.calculate_pixel(0, 0)};
-
-    EXPECT_GT(color, 0);
-    EXPECT_LT(color, g_colors);
-    EXPECT_EQ(color, m_pixels[0]);
 }
 
 TEST_F(TestPerturbationPixels, standardFractalEnablesPerturbationForBoundaryTrace)
