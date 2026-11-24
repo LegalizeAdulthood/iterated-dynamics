@@ -50,7 +50,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             exit $LASTEXITCODE
           }
-          cmake --preset ci-debug 2>&1 |
+          cmake --preset msvc-analysis 2>&1 |
             Tee-Object -FilePath build.log -Append
           if ($LASTEXITCODE -ne 0) {
             exit $LASTEXITCODE
@@ -59,7 +59,7 @@ jobs:
       - name: Run Static Analysis
         continue-on-error: true
         run: |
-          msbuild build-ci-debug/ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:EnableClangTidyCodeAnalysis=false /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=NativeRecommendedRules.ruleset /p:TreatWarningsAsErrors=false /v:q "/flp:logfile=msvc-static-analysis-report.txt;verbosity=q"
+          msbuild build-msvc-analysis/ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:EnableClangTidyCodeAnalysis=false /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=NativeRecommendedRules.ruleset /p:TreatWarningsAsErrors=false /v:q "/flp:logfile=msvc-static-analysis-report.txt;verbosity=q"
 
       - name: Analyze vcpkg package cache
         if: always()

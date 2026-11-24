@@ -489,6 +489,12 @@ jobs:
           exit $LASTEXITCODE
         }
 
+    - name: Initialize MSVC
+      if: ${{runner.os == 'Windows'}}
+      uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
+      with:
+        arch: x64
+
     - name: Run Workflow Windows
       if: ${{matrix.os == 'windows-2022'}}
       shell: pwsh
@@ -1252,6 +1258,12 @@ jobs:
         install-nuget: "true"
         debug: "false"
         trace: "false"
+
+    - name: Initialize MSVC
+      if: ${{runner.os == 'Windows'}}
+      uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
+      with:
+        arch: x64
 
     - name: Run Workflow
       shell: pwsh

@@ -20,11 +20,8 @@ function(target_id_resources target)
         "${ID_RESOURCE_DIR}/Id.ico"
         "${ID_RESOURCE_DIR}/id.rc.in"
         "${ID_RESOURCE_SCRIPT}"
-        "${ID_RESOURCE_DIR}/app-manifest.xml"
+        "${ID_RESOURCE_DIR}/app.manifest"
         "${ID_RESOURCE_DIR}/resource.h")
-    target_link_options("${target}" PRIVATE
-        "/manifest:embed"
-        "/manifestinput:${ID_RESOURCE_DIR}/app-manifest.xml")
     target_include_directories("${target}" PRIVATE
         "${ID_RESOURCE_DIR}"
         "${ID_RESOURCE_BINARY_DIR}")

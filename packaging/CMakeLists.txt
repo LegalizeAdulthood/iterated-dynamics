@@ -65,6 +65,9 @@ if(WIN32)
     # Add a custom target to build the Burn bootstrapper after the MSI is built
     add_custom_target(setup
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/bundle/downloads
+        COMMAND curl -L
+            -o "${CMAKE_CURRENT_BINARY_DIR}/bundle/downloads/vc_redist.x64.exe"
+            "https://aka.ms/vs/17/release/vc_redist.x64.exe"
         COMMAND ${CMAKE_COMMAND} -E copy 
             ${CMAKE_CURRENT_SOURCE_DIR}/license.rtf 
             ${CMAKE_CURRENT_BINARY_DIR}/bundle/
@@ -90,15 +93,6 @@ if(WIN32)
         SOURCES Bundle.wxs
     )
 
-    # Download the VC runtime for inclusion in the bundle
-    add_custom_command(
-        TARGET setup PRE_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/bundle/downloads
-        COMMAND curl -L
-            -o "${CMAKE_CURRENT_BINARY_DIR}/bundle/downloads/vc_redist.x64.exe"
-            "https://aka.ms/vs/17/release/vc_redist.x64.exe"
-        COMMENT "Checking for VC++ Runtime redistributable"
-    )
 else()
     set(CPACK_GENERATOR TGZ)
 endif()

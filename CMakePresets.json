@@ -30,6 +30,13 @@
       "binaryDir": "${sourceDir}/build-${presetName}"
     },
     {
+      "name": "ci-settings",
+      "hidden": true,
+      "description": "CI builds use Ninja with automatic build parallelism",
+      "inherits": [ "ci-preset-build-dir" ],
+      "generator": "Ninja"
+    },
+    {
       "name": "compile-commands",
       "hidden": true,
       "description": "Generate a compile_commands.json database",
@@ -125,12 +132,12 @@
     {
       "name": "ci-debug",
       "displayName": "CI Configure with Debug settings",
-      "inherits": [ "ci-preset-build-dir", "default", "debug-config", "run-slow-tests", "require-package-docs" ]
+      "inherits": [ "ci-settings", "default", "debug-config", "run-slow-tests", "require-package-docs" ]
     },
     {
       "name": "ci-release",
       "displayName": "CI Configure with Release settings",
-      "inherits": [ "ci-preset-build-dir", "default", "release-config", "run-slow-tests", "require-package-docs" ]
+      "inherits": [ "ci-settings", "default", "release-config", "run-slow-tests", "require-package-docs" ]
     },
     {
       "name": "ci-netbsd-release",
@@ -140,12 +147,12 @@
     {
       "name": "ci-wx-debug",
       "displayName": "CI Configure with wxWidgets Debug settings",
-      "inherits": [ "ci-preset-build-dir", "use-wx", "debug-config", "run-slow-tests", "require-package-docs" ]
+      "inherits": [ "ci-settings", "use-wx", "debug-config", "run-slow-tests", "require-package-docs" ]
     },
     {
       "name": "ci-wx-release",
       "displayName": "CI Configure with wxWidgets Release settings",
-      "inherits": [ "ci-preset-build-dir", "use-wx", "release-config", "run-slow-tests", "require-package-docs" ]
+      "inherits": [ "ci-settings", "use-wx", "release-config", "run-slow-tests", "require-package-docs" ]
     },
     {
       "name": "feature-hc",
@@ -160,6 +167,18 @@
       "name": "ci-ascii-doc",
       "displayName": "CI Configure HTML docs with Release settings",
       "inherits": [ "ci-preset-build-dir", "feature-hc", "release-config", "default" ]
+    },
+    {
+      "name": "msvc-analysis",
+      "displayName": "Configure for MSVC static analysis",
+      "inherits": [ "ci-debug" ],
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
     },
     {
       "name": "cppcheck",
