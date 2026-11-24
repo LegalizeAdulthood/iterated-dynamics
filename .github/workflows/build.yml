@@ -1059,8 +1059,22 @@ jobs:
               fi
             fi
             if [ "${status}" -eq 0 ]; then
+              python3 scripts/cmake-instrumentation.py prepare build-ci-netbsd-release
+              status=$?
+            fi
+            if [ "${status}" -eq 0 ]; then
               DISPLAY=:99 cmake --workflow --preset ci-netbsd-release
               status=$?
+              ctest --collect-instrumentation build-ci-netbsd-release
+              timing_status=$?
+              if [ "${status}" -eq 0 ]; then
+                status=${timing_status}
+                if [ ! -s build-ci-netbsd-release/cmake-instrumentation/commands.csv ] ||
+                  [ ! -s build-ci-netbsd-release/cmake-instrumentation/trace.json ]; then
+                  echo "CMake instrumentation artifacts were not generated"
+                  status=1
+                fi
+              fi
             fi
             if [ -n "${x_server_pid:-}" ]; then
               kill "$x_server_pid" || true
@@ -1080,6 +1094,9 @@ jobs:
             mkdir -p .netbsd-copyback/build-ci-netbsd-release
             cp -R build-ci-netbsd-release/test-artifacts .netbsd-copyback/build-ci-netbsd-release/
           fi
+          if [ -d build-ci-netbsd-release/cmake-instrumentation ]; then
+            cp -R build-ci-netbsd-release/cmake-instrumentation .netbsd-copyback/
+          fi
           if [ -f xserver.log ]; then
             cp xserver.log .netbsd-copyback/
           fi
@@ -1095,6 +1112,14 @@ jobs:
         name: image-test-diagnostics-${{github.job}}-${{github.run_attempt}}
         if-no-files-found: ignore
         path: ${{github.workspace}}/build-ci-netbsd-release/test-artifacts/
+
+    - name: Upload NetBSD CMake instrumentation
+      if: always()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: cmake-instrumentation-${{github.job}}-${{github.run_attempt}}
+        if-no-files-found: warn
+        path: ${{github.workspace}}/cmake-instrumentation/
 
     - name: Analyze vcpkg package cache
       if: always()
